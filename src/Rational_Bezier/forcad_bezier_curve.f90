@@ -53,8 +53,7 @@ contains
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
-                ! print*, 'Error: Number of weights does not match the number of control points.'
-                return
+                error stop 'Number of weights does not match the number of control points.'
             else
                 this%Wc = Wc
             end if
@@ -76,8 +75,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xc)) then
-            ! print*, 'Error: Control points are not set.'
-            return
+            error stop 'Control points are not set.'
         end if
 
         ! Set parameter values
@@ -130,7 +128,7 @@ contains
         if (allocated(this%Xc)) then
             Xc = this%Xc
         else
-            ! print*, 'Error: Control points are not set.'
+            error stop 'Control points are not set.'
         end if
     end function
     !===============================================================================
@@ -146,7 +144,7 @@ contains
         if (allocated(this%Xg)) then
             Xg = this%Xg
         else
-            ! print*, 'Error: Geometry points are not set.'
+            error stop 'Geometry points are not set.'
         end if
     end function
     !===============================================================================
@@ -162,7 +160,7 @@ contains
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
-            ! print*, 'Error: The Bezier curve is not rational.'
+            error stop 'The Bezier curve is not rational.'
         end if
     end function
     !===============================================================================
@@ -178,7 +176,7 @@ contains
         if (allocated(this%Xt)) then
             Xt = this%Xt
         else
-            ! print*, 'Error: Parameter values are not set.'
+            error stop 'Parameter values are not set.'
         end if
     end function
     !===============================================================================
@@ -282,8 +280,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xc)) then
-            ! print*, 'Error: Control points are not set.'
-            return
+            error stop 'Control points are not set.'
         end if
 
         call this%get_elem_Xc(elemConn)
@@ -323,8 +320,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xg)) then
-            ! print*, 'Error: Geometry points are not set.'
-            return
+            error stop 'Geometry points are not set.'
         end if
 
         call this%get_elem_Xg(elemConn)
@@ -366,7 +362,7 @@ contains
             this%Xc(num,dir) = X
             call this%set(Xc = this%Xc, Wc = this%Wc)
         else
-            ! print*, 'Error: Control points are not set.'
+            error stop 'Control points are not set.'
         end if
     end subroutine
     !===============================================================================
@@ -385,7 +381,7 @@ contains
             this%Wc(num) = W
             call this%set(Xc = this%Xc, Wc = this%Wc)
         else
-            ! print*, 'Error: The Bezier curve is not rational.'
+            error stop 'The Bezier curve is not rational.'
         end if
     end subroutine
     !===============================================================================
@@ -403,8 +399,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xc)) then
-            ! print*, 'Error: Control points are not set.'
-            return
+            error stop 'Control points are not set.'
         end if
 
         if (allocated(this%Wc)) then ! Rational Bezier curve

@@ -114,8 +114,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xc)) then
-            ! print*, 'Error: Control points are not set.'
-            return
+            error stop 'Control points are not set.'
         end if
 
         ! Set parameter values
@@ -200,7 +199,7 @@ contains
         if (allocated(this%Xc)) then
             Xc = this%Xc
         else
-            ! print*, 'Error: Control points are not set.'
+            error stop 'Control points are not set.'
         end if
     end function
     !===============================================================================
@@ -216,7 +215,7 @@ contains
         if (allocated(this%Xg)) then
             Xg = this%Xg
         else
-            ! print*, 'Error: Geometry points are not set.'
+            error stop 'Geometry points are not set.'
         end if
     end function
     !===============================================================================
@@ -232,7 +231,7 @@ contains
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
-            ! print*, 'Error: The Bezier curve is not rational.'
+            error stop 'The Bezier curve is not rational.'
         end if
     end function
     !===============================================================================
@@ -250,22 +249,22 @@ contains
             if (allocated(this%Xt1)) then
                 Xt = this%Xt1
             else
-                ! print*, 'Error: Parameter values are not set.'
+                error stop 'Parameter values are not set.'
             end if
         elseif (dir == 2) then
             if (allocated(this%Xt2)) then
                 Xt = this%Xt2
             else
-                ! print*, 'Error: Parameter values are not set.'
+                error stop 'Parameter values are not set.'
             end if
         elseif (dir == 3) then
             if (allocated(this%Xt3)) then
                 Xt = this%Xt3
             else
-                ! print*, 'Error: Parameter values are not set.'
+                error stop 'Parameter values are not set.'
             end if
         else
-            ! print*, 'Error: Invalid direction for parameter values.'
+            error stop 'Invalid direction for parameter values.'
         end if
 
     end function
@@ -315,22 +314,22 @@ contains
             if (allocated(this%knot1)) then
                 knot = this%knot1
             else
-                ! print*, 'Error: Knot vector is not set.'
+                error stop 'Knot vector is not set.'
             end if
         elseif (dir == 2) then
             if (allocated(this%knot2)) then
                 knot = this%knot2
             else
-                ! print*, 'Error: Knot vector is not set.'
+                error stop 'Knot vector is not set.'
             end if
         elseif (dir == 3) then
             if (allocated(this%knot3)) then
                 knot = this%knot3
             else
-                ! print*, 'Error: Knot vector is not set.'
+                error stop 'Knot vector is not set.'
             end if
         else
-            ! print*, 'Error: Invalid direction for knot vector.'
+            error stop 'Invalid direction for knot vector.'
         end if
 
     end function
@@ -400,8 +399,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xc)) then
-            ! print*, 'Error: Control points are not set.'
-            return
+            error stop 'Control points are not set.'
         end if
 
         call this%get_elem_Xc(elemConn)
@@ -441,8 +439,7 @@ contains
 
         ! check
         if (.not.allocated(this%Xg)) then
-            ! print*, 'Error: Geometry points are not set.'
-            return
+            error stop 'Geometry points are not set.'
         end if
 
         call this%get_elem_Xg(elemConn)
@@ -484,7 +481,7 @@ contains
             this%Xc(num,dir) = X
             call this%set(knot1 = this%knot1, knot2 = this%knot2, knot3 = this%knot3, Xc = this%Xc, Wc = this%Wc)
         else
-            ! print*, 'Error: Control points are not set.'
+            error stop 'Control points are not set.'
         end if
     end subroutine
     !===============================================================================
@@ -502,7 +499,7 @@ contains
             this%Wc(num) = W
             call this%set(knot1 = this%knot1, knot2 = this%knot2, knot3 = this%knot3, Xc = this%Xc, Wc = this%Wc)
         else
-            ! print*, 'Error: The NURBS surface is not rational.'
+            error stop 'The NURBS surface is not rational.'
         end if
     end subroutine
     !===============================================================================
@@ -520,8 +517,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot1)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 m = compute_multiplicity(this%knot1)
             end if
@@ -530,8 +526,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot2)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 m = compute_multiplicity(this%knot2)
             end if
@@ -540,14 +535,13 @@ contains
 
             ! check
             if (.not.allocated(this%knot3)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 m = compute_multiplicity(this%knot3)
             end if
 
         else
-            ! print*, 'Error: Invalid direction.'
+            error stop 'Invalid direction.'
         end if
 
     end function
@@ -566,8 +560,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot1)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 c = this%order(1) - compute_multiplicity(this%knot1)
             end if
@@ -576,8 +569,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot2)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 c = this%order(2) - compute_multiplicity(this%knot2)
             end if
@@ -586,14 +578,13 @@ contains
 
             ! check
             if (.not.allocated(this%knot3)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 c = this%order(3) - compute_multiplicity(this%knot3)
             end if
 
         else
-            ! print*, 'Error: Invalid direction.'
+            error stop 'Invalid direction.'
         end if
 
     end function
@@ -612,8 +603,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot1)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 nc = sum(compute_multiplicity(this%knot1)) - this%order(1) - 1
             end if
@@ -622,8 +612,7 @@ contains
 
             ! check
             if (.not.allocated(this%knot2)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 nc = sum(compute_multiplicity(this%knot2)) - this%order(2) - 1
             end if
@@ -632,14 +621,13 @@ contains
 
             ! check
             if (.not.allocated(this%knot3)) then
-                ! print*, 'Error: Knot vector is not set.'
-                return
+                error stop 'Knot vector is not set.'
             else
                 nc = sum(compute_multiplicity(this%knot3)) - this%order(3) - 1
             end if
 
         else
-            ! print*, 'Error: Invalid direction.'
+            error stop 'Invalid direction.'
         end if
 
     end function
