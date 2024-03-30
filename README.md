@@ -6,7 +6,7 @@
 
 ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** curves, surfaces, and volumes.
 
-<img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/mainvtk/example_bezier.png" width="750">
+<img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bezier.png" width="750">
 
 ## fpm dependency
 
