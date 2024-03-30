@@ -59,7 +59,6 @@ contains
         real(rk), intent(in) :: knot1(:), knot2(:), knot3(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
-        integer :: nc(3)
 
         this%knot1 = knot1
         this%knot2 = knot2
@@ -81,7 +80,7 @@ contains
     pure subroutine set2(this, Xth_dir1, Xth_dir2, Xth_dir3, order, continuity1, continuity2, continuity3, Xc, Wc)
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in) :: Xth_dir1(:), Xth_dir2(:), Xth_dir3(:)
-        integer, intent(in) :: order(3)
+        integer, intent(in) :: order(:)
         integer, intent(in) :: continuity1(:), continuity2(:), continuity3(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)

@@ -46,7 +46,7 @@ contains
     !> Set control points and weights for the Bezier curve object.
     pure subroutine set(this, nc, Xc, Wc)
         class(bezier_surface), intent(inout) :: this
-        integer, intent(in) :: nc(2)
+        integer, intent(in) :: nc(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
 
