@@ -1,0 +1,60 @@
+name: fpm
+on: [push]
+jobs:
+
+  Build:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        toolchain:
+          - {compiler: gcc}
+          - {compiler: intel}
+          - {compiler: intel-classic}
+          - {compiler: nvidia-hpc}
+        exclude:
+          - os: windows-latest
+            toolchain: {compiler: nvidia-hpc}
+          - os: windows-latest
+            toolchain: {compiler: intel}
+          - os: windows-latest
+            toolchain: {compiler: intel-classic}
+          - os: macos-latest
+            toolchain: {compiler: nvidia-hpc}
+          - os: macos-latest
+            toolchain: {compiler: intel}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup Fortran Package Manager (fpm)
+      uses: fortran-lang/setup-fpm@v5
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Fortran Compiler
+      uses: fortran-lang/setup-fortran@main
+      id: setup-fortran
+      with:
+        compiler: ${{ matrix.toolchain.compiler }}
+        version: ${{ matrix.toolchain.version }}
+
+    - name: Install gcc@10 on macos required by fpm
+      if: contains(matrix.os, 'macos')
+      run: brew install gcc@10
+
+    - name: Run Examples (Debug)
+      run: fpm run --example --all --profile debug --compiler ${{ env.FC}}
+      env:
+        FC: ${{ steps.setup-fortran.outputs.fc }}
+
+    - name: Run Examples (Release)
+      run: fpm run --example --all --profile release --compiler ${{ env.FC}}
+      env:
+        FC: ${{ steps.setup-fortran.outputs.fc }}
