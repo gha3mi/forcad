@@ -40,8 +40,9 @@ cd forcad
 
 
 ```shell
-fpm run --example --all
+fpm run --example <file name excluding the .f90 extension>
 ```
+Once the examples have been executed, `.vtk` files will be generated within the `vtk` directory. These files can then be visualized using tools such as ParaView.
 
 ## API documentation
 
@@ -60,6 +61,7 @@ ford ford.yml
 - [ ] Add method `insert_knot()` for B-splines and NURBS.
 - [ ] Add method `remove_knot()` for B-splines and NURBS.
 - [ ] Add method `elevate_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
+- [x] Add method `elevate_degree()` for Bezier and Rational Bezier curves.
 - [ ] Add method `reduce_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
 
 ## Contributing
