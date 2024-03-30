@@ -1,0 +1,1050 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ForCAD">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>example_bezier_volume &ndash; ForCAD</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD <small>0.1.0</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>example_bezier_volume      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip"
+                 data-bs-placement="bottom" data-html="true"
+                 title="16.2% of total for programs.">30 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/bezier_volume.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/bezier_volume.f90.html'>bezier_volume.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">example_bezier_volume</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/example_bezier_volume.html#variable-wc~19">Wc</a>
+            <a class="list-group-item" href="../program/example_bezier_volume.html#variable-xc~19">Xc</a>
+            <a class="list-group-item" href="../program/example_bezier_volume.html#variable-bezier~3">bezier</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/example_bezier_volume.html#proc-generate_xc~5">generate_Xc</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/example_bezier_volume.html#src">example_bezier_volume</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~example_bezier_volume~~UsesGraph Pages: 1 -->
+<svg id="programexample_bezier_volumeUsesGraph" width="515pt" height="272pt"
+ viewBox="0.00 0.00 515.00 271.97" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~example_bezier_volume~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 267.97)">
+<title>program~~example_bezier_volume~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-267.97 511,-267.97 511,4 -4,4"/>
+<!-- program~example_bezier_volume -->
+<g id="program~~example_bezier_volume~~UsesGraph_node1" class="node">
+<title>program~example_bezier_volume</title>
+<polygon fill="none" stroke="black" points="507,-137.97 365,-137.97 365,-113.97 507,-113.97 507,-137.97"/>
+<text text-anchor="middle" x="436" y="-123.57" font-family="Helvetica,sans-Serif" font-size="10.50">example_bezier_volume</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~example_bezier_volume~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="329,-137.97 275,-137.97 275,-113.97 329,-113.97 329,-137.97"/>
+<text text-anchor="middle" x="302" y="-123.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;module~forcad -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge1" class="edge">
+<title>program~example_bezier_volume&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M364.75,-125.97C355.93,-125.97 347.21,-125.97 339.23,-125.97"/>
+<polygon fill="#255000" stroke="#255000" points="339.21,-122.47 329.21,-125.97 339.21,-129.47 339.21,-122.47"/>
+</g>
+<!-- module~forcad_bezier_curve -->
+<g id="program~~example_bezier_volume~~UsesGraph_node3" class="node">
+<title>module~forcad_bezier_curve</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node3"><a xlink:href="../module/forcad_bezier_curve.html" xlink:title="forcad_bezier_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="234,-263.97 114,-263.97 114,-239.97 234,-239.97 234,-263.97"/>
+<text text-anchor="middle" x="174" y="-249.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_bezier_curve -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_bezier_curve</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M297.01,-138.29C289.32,-160.14 270.35,-205.77 239,-230.97 237.22,-232.4 235.35,-233.73 233.39,-234.98"/>
+<polygon fill="#255000" stroke="#255000" points="231.53,-232.01 224.43,-239.88 234.88,-238.15 231.53,-232.01"/>
+</g>
+<!-- module~forcad_bezier_surface -->
+<g id="program~~example_bezier_volume~~UsesGraph_node4" class="node">
+<title>module~forcad_bezier_surface</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node4"><a xlink:href="../module/forcad_bezier_surface.html" xlink:title="forcad_bezier_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="239,-221.97 109,-221.97 109,-197.97 239,-197.97 239,-221.97"/>
+<text text-anchor="middle" x="174" y="-207.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_bezier_surface -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_bezier_surface</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M291.82,-138.37C280.76,-152.5 260.91,-175.38 239,-188.97 236.22,-190.7 233.28,-192.3 230.25,-193.78"/>
+<polygon fill="#255000" stroke="#255000" points="228.7,-190.64 220.96,-197.87 231.53,-197.04 228.7,-190.64"/>
+</g>
+<!-- module~forcad_bezier_volume -->
+<g id="program~~example_bezier_volume~~UsesGraph_node5" class="node">
+<title>module~forcad_bezier_volume</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node5"><a xlink:href="../module/forcad_bezier_volume.html" xlink:title="forcad_bezier_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="239,-179.97 109,-179.97 109,-155.97 239,-155.97 239,-179.97"/>
+<text text-anchor="middle" x="174" y="-165.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_bezier_volume -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_bezier_volume</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M274.77,-134.92C263.74,-138.67 250.75,-143.05 239,-146.97 233.39,-148.84 227.49,-150.8 221.64,-152.73"/>
+<polygon fill="#255000" stroke="#255000" points="220.31,-149.48 211.91,-155.93 222.5,-156.13 220.31,-149.48"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~example_bezier_volume~~UsesGraph_node6" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node6"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="232.5,-137.97 115.5,-137.97 115.5,-113.97 232.5,-113.97 232.5,-137.97"/>
+<text text-anchor="middle" x="174" y="-123.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M274.89,-125.97C265.36,-125.97 254.09,-125.97 242.61,-125.97"/>
+<polygon fill="#255000" stroke="#255000" points="242.51,-122.47 232.51,-125.97 242.51,-129.47 242.51,-122.47"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~example_bezier_volume~~UsesGraph_node7" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node7"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="237.5,-95.97 110.5,-95.97 110.5,-71.97 237.5,-71.97 237.5,-95.97"/>
+<text text-anchor="middle" x="174" y="-81.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge6" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M274.77,-117.03C263.74,-113.28 250.75,-108.89 239,-104.97 233.39,-103.1 227.49,-101.15 221.64,-99.22"/>
+<polygon fill="#255000" stroke="#255000" points="222.5,-95.82 211.91,-96.02 220.31,-102.47 222.5,-95.82"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~example_bezier_volume~~UsesGraph_node8" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node8"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="237.5,-53.97 110.5,-53.97 110.5,-29.97 237.5,-29.97 237.5,-53.97"/>
+<text text-anchor="middle" x="174" y="-39.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge7" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M291.82,-113.58C280.76,-99.45 260.91,-76.56 239,-62.97 236.22,-61.25 233.28,-59.65 230.25,-58.17"/>
+<polygon fill="#255000" stroke="#255000" points="231.53,-54.9 220.96,-54.08 228.7,-61.31 231.53,-54.9"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_node9" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~example_bezier_volume~~UsesGraph_node9"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="73,-137.97 0,-137.97 0,-113.97 73,-113.97 73,-137.97"/>
+<text text-anchor="middle" x="36.5" y="-123.57" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge8" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M298.03,-113.71C291.7,-90.62 274.48,-41.23 239,-20.97 188.82,7.67 160.07,6.04 109,-20.97 75.93,-38.46 55.29,-78.88 45.13,-104.15"/>
+<polygon fill="#255000" stroke="#255000" points="41.81,-103.05 41.52,-113.64 48.35,-105.54 41.81,-103.05"/>
+</g>
+<!-- module~forcad_bezier_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge9" class="edge">
+<title>module~forcad_bezier_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M124.45,-239.89C118.96,-237.43 113.67,-234.49 109,-230.97 79.7,-208.93 58.3,-171.23 46.9,-147.51"/>
+<polygon fill="#255000" stroke="#255000" points="50.01,-145.89 42.63,-138.29 43.65,-148.83 50.01,-145.89"/>
+</g>
+<!-- module~forcad_bezier_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge10" class="edge">
+<title>module~forcad_bezier_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M128.27,-197.89C121.62,-195.36 114.99,-192.4 109,-188.97 88.83,-177.43 69.27,-159.6 55.73,-145.84"/>
+<polygon fill="transparent" stroke="transparent" points="57.93,-143.09 48.49,-138.3 52.88,-147.93 57.93,-143.09"/>
+</g>
+<!-- module~forcad_bezier_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge11" class="edge">
+<title>module~forcad_bezier_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#722550" stroke-dasharray="5,2" d="M134.17,-155.94C118.09,-150.95 99.33,-145.14 82.64,-139.96"/>
+<polygon fill="#722550" stroke="#722550" points="83.68,-136.62 73.09,-137 81.6,-143.31 83.68,-136.62"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge12" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#025514" stroke-dasharray="5,2" stroke-opacity="0.019608" d="M115.14,-125.97C104.57,-125.97 93.67,-125.97 83.51,-125.97"/>
+<polygon fill="#025514" fill-opacity="0.019608" stroke="#025514" stroke-opacity="0.019608" points="83.22,-122.47 73.22,-125.97 83.22,-129.47 83.22,-122.47"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge13" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#014525" stroke-dasharray="5,2" stroke-opacity="0.019608" d="M134.17,-96.01C118.09,-100.99 99.33,-106.81 82.64,-111.98"/>
+<polygon fill="#014525" fill-opacity="0.019608" stroke="#014525" stroke-opacity="0.019608" points="81.6,-108.64 73.09,-114.94 83.68,-115.32 81.6,-108.64"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~example_bezier_volume~~UsesGraph_edge14" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#720255" stroke-dasharray="5,2" d="M128.27,-54.05C121.62,-56.58 114.99,-59.55 109,-62.97 88.83,-74.51 69.27,-92.35 55.73,-106.1"/>
+<polygon fill="#720255" stroke="#720255" points="52.88,-104.01 48.49,-113.65 57.93,-108.86 52.88,-104.01"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <p>This program demonstrates the usage of a Bezier volume object to create, and finalize a Bezier volume.
+It sets up control points and weights, generates the volume, and exports the control points
+and the volume to VTK files at various stages.</p>
+<p>Define control points for the Bezier volume</p>
+<p>Define weights for the control points</p>
+<p>Set control points and weights for the bezier volume object</p>
+<p>Export initial control points to a VTK file</p>
+<p>Generate the Bezier volume with a resolution of 10x10x10</p>
+<p>Export the generated volume to a VTK file</p>
+<p>Finalize the Bezier volume object</p>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~example_bezier_volume~~CallsGraph Pages: 1 -->
+<svg id="programexample_bezier_volumeCallsGraph" width="641pt" height="183pt"
+ viewBox="0.00 0.00 641.00 182.77" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~example_bezier_volume~~CallsGraph" class="graph" transform="scale(1.9 1.9) rotate(0) translate(4 343)">
+<title>program~~example_bezier_volume~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-343 1213,-343 1213,4 -4,4"/>
+<!-- program~example_bezier_volume -->
+<g id="program~~example_bezier_volume~~CallsGraph_node1" class="node">
+<title>program~example_bezier_volume</title>
+<polygon fill="none" stroke="black" points="142,-129 0,-129 0,-105 142,-105 142,-129"/>
+<text text-anchor="middle" x="71" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50">example_bezier_volume</text>
+</g>
+<!-- proc~create -->
+<g id="program~~example_bezier_volume~~CallsGraph_node2" class="node">
+<title>proc~create</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node2"><a xlink:href="../proc/create.html" xlink:title="forcad_bezier_volume::bezier_volume%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="446.5,-255 187.5,-255 187.5,-231 446.5,-231 446.5,-255"/>
+<text text-anchor="middle" x="317" y="-240.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%create</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~create -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge1" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~create</title>
+<path fill="none" stroke="#255000" d="M83.96,-129.03C102.54,-147.07 140.15,-181.16 178,-201 200.32,-212.7 226.41,-221.69 249.87,-228.29"/>
+<polygon fill="#255000" stroke="#255000" points="249.17,-231.73 259.74,-230.98 251.01,-224.98 249.17,-231.73"/>
+</g>
+<!-- proc~export_xc -->
+<g id="program~~example_bezier_volume~~CallsGraph_node3" class="node">
+<title>proc~export_xc</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node3"><a xlink:href="../proc/export_xc.html" xlink:title="forcad_bezier_volume::bezier_volume%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="455.5,-192 178.5,-192 178.5,-168 455.5,-168 455.5,-192"/>
+<text text-anchor="middle" x="317" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~export_xc -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge2" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~export_xc</title>
+<path fill="none" stroke="#255000" d="M97.58,-129.03C118.71,-138.51 149.72,-151.35 178,-159 187.84,-161.66 198.17,-164.01 208.57,-166.09"/>
+<polygon fill="#255000" stroke="#255000" points="208.06,-169.56 218.54,-167.99 209.37,-162.68 208.06,-169.56"/>
+</g>
+<!-- proc~export_xg -->
+<g id="program~~example_bezier_volume~~CallsGraph_node4" class="node">
+<title>proc~export_xg</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node4"><a xlink:href="../proc/export_xg.html" xlink:title="forcad_bezier_volume::bezier_volume%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="456,-150 178,-150 178,-126 456,-126 456,-150"/>
+<text text-anchor="middle" x="317" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~export_xg -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge3" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~export_xg</title>
+<path fill="none" stroke="#255000" d="M142.25,-123.05C150.34,-123.74 158.81,-124.47 167.47,-125.22"/>
+<polygon fill="#255000" stroke="#255000" points="167.44,-128.73 177.7,-126.1 168.04,-121.75 167.44,-128.73"/>
+</g>
+<!-- proc~finalize -->
+<g id="program~~example_bezier_volume~~CallsGraph_node5" class="node">
+<title>proc~finalize</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node5"><a xlink:href="../proc/finalize.html" xlink:title="forcad_bezier_volume::bezier_volume%finalize">
+<polygon fill="#d9534f" stroke="#d9534f" points="448.5,-108 185.5,-108 185.5,-84 448.5,-84 448.5,-108"/>
+<text text-anchor="middle" x="317" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%finalize</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~finalize -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge4" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~finalize</title>
+<path fill="none" stroke="#255000" d="M142.25,-110.95C152.7,-110.05 163.78,-109.1 175.07,-108.13"/>
+<polygon fill="#255000" stroke="#255000" points="175.39,-111.62 185.05,-107.27 174.79,-104.64 175.39,-111.62"/>
+</g>
+<!-- proc~generate_xc~5 -->
+<g id="program~~example_bezier_volume~~CallsGraph_node6" class="node">
+<title>proc~generate_xc~5</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node6"><a xlink:href="../proc/generate_xc~5.html" xlink:title="example_bezier_volume::generate_Xc">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="425.5,-66 208.5,-66 208.5,-42 425.5,-42 425.5,-66"/>
+<text text-anchor="middle" x="317" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_bezier_volume::generate_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~generate_xc~5 -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge5" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~generate_xc~5</title>
+<path fill="none" stroke="#255000" d="M97.58,-104.97C118.71,-95.49 149.72,-82.65 178,-75 187.84,-72.34 198.17,-69.99 208.57,-67.91"/>
+<polygon fill="#255000" stroke="#255000" points="209.37,-71.32 218.54,-66.01 208.06,-64.44 209.37,-71.32"/>
+</g>
+<!-- proc~set -->
+<g id="program~~example_bezier_volume~~CallsGraph_node7" class="node">
+<title>proc~set</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node7"><a xlink:href="../proc/set.html" xlink:title="forcad_bezier_volume::bezier_volume%set">
+<polygon fill="#d9534f" stroke="#d9534f" points="437.5,-24 196.5,-24 196.5,0 437.5,0 437.5,-24"/>
+<text text-anchor="middle" x="317" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%set</text>
+</a>
+</g>
+</g>
+<!-- program~example_bezier_volume&#45;&gt;proc~set -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge6" class="edge">
+<title>program~example_bezier_volume&#45;&gt;proc~set</title>
+<path fill="none" stroke="#255000" d="M83.04,-104.9C100.96,-86.09 138.39,-50.24 178,-33 183.07,-30.79 188.33,-28.81 193.71,-27.04"/>
+<polygon fill="#255000" stroke="#255000" points="194.96,-30.32 203.5,-24.05 192.92,-23.62 194.96,-30.32"/>
+</g>
+<!-- interface~ndgrid -->
+<g id="program~~example_bezier_volume~~CallsGraph_node8" class="node">
+<title>interface~ndgrid</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node8"><a xlink:href="../interface/ndgrid.html" xlink:title="forcad_utils::ndgrid">
+<polygon fill="#a7506f" stroke="#a7506f" points="696.5,-318 581.5,-318 581.5,-294 696.5,-294 696.5,-318"/>
+<text text-anchor="middle" x="639" y="-303.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::ndgrid</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;interface~ndgrid -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge7" class="edge">
+<title>proc~create&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#255000" d="M362.81,-255.04C397.8,-264.15 447.75,-276.5 492,-285 517.75,-289.95 546.26,-294.3 571.2,-297.74"/>
+<polygon fill="#255000" stroke="#255000" points="570.91,-301.23 581.29,-299.1 571.85,-294.29 570.91,-301.23"/>
+</g>
+<!-- proc~basis_bernstein -->
+<g id="program~~example_bezier_volume~~CallsGraph_node9" class="node">
+<title>proc~basis_bernstein</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node9"><a xlink:href="../proc/basis_bernstein.html" xlink:title="forcad_utils::basis_bernstein">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="720.5,-276 557.5,-276 557.5,-252 720.5,-252 720.5,-276"/>
+<text text-anchor="middle" x="639" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::basis_bernstein</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~basis_bernstein -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge8" class="edge">
+<title>proc~create&#45;&gt;proc~basis_bernstein</title>
+<path fill="none" stroke="#255000" d="M446.77,-251.45C480.47,-253.66 516.08,-256 547.32,-258.05"/>
+<polygon fill="#255000" stroke="#255000" points="547.1,-261.54 557.31,-258.7 547.56,-254.56 547.1,-261.54"/>
+</g>
+<!-- proc~kron -->
+<g id="program~~example_bezier_volume~~CallsGraph_node12" class="node">
+<title>proc~kron</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node12"><a xlink:href="../proc/kron.html" xlink:title="forcad_utils::kron">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="691,-234 587,-234 587,-210 691,-210 691,-234"/>
+<text text-anchor="middle" x="639" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::kron</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~kron -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge9" class="edge">
+<title>proc~create&#45;&gt;proc~kron</title>
+<path fill="none" stroke="#255000" d="M446.77,-234.55C491.7,-231.6 540.04,-228.43 576.88,-226.01"/>
+<polygon fill="#255000" stroke="#255000" points="577.2,-229.5 586.95,-225.35 576.75,-222.51 577.2,-229.5"/>
+</g>
+<!-- proc~get_elem_xc -->
+<g id="program~~example_bezier_volume~~CallsGraph_node10" class="node">
+<title>proc~get_elem_xc</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node10"><a xlink:href="../proc/get_elem_xc.html" xlink:title="forcad_bezier_volume::bezier_volume%get_elem_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="785.5,-192 492.5,-192 492.5,-168 785.5,-168 785.5,-192"/>
+<text text-anchor="middle" x="639" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%get_elem_Xc</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~get_elem_xc -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge10" class="edge">
+<title>proc~export_xc&#45;&gt;proc~get_elem_xc</title>
+<path fill="none" stroke="transparent" d="M455.57,-180C464.43,-180 473.38,-180 482.32,-180"/>
+<polygon fill="transparent" stroke="transparent" points="482.4,-183.5 492.4,-180 482.4,-176.5 482.4,-183.5"/>
+</g>
+<!-- proc~get_elem_xg -->
+<g id="program~~example_bezier_volume~~CallsGraph_node11" class="node">
+<title>proc~get_elem_xg</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node11"><a xlink:href="../proc/get_elem_xg.html" xlink:title="forcad_bezier_volume::bezier_volume%get_elem_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="786,-150 492,-150 492,-126 786,-126 786,-150"/>
+<text text-anchor="middle" x="639" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_bezier_volume::bezier_volume%get_elem_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xg&#45;&gt;proc~get_elem_xg -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge11" class="edge">
+<title>proc~export_xg&#45;&gt;proc~get_elem_xg</title>
+<path fill="none" stroke="#025500" d="M456.03,-138C464.54,-138 473.14,-138 481.72,-138"/>
+<polygon fill="#025500" stroke="#025500" points="481.78,-141.5 491.78,-138 481.78,-134.5 481.78,-141.5"/>
+</g>
+<!-- proc~ndgrid2 -->
+<g id="program~~example_bezier_volume~~CallsGraph_node14" class="node">
+<title>proc~ndgrid2</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node14"><a xlink:href="../proc/ndgrid2.html" xlink:title="forcad_utils::ndgrid2">
+<polygon fill="#d9534f" stroke="#d9534f" points="960.5,-339 838.5,-339 838.5,-315 960.5,-315 960.5,-339"/>
+<text text-anchor="middle" x="899.5" y="-324.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::ndgrid2</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid2 -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge12" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid2</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M696.73,-310.61C735.45,-313.75 787,-317.94 828.31,-321.3"/>
+<polygon fill="#255000" stroke="#255000" points="828.05,-324.79 838.3,-322.11 828.62,-317.81 828.05,-324.79"/>
+</g>
+<!-- proc~ndgrid3 -->
+<g id="program~~example_bezier_volume~~CallsGraph_node15" class="node">
+<title>proc~ndgrid3</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node15"><a xlink:href="../proc/ndgrid3.html" xlink:title="forcad_utils::ndgrid3">
+<polygon fill="#d9534f" stroke="#d9534f" points="960.5,-297 838.5,-297 838.5,-273 960.5,-273 960.5,-297"/>
+<text text-anchor="middle" x="899.5" y="-282.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::ndgrid3</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid3 -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge13" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid3</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M696.73,-301.39C735.45,-298.25 787,-294.06 828.31,-290.7"/>
+<polygon fill="#255000" stroke="#255000" points="828.62,-294.19 838.3,-289.89 828.05,-287.21 828.62,-294.19"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~example_bezier_volume~~CallsGraph_node13" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node13"><a xlink:href="../interface/elemconn_c0.html" xlink:title="forcad_utils::elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="977,-171 822,-171 822,-147 977,-147 977,-171"/>
+<text text-anchor="middle" x="899.5" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~get_elem_xc&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge14" class="edge">
+<title>proc~get_elem_xc&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#025510" stroke-opacity="0.007843" d="M785.87,-168.15C794.66,-167.44 803.35,-166.73 811.77,-166.05"/>
+<polygon fill="#025510" fill-opacity="0.007843" stroke="#025510" stroke-opacity="0.007843" points="812.21,-169.52 821.89,-165.22 811.64,-162.54 812.21,-169.52"/>
+</g>
+<!-- proc~get_elem_xg&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge15" class="edge">
+<title>proc~get_elem_xg&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#010225" stroke-opacity="0.019608" d="M786.25,-149.88C794.94,-150.59 803.52,-151.28 811.84,-151.96"/>
+<polygon fill="#010225" fill-opacity="0.019608" stroke="#010225" stroke-opacity="0.019608" points="811.6,-155.45 821.85,-152.77 812.17,-148.47 811.6,-155.45"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~example_bezier_volume~~CallsGraph_node16" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node16"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="forcad_utils::cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1208.5,-213 1013.5,-213 1013.5,-189 1208.5,-189 1208.5,-213"/>
+<text text-anchor="middle" x="1111" y="-198.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge16" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M960.53,-171.04C985.3,-176 1014.17,-181.79 1039.89,-186.95"/>
+<polygon fill="#255000" stroke="#255000" points="1039.46,-190.43 1049.96,-188.96 1040.84,-183.57 1039.46,-190.43"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~example_bezier_volume~~CallsGraph_node17" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node17"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="forcad_utils::cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1209,-171 1013,-171 1013,-147 1209,-147 1209,-171"/>
+<text text-anchor="middle" x="1111" y="-156.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge17" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M977.02,-159C985.42,-159 994.09,-159 1002.77,-159"/>
+<polygon fill="#255000" stroke="#255000" points="1002.97,-162.5 1012.97,-159 1002.97,-155.5 1002.97,-162.5"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~example_bezier_volume~~CallsGraph_node18" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~example_bezier_volume~~CallsGraph_node18"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="forcad_utils::cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1209,-129 1013,-129 1013,-105 1209,-105 1209,-129"/>
+<text text-anchor="middle" x="1111" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~example_bezier_volume~~CallsGraph_edge18" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M960.53,-146.96C985.3,-142 1014.17,-136.21 1039.89,-131.05"/>
+<polygon fill="#255000" stroke="#255000" points="1040.84,-134.43 1049.96,-129.04 1039.46,-127.57 1040.84,-134.43"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramexample_bezier_volumeCallsGraph = svgPanZoom('#programexample_bezier_volumeCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wc~19"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Wc</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Arrays for control points and weights</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xc~19"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xc</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Arrays for control points and weights</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bezier~3"></span>
+              type(<a href='../type/bezier_volume.html'>bezier_volume</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bezier</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Declare a bezier volume object</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+ 
+    <section>
+    <h2>Functions</h2>
+      <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-generate_xc~5"></span> <h3> function <a href='../proc/generate_xc~5.html'>generate_Xc</a>(L) result(control_points)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-l~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>L</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=rk), dimension(:,:), allocatable</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+    </section>
+    <br>
+
+
+    
+
+    <section>
+    <h2 id="src">Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">example_bezier_volume</span>
+
+<span class="w">    </span><span class="k">use </span><span class="n">forcad</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span><span class="p">,</span><span class="w"> </span><span class="n">bezier_volume</span>
+
+<span class="w">    </span><span class="k">implicit none</span>
+<span class="k">    type</span><span class="p">(</span><span class="n">bezier_volume</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bezier</span><span class="w">            </span><span class="c">!! Declare a bezier volume object</span>
+<span class="w">    </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xc</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">Wc</span><span class="p">(:)</span><span class="w">  </span><span class="c">!! Arrays for control points and weights</span>
+
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c">! Setting up the bezier volume</span>
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+
+<span class="w">    </span><span class="c">!&gt; Define control points for the Bezier volume</span>
+<span class="w">    </span><span class="n">Xc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">generate_Xc</span><span class="p">(</span><span class="mf">1.0_rk</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!&gt; Define weights for the control points</span>
+<span class="w">    </span><span class="k">allocate</span><span class="p">(</span><span class="n">Wc</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">1.0_rk</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!&gt; Set control points and weights for the bezier volume object</span>
+<span class="w">    </span><span class="k">call </span><span class="n">bezier</span><span class="p">%</span><span class="n">set</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="n">Wc</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!&gt; Export initial control points to a VTK file</span>
+<span class="w">    </span><span class="k">call </span><span class="n">bezier</span><span class="p">%</span><span class="n">export_Xc</span><span class="p">(</span><span class="s1">&#39;vtk/bezier_volume_Xc.vtk&#39;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c">! Creating the bezier volume</span>
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+
+<span class="w">    </span><span class="c">!&gt; Generate the Bezier volume with a resolution of 10x10x10</span>
+<span class="w">    </span><span class="k">call </span><span class="n">bezier</span><span class="p">%</span><span class="n">create</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!&gt; Export the generated volume to a VTK file</span>
+<span class="w">    </span><span class="k">call </span><span class="n">bezier</span><span class="p">%</span><span class="n">export_Xg</span><span class="p">(</span><span class="s1">&#39;vtk/bezier_volume_Xg.vtk&#39;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="c">! Finalizing</span>
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+
+<span class="w">    </span><span class="c">!&gt; Finalize the Bezier volume object</span>
+<span class="w">    </span><span class="k">call </span><span class="n">bezier</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span>
+
+<span class="k">contains</span>
+
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+<span class="w">    </span><span class="k">function </span><span class="n">generate_Xc</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">control_points</span><span class="p">)</span>
+<span class="w">        </span><span class="k">implicit none</span>
+<span class="k">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">L</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:,:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">control_points</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">L2</span>
+<span class="w">        </span><span class="n">L2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0_rk</span>
+<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">control_points</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">3</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">4</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">5</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">6</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">7</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">]</span>
+<span class="w">        </span><span class="n">control_points</span><span class="p">(</span><span class="mi">8</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w">  </span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">L2</span><span class="p">]</span>
+<span class="w">    </span><span class="k">end function</span>
+<span class="w">    </span><span class="c">!-----------------------------------------------------------------------------</span>
+
+<span class="k">end program </span><span class="n">example_bezier_volume</span>
+</pre></div>
+
+    </section>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col"><p>ForCAD was developed by Seyed Ali Ghasemi<br>&copy; 2024 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2024-03-30T00:33:38.416559             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>

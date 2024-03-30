@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for ForCAD">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="./favicon.png">
+
+    <title> ForCAD </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="./css/pygments.css" rel="stylesheet">
+    <link href="./css/font-awesome.min.css" rel="stylesheet">
+    <link href="./css/local.css" rel="stylesheet">
+      <link  href="./tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="./js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="./index.html">ForCAD <small>0.1.0</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="./lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="./search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="p-5 mb-4 bg-light border rounded-3" id="jumbotron">
+        
+	<p> Find us on&hellip;</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="https://github.com/gha3mi/forcad" role="button">GitHub</a>
+        </p>
+      </div>
+
+      <div class="row" id='text'>
+        <div class=col-md-8>
+          <h1>ForCAD</h1>
+          <p><a href="https://github.com/gha3mi/forcad"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-ForCAD-blue.svg?style=social&amp;logo=github"></a>
+<a href="https://gha3mi.github.io/forcad/"><img alt="Documentation" src="https://img.shields.io/badge/ford-Documentation%20-blueviolet.svg"></a>
+<a href="https://github.com/gha3mi/forcad/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/gha3mi/forcad?color=green"></a></p>
+<p><strong>ForCAD</strong>: A Fortran library for Geometric Modeling.</p>
+<p>ForCAD supports <strong>B-Spline</strong>, <strong>NURBS</strong>, <strong>Bezier</strong>, and <strong>Rational Bezier</strong> curves, surfaces, and volumes.</p>
+<p><img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bezier.png" width="750"></p>
+<h2>fpm dependency</h2>
+<p>If you want to use <code>ForCAD</code> as a dependency in your own fpm project,
+you can easily include it by adding the following line to your <code>fpm.toml</code> file:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[dependencies]</span>
+<span class="n">forcad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">git</span><span class="p">=</span><span class="s2">&quot;https://github.com/gha3mi/forcad.git&quot;</span><span class="p">}</span>
+</code></pre></div>
+
+<h2>How to run examples</h2>
+<p>To get started, follow these steps:</p>
+<p><strong>Clone the repository:</strong></p>
+<p>Clone the <code>ForCAD</code> repository from GitHub:</p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gha3mi/forcad.git
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>forcad
+</code></pre></div>
+
+<h3>Using fpm</h3>
+<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>run<span class="w"> </span>--example<span class="w"> </span>--all
+</code></pre></div>
+
+<h2>API documentation</h2>
+<p>The most up-to-date API documentation for the master branch is available
+<a href="https://gha3mi.github.io/forcad/">here</a>.
+To generate the API documentation for <code>ForCAD</code> using
+<a href="https://github.com/Fortran-FOSS-Programmers/ford">ford</a> run the following
+command:</p>
+<div class="codehilite"><pre><span></span><code>ford<span class="w"> </span>ford.yml
+</code></pre></div>
+
+<h2>ToDo</h2>
+<ul>
+<li>[ ] Add method <code>insert_knot()</code> for B-splines and NURBS.</li>
+<li>[ ] Add method <code>remove_knot()</code> for B-splines and NURBS.</li>
+<li>[ ] Add method <code>elevate_degree()</code> for Bezier, Rational Bezier, B-splines, and NURBS.</li>
+<li>[ ] Add method <code>reduce_degree()</code> for Bezier, Rational Bezier, B-splines, and NURBS.</li>
+</ul>
+<h2>Contributing</h2>
+<p>Contributions to <code>ForCAD</code> are welcome!
+If you find any issues or would like to suggest improvements, please open an issue.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://doi.org/10.1007/978-3-642-97385-7">The NURBS Book</a> by Les Piegl, Wayne Tiller</li>
+<li><a href="https://doi.org/10.1016/B978-1-55860-669-2.X5000-3">An Introduction to NURBS</a> by David F. Rogers</li>
+</ul>
+        </div>
+          <div class="col-md-4">
+	        <div class="card card-body bg-light">
+              <h2 class="card-title">Developer Info</h2>
+              <h4 class="card-text">Seyed Ali Ghasemi</h4>
+              <p class="card-text"></p>
+                <div class="text-center"><div class="btn-group" role="group">
+                      <a class="btn btn-lg btn-primary" href="mailto:info@gha3mi.com"><i class="fa fa-envelope fa-lg"></i></a>
+                      <a class="btn btn-lg btn-primary" href="https://github.com/gha3mi"><i class="fa fa-github fa-lg"></i></a>
+                </div></div>
+            </div>
+          </div>
+      </div>
+        <div class="row">
+          <hr>
+          <div class="col-xs-6 col-sm-3">
+            <div>
+              <h3>Source Files</h3>
+              <ul><li><a href='sourcefile/bezier_curve.f90.html'>bezier_curve.f90</a></li><li><a href='sourcefile/bezier_surface.f90.html'>bezier_surface.f90</a></li><li><a href='sourcefile/bezier_volume.f90.html'>bezier_volume.f90</a></li><li><a href='sourcefile/forcad.f90.html'>forcad.f90</a></li><li><a href='sourcefile/forcad_bezier_curve.f90.html'>forcad_bezier_curve.f90</a></li><li><a href='sourcefile/forcad_bezier_surface.f90.html'>forcad_bezier_surface.f90</a></li><li><a href='sourcefile/forcad_bezier_volume.f90.html'>forcad_bezier_volume.f90</a></li><li><a href='sourcefile/forcad_nurbs_curve.f90.html'>forcad_nurbs_curve.f90</a></li><li><a href='sourcefile/forcad_nurbs_surface.f90.html'>forcad_nurbs_surface.f90</a></li><li><a href='sourcefile/forcad_nurbs_volume.f90.html'>forcad_nurbs_volume.f90</a></li></ul>
+            </div>
+            <div>
+              <ul>
+                <li><a href="./lists/files.html"><em>All source files&hellip;</em></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-xs-6 col-sm-3">
+            <div>
+              <h3>Modules</h3>
+              <ul><li><a href='module/forcad.html'>forcad</a></li><li><a href='module/forcad_bezier_curve.html'>forcad_bezier_curve</a></li><li><a href='module/forcad_bezier_surface.html'>forcad_bezier_surface</a></li><li><a href='module/forcad_bezier_volume.html'>forcad_bezier_volume</a></li><li><a href='module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li><li><a href='module/forcad_nurbs_surface.html'>forcad_nurbs_surface</a></li><li><a href='module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li><li><a href='module/forcad_utils.html'>forcad_utils</a></li></ul>
+            </div>
+            <div>
+              <ul>
+                <li><a href="./lists/modules.html"><em>All modules&hellip;</em></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-xs-6 col-sm-3">
+            <div>
+              <h3>Procedures</h3>
+              <ul><li><a href='proc/basis_bernstein.html'>basis_bernstein</a></li><li><a href='proc/basis_bspline.html'>basis_bspline</a></li><li><a href='proc/cmp_elemconn_c0_l.html'>cmp_elemConn_C0_L</a></li><li><a href='proc/cmp_elemconn_c0_s.html'>cmp_elemConn_C0_S</a></li><li><a href='proc/cmp_elemconn_c0_v.html'>cmp_elemConn_C0_V</a></li><li><a href='proc/compute_knot_vector.html'>compute_knot_vector</a></li><li><a href='proc/compute_multiplicity.html'>compute_multiplicity</a></li><li><a href='proc/create.html'>create</a></li><li><a href='proc/create~2.html'>create</a></li><li><a href='proc/create~3.html'>create</a></li></ul>
+            </div>
+            <div>
+              <ul>
+                <li><a href="./lists/procedures.html"><em>All procedures&hellip;</em></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-xs-6 col-sm-3">
+            <div>
+              <h3>Derived Types</h3>
+              <ul><li><a href='type/bezier_curve.html'>bezier_curve</a></li><li><a href='type/bezier_surface.html'>bezier_surface</a></li><li><a href='type/bezier_volume.html'>bezier_volume</a></li><li><a href='type/nurbs_curve.html'>nurbs_curve</a></li><li><a href='type/nurbs_surface.html'>nurbs_surface</a></li><li><a href='type/nurbs_volume.html'>nurbs_volume</a></li></ul>
+            </div>
+            <div>
+              <ul>
+                <li><a href="./lists/types.html"><em>All derived types&hellip;</em></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col"><p>ForCAD was developed by Seyed Ali Ghasemi<br>&copy; 2024 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2024-03-30T00:33:38.416559             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="./tipuesearch/tipuesearch_content.js"></script>
+          <script src="./tipuesearch/tipuesearch_set.js"></script>
+          <script src="./tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
