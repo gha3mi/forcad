@@ -65,18 +65,20 @@ contains
         real(rk), intent(in) :: Xt
         integer, intent(in) :: nc
         real(rk), allocatable :: B(:)
-        integer  :: i
+        integer  :: p, order
+
+        order = nc - 1
 
         allocate(B(nc), source=0.0_rk)
 
-        do concurrent (i = 0: nc-1)
-            B(i+1) = gamma(real(nc, kind=rk))/(gamma(real(i+1, kind=rk))*gamma(real(nc-i, kind=rk)))
-            if (Xt == 0.0_rk .and. i == 0) then
-                B(i+1) = B(i+1)*(1.0_rk-Xt)**(nc-1-i)
-            else if (1.0_rk-Xt == 0.0_rk .and. nc-1-i == 0) then
-                B(i+1) = B(i+1)*(Xt**i)
+        do concurrent (p = 0:order)
+            B(p+1) = gamma(real(nc, kind=rk))/(gamma(real(p+1, kind=rk))*gamma(real(nc-p, kind=rk)))
+            if (Xt == 0.0_rk .and. p == 0) then
+                B(p+1) = B(p+1)*(1.0_rk-Xt)**(order-p)
+            else if (Xt == 0.0_rk .and. order-p == 0) then
+                B(p+1) = B(p+1)*(Xt**p)
             else
-                B(i+1) = B(i+1)*(Xt**i)*(1.0_rk-Xt)**(nc-1-i)
+                B(p+1) = B(p+1)*(Xt**p)*(1.0_rk-Xt)**(order-p)
             end if
         end do
     end function
