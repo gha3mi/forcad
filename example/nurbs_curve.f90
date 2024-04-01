@@ -8,7 +8,7 @@ program example_nurbs_curve
     implicit none
     type(nurbs_curve) :: nurbs              !! Declare a NURBS curve object
     real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
-    real(rk) :: knot(5)                     !! Array for knot vector
+    real(rk) :: knot(6)                     !! Array for knot vector
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS curve
@@ -18,14 +18,14 @@ program example_nurbs_curve
     allocate(Xc(3, 3))
     Xc(1,:) = [0.0_rk, 0.0_rk, 0.0_rk]
     Xc(2,:) = [0.0_rk, 5.0_rk, 0.0_rk]
-    Xc(3,:) = [10.0_rk, 10.0_rk, 0.0_rk]
+    Xc(3,:) = [5.0_rk, 5.0_rk, 0.0_rk]
 
     ! Define weights for the control points
     allocate(Wc(3))
-    Wc = [1.0_rk, 1.0_rk, 1.0_rk]
+    Wc = [1.0_rk, 2.0_rk, 1.0_rk]
 
     ! Define knot vector
-    knot = [0.0_rk, 0.0_rk, 0.5_rk, 1.0_rk, 1.0_rk]
+    knot = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
 
     ! Set knot vector, control points, and weights for the NURBS curve object
     call nurbs%set(knot, Xc, Wc)
@@ -37,8 +37,8 @@ program example_nurbs_curve
     ! Creating the NURBS curve
     !-----------------------------------------------------------------------------
 
-    ! Generate the NURBS curve with a resolution of 100
-    call nurbs%create(res = 1000)
+    ! Generate the NURBS curve with a resolution of 20
+    call nurbs%create(res = 20)
 
     ! Export the generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
