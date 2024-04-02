@@ -64,6 +64,9 @@ ford ford.yml
 - [ ] Add method `elevate_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
 - [x] Add method `elevate_degree()` for Bezier and Rational Bezier curves.
 - [ ] Add method `reduce_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
+- [ ] Add method `derivative()`.
+- [ ] Add support for multiple patches.
+- [ ] Implement extraction of piecewise Bezier objects from NURBS.
 
 ## Contributing
 
