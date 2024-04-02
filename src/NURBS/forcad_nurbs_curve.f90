@@ -340,7 +340,7 @@ contains
             error stop 'Invalid dimension of the control points.'
         end if
 
-        write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*3
+        write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*(size(elemConn,2)+1)
         write(nunit,'(g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0)')&
             (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, size(elemConn,1))
 
@@ -384,7 +384,7 @@ contains
             error stop 'Invalid dimension of the geometry points.'
         end if
 
-        write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*3
+        write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*(size(elemConn,2)+1)
         write(nunit,'(g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0)')&
             (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, size(elemConn,1))
 
