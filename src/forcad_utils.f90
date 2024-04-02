@@ -181,7 +181,7 @@ contains
         integer, intent(in) :: nnode
         integer, intent(in) :: p
         integer, dimension(:,:), allocatable :: elemConn
-        integer :: i, j, l
+        integer :: i, l
         integer, dimension(:), allocatable :: nodes
 
         allocate(elemConn( ((nnode-p) / p) ,2))
