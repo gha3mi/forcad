@@ -41,6 +41,7 @@ module forcad_nurbs_curve
         procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
+        procedure :: insert_knot         !!> Insert a new knot
     end type
     !===============================================================================
 
@@ -475,6 +476,97 @@ contains
 
         nc = sum(compute_multiplicity(this%knot)) - this%order - 1
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine insert_knot(this, Xth)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xth
+        real(rk), allocatable :: alpha(:), Xc_new(:,:), Wc_new(:), knot_new(:)
+        integer, allocatable :: m(:)
+        integer :: k, i, nc_new, order_new
+
+        ! Find the index where the new knot (Xth) should be inserted
+        ! knot span [k, k+1)
+        k = 0
+        do while (this%knot(k+1) < Xth .and. k+1 <= size(this%knot))
+            k = k + 1
+        end do
+
+        ! Check if the new knot is within the range of existing knots and is not the first or the last knot
+        ! Insert the new knot and update the knot vector
+        if (k+1 > 1 .and. k+1 < size(this%knot)) then
+            if (Xth >= this%knot(k) .and. Xth <= this%knot(k+1)) then
+                allocate(knot_new(size(this%knot)+1))
+                knot_new = [this%knot(1:k), Xth, this%knot(k+1:size(this%knot))]
+            else
+                error stop 'Invalid new knot value. It should be within the range of existing knots.'
+            end if
+        else
+            error stop 'Invalid new knot value. It should be greater than the first knot and less than the last knot.'
+        end if
+
+        ! Compute the new control points
+        m = compute_multiplicity(knot_new)
+        order_new = m(1) - 1
+        nc_new = sum(m) - order_new - 1
+
+
+        if (allocated(this%Wc)) then ! NURBS
+
+            allocate(Xc_new(nc_new, size(this%Xc, 2)))
+            allocate(Wc_new(nc_new))
+            allocate(alpha(size(this%knot)), source = 0.0_rk)
+
+            do i = 1,nc_new
+                if (i < k-this%order+1) then
+                    Xc_new(i, :) = this%Xc(i, :)*this%Wc(i)
+                    Wc_new(i) = this%Wc(i)
+                else if (i > k) then
+                    Xc_new(i, :) = this%Xc(i-1, :)*this%Wc(i-1)
+                    Wc_new(i) = this%Wc(i-1)
+                else
+                    alpha(i) = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
+                    Xc_new(i, :) = (1.0_rk-alpha(i))*this%Xc(i-1, :)*this%Wc(i-1) + alpha(i)*this%Xc(i, :)*this%Wc(i)
+                    Wc_new(i) = (1.0_rk-alpha(i))*this%Wc(i-1) + alpha(i)*this%Wc(i)
+                end if
+            end do
+
+            ! Normalize the new control points
+            do concurrent (i = 1: size(Xc_new, 2))
+                Xc_new(:, i) = Xc_new(:, i) / Wc_new(:)
+            end do
+
+            deallocate(this%Xc, this%knot, this%Xg, this%Wc)
+            call this%set(knot = knot_new, Xc = Xc_new, Wc = Wc_new)
+            call this%create()
+
+        else ! B-Spline
+
+            allocate(Xc_new(nc_new, size(this%Xc, 2)))
+            allocate(alpha(size(this%knot)))
+
+            do i = 1,nc_new
+                if (i < k-this%order+1) then
+                    Xc_new(i, :) = this%Xc(i, :)
+                else if (i > k) then
+                    Xc_new(i, :) = this%Xc(i-1, :)
+                else
+                    alpha(i) = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
+                    Xc_new(i, :) = (1.0_rk-alpha(i))*this%Xc(i-1, :) + alpha(i)*this%Xc(i, :)
+                end if
+            end do
+
+            deallocate(this%Xc, this%knot, this%Xg)
+            call this%set(knot = knot_new, Xc = Xc_new)
+            call this%create()
+
+        end if
+
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_curve
