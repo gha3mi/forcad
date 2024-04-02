@@ -42,6 +42,7 @@ module forcad_nurbs_curve
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
         procedure :: insert_knot         !!> Insert a new knot
+        procedure :: elevate_degree      !!> Elevate the degree of the curve
     end type
     !===============================================================================
 
@@ -485,7 +486,8 @@ contains
     pure subroutine insert_knot(this, Xth)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xth
-        real(rk), allocatable :: alpha(:), Xc_new(:,:), Wc_new(:), knot_new(:)
+        real(rk) :: alpha
+        real(rk), allocatable :: Xc_new(:,:), Wc_new(:), knot_new(:)
         integer, allocatable :: m(:)
         integer :: k, i, nc_new, order_new
 
@@ -519,7 +521,6 @@ contains
 
             allocate(Xc_new(nc_new, size(this%Xc, 2)))
             allocate(Wc_new(nc_new))
-            allocate(alpha(size(this%knot)), source = 0.0_rk)
 
             do i = 1,nc_new
                 if (i < k-this%order+1) then
@@ -529,9 +530,9 @@ contains
                     Xc_new(i, :) = this%Xc(i-1, :)*this%Wc(i-1)
                     Wc_new(i) = this%Wc(i-1)
                 else
-                    alpha(i) = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
-                    Xc_new(i, :) = (1.0_rk-alpha(i))*this%Xc(i-1, :)*this%Wc(i-1) + alpha(i)*this%Xc(i, :)*this%Wc(i)
-                    Wc_new(i) = (1.0_rk-alpha(i))*this%Wc(i-1) + alpha(i)*this%Wc(i)
+                    alpha = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
+                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i-1, :)*this%Wc(i-1) + alpha*this%Xc(i, :)*this%Wc(i)
+                    Wc_new(i) = (1.0_rk-alpha)*this%Wc(i-1) + alpha*this%Wc(i)
                 end if
             end do
 
@@ -547,7 +548,6 @@ contains
         else ! B-Spline
 
             allocate(Xc_new(nc_new, size(this%Xc, 2)))
-            allocate(alpha(size(this%knot)))
 
             do i = 1,nc_new
                 if (i < k-this%order+1) then
@@ -555,8 +555,8 @@ contains
                 else if (i > k) then
                     Xc_new(i, :) = this%Xc(i-1, :)
                 else
-                    alpha(i) = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
-                    Xc_new(i, :) = (1.0_rk-alpha(i))*this%Xc(i-1, :) + alpha(i)*this%Xc(i, :)
+                    alpha = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
+                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i-1, :) + alpha*this%Xc(i, :)
                 end if
             end do
 
@@ -568,5 +568,79 @@ contains
 
     end subroutine
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine elevate_degree(this)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk) :: alpha
+        real(rk), allocatable :: Xc_new(:,:), Wc_new(:), knot_new(:)
+        integer, allocatable :: m(:)
+        integer :: i, nc_new, order_new
+
+        ! Compute the new knot vector
+        m = compute_multiplicity(this%knot)
+        m(1) = m(1) + 1
+        m(size(m)) = m(size(m)) + 1
+
+        order_new = this%order + 1
+        nc_new = sum(m) - order_new - 1
+
+        allocate(knot_new(size(this%knot)+2))
+        knot_new = [this%knot(1), this%knot, this%knot(size(this%knot))]
+
+        if (allocated(this%Wc)) then ! NURBS
+
+            allocate(Xc_new(nc_new, size(this%Xc, 2)))
+            allocate(Wc_new(nc_new))
+
+            Xc_new(1, :) = this%Xc(1, :) * this%Wc(1)
+            Wc_new(1) = this%Wc(1)
+
+            ! Calculate new control points and weights
+            do i = 2, nc_new
+                if (i <= order_new) then
+                    alpha = real(i-1,rk)/real(order_new, rk)
+                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i, :)*this%Wc(i) + alpha*this%Xc(i-1, :)*this%Wc(i-1)
+                    Wc_new(i) = (1.0_rk-alpha)*this%Wc(i) + alpha*this%Wc(i-1)
+                else
+                    Xc_new(i, :) = this%Xc(i-1, :)*this%Wc(i-1)
+                    Wc_new(i) = this%Wc(i-1)
+                end if
+            end do
+
+            ! Normalize the new control points
+            do i = 1, nc_new
+                Xc_new(i, :) = Xc_new(i, :) / Wc_new(i)
+            end do
+
+            deallocate(this%Xc, this%knot, this%Xg, this%Wc)
+            call this%set(knot = knot_new, Xc = Xc_new, Wc = Wc_new)
+            call this%create()
+
+        else ! B-Spline
+
+            allocate(Xc_new(nc_new, size(this%Xc, 2)))
+
+            Xc_new(1, :) = this%Xc(1, :)
+
+            ! Calculate new control points and weights
+            do i = 2, nc_new
+                if (i <= order_new) then
+                    alpha = real(i-1,rk)/real(order_new, rk)
+                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i, :) + alpha*this%Xc(i-1, :)
+                else
+                    Xc_new(i, :) = this%Xc(i-1, :)
+                end if
+            end do
+
+            deallocate(this%Xc, this%knot, this%Xg)
+            call this%set(knot = knot_new, Xc = Xc_new)
+            call this%create()
+
+        end if
+    end subroutine
 
 end module forcad_nurbs_curve

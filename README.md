@@ -63,7 +63,8 @@ ford ford.yml
 - [x] Add `insert_knot()` method for curves.
 - [ ] Add `insert_knot()` method for surfaces and volumes.
 - [ ] Add `remove_knot()` method for curves, surfaces and volumes.
-- [ ] Add `elevate_degree()` method for curves, surfaces and volumes.
+- [x] Add `elevate_degree()` method for curves.
+- [ ] Add `elevate_degree()` method for surfaces and volumes.
 - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
 - [ ] Add `derivative()` method.
 - [ ] Add support for multiple patches.
