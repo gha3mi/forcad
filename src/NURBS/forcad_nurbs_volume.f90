@@ -84,7 +84,6 @@ contains
         integer, intent(in) :: continuity1(:), continuity2(:), continuity3(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
-        integer :: nc(3)
 
         this%knot1 = compute_knot_vector(Xth_dir1, order(1), continuity1)
         this%knot2 = compute_knot_vector(Xth_dir2, order(2), continuity2)
@@ -394,7 +393,7 @@ contains
     impure subroutine export_Xc(this, filename)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
-        integer :: i, j, nc, nunit
+        integer :: i, nc, nunit
         integer, dimension(:,:), allocatable :: elemConn
 
         ! check
@@ -439,7 +438,7 @@ contains
     impure subroutine export_Xg(this, filename)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
-        integer :: i, j, ng, nunit
+        integer :: i, ng, nunit
         integer, dimension(:,:), allocatable :: elemConn
 
         ! check

@@ -318,7 +318,7 @@ contains
     impure subroutine export_Xc(this, filename)
         class(bezier_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
-        integer :: i, j, nc, nunit
+        integer :: i, nc, nunit
         integer, dimension(:,:), allocatable :: elemConn
 
         ! check
@@ -363,7 +363,7 @@ contains
     impure subroutine export_Xg(this, filename)
         class(bezier_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
-        integer :: i, j, ng, nunit
+        integer :: i, ng, nunit
         integer, dimension(:,:), allocatable :: elemConn
 
         ! check
