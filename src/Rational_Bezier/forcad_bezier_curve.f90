@@ -403,9 +403,10 @@ contains
     !> Elevate the degree of the Bezier curve by one.
     pure subroutine elevate_degree(this)
         class(bezier_curve), intent(inout) :: this
-        integer :: nc_new, j, i
+        integer :: nc_new, i
         real(rk), allocatable :: Xc_new(:,:)
         real(rk), allocatable :: Wc_new(:)
+        real(rk) :: alpha
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -420,18 +421,15 @@ contains
             allocate(Xc_new(nc_new, size(this%Xc, 2)))
             allocate(Wc_new(nc_new))
 
-            ! Compute new control points
+            ! Compute new control points and weights
             Xc_new(1,:) = this%Xc(1,:) * this%Wc(1)
             Wc_new(1) = this%Wc(1)
             Xc_new(nc_new,:) = this%Xc(this%nc,:) * this%Wc(this%nc)
             Wc_new(nc_new) = this%Wc(this%nc)
-            do concurrent (j = 2: this%nc)
-                do i = 1, size(this%Xc, 2)
-                    Xc_new(j, i) = (j-1) / real(nc_new - 1, rk) * this%Xc(j-1, i) * this%Wc(j-1) + &
-                        (1 - (j-1) / real(nc_new - 1, rk)) * this%Xc(j, i) * this%Wc(j)
-                end do
-                Wc_new(j) = (j-1) / real(nc_new - 1, rk) * this%Wc(j-1) + &
-                    (1 - (j-1) / real(nc_new - 1, rk)) * this%Wc(j)
+            do i = 2, nc_new-1
+                alpha = real(i, rk) / real(nc_new-1, rk)
+                Xc_new(i, :) = (1.0_rk - alpha) * this%Xc(i, :)*this%Wc(i) + alpha*this%Xc(i-1, :)*this%Wc(i-1)
+                Wc_new(i) = (1.0_rk - alpha)*this%Wc(i) + alpha*this%Wc(i-1)
             end do
 
             ! Normalize the new control points
@@ -454,11 +452,9 @@ contains
             ! Compute new control points
             Xc_new(1,:) = this%Xc(1,:)
             Xc_new(nc_new,:) = this%Xc(this%nc,:)
-            do concurrent (j = 2: this%nc)
-                do i = 1, size(this%Xc, 2)
-                    Xc_new(j, i) = (j-1) / real(nc_new - 1, rk) * this%Xc(j-1, i) + &
-                        (1 - (j-1) / real(nc_new - 1, rk)) * this%Xc(j, i)
-                end do
+            do i = 2, nc_new-1
+                alpha = real(i, rk) / real(nc_new-1, rk)
+                Xc_new(i, :) = (1.0_rk - alpha)*this%Xc(i, :) + alpha*this%Xc(i-1, :)
             end do
 
             ! Update geometry points
