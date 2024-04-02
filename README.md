@@ -59,14 +59,22 @@ ford ford.yml
 
 ## ToDo
 
-- [ ] Add method `insert_knot()` for B-splines and NURBS.
-- [ ] Add method `remove_knot()` for B-splines and NURBS.
-- [ ] Add method `elevate_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
-- [x] Add method `elevate_degree()` for Bezier and Rational Bezier curves.
-- [ ] Add method `reduce_degree()` for Bezier, Rational Bezier, B-splines, and NURBS.
-- [ ] Add method `derivative()`.
+### B-Splines and NURBS
+- [x] Add `insert_knot()` method for curves.
+- [ ] Add `insert_knot()` method for surfaces and volumes.
+- [ ] Add `remove_knot()` method for curves, surfaces and volumes.
+- [ ] Add `elevate_degree()` method for curves, surfaces and volumes.
+- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
+- [ ] Add `derivative()` method.
 - [ ] Add support for multiple patches.
-- [ ] Implement extraction of piecewise Bezier objects from NURBS.
+- [ ] Add extraction of piecewise Bezier objects from NURBS.
+
+### Bezier and Rational Bezier
+- [x] Add `elevate_degree()` method for curves.
+- [ ] Add `elevate_degree()` method for surfaces and volumes.
+- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
+- [ ] Add `derivative()` method.
+- [ ] Add support for multiple patches.
 
 ## Contributing
 
