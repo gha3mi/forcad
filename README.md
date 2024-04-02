@@ -43,7 +43,7 @@ cd forcad
 ```shell
 fpm run --example <file name excluding the .f90 extension>
 ```
-Once the examples have been executed, `.vtk` files will be generated within the `vtk` directory. These files can then be visualized using tools such as ParaView.
+Once the examples have been executed, `.vtk` files will be generated within the `vtk` directory. These files can then be visualized using tools such as [ParaView](https://www.paraview.org/).
 
 ## API documentation
 
