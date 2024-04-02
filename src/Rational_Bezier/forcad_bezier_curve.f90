@@ -296,8 +296,10 @@ contains
 
         if (size(this%Xc,2) == 2) then
             write(nunit,'(g0," ",g0," ",g0)') (this%Xc(i,1), this%Xc(i,2), 0.0_rk , i = 1, nc)
-        else
+        elseif (size(this%Xc,2) == 3) then
             write(nunit,'(g0," ",g0," ",g0)') (this%Xc(i,1), this%Xc(i,2), this%Xc(i,3) , i = 1, nc)
+        else
+            error stop 'Invalid dimension of control points.'
         end if
 
         write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*3
@@ -339,8 +341,10 @@ contains
 
         if (size(this%Xg,2) == 2) then
             write(nunit,'(g0," ",g0," ",g0)') (this%Xg(i,1), this%Xg(i,2), 0.0_rk , i = 1, ng)
-        else
+        elseif (size(this%Xg,2) == 3) then
             write(nunit,'(g0," ",g0," ",g0)') (this%Xg(i,1), this%Xg(i,2), this%Xg(i,3) , i = 1, ng)
+        else
+            error stop 'Invalid dimension of geometry points.'
         end if
 
         write(nunit,'(a," ",g0," ",g0)') 'CELLS', size(elemConn,1), size(elemConn,1)*3
