@@ -43,8 +43,8 @@ module forcad_nurbs_curve
         procedure :: get_nc              !!> Get number of required control points
         procedure :: insert_knot         !!> Insert a new knot
         procedure :: elevate_degree      !!> Elevate the degree of the curve
-        procedure :: derivative          !!>
-        procedure :: basis               !!>
+        procedure :: derivative          !!> Compute the derivative of the NURBS curve
+        procedure :: basis               !!> Compute the basis functions of the NURBS curve
     end type
     !===============================================================================
 
