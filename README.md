@@ -66,8 +66,7 @@ ford ford.yml
 - [x] Add `elevate_degree()` method for curves.
 - [ ] Add `elevate_degree()` method for surfaces and volumes.
 - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
-- [x] Add `derivative()` method for curves.
-- [ ] Add `derivative()` method for surfaces and volumes.
+- [x] Add `derivative()` method for curves, surfaces and volumes.
 - [ ] Add support for multiple patches.
 - [ ] Add extraction of piecewise Bezier objects from NURBS.
 
