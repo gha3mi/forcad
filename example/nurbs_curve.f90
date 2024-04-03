@@ -22,7 +22,7 @@ program example_nurbs_curve
 
     ! Define weights for the control points
     allocate(Wc(3))
-    Wc = [1.0_rk, 2.0_rk, 1.0_rk]
+    Wc = [1.0_rk, 2.0_rk, 0.3_rk]
 
     ! Define knot vector
     knot = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
@@ -42,6 +42,22 @@ program example_nurbs_curve
 
     ! Export the generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
+
+    !-----------------------------------------------------------------------------
+    ! Refinements
+    !-----------------------------------------------------------------------------
+
+    ! Insert knots
+    call nurbs%insert_knot([0.25_rk, 0.75_rk])
+
+    ! Elevate the degree of the curve (2 times)
+    call nurbs%elevate_degree(2)
+
+    ! Export updated control points to a VTK file
+    call nurbs%export_Xc('vtk/nurbs_curve_Xc2.vtk')
+
+    ! Export the refined generated curve to a VTK file
+    call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
