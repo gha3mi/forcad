@@ -3,7 +3,8 @@ module forcad_utils
     implicit none
 
     private
-    public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector
+    public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
+              basis_bspline_der
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -54,6 +55,63 @@ contains
             end do
         end do
         B = Nt(:,order)
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    pure function basis_bspline_der(Xt, knot, nc, order) result(dB)
+        integer, intent(in)   :: order
+        real(rk), intent(in)  :: knot(:)
+        integer, intent(in)   :: nc
+        real(rk), intent(in)  :: Xt
+        real(rk), allocatable :: dB(:)
+        real(rk), allocatable :: Nt(:,:), dNt_dXt(:,:)
+        real(rk)              :: R, L, Rp, Lp, knot_i, knot_ip, knot_jk, knot_jkm, knot_end, a, b, c, d
+        integer               :: i, p, k, n, m, jk
+
+        k = order + 1
+        n = nc - 1
+        allocate(Nt(nc+order, order+1))
+        Nt = 0.0_rk
+        do i = 1, n+k
+            knot_i   = knot(i)
+            knot_ip  = knot(i+1)
+            knot_end = knot(size(knot))
+            if ( abs(Xt - knot_end) > tiny(0.0_rk) ) then
+                if ( Xt >= knot_i .and. Xt < knot_ip ) Nt(i,1) = 1.0_rk
+            elseif ( abs(Xt - knot_end) < tiny(0.0_rk) ) then
+                if ( Xt >= knot_i .and. Xt <= knot_ip ) Nt(i,1) = 1.0_rk
+            end if
+        end do
+        allocate(dNt_dXt(nc+order, order+1))
+        dNt_dXt = 0.0_rk
+        m = 0
+        do jk = 2, k
+            m = m + 1
+            do i = 1, n + k - m
+                knot_i   = knot(i)
+                knot_ip  = knot(i+1)
+                knot_jk  = knot(i+jk)
+                knot_jkm = knot(i+jk-1)
+                a        = (knot_jkm - knot_i)
+                b        = (knot_jk - Xt)
+                c        = (knot_jk - knot_ip)
+                d        = (Xt - knot_i)
+                R = d/a
+                if ( isnan(R) .or. isinf(R) .or. abs(R) < 1.0e-14_rk ) R = 0.0_rk
+                L = b/c
+                if ( isnan(L) .or. isinf(L) .or. abs(L) < 1.0e-14_rk ) L = 0.0_rk
+                Nt(i,jk) = R*Nt(i,jk-1) + L*Nt(i+1,jk-1)
+                Rp = (Nt(i,jk-1) + d*dNt_dXt(i,jk-1)) / a
+                if ( isnan(Rp) .or. isinf(Rp) .or. abs(Rp) < 1.0e-14_rk ) Rp = 0.0_rk
+                Lp = (b*dNt_dXt(i+1,jk-1) - Nt(i+1,jk-1)) / c
+                if ( isnan(Lp) .or. isinf(Lp) .or. abs(Lp) < 1.0e-14_rk ) Lp = 0.0_rk
+                dNt_dXt(i,jk) = Rp + Lp
+            end do
+        end do
+        dB = dNt_dXt(1:nc,k)
     end function
     !===============================================================================
 
@@ -285,5 +343,19 @@ contains
         knot = repelem(Xth_dir, (order - continuity))
     end function
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    elemental pure function isinf(x) result(output)
+        real(rk), intent(in) :: x
+        logical :: output
+
+        output=.false.
+        if (x >  huge(x)) output=.true.
+        if (x < -huge(x)) output=.true.
+    end function
+!===============================================================================
 
 end module forcad_utils

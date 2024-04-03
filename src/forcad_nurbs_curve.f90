@@ -1,6 +1,6 @@
 module forcad_nurbs_curve
 
-    use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector
+    use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der
 
     implicit none
 
@@ -43,6 +43,8 @@ module forcad_nurbs_curve
         procedure :: get_nc              !!> Get number of required control points
         procedure :: insert_knot         !!> Insert a new knot
         procedure :: elevate_degree      !!> Elevate the degree of the curve
+        procedure :: derivative          !!>
+        procedure :: basis               !!>
     end type
     !===============================================================================
 
@@ -843,6 +845,98 @@ contains
         end if
         f = log(gamma(real(n+1,rk)))
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine derivative(this, res, Xt, dTgc)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in), optional :: res
+        real(rk), intent(in), optional :: Xt(:)
+        real(rk), allocatable, intent(out) :: dTgc(:,:)
+        real(rk), allocatable :: dTgc_Xt(:)
+        integer :: i
+
+        ! check
+        if (.not.allocated(this%Xc)) then
+            error stop 'Control points are not set.'
+        end if
+
+        ! Set parameter values
+        if (present(Xt)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            this%Xt = Xt
+        elseif (present(res)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            allocate(this%Xt(res))
+            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            ! else
+            ! this%Xt = this%Xt
+        end if
+
+        allocate(dTgc(size(this%Xt, 1), this%nc))
+
+        if (allocated(this%Wc)) then
+            do i = 1, size(this%Xt, 1)
+                dTgc_Xt = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgc_Xt = dTgc_Xt*(this%Wc/(dot_product(dTgc_Xt,this%Wc)))
+                dTgc(i,:) = dTgc_Xt
+            end do
+        else
+            do i = 1, size(this%Xt, 1)
+                dTgc_Xt = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgc(i,:) = dTgc_Xt
+            end do
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis(this, res, Xt, Tgc)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in), optional :: res
+        real(rk), intent(in), optional :: Xt(:)
+        real(rk), allocatable, intent(out) :: Tgc(:,:)
+        real(rk), allocatable :: Tgci(:)
+        integer :: i
+
+        ! check
+        if (.not.allocated(this%Xc)) then
+            error stop 'Control points are not set.'
+        end if
+
+        ! Set parameter values
+        if (present(Xt)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            this%Xt = Xt
+        elseif (present(res)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            allocate(this%Xt(res))
+            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            ! else
+            ! this%Xt = this%Xt
+        end if
+
+        allocate(Tgc(size(this%Xt, 1), this%nc))
+
+        if (allocated(this%Wc)) then
+            do i = 1, size(this%Xt, 1)
+                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
+                Tgc(i,:) = Tgci
+            end do
+        else
+            do i = 1, size(this%Xt, 1)
+                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgc(i,:) = Tgci
+            end do
+        end if
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_curve

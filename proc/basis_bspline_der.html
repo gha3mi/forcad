@@ -10,7 +10,7 @@
     <meta name="author" content="Seyed Ali Ghasemi" >
     <link rel="icon" href="../favicon.png">
 
-    <title>get_elem_Xc &ndash; ForCAD</title>
+    <title>basis_bspline_der &ndash; ForCAD</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -65,8 +65,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>get_elem_Xc
-      <small>Subroutine</small>
+    <h1>basis_bspline_der
+      <small>Function</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -79,21 +79,21 @@
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip"
                  data-bs-placement="bottom" data-html="true"
-                 title=" 0.4% of total for procedures.">10 statements</a>
+                 title=" 2.1% of total for procedures.">51 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/forcad_nurbs_volume.f90"> Source File</a>
+              <a href="../src/forcad_utils.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_volume.f90.html'>forcad_nurbs_volume.f90</a></li>
-                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li>
-            <li class="breadcrumb-item active" aria-current="page">get_elem_Xc</li>
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_utils.f90.html'>forcad_utils.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_utils.html'>forcad_utils</a></li>
+            <li class="breadcrumb-item active" aria-current="page">basis_bspline_der</li>
           </ol>
         </nav>
       </div>
@@ -138,13 +138,11 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure subroutine get_elem_Xc(this, elemConn, p)  
+    <h2>public pure function basis_bspline_der(Xt, knot, nc, order) result(dB)  
 </h2>
     
 
 
-    <h3>Type Bound</h3>
-    <p><a href='../type/nurbs_volume.html'>nurbs_volume</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -159,45 +157,60 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-this~29"></span>
-              class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
+              <span class="anchor" id="variable-xt~16"></span>
+              real(kind=rk),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>this</strong></td>
+            <td><strong>Xt</strong></td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-elemconn~5"></span>
-              integer,
+              <span class="anchor" id="variable-knot~8"></span>
+              real(kind=rk),
             </td>
-<td>intent(out),</td>
+<td>intent(in)</td>
               <td></td>            <td>
-              dimension(:,:), allocatable
-            </td>
-            <td>::</td>
-            <td><strong>elemConn</strong></td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-p~3"></span>
-              integer,
-            </td>
-<td>intent(in),</td>
-              <td>optional</td>            <td>
               
             </td>
             <td>::</td>
-            <td><strong>p</strong>(:)</td>
+            <td><strong>knot</strong>(:)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nc~21"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nc</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-order~12"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>order</strong></td>
             <td>
                 
             </td>
@@ -205,6 +218,13 @@
     </tbody>
   </table>
 
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-db"></span>
+          real(kind=rk), allocatable, (:)
+        </small>
+      </h3>
+      
     <br>
     <div class="card">
       <div class="card-header">
@@ -216,85 +236,36 @@
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
-<!-- Title: proc~~get_elem_xc~2~~CallsGraph Pages: 1 -->
-<svg id="procget_elem_xc2CallsGraph" width="641pt" height="104pt"
- viewBox="0.00 0.00 641.00 103.56" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~get_elem_xc~2~~CallsGraph" class="graph" transform="scale(1.12 1.12) rotate(0) translate(4 112)">
-<title>proc~~get_elem_xc~2~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 714,-112 714,4 -4,4"/>
-<!-- proc~get_elem_xc~2 -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_node1" class="node">
-<title>proc~get_elem_xc~2</title>
-<polygon fill="none" stroke="black" points="287,-66 0,-66 0,-42 287,-42 287,-66"/>
-<text text-anchor="middle" x="143.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">forcad_nurbs_volume::nurbs_volume%get_elem_Xc</text>
+<!-- Title: proc~~basis_bspline_der~~CallsGraph Pages: 1 -->
+<svg id="procbasis_bspline_derCallsGraph" width="322pt" height="32pt"
+ viewBox="0.00 0.00 322.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~basis_bspline_der~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~basis_bspline_der~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 318,-28 318,4 -4,4"/>
+<!-- proc~basis_bspline_der -->
+<g id="proc~~basis_bspline_der~~CallsGraph_node1" class="node">
+<title>proc~basis_bspline_der</title>
+<polygon fill="none" stroke="black" points="175,-24 0,-24 0,0 175,0 175,-24"/>
+<text text-anchor="middle" x="87.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">forcad_utils::basis_bspline_der</text>
 </g>
-<!-- interface~elemconn_c0 -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_node2" class="node">
-<title>interface~elemconn_c0</title>
-<g id="a_proc~~get_elem_xc~2~~CallsGraph_node2"><a xlink:href="../interface/elemconn_c0.html" xlink:title="forcad_utils::elemConn_C0">
-<polygon fill="#a7506f" stroke="#a7506f" points="478,-66 323,-66 323,-42 478,-42 478,-66"/>
-<text text-anchor="middle" x="400.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::elemConn_C0</text>
+<!-- proc~isinf -->
+<g id="proc~~basis_bspline_der~~CallsGraph_node2" class="node">
+<title>proc~isinf</title>
+<g id="a_proc~~basis_bspline_der~~CallsGraph_node2"><a xlink:href="../proc/isinf.html" xlink:title="forcad_utils::isinf">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="314,-24 211,-24 211,0 314,0 314,-24"/>
+<text text-anchor="middle" x="262.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::isinf</text>
 </a>
 </g>
 </g>
-<!-- proc~get_elem_xc~2&#45;&gt;interface~elemconn_c0 -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_edge1" class="edge">
-<title>proc~get_elem_xc~2&#45;&gt;interface~elemconn_c0</title>
-<path fill="none" stroke="#255000" d="M287.28,-54C295.84,-54 304.31,-54 312.53,-54"/>
-<polygon fill="#255000" stroke="#255000" points="312.8,-57.5 322.8,-54 312.8,-50.5 312.8,-57.5"/>
-</g>
-<!-- proc~cmp_elemconn_c0_l -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_node3" class="node">
-<title>proc~cmp_elemconn_c0_l</title>
-<g id="a_proc~~get_elem_xc~2~~CallsGraph_node3"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="forcad_utils::cmp_elemConn_C0_L">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="709.5,-108 514.5,-108 514.5,-84 709.5,-84 709.5,-108"/>
-<text text-anchor="middle" x="612" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_L</text>
-</a>
-</g>
-</g>
-<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_edge2" class="edge">
-<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
-<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M461.53,-66.04C486.3,-71 515.17,-76.79 540.89,-81.95"/>
-<polygon fill="#255000" stroke="#255000" points="540.46,-85.43 550.96,-83.96 541.84,-78.57 540.46,-85.43"/>
-</g>
-<!-- proc~cmp_elemconn_c0_s -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_node4" class="node">
-<title>proc~cmp_elemconn_c0_s</title>
-<g id="a_proc~~get_elem_xc~2~~CallsGraph_node4"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="forcad_utils::cmp_elemConn_C0_S">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="710,-66 514,-66 514,-42 710,-42 710,-66"/>
-<text text-anchor="middle" x="612" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_S</text>
-</a>
-</g>
-</g>
-<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_edge3" class="edge">
-<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
-<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M478.02,-54C486.42,-54 495.09,-54 503.77,-54"/>
-<polygon fill="#255000" stroke="#255000" points="503.97,-57.5 513.97,-54 503.97,-50.5 503.97,-57.5"/>
-</g>
-<!-- proc~cmp_elemconn_c0_v -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_node5" class="node">
-<title>proc~cmp_elemconn_c0_v</title>
-<g id="a_proc~~get_elem_xc~2~~CallsGraph_node5"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="forcad_utils::cmp_elemConn_C0_V">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="710,-24 514,-24 514,0 710,0 710,-24"/>
-<text text-anchor="middle" x="612" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils::cmp_elemConn_C0_V</text>
-</a>
-</g>
-</g>
-<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
-<g id="proc~~get_elem_xc~2~~CallsGraph_edge4" class="edge">
-<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
-<path fill="none" stroke="#255000" stroke-dasharray="5,2" d="M461.53,-41.96C486.3,-37 515.17,-31.21 540.89,-26.05"/>
-<polygon fill="#255000" stroke="#255000" points="541.84,-29.43 550.96,-24.04 540.46,-22.57 541.84,-29.43"/>
+<!-- proc~basis_bspline_der&#45;&gt;proc~isinf -->
+<g id="proc~~basis_bspline_der~~CallsGraph_edge1" class="edge">
+<title>proc~basis_bspline_der&#45;&gt;proc~isinf</title>
+<path fill="none" stroke="#255000" d="M175.25,-12C183.79,-12 192.32,-12 200.52,-12"/>
+<polygon fill="#255000" stroke="#255000" points="200.7,-15.5 210.7,-12 200.7,-8.5 200.7,-15.5"/>
 </g>
 </g>
 </svg>
-</div>                <script>
-                  var panprocget_elem_xc2CallsGraph = svgPanZoom('#procget_elem_xc2CallsGraph',
-                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
-                  );
-                </script>          <div>
+</div>          <div>
             <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
           </div>
           <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
@@ -385,55 +356,36 @@ large graphs.</div>
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
-<!-- Title: proc~~get_elem_xc~2~~CalledByGraph Pages: 1 -->
-<svg id="procget_elem_xc2CalledByGraph" width="641pt" height="26pt"
- viewBox="0.00 0.00 641.00 26.40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~get_elem_xc~2~~CalledByGraph" class="graph" transform="scale(1.21 1.21) rotate(0) translate(4 28)">
-<title>proc~~get_elem_xc~2~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 773,-28 773,4 -4,4"/>
-<!-- proc~get_elem_xc~2 -->
-<g id="proc~~get_elem_xc~2~~CalledByGraph_node1" class="node">
-<title>proc~get_elem_xc~2</title>
-<polygon fill="none" stroke="black" points="769,-24 482,-24 482,0 769,0 769,-24"/>
-<text text-anchor="middle" x="625.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">forcad_nurbs_volume::nurbs_volume%get_elem_Xc</text>
+<!-- Title: proc~~basis_bspline_der~~CalledByGraph Pages: 1 -->
+<svg id="procbasis_bspline_derCalledByGraph" width="472pt" height="32pt"
+ viewBox="0.00 0.00 472.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~basis_bspline_der~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>proc~~basis_bspline_der~~CalledByGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 468,-28 468,4 -4,4"/>
+<!-- proc~basis_bspline_der -->
+<g id="proc~~basis_bspline_der~~CalledByGraph_node1" class="node">
+<title>proc~basis_bspline_der</title>
+<polygon fill="none" stroke="black" points="464,-24 289,-24 289,0 464,0 464,-24"/>
+<text text-anchor="middle" x="376.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">forcad_utils::basis_bspline_der</text>
 </g>
-<!-- proc~export_xc~2 -->
-<g id="proc~~get_elem_xc~2~~CalledByGraph_node2" class="node">
-<title>proc~export_xc~2</title>
-<g id="a_proc~~get_elem_xc~2~~CalledByGraph_node2"><a xlink:href="../proc/export_xc~2.html" xlink:title="forcad_nurbs_volume::nurbs_volume%export_Xc">
-<polygon fill="#d9534f" stroke="#d9534f" points="446,-24 175,-24 175,0 446,0 446,-24"/>
-<text text-anchor="middle" x="310.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume::nurbs_volume%export_Xc</text>
+<!-- proc~derivative -->
+<g id="proc~~basis_bspline_der~~CalledByGraph_node2" class="node">
+<title>proc~derivative</title>
+<g id="a_proc~~basis_bspline_der~~CalledByGraph_node2"><a xlink:href="../proc/derivative.html" xlink:title="forcad_nurbs_curve::nurbs_curve%derivative">
+<polygon fill="#d9534f" stroke="#d9534f" points="253,-24 0,-24 0,0 253,0 253,-24"/>
+<text text-anchor="middle" x="126.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve::nurbs_curve%derivative</text>
 </a>
 </g>
 </g>
-<!-- proc~export_xc~2&#45;&gt;proc~get_elem_xc~2 -->
-<g id="proc~~get_elem_xc~2~~CalledByGraph_edge1" class="edge">
-<title>proc~export_xc~2&#45;&gt;proc~get_elem_xc~2</title>
-<path fill="none" stroke="#255000" d="M446.06,-12C454.42,-12 462.87,-12 471.3,-12"/>
-<polygon fill="#255000" stroke="#255000" points="471.58,-15.5 481.58,-12 471.58,-8.5 471.58,-15.5"/>
-</g>
-<!-- program~example_nurbs_volume -->
-<g id="proc~~get_elem_xc~2~~CalledByGraph_node3" class="node">
-<title>program~example_nurbs_volume</title>
-<g id="a_proc~~get_elem_xc~2~~CalledByGraph_node3"><a xlink:href="../program/example_nurbs_volume.html" xlink:title="example_nurbs_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-24 0,-24 0,0 139,0 139,-24"/>
-<text text-anchor="middle" x="69.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_volume</text>
-</a>
-</g>
-</g>
-<!-- program~example_nurbs_volume&#45;&gt;proc~export_xc~2 -->
-<g id="proc~~get_elem_xc~2~~CalledByGraph_edge2" class="edge">
-<title>program~example_nurbs_volume&#45;&gt;proc~export_xc~2</title>
-<path fill="none" stroke="#255000" d="M139.31,-12C147.52,-12 156.13,-12 164.93,-12"/>
-<polygon fill="#255000" stroke="#255000" points="164.93,-15.5 174.93,-12 164.93,-8.5 164.93,-15.5"/>
+<!-- proc~derivative&#45;&gt;proc~basis_bspline_der -->
+<g id="proc~~basis_bspline_der~~CalledByGraph_edge1" class="edge">
+<title>proc~derivative&#45;&gt;proc~basis_bspline_der</title>
+<path fill="none" stroke="#255000" d="M253.32,-12C261.84,-12 270.35,-12 278.69,-12"/>
+<polygon fill="#255000" stroke="#255000" points="278.77,-15.5 288.77,-12 278.77,-8.5 278.77,-15.5"/>
 </g>
 </g>
 </svg>
-</div>                <script>
-                  var panprocget_elem_xc2CalledByGraph = svgPanZoom('#procget_elem_xc2CalledByGraph',
-                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
-                  );
-                </script>          <div>
+</div>          <div>
             <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
           </div>
           <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
