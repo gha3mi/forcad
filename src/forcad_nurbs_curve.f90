@@ -42,6 +42,7 @@ module forcad_nurbs_curve
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
         procedure :: insert_knot         !!> Insert a new knot
+        procedure :: elevate_degree      !!> Elevate the degree of the curve
     end type
     !===============================================================================
 
@@ -484,88 +485,364 @@ contains
     !> license: BSD 3-Clause
     pure subroutine insert_knot(this, Xth)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: Xth
+        real(rk), intent(in) :: Xth(:)
+        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
         real(rk) :: alpha
-        real(rk), allocatable :: Xc_new(:,:), Wc_new(:), knot_new(:)
-        integer, allocatable :: m(:)
-        integer :: k, i, nc_new, order_new
+        integer :: dim, nc, nXth, nknot, a, b, r, l, i, j, m, n, s, q, ind
 
-        ! Find the index where the new knot (Xth) should be inserted
-        ! knot span [k, k+1)
-        k = 0
-        do while (this%knot(k+1) < Xth .and. k+1 <= size(this%knot))
-            k = k + 1
-        end do
-
-        ! Check if the new knot is within the range of existing knots and is not the first or the last knot
-        ! Insert the new knot and update the knot vector
-        if (k+1 > 1 .and. k+1 < size(this%knot)) then
-            if (Xth >= this%knot(k) .and. Xth <= this%knot(k+1)) then
-                allocate(knot_new(size(this%knot)+1))
-                knot_new = [this%knot(1:k), Xth, this%knot(k+1:size(this%knot))]
-            else
-                error stop 'Invalid new knot value. It should be within the range of existing knots.'
-            end if
+        if (allocated(this%Wc)) then
+            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)+1))
+            do i = 1, size(this%Xc,2)
+                Xcw(:,i) = (this%Xc(:,i)*this%Wc)
+            end do
+            Xcw(:,size(this%Xc,2)+1) = this%Wc
         else
-            error stop 'Invalid new knot value. It should be greater than the first knot and less than the last knot.'
+            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)))
+            do i = 1, size(this%Xc,2)
+                Xcw(:,i) = (this%Xc(:,i))
+            end do
         end if
-
-        ! Compute the new control points
-        m = compute_multiplicity(knot_new)
-        order_new = m(1) - 1
-        nc_new = sum(m) - order_new - 1
-
-
-        if (allocated(this%Wc)) then ! NURBS
-
-            allocate(Xc_new(nc_new, size(this%Xc, 2)))
-            allocate(Wc_new(nc_new))
-
-            do i = 1,nc_new
-                if (i < k-this%order+1) then
-                    Xc_new(i, :) = this%Xc(i, :)*this%Wc(i)
-                    Wc_new(i) = this%Wc(i)
-                else if (i > k) then
-                    Xc_new(i, :) = this%Xc(i-1, :)*this%Wc(i-1)
-                    Wc_new(i) = this%Wc(i-1)
+        nc = size(Xcw, 1)
+        dim = size(Xcw, 2)
+        nXth = size(Xth)
+        nknot = size(this%knot)
+        allocate(Xcw_new(nc+nXth, dim), source=0.0_rk)
+        allocate(knot_new(nknot+nXth), source=0.0_rk)
+        n = nc - 1
+        r = nXth - 1
+        m = n + this%order + 1
+        a = findspan(n, this%order, Xth(1), this%knot)
+        b = findspan(n, this%order, Xth(r+1), this%knot)
+        b = b + 1
+        do q = 0,dim-1
+            do j = 0,a-this%order
+                Xcw_new(j+1,q+1) = Xcw(j+1,q+1)
+            end do
+            do j = b-1,n
+                Xcw_new(j+r+2,q+1) = Xcw(j+1,q+1)
+            end do
+        end do
+        do j = 0,a
+            knot_new(j+1) = this%knot(j+1)
+        end do
+        do j = b+this%order,m
+            knot_new(j+r+2) = this%knot(j+1)
+        end do
+        i = b + this%order - 1
+        s = b + this%order + r
+        do j = r,0,-1
+            do while (Xth(j+1) <= this%knot(i+1) .and. i > a)
+                do q = 0,dim-1
+                    Xcw_new(s-this%order,q+1) = Xcw(i-this%order,q+1)
+                end do
+                knot_new(s+1) = this%knot(i+1)
+                s = s - 1
+                i = i - 1
+            end do
+            do q = 0,dim-1
+                Xcw_new(s-this%order,q+1) = Xcw_new(s-this%order+1,q+1)
+            end do
+            do l = 1,this%order
+                ind = s - this%order + l
+                alpha = knot_new(s+l+1) - Xth(j+1)
+                if (abs(alpha) == 0) then
+                    do q = 0,dim-1
+                        Xcw_new(ind,q+1) = Xcw_new(ind+1,q+1)
+                    end do
                 else
-                    alpha = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
-                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i-1, :)*this%Wc(i-1) + alpha*this%Xc(i, :)*this%Wc(i)
-                    Wc_new(i) = (1.0_rk-alpha)*this%Wc(i-1) + alpha*this%Wc(i)
+                    alpha = alpha/(knot_new(s+l+1) - this%knot(i-this%order+l+1))
+                    do q = 0,dim-1
+                        Xcw_new(ind,q+1) = (1.0_rk-alpha)*Xcw_new(ind+1,q+1) + alpha*Xcw_new(ind,q+1)
+                    end do
                 end if
             end do
-
-            ! Normalize the new control points
-            do concurrent (i = 1: size(Xc_new, 2))
-                Xc_new(:, i) = Xc_new(:, i) / Wc_new(:)
+            knot_new(s+1) = Xth(j+1)
+            s = s - 1
+        end do
+        if (allocated(this%Wc)) then
+            Xc_new = Xcw_new(:,1:size(this%Xc,2))
+            Wc_new = Xcw_new(:,size(this%Xc,2)+1)
+            do concurrent (i = 1: size(this%Xc, 2))
+                Xc_new(:,i) = Xc_new(:,i) / Wc_new(:)
             end do
-
             deallocate(this%Xc, this%knot, this%Xg, this%Wc)
             call this%set(knot = knot_new, Xc = Xc_new, Wc = Wc_new)
             call this%create()
-
-        else ! B-Spline
-
-            allocate(Xc_new(nc_new, size(this%Xc, 2)))
-
-            do i = 1,nc_new
-                if (i < k-this%order+1) then
-                    Xc_new(i, :) = this%Xc(i, :)
-                else if (i > k) then
-                    Xc_new(i, :) = this%Xc(i-1, :)
-                else
-                    alpha = (Xth - this%knot(i)) / (this%knot(i+this%order) - this%knot(i))
-                    Xc_new(i, :) = (1.0_rk-alpha)*this%Xc(i-1, :) + alpha*this%Xc(i, :)
-                end if
-            end do
-
+        else
+            Xc_new = Xcw_new(1:size(this%Xc,2),:)
             deallocate(this%Xc, this%knot, this%Xg)
             call this%set(knot = knot_new, Xc = Xc_new)
             call this%create()
-
         end if
-
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function findspan(n,order,Xth,knot) result(s)
+        integer, intent(in) :: n, order
+        real(rk), intent(in) :: Xth
+        real(rk), intent(in) :: knot(:)
+        integer :: s
+        integer :: low, high, mid
+        if (Xth == knot(n+2)) then
+            s = n
+            return
+        end if
+        low = order
+        high = n + 1
+        mid = (low + high) / 2
+        do while (Xth < knot(mid+1) .or. Xth >= knot(mid+2))
+            if (Xth < knot(mid+1)) then
+                high = mid
+            else
+                low = mid
+            end if
+            mid = (low + high) / 2
+        end do
+        s = mid
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine elevate_degree(this, t)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in) :: t
+        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
+        real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
+        real(rk) :: inv, alpha1, alpha2, Xth1, Xth2, numer, den
+        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, ii, dim, nc, nc_new
+        integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
+        integer, allocatable :: mlp(:)
+
+        if (allocated(this%Wc)) then
+            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)+1))
+            do i = 1, size(this%Xc,2)
+                Xcw(:,i) = (this%Xc(:,i)*this%Wc)
+            end do
+            Xcw(:,size(this%Xc,2)+1) = this%Wc
+        else
+            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)))
+            do i = 1, size(this%Xc,2)
+                Xcw(:,i) = (this%Xc(:,i))
+            end do
+        end if
+        nc = size(Xcw,1)
+        dim = size(Xcw,2)
+        mlp = compute_multiplicity(this%knot)
+        mlp = mlp + t
+        nc_new = sum(mlp) - (mlp(1)-1) - 1
+        allocate(Xcw_new(nc_new,dim), source=0.0_rk)
+        allocate(bezalfs(this%order+1,this%order+t+1), source=0.0_rk)
+        allocate(bpts(this%order+1,dim), source=0.0_rk)
+        allocate(ebpts(this%order+t+1,dim), source=0.0_rk)
+        allocate(Nextbpts(this%order+1,dim), source=0.0_rk)
+        allocate(alfs(this%order), source=0.0_rk)
+        n = nc - 1
+        m = n + this%order + 1
+        ph = this%order + t
+        ph2 = ph / 2
+        bezalfs(1,1) = 1.0_rk
+        bezalfs(this%order+1,ph+1) = 1.0_rk
+        do i = 1,ph2
+            inv = 1.0_rk/bincoeff(ph,i)
+            mpi = min(this%order,i)
+            do j = max(0,i-t),mpi
+                bezalfs(j+1,i+1) = inv*bincoeff(this%order,j)*bincoeff(t,i-j)
+            end do
+        end do
+        do i = ph2+1,ph-1
+            mpi = min(this%order,i)
+            do j = max(0,i-t),mpi
+                bezalfs(j+1,i+1) = bezalfs(this%order-j+1,ph-i+1)
+            end do
+        end do
+        mh = ph
+        knoti = ph+1
+        r = -1
+        a = this%order
+        b = this%order+1
+        Xcwi = 1
+        Xth1 = this%knot(1)
+        do ii =0,dim-1
+            Xcw_new(1,ii+1) = Xcw(1,ii+1)
+        end do
+        allocate(knot_new(sum(mlp)), source=0.0_rk)
+        do i = 0,ph
+            knot_new(i+1) = Xth1
+        end do
+        do i = 0,this%order
+            do ii = 0,dim-1
+                bpts(i+1,ii+1) = Xcw(i+1,ii+1)
+            end do
+        end do
+        do while (b<m)
+            i = b
+            do while (b<m .and. this%knot(b+1) == this%knot(b+2))
+                b = b + 1
+                if (b+2 > size(this%knot)) then
+                    exit
+                end if
+            end do
+            mul = b - i + 1
+            mh = mh + mul + t
+            Xth2 = this%knot(b+1)
+            oldr = r
+            r = this%order - mul
+            if (oldr > 0) then
+                lbz = (oldr+2)/2
+            else
+                lbz = 1
+            end if
+            if (r > 0) then
+                rbz = ph - (r+1)/2
+            else
+                rbz = ph
+            end if
+            if (r>0) then
+                numer = Xth2 - Xth1
+                do q = this%order,mul+1,-1
+                    alfs(q-mul) = numer / (this%knot(a+q+1)-Xth1)
+                end do
+                do j = 1,r
+                    sv = r - j
+                    s = mul + j
+                    do q = this%order,s,-1
+                        do ii = 0,dim-1
+                            bpts(q+1,ii+1) = (1.0_rk-alfs(q-s+1))*bpts(q,ii+1) + alfs(q-s+1)*bpts(q+1,ii+1)
+                        end do
+                    end do
+                    do ii = 0,dim-1
+                        Nextbpts(sv+1,ii+1) = bpts(this%order+1,ii+1)
+                    end do
+                end do
+            end if
+            do i = lbz,ph
+                do ii = 0,dim-1
+                    ebpts(i+1,ii+1) = 0.0_rk
+                end do
+                mpi = min(this%order,i)
+                do j = max(0,i-t),mpi
+                    do ii = 0,dim-1
+                        ebpts(i+1,ii+1) = bezalfs(j+1,i+1)*bpts(j+1,ii+1) + ebpts(i+1,ii+1)
+                    end do
+                end do
+            end do
+            if (oldr > 1) then
+                first = knoti - 2
+                last = knoti
+                den = Xth2 - Xth1
+                alpha3 = floor((Xth2-this%knot(knoti)) / den)
+                do tr = 1,oldr-1
+                    i = first
+                    j = last
+                    kj = j - knoti + 1
+                    do while (j-i > tr)
+                        if (i < Xcwi) then
+                            alpha1 = (Xth2-this%knot(i+1))/(Xth1-this%knot(i+1))
+                            do ii = 0,dim-1
+                                Xcw_new(i+1,ii+1) = (1-alpha1)*Xcw_new(i,ii+1) + alpha1*Xcw_new(i+1,ii+1)
+                            end do
+                        end if
+                        if (j >= lbz) then
+                            if (j-tr <= knoti-ph+oldr) then
+                                alpha2 = (Xth2-knot_new(j-tr+1)) / den
+                                do ii = 0,dim-1
+                                    ebpts(kj+1,ii+1) = alpha2*ebpts(kj+1,ii+1) + (1-alpha2)*ebpts(kj+2,ii+1)
+                                end do
+                            else
+                                do ii = 0,dim-1
+                                    ebpts(kj+1,ii+1) = (1-alpha3)*ebpts(ii+1,kj+2) + alpha3*ebpts(kj+1,ii+1)
+                                end do
+                            end if
+                        end if
+                        i = i + 1
+                        j = j - 1
+                        kj = kj - 1
+                    end do
+                    first = first - 1
+                    last = last + 1
+                end do
+            end if
+            if (a /= this%order) then
+                do i = 0,ph-oldr-1
+                    knot_new(knoti+1) = Xth1
+                    knoti = knoti + 1
+                end do
+            end if
+            do j = lbz,rbz
+                do ii = 0,dim-1
+                    Xcw_new(Xcwi+1,ii+1) = ebpts(j+1,ii+1)
+                end do
+                Xcwi = Xcwi + 1
+            end do
+            if (b<m) then
+                do j = 0,r-1
+                    do ii = 0,dim-1
+                        bpts(j+1,ii+1) = Nextbpts(j+1,ii+1)
+                    end do
+                end do
+                do j = r,this%order
+                    do ii = 0,dim-1
+                        bpts(j+1,ii+1) = Xcw(b-this%order+j+1,ii+1)
+                    end do
+                end do
+                a = b
+                b = b+1
+                Xth1 = Xth2
+            else
+                do i = 0,ph
+                    knot_new(knoti+i+1) = Xth2
+                end do
+            end if
+        end do
+        if (allocated(this%Wc)) then
+            Xc_new = Xcw_new(:,1:size(this%Xc,2))
+            Wc_new = Xcw_new(:,size(this%Xc,2)+1)
+            do concurrent (i = 1: size(this%Xc, 2))
+                Xc_new(:,i) = Xc_new(:,i) / Wc_new(:)
+            end do
+            deallocate(this%Xc, this%knot, this%Xg, this%Wc)
+            call this%set(knot = knot_new, Xc = Xc_new, Wc = Wc_new)
+            call this%create()
+        else
+            Xc_new = Xcw_new(1:size(this%Xc,2),:)
+            deallocate(this%Xc, this%knot, this%Xg)
+            call this%set(knot = knot_new, Xc = Xc_new)
+            call this%create()
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function bincoeff(n,k) result(b)
+        integer, intent(in) :: n, k
+        real(rk) :: b
+        b = floor(0.5_rk+exp(factln(n)-factln(k)-factln(n-k)))
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function factln(n) result(f)
+        integer, intent(in) :: n
+        real(rk) :: f
+        if (n <= 1) then
+            f = 0.0_rk
+            return
+        end if
+        f = log(gamma(real(n+1,rk)))
+    end function
     !===============================================================================
 
 end module forcad_nurbs_curve
