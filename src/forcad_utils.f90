@@ -100,14 +100,14 @@ contains
                 c        = (knot_jk - knot_ip)
                 d        = (Xt - knot_i)
                 R = d/a
-                if ( isnan(R) .or. isinf(R) .or. abs(R) < 1.0e-14_rk ) R = 0.0_rk
+                if ( isnan(R) .or. isinf(R) .or. abs(R) < tiny(0.0_rk) ) R = 0.0_rk
                 L = b/c
-                if ( isnan(L) .or. isinf(L) .or. abs(L) < 1.0e-14_rk ) L = 0.0_rk
+                if ( isnan(L) .or. isinf(L) .or. abs(L) < tiny(0.0_rk) ) L = 0.0_rk
                 Nt(i,jk) = R*Nt(i,jk-1) + L*Nt(i+1,jk-1)
                 Rp = (Nt(i,jk-1) + d*dNt_dXt(i,jk-1)) / a
-                if ( isnan(Rp) .or. isinf(Rp) .or. abs(Rp) < 1.0e-14_rk ) Rp = 0.0_rk
+                if ( isnan(Rp) .or. isinf(Rp) .or. abs(Rp) < tiny(0.0_rk) ) Rp = 0.0_rk
                 Lp = (b*dNt_dXt(i+1,jk-1) - Nt(i+1,jk-1)) / c
-                if ( isnan(Lp) .or. isinf(Lp) .or. abs(Lp) < 1.0e-14_rk ) Lp = 0.0_rk
+                if ( isnan(Lp) .or. isinf(Lp) .or. abs(Lp) < tiny(0.0_rk) ) Lp = 0.0_rk
                 dNt_dXt(i,jk) = Rp + Lp
             end do
         end do
