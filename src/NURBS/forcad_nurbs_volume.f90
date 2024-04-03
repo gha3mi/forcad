@@ -1,6 +1,7 @@
 module forcad_nurbs_volume
 
-    use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector
+    use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
+                            basis_bspline_der
 
     implicit none
 
@@ -45,6 +46,8 @@ module forcad_nurbs_volume
         procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
+        procedure :: derivative          !!> Compute the derivative of the NURBS curve
+        procedure :: basis               !!> Compute the basis functions of the NURBS curve
     end type
     !===============================================================================
 
@@ -640,6 +643,166 @@ contains
         end if
 
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine derivative(this, res1, res2, res3, Xt1, Xt2, Xt3, dTgc)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in), optional :: res1, res2, res3
+        real(rk), intent(in), optional :: Xt1(:), Xt2(:), Xt3(:)
+        real(rk), allocatable, intent(out) :: dTgc(:,:)
+        real(rk), allocatable :: dTgci(:)
+        integer :: i
+        real(rk), dimension(:), allocatable :: dTgc1, dTgc2, dTgc3
+        real(rk), dimension(:,:), allocatable :: Xt
+
+        ! Set parameter values
+        if (present(Xt1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            this%Xt1 = Xt1
+        elseif (present(res1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            allocate(this%Xt1(res1))
+            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            ! else
+            ! this%Xt1 = this%Xt1
+        end if
+
+        ! Set parameter values
+        if (present(Xt2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            this%Xt2 = Xt2
+        elseif (present(res2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            allocate(this%Xt2(res2))
+            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            ! else
+            ! this%Xt2 = this%Xt2
+        end if
+
+        ! Set parameter values
+        if (present(Xt3)) then
+            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            this%Xt3 = Xt3
+        elseif (present(res3)) then
+            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            allocate(this%Xt3(res3))
+            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            ! else
+            ! this%Xt3 = this%Xt3
+        end if
+
+        ! Set number of geometry points
+        this%ng(1) = size(this%Xt1,1)
+        this%ng(2) = size(this%Xt2,1)
+        this%ng(3) = size(this%Xt3,1)
+
+        call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
+
+        allocate(dTgc(this%ng(1)*this%ng(2)*this%ng(3), this%nc(1)*this%nc(2)*this%nc(3)))
+
+        if (allocated(this%Wc)) then ! NURBS volume
+            do i = 1, size(Xt, 1)
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgc3 = basis_bspline_der(Xt(i,3), this%knot3, this%nc(3), this%order(3))
+                dTgci = kron(dTgc3, kron(dTgc2, dTgc1))
+                dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
+                dTgc(i,:) = dTgci
+            end do
+        else
+            do i = 1, size(Xt, 1)
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgc3 = basis_bspline_der(Xt(i,3), this%knot3, this%nc(3), this%order(3))
+                dTgci = kron(dTgc3, kron(dTgc2, dTgc1))
+                dTgc(i,:) = dTgci
+            end do
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis(this, res1, res2, res3, Xt1, Xt2, Xt3, Tgc)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in), optional :: res1, res2, res3
+        real(rk), intent(in), optional :: Xt1(:), Xt2(:), Xt3(:)
+        real(rk), allocatable, intent(out) :: Tgc(:,:)
+        real(rk), allocatable :: Tgci(:)
+        integer :: i
+        real(rk), dimension(:), allocatable :: Tgc1, Tgc2, Tgc3
+        real(rk), dimension(:,:), allocatable :: Xt
+
+        ! Set parameter values
+        if (present(Xt1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            this%Xt1 = Xt1
+        elseif (present(res1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            allocate(this%Xt1(res1))
+            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            ! else
+            ! this%Xt1 = this%Xt1
+        end if
+
+        ! Set parameter values
+        if (present(Xt2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            this%Xt2 = Xt2
+        elseif (present(res2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            allocate(this%Xt2(res2))
+            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            ! else
+            ! this%Xt2 = this%Xt2
+        end if
+
+        ! Set parameter values
+        if (present(Xt3)) then
+            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            this%Xt3 = Xt3
+        elseif (present(res3)) then
+            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            allocate(this%Xt3(res3))
+            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            ! else
+            ! this%Xt3 = this%Xt3
+        end if
+
+        ! Set number of geometry points
+        this%ng(1) = size(this%Xt1,1)
+        this%ng(2) = size(this%Xt2,1)
+        this%ng(3) = size(this%Xt3,1)
+
+        call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
+
+        allocate(Tgc(this%ng(1)*this%ng(2)*this%ng(3), this%nc(1)*this%nc(2)*this%nc(3)))
+
+        if (allocated(this%Wc)) then ! NURBS volume
+            do i = 1, size(Xt, 1)
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%order(3))
+                Tgci = kron(Tgc3, kron(Tgc2, Tgc1))
+                Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
+                Tgc(i,:) = Tgci
+            end do
+        else
+            do i = 1, size(Xt, 1)
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%order(3))
+                Tgci = kron(Tgc3, kron(Tgc2, Tgc1))
+                Tgc(i,:) = Tgci
+            end do
+        end if
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_volume
