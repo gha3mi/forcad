@@ -10,7 +10,7 @@
     <meta name="author" content="Seyed Ali Ghasemi" >
     <link rel="icon" href="../favicon.png">
 
-    <title>derivative &ndash; ForCAD</title>
+    <title>basis &ndash; ForCAD</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -65,7 +65,7 @@
 
     <div class="container">
   <div class="row">
-    <h1>derivative
+    <h1>basis
       <small>Subroutine</small>
       
     </h1>
@@ -78,21 +78,21 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 1.7% of total for procedures.">46 statements</a>
+                 title=" 2.2% of total for procedures.">57 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/forcad_nurbs_surface.f90"> Source File</a>
+              <a href="../src/forcad_nurbs_volume.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_surface.f90.html'>forcad_nurbs_surface.f90</a></li>
-                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_surface.html'>forcad_nurbs_surface</a></li>
-            <li class="breadcrumb-item active" aria-current="page">derivative</li>
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_volume.f90.html'>forcad_nurbs_volume.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li>
+            <li class="breadcrumb-item active" aria-current="page">basis</li>
           </ol>
         </nav>
       </div>
@@ -137,13 +137,13 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure subroutine derivative(this, res1, res2, Xt1, Xt2, dTgc)  
+    <h2>private pure subroutine basis(this, res1, res2, res3, Xt1, Xt2, Xt3, Tgc)  
 </h2>
     
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/nurbs_surface.html'>nurbs_surface</a></p>
+    <p><a href='../type/nurbs_volume.html'>nurbs_volume</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -158,8 +158,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-this~21"></span>
-              class(<a href='../type/nurbs_surface.html'>nurbs_surface</a>),
+              <span class="anchor" id="variable-this~117"></span>
+              class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -173,7 +173,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-res1~2"></span>
+              <span class="anchor" id="variable-res1~8"></span>
               integer,
             </td>
 <td>intent(in),</td>
@@ -188,7 +188,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-res2~2"></span>
+              <span class="anchor" id="variable-res2~8"></span>
               integer,
             </td>
 <td>intent(in),</td>
@@ -203,7 +203,22 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt1~3"></span>
+              <span class="anchor" id="variable-res3~4"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>res3</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt1~12"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -218,7 +233,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt2~3"></span>
+              <span class="anchor" id="variable-xt2~12"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -233,7 +248,22 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-dtgc"></span>
+              <span class="anchor" id="variable-xt3~6"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Xt3</strong>(:)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tgc~9"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -241,7 +271,7 @@
               allocatable
             </td>
             <td>::</td>
-            <td><strong>dTgc</strong>(:,:)</td>
+            <td><strong>Tgc</strong>(:,:)</td>
             <td>
                 
             </td>
@@ -260,107 +290,92 @@
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
-<!-- Title: proc~~derivative~~CallsGraph Pages: 1 -->
-<svg id="procderivativeCallsGraph" width="391pt" height="158pt"
- viewBox="0.00 0.00 391.00 158.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~derivative~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 154)">
-<title>proc~~derivative~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-154 387,-154 387,4 -4,4"/>
-<!-- proc~derivative -->
-<g id="proc~~derivative~~CallsGraph_node1" class="node">
-<title>proc~derivative</title>
-<polygon fill="none" stroke="black" points="151,-66 0,-66 0,-42 151,-42 151,-66"/>
-<text text-anchor="middle" x="75.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_surface%derivative</text>
+<!-- Title: proc~~basis~3~~CallsGraph Pages: 1 -->
+<svg id="procbasis3CallsGraph" width="341pt" height="137pt"
+ viewBox="0.00 0.00 341.00 137.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~basis~3~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 133)">
+<title>proc~~basis~3~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-133 337,-133 337,4 -4,4"/>
+<!-- proc~basis~3 -->
+<g id="proc~~basis~3~~CallsGraph_node1" class="node">
+<title>proc~basis~3</title>
+<polygon fill="none" stroke="black" points="124,-66 0,-66 0,-42 124,-42 124,-66"/>
+<text text-anchor="middle" x="62" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_volume%basis</text>
 </g>
 <!-- interface~ndgrid -->
-<g id="proc~~derivative~~CallsGraph_node2" class="node">
+<g id="proc~~basis~3~~CallsGraph_node2" class="node">
 <title>interface~ndgrid</title>
-<g id="a_proc~~derivative~~CallsGraph_node2"><a xlink:href="../interface/ndgrid.html" xlink:title="ndgrid">
-<polygon fill="#a7506f" stroke="#a7506f" points="267,-108 213,-108 213,-84 267,-84 267,-108"/>
-<text text-anchor="middle" x="240" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid</text>
+<g id="a_proc~~basis~3~~CallsGraph_node2"><a xlink:href="../interface/ndgrid.html" xlink:title="ndgrid">
+<polygon fill="#a7506f" stroke="#a7506f" points="228.5,-108 174.5,-108 174.5,-84 228.5,-84 228.5,-108"/>
+<text text-anchor="middle" x="201.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative&#45;&gt;interface~ndgrid -->
-<g id="proc~~derivative~~CallsGraph_edge1" class="edge">
-<title>proc~derivative&#45;&gt;interface~ndgrid</title>
-<path fill="none" stroke="#ff0000" d="M123.07,-66.04C148.39,-72.58 179.25,-80.56 202.76,-86.63"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="202.12,-90.08 212.68,-89.2 203.87,-83.31 202.12,-90.08"/>
+<!-- proc~basis~3&#45;&gt;interface~ndgrid -->
+<g id="proc~~basis~3~~CallsGraph_edge1" class="edge">
+<title>proc~basis~3&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#ff0000" d="M102.4,-66.04C121.91,-71.99 145.3,-79.14 164.34,-84.96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="163.56,-88.38 174.14,-87.95 165.6,-81.68 163.56,-88.38"/>
 </g>
-<!-- proc~basis_bspline_der -->
-<g id="proc~~derivative~~CallsGraph_node3" class="node">
-<title>proc~basis_bspline_der</title>
-<g id="a_proc~~derivative~~CallsGraph_node3"><a xlink:href="../proc/basis_bspline_der.html" xlink:title="basis_bspline_der">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="293,-66 187,-66 187,-42 293,-42 293,-66"/>
-<text text-anchor="middle" x="240" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der</text>
+<!-- proc~basis_bspline -->
+<g id="proc~~basis~3~~CallsGraph_node3" class="node">
+<title>proc~basis_bspline</title>
+<g id="a_proc~~basis~3~~CallsGraph_node3"><a xlink:href="../proc/basis_bspline.html" xlink:title="basis_bspline">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="243,-66 160,-66 160,-42 243,-42 243,-66"/>
+<text text-anchor="middle" x="201.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative&#45;&gt;proc~basis_bspline_der -->
-<g id="proc~~derivative~~CallsGraph_edge2" class="edge">
-<title>proc~derivative&#45;&gt;proc~basis_bspline_der</title>
-<path fill="none" stroke="#ff0000" d="M151.09,-54C159.63,-54 168.27,-54 176.63,-54"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="176.66,-57.5 186.66,-54 176.66,-50.5 176.66,-57.5"/>
+<!-- proc~basis~3&#45;&gt;proc~basis_bspline -->
+<g id="proc~~basis~3~~CallsGraph_edge2" class="edge">
+<title>proc~basis~3&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#ff0000" d="M124.11,-54C132.58,-54 141.21,-54 149.47,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="149.7,-57.5 159.7,-54 149.7,-50.5 149.7,-57.5"/>
 </g>
 <!-- proc~kron -->
-<g id="proc~~derivative~~CallsGraph_node4" class="node">
+<g id="proc~~basis~3~~CallsGraph_node4" class="node">
 <title>proc~kron</title>
-<g id="a_proc~~derivative~~CallsGraph_node4"><a xlink:href="../proc/kron.html" xlink:title="kron">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="267,-24 213,-24 213,0 267,0 267,-24"/>
-<text text-anchor="middle" x="240" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron</text>
+<g id="a_proc~~basis~3~~CallsGraph_node4"><a xlink:href="../proc/kron.html" xlink:title="kron">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="228.5,-24 174.5,-24 174.5,0 228.5,0 228.5,-24"/>
+<text text-anchor="middle" x="201.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron</text>
 </a>
 </g>
 </g>
-<!-- proc~derivative&#45;&gt;proc~kron -->
-<g id="proc~~derivative~~CallsGraph_edge3" class="edge">
-<title>proc~derivative&#45;&gt;proc~kron</title>
-<path fill="none" stroke="#ff0000" d="M123.07,-41.96C148.39,-35.42 179.25,-27.44 202.76,-21.37"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="203.87,-24.69 212.68,-18.8 202.12,-17.92 203.87,-24.69"/>
+<!-- proc~basis~3&#45;&gt;proc~kron -->
+<g id="proc~~basis~3~~CallsGraph_edge3" class="edge">
+<title>proc~basis~3&#45;&gt;proc~kron</title>
+<path fill="none" stroke="#ff0000" d="M102.4,-41.96C121.91,-36.01 145.3,-28.86 164.34,-23.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="165.6,-26.32 174.14,-20.05 163.56,-19.62 165.6,-26.32"/>
 </g>
 <!-- proc~ndgrid2 -->
-<g id="proc~~derivative~~CallsGraph_node6" class="node">
+<g id="proc~~basis~3~~CallsGraph_node5" class="node">
 <title>proc~ndgrid2</title>
-<g id="a_proc~~derivative~~CallsGraph_node6"><a xlink:href="../proc/ndgrid2.html" xlink:title="ndgrid2">
-<polygon fill="#d9534f" stroke="#d9534f" points="383,-150 329,-150 329,-126 383,-126 383,-150"/>
-<text text-anchor="middle" x="356" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid2</text>
+<g id="a_proc~~basis~3~~CallsGraph_node5"><a xlink:href="../proc/ndgrid2.html" xlink:title="ndgrid2">
+<polygon fill="#d9534f" stroke="#d9534f" points="333,-129 279,-129 279,-105 333,-105 333,-129"/>
+<text text-anchor="middle" x="306" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid2</text>
 </a>
 </g>
 </g>
 <!-- interface~ndgrid&#45;&gt;proc~ndgrid2 -->
-<g id="proc~~derivative~~CallsGraph_edge4" class="edge">
+<g id="proc~~basis~3~~CallsGraph_edge4" class="edge">
 <title>interface~ndgrid&#45;&gt;proc~ndgrid2</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M267.15,-105.64C282.65,-111.34 302.5,-118.66 319.41,-124.89"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="318.37,-128.24 328.97,-128.41 320.79,-121.67 318.37,-128.24"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M228.63,-101.35C240.92,-103.87 255.77,-106.91 269.09,-109.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="268.42,-113.08 278.92,-111.66 269.82,-106.22 268.42,-113.08"/>
 </g>
 <!-- proc~ndgrid3 -->
-<g id="proc~~derivative~~CallsGraph_node7" class="node">
+<g id="proc~~basis~3~~CallsGraph_node6" class="node">
 <title>proc~ndgrid3</title>
-<g id="a_proc~~derivative~~CallsGraph_node7"><a xlink:href="../proc/ndgrid3.html" xlink:title="ndgrid3">
-<polygon fill="#d9534f" stroke="#d9534f" points="383,-108 329,-108 329,-84 383,-84 383,-108"/>
-<text text-anchor="middle" x="356" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid3</text>
+<g id="a_proc~~basis~3~~CallsGraph_node6"><a xlink:href="../proc/ndgrid3.html" xlink:title="ndgrid3">
+<polygon fill="#d9534f" stroke="#d9534f" points="333,-87 279,-87 279,-63 333,-63 333,-87"/>
+<text text-anchor="middle" x="306" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid3</text>
 </a>
 </g>
 </g>
 <!-- interface~ndgrid&#45;&gt;proc~ndgrid3 -->
-<g id="proc~~derivative~~CallsGraph_edge5" class="edge">
+<g id="proc~~basis~3~~CallsGraph_edge5" class="edge">
 <title>interface~ndgrid&#45;&gt;proc~ndgrid3</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M267.15,-96C282.51,-96 302.13,-96 318.93,-96"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="318.97,-99.5 328.97,-96 318.97,-92.5 318.97,-99.5"/>
-</g>
-<!-- proc~isinf -->
-<g id="proc~~derivative~~CallsGraph_node5" class="node">
-<title>proc~isinf</title>
-<g id="a_proc~~derivative~~CallsGraph_node5"><a xlink:href="../proc/isinf.html" xlink:title="isinf">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="383,-66 329,-66 329,-42 383,-42 383,-66"/>
-<text text-anchor="middle" x="356" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">isinf</text>
-</a>
-</g>
-</g>
-<!-- proc~basis_bspline_der&#45;&gt;proc~isinf -->
-<g id="proc~~derivative~~CallsGraph_edge6" class="edge">
-<title>proc~basis_bspline_der&#45;&gt;proc~isinf</title>
-<path fill="none" stroke="#00ff00" d="M293.33,-54C301.88,-54 310.56,-54 318.62,-54"/>
-<polygon fill="#00ff00" stroke="#00ff00" points="318.77,-57.5 328.77,-54 318.77,-50.5 318.77,-57.5"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M228.63,-90.65C240.92,-88.13 255.77,-85.09 269.09,-82.36"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="269.82,-85.78 278.92,-80.34 268.42,-78.92 269.82,-85.78"/>
 </g>
 </g>
 </svg>

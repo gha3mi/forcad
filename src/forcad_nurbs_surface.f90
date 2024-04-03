@@ -1,6 +1,7 @@
 module forcad_nurbs_surface
 
-    use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector
+    use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
+                            basis_bspline_der
 
     implicit none
 
@@ -24,7 +25,7 @@ module forcad_nurbs_surface
     contains
         procedure :: set1                 !!> Set control points and weights
         procedure :: set2                 !!> Set control points and weights
-        generic :: set => set1, set2      
+        generic :: set => set1, set2
         procedure :: create               !!> Generate geometry points
         procedure :: get_Xc               !!> Get control points
         procedure :: get_Xg               !!> Get geometry points
@@ -43,6 +44,8 @@ module forcad_nurbs_surface
         procedure :: get_multiplicity     !!> Get multiplicity of the knot vector
         procedure :: get_continuity       !!> Get continuity of the surface
         procedure :: get_nc               !!> Get number of required control points
+        procedure :: derivative           !!> Compute the derivative of the NURBS surface
+        procedure :: basis                !!> Compute the basis functions of the NURBS surface
     end type
     !===============================================================================
 
@@ -576,6 +579,136 @@ contains
         end if
 
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine derivative(this, res1, res2, Xt1, Xt2, dTgc)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in), optional :: res1, res2
+        real(rk), intent(in), optional :: Xt1(:), Xt2(:)
+        real(rk), allocatable, intent(out) :: dTgc(:,:)
+        real(rk), allocatable :: dTgci(:)
+        integer :: i
+        real(rk), dimension(:), allocatable :: dTgc1, dTgc2
+        real(rk), dimension(:,:), allocatable :: Xt
+
+        ! Set parameter values
+        if (present(Xt1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            this%Xt1 = Xt1
+        elseif (present(res1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            allocate(this%Xt1(res1))
+            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            ! else
+            ! this%Xt1 = this%Xt1
+        end if
+
+        ! Set parameter values
+        if (present(Xt2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            this%Xt2 = Xt2
+        elseif (present(res2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            allocate(this%Xt2(res2))
+            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            ! else
+            ! this%Xt2 = this%Xt2
+        end if
+
+        ! Set number of geometry points
+        this%ng(1) = size(this%Xt1,1)
+        this%ng(2) = size(this%Xt2,1)
+
+        call ndgrid(this%Xt1, this%Xt2, Xt)
+
+        allocate(dTgc(this%ng(1)*this%ng(2), this%nc(1)*this%nc(2)))
+
+        if (allocated(this%Wc)) then ! NURBS surface
+            do i = 1, size(Xt, 1)
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgci = kron(dTgc2, dTgc1)
+                dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
+                dTgc(i,:) = dTgci
+            end do
+        else
+            do i = 1, size(Xt, 1)
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgci = kron(dTgc2, dTgc1)
+                dTgc(i,:) = dTgci
+            end do
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis(this, res1, res2, Xt1, Xt2, Tgc)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in), optional :: res1, res2
+        real(rk), intent(in), optional :: Xt1(:), Xt2(:)
+        real(rk), allocatable, intent(out) :: Tgc(:,:)
+        real(rk), allocatable :: Tgci(:)
+        integer :: i
+        real(rk), dimension(:), allocatable :: Tgc1, Tgc2
+        real(rk), dimension(:,:), allocatable :: Xt
+
+        ! Set parameter values
+        if (present(Xt1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            this%Xt1 = Xt1
+        elseif (present(res1)) then
+            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            allocate(this%Xt1(res1))
+            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            ! else
+            ! this%Xt1 = this%Xt1
+        end if
+
+        ! Set parameter values
+        if (present(Xt2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            this%Xt2 = Xt2
+        elseif (present(res2)) then
+            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            allocate(this%Xt2(res2))
+            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            ! else
+            ! this%Xt2 = this%Xt2
+        end if
+
+        ! Set number of geometry points
+        this%ng(1) = size(this%Xt1,1)
+        this%ng(2) = size(this%Xt2,1)
+
+        call ndgrid(this%Xt1, this%Xt2, Xt)
+
+        allocate(Tgc(this%ng(1)*this%ng(2), this%nc(1)*this%nc(2)))
+
+        if (allocated(this%Wc)) then ! NURBS surface
+            do i = 1, size(Xt, 1)
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgci = kron(Tgc2, Tgc1)
+                Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
+                Tgc(i,:) = Tgci
+            end do
+        else
+            do i = 1, size(Xt, 1)
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgci = kron(Tgc2, Tgc1)
+                Tgc(i,:) = Tgci
+            end do
+        end if
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_surface

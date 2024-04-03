@@ -856,13 +856,8 @@ contains
         integer, intent(in), optional :: res
         real(rk), intent(in), optional :: Xt(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
-        real(rk), allocatable :: dTgc_Xt(:)
+        real(rk), allocatable :: dTgci(:)
         integer :: i
-
-        ! check
-        if (.not.allocated(this%Xc)) then
-            error stop 'Control points are not set.'
-        end if
 
         ! Set parameter values
         if (present(Xt)) then
@@ -880,14 +875,14 @@ contains
 
         if (allocated(this%Wc)) then
             do i = 1, size(this%Xt, 1)
-                dTgc_Xt = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
-                dTgc_Xt = dTgc_Xt*(this%Wc/(dot_product(dTgc_Xt,this%Wc)))
-                dTgc(i,:) = dTgc_Xt
+                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
+                dTgc(i,:) = dTgci
             end do
         else
             do i = 1, size(this%Xt, 1)
-                dTgc_Xt = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
-                dTgc(i,:) = dTgc_Xt
+                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgc(i,:) = dTgci
             end do
         end if
     end subroutine
@@ -904,11 +899,6 @@ contains
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk), allocatable :: Tgci(:)
         integer :: i
-
-        ! check
-        if (.not.allocated(this%Xc)) then
-            error stop 'Control points are not set.'
-        end if
 
         ! Set parameter values
         if (present(Xt)) then
