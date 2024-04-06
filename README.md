@@ -60,8 +60,8 @@ ford ford.yml
 ## ToDo
 
 ### B-Splines and NURBS
-- [x] Add `insert_knot()` method for curves, surfaces and volumes.
-- [ ] Add `remove_knot()` method for curves, surfaces and volumes.
+- [x] Add `insert_knots()` method for curves, surfaces and volumes.
+- [ ] Add `remove_knots()` method for curves, surfaces and volumes.
 - [x] Add `elevate_degree()` method for curves.
 - [ ] Add `elevate_degree()` method for surfaces and volumes.
 - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
