@@ -21,6 +21,7 @@ program example_nurbs_surface
     !> Define weights for the control points
     allocate(Wc(size(Xc, 1)))
     Wc = 1.0_rk
+    Wc(2) = 5.0_rk
 
     !> Define knot vectors for both dimensions
     knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
@@ -41,6 +42,20 @@ program example_nurbs_surface
 
     !> Export the generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
+
+    !-----------------------------------------------------------------------------
+    ! Refinements
+    !-----------------------------------------------------------------------------
+
+    ! Insert knots 0.25, twice and 0.75, once
+    call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [2,1]) ! direction 1
+    call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [2,1]) ! direction 2
+
+    ! Export updated control points to a VTK file
+    call nurbs%export_Xc('vtk/nurbs_surface_Xc2.vtk')
+
+    ! Export the refined generated surface to a VTK file
+    call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
