@@ -24,6 +24,14 @@ module forcad_utils
     end interface
     !===============================================================================
 
+
+    !===============================================================================
+    interface compute_multiplicity
+        module procedure compute_multiplicity1
+        module procedure compute_multiplicity2
+    end interface
+    !===============================================================================
+
 contains
 
     !===============================================================================
@@ -69,7 +77,7 @@ contains
         real(rk), allocatable :: dB(:)
         real(rk), allocatable :: Nt(:,:), dNt_dXt(:,:)
         real(rk)              :: R, L, Rp, Lp, knot_i, knot_ip, knot_jk, knot_jkm, knot_end, a, b, c, d
-        integer               :: i, p, k, n, m, jk
+        integer               :: i, k, n, m, jk
 
         k = order + 1
         n = nc - 1
@@ -304,7 +312,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function compute_multiplicity(knot) result(multiplicity)
+    pure function compute_multiplicity1(knot) result(multiplicity)
         real(rk), intent(in) :: knot(:)
         integer, dimension(:), allocatable :: multiplicity
         integer :: i, count
@@ -325,6 +333,36 @@ contains
                 multiplicity(count) = 1
             else
                 multiplicity(count) = multiplicity(count) + 1
+            end if
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function compute_multiplicity2(knot, Xth) result(multiplicity)
+        real(rk), dimension(:), intent(in) :: knot
+        real(rk), intent(in) :: Xth
+        integer :: multiplicity
+        integer :: i, count, size_knot
+
+        size_knot = size(knot)
+        multiplicity = 0
+        i = 1
+        do while (i <= size_knot)
+            if (knot(i) == Xth) then
+                count = 1
+                do while (i + count <= size_knot .and. knot(i + count) == Xth)
+                    count = count + 1
+                end do
+                if (count > multiplicity) then
+                    multiplicity = count
+                end if
+                i = i + count
+            else
+                i = i + 1
             end if
         end do
     end function
