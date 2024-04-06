@@ -52,6 +52,11 @@ program example_nurbs_volume
     call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
     call nurbs%insert_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
 
+    ! Elevate degree by 2 in all three directions
+    call nurbs%elevate_degree(1, 2) ! direction 1
+    call nurbs%elevate_degree(2, 2) ! direction 2
+    call nurbs%elevate_degree(3, 2) ! direction 3
+
     ! Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc2.vtk')
 

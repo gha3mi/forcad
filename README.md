@@ -61,11 +61,10 @@ ford ford.yml
 
 ### B-Splines and NURBS
 - [x] Add `insert_knots()` method for curves, surfaces and volumes.
-- [ ] Add `remove_knots()` method for curves, surfaces and volumes.
-- [x] Add `elevate_degree()` method for curves.
-- [ ] Add `elevate_degree()` method for surfaces and volumes.
-- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
+- [x] Add `elevate_degree()` method for curves, surfaces and volumes.
 - [x] Add `derivative()` method for curves, surfaces and volumes.
+- [ ] Add `remove_knots()` method for curves, surfaces and volumes.
+- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
 - [ ] Add support for multiple patches.
 - [ ] Add extraction of piecewise Bezier objects from NURBS.
 
