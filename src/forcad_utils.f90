@@ -4,7 +4,7 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-              basis_bspline_der
+        basis_bspline_der, insert_knot_A_5_1, findspan
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -356,6 +356,77 @@ contains
         if (x >  huge(x)) output=.true.
         if (x < -huge(x)) output=.true.
     end function
-!===============================================================================
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw)
+        integer, intent(in) :: p, k, s, r
+        real(rk), intent(in) :: UP(0:), Pw(0:,:)
+        real(rk), intent(in) :: u
+        real(rk), allocatable, intent(out) :: UQ(:), Qw(:,:)
+        integer, intent(out) :: nq
+        integer :: i, j, L, mp, dim, np
+        real(rk), allocatable :: Rw(:,:)
+        real(rk) :: alpha
+
+        dim = size(Pw, 2)
+        np  = size(Pw, 1) - 1
+        mp  = np + p + 1
+        nq  = np + r
+
+        allocate(UQ(0:mp+r))
+        allocate(Qw(0:nq,1:dim))
+        allocate(Rw(0:p ,1:dim))
+
+        UQ(0:k) = UP(0:k)
+        UQ(k+1:k+r) = u
+        UQ(k+1+r:mp+r) = UP(k+1:mp)
+        Qw(0:k-p,:) = Pw(0:k-p,:)
+        Qw(k-s+r:np+r,:) = Pw(k-s:np,:)
+        Rw(0:p-s,:) = Pw(k-p:k-s,:)
+        do j = 1, r
+            L = k-p+j
+            do i = 0, p-j-s
+                alpha = (u - UP(L+i)) / (UP(i+k+1) - UP(L+i))
+                Rw(i,:) = alpha*Rw(i+1,:) + (1.0_rk - alpha) * Rw(i,:)
+            end do
+            Qw(L,:) = Rw(0,:)
+            Qw(k+r-j-s,:) = Rw(p-j-s,:)
+        end do
+        Qw(L+1:k-s-1,:) = Rw(1:k-s-1-L,:)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function findspan(n,order,Xth,knot) result(s)
+        integer, intent(in) :: n, order
+        real(rk), intent(in) :: Xth
+        real(rk), intent(in) :: knot(:)
+        integer :: s
+        integer :: low, high, mid
+        if (Xth == knot(n+2)) then
+            s = n
+            return
+        end if
+        low = order
+        high = n + 1
+        mid = (low + high) / 2
+        do while (Xth < knot(mid+1) .or. Xth >= knot(mid+2))
+            if (Xth < knot(mid+1)) then
+                high = mid
+            else
+                low = mid
+            end if
+            mid = (low + high) / 2
+        end do
+        s = mid
+    end function
+    !===============================================================================
 
 end module forcad_utils

@@ -1,6 +1,7 @@
 module forcad_nurbs_curve
 
-    use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der
+    use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
+    insert_knot_A_5_1, findspan
 
     implicit none
 
@@ -41,7 +42,7 @@ module forcad_nurbs_curve
         procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
-        procedure :: insert_knot         !!> Insert a new knot
+        procedure :: insert_knots         !!> Insert a new knot
         procedure :: elevate_degree      !!> Elevate the degree of the curve
         procedure :: derivative          !!> Compute the derivative of the NURBS curve
         procedure :: basis               !!> Compute the basis functions of the NURBS curve
@@ -60,6 +61,9 @@ contains
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
 
+        if (allocated(this%knot)) deallocate(this%knot)
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
         this%knot = knot
         this%order = this%get_order()
         this%Xc = Xc
@@ -68,6 +72,7 @@ contains
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
+                if (allocated(this%Wc)) deallocate(this%Wc)
                 this%Wc = Wc
             end if
         end if
@@ -485,127 +490,87 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine insert_knot(this, Xth)
+    pure subroutine insert_knots(this,Xth,r)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xth(:)
-        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
-        real(rk) :: alpha
-        integer :: dim, nc, nXth, nknot, a, b, r, l, i, j, m, n, s, q, ind
+        integer, intent(in) :: r(:)
+        integer :: k, i, s, dim, j, n_new
+        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
+        integer, allocatable :: mlp(:)
 
-        if (allocated(this%Wc)) then
-            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)+1))
-            do i = 1, size(this%Xc,2)
-                Xcw(:,i) = (this%Xc(:,i)*this%Wc)
-            end do
-            Xcw(:,size(this%Xc,2)+1) = this%Wc
-        else
-            allocate(Xcw(size(this%Xc,1),size(this%Xc,2)))
-            do i = 1, size(this%Xc,2)
-                Xcw(:,i) = (this%Xc(:,i))
-            end do
-        end if
-        nc = size(Xcw, 1)
-        dim = size(Xcw, 2)
-        nXth = size(Xth)
-        nknot = size(this%knot)
-        allocate(Xcw_new(nc+nXth, dim), source=0.0_rk)
-        allocate(knot_new(nknot+nXth), source=0.0_rk)
-        n = nc - 1
-        r = nXth - 1
-        m = n + this%order + 1
-        a = findspan(n, this%order, Xth(1), this%knot)
-        b = findspan(n, this%order, Xth(r+1), this%knot)
-        b = b + 1
-        do q = 0,dim-1
-            do j = 0,a-this%order
-                Xcw_new(j+1,q+1) = Xcw(j+1,q+1)
-            end do
-            do j = b-1,n
-                Xcw_new(j+r+2,q+1) = Xcw(j+1,q+1)
-            end do
-        end do
-        do j = 0,a
-            knot_new(j+1) = this%knot(j+1)
-        end do
-        do j = b+this%order,m
-            knot_new(j+r+2) = this%knot(j+1)
-        end do
-        i = b + this%order - 1
-        s = b + this%order + r
-        do j = r,0,-1
-            do while (Xth(j+1) <= this%knot(i+1) .and. i > a)
-                do q = 0,dim-1
-                    Xcw_new(s-this%order,q+1) = Xcw(i-this%order,q+1)
-                end do
-                knot_new(s+1) = this%knot(i+1)
-                s = s - 1
-                i = i - 1
-            end do
-            do q = 0,dim-1
-                Xcw_new(s-this%order,q+1) = Xcw_new(s-this%order+1,q+1)
-            end do
-            do l = 1,this%order
-                ind = s - this%order + l
-                alpha = knot_new(s+l+1) - Xth(j+1)
-                if (abs(alpha) == 0) then
-                    do q = 0,dim-1
-                        Xcw_new(ind,q+1) = Xcw_new(ind+1,q+1)
-                    end do
+        if (allocated(this%Wc)) then ! NURBS
+
+            do i = 1, size(Xth)
+                k = findspan(this%nc-1,this%order,Xth(i),this%knot)
+                if (this%knot(k) == Xth(i)) then
+                    mlp = compute_multiplicity(this%knot)
+                    s = mlp(k)
                 else
-                    alpha = alpha/(knot_new(s+l+1) - this%knot(i-this%order+l+1))
-                    do q = 0,dim-1
-                        Xcw_new(ind,q+1) = (1.0_rk-alpha)*Xcw_new(ind+1,q+1) + alpha*Xcw_new(ind,q+1)
-                    end do
+                    s = 0
                 end if
+
+                dim = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),dim+1))
+                do j = 1, size(this%Xc,1)
+                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,dim+1) = this%Wc(j)
+                end do
+
+                call insert_knot_A_5_1(&
+                    this%order,&
+                    this%knot,&
+                    Xcw,&
+                    Xth(i),&
+                    k,&
+                    s,&
+                    r(i),&
+                    n_new,&
+                    knot_new,&
+                    Xcw_new)
+
+                allocate(Xc_new(1:n_new+1,1:dim))
+                allocate(Wc_new(1:n_new+1))
+                do j = 1, n_new+1
+                    Xc_new(j,1:dim) = Xcw_new(j-1,1:dim)/Xcw_new(j-1,dim+1)
+                    Wc_new(j) = Xcw_new(j-1,dim+1)
+                end do
+
+                call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
+                deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
             end do
-            knot_new(s+1) = Xth(j+1)
-            s = s - 1
-        end do
-        if (allocated(this%Wc)) then
-            Xc_new = Xcw_new(:,1:size(this%Xc,2))
-            Wc_new = Xcw_new(:,size(this%Xc,2)+1)
-            do concurrent (i = 1: size(this%Xc, 2))
-                Xc_new(:,i) = Xc_new(:,i) / Wc_new(:)
+
+        else ! B-Spline
+
+            do i = 1, size(Xth)
+                k = findspan(this%nc-1,this%order,Xth(i),this%knot)
+                if (this%knot(k) == Xth(i)) then
+                    mlp = compute_multiplicity(this%knot)
+                    s = mlp(k)
+                else
+                    s = 0
+                end if
+
+                call insert_knot_A_5_1(&
+                    this%order,&
+                    this%knot,&
+                    this%Xc,&
+                    Xth(i),&
+                    k,&
+                    s,&
+                    r(i),&
+                    n_new,&
+                    knot_new,&
+                    Xc_new)
+
+                deallocate(this%Xc, this%knot)
+                call this%set(knot=knot_new, Xc=Xc_new)
             end do
-            deallocate(this%Xc, this%knot, this%Xg, this%Wc)
-            call this%set(knot = knot_new, Xc = Xc_new, Wc = Wc_new)
-            call this%create()
-        else
-            Xc_new = Xcw_new(1:size(this%Xc,2),:)
-            deallocate(this%Xc, this%knot, this%Xg)
-            call this%set(knot = knot_new, Xc = Xc_new)
-            call this%create()
+
         end if
+
+        call this%create()
+
     end subroutine
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    pure function findspan(n,order,Xth,knot) result(s)
-        integer, intent(in) :: n, order
-        real(rk), intent(in) :: Xth
-        real(rk), intent(in) :: knot(:)
-        integer :: s
-        integer :: low, high, mid
-        if (Xth == knot(n+2)) then
-            s = n
-            return
-        end if
-        low = order
-        high = n + 1
-        mid = (low + high) / 2
-        do while (Xth < knot(mid+1) .or. Xth >= knot(mid+2))
-            if (Xth < knot(mid+1)) then
-                high = mid
-            else
-                low = mid
-            end if
-            mid = (low + high) / 2
-        end do
-        s = mid
-    end function
     !===============================================================================
 
 
