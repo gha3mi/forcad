@@ -4,7 +4,7 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -426,6 +426,220 @@ contains
             mid = (low + high) / 2
         end do
         s = mid
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine elevate_degree_A(t, knot, order, Xcw, nc_new, knot_new, Xcw_new)
+        integer, intent(in) :: t
+        real(rk), intent(in) :: Xcw(:,:), knot(:)
+        integer, intent(in) :: order
+        integer, intent(out) :: nc_new
+        real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
+        real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
+        real(rk) :: inv, alpha1, alpha2, Xth1, Xth2, numer, den
+        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, ii, dim, nc
+        integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
+        integer, allocatable :: mlp(:)
+
+        nc = size(Xcw,1)
+        dim = size(Xcw,2)
+        mlp = compute_multiplicity(knot)
+        mlp = mlp + t
+        nc_new = sum(mlp) - (mlp(1)-1) - 1
+        allocate(Xcw_new(nc_new,dim), source=0.0_rk)
+        allocate(bezalfs(order+1,order+t+1), source=0.0_rk)
+        allocate(bpts(order+1,dim), source=0.0_rk)
+        allocate(ebpts(order+t+1,dim), source=0.0_rk)
+        allocate(Nextbpts(order+1,dim), source=0.0_rk)
+        allocate(alfs(order), source=0.0_rk)
+        n = nc - 1
+        m = n + order + 1
+        ph = order + t
+        ph2 = ph / 2
+        bezalfs(1,1) = 1.0_rk
+        bezalfs(order+1,ph+1) = 1.0_rk
+        do i = 1,ph2
+            inv = 1.0_rk/bincoeff(ph,i)
+            mpi = min(order,i)
+            do j = max(0,i-t),mpi
+                bezalfs(j+1,i+1) = inv*bincoeff(order,j)*bincoeff(t,i-j)
+            end do
+        end do
+        do i = ph2+1,ph-1
+            mpi = min(order,i)
+            do j = max(0,i-t),mpi
+                bezalfs(j+1,i+1) = bezalfs(order-j+1,ph-i+1)
+            end do
+        end do
+        mh = ph
+        knoti = ph+1
+        r = -1
+        a = order
+        b = order+1
+        Xcwi = 1
+        Xth1 = knot(1)
+        do ii =0,dim-1
+            Xcw_new(1,ii+1) = Xcw(1,ii+1)
+        end do
+        allocate(knot_new(sum(mlp)), source=0.0_rk)
+        do i = 0,ph
+            knot_new(i+1) = Xth1
+        end do
+        do i = 0,order
+            do ii = 0,dim-1
+                bpts(i+1,ii+1) = Xcw(i+1,ii+1)
+            end do
+        end do
+        do while (b<m)
+            i = b
+            do while (b<m .and. knot(b+1) == knot(b+2))
+                b = b + 1
+                if (b+2 > size(knot)) then
+                    exit
+                end if
+            end do
+            mul = b - i + 1
+            mh = mh + mul + t
+            Xth2 = knot(b+1)
+            oldr = r
+            r = order - mul
+            if (oldr > 0) then
+                lbz = (oldr+2)/2
+            else
+                lbz = 1
+            end if
+            if (r > 0) then
+                rbz = ph - (r+1)/2
+            else
+                rbz = ph
+            end if
+            if (r>0) then
+                numer = Xth2 - Xth1
+                do q = order,mul+1,-1
+                    alfs(q-mul) = numer / (knot(a+q+1)-Xth1)
+                end do
+                do j = 1,r
+                    sv = r - j
+                    s = mul + j
+                    do q = order,s,-1
+                        do ii = 0,dim-1
+                            bpts(q+1,ii+1) = (1.0_rk-alfs(q-s+1))*bpts(q,ii+1) + alfs(q-s+1)*bpts(q+1,ii+1)
+                        end do
+                    end do
+                    do ii = 0,dim-1
+                        Nextbpts(sv+1,ii+1) = bpts(order+1,ii+1)
+                    end do
+                end do
+            end if
+            do i = lbz,ph
+                do ii = 0,dim-1
+                    ebpts(i+1,ii+1) = 0.0_rk
+                end do
+                mpi = min(order,i)
+                do j = max(0,i-t),mpi
+                    do ii = 0,dim-1
+                        ebpts(i+1,ii+1) = bezalfs(j+1,i+1)*bpts(j+1,ii+1) + ebpts(i+1,ii+1)
+                    end do
+                end do
+            end do
+            if (oldr > 1) then
+                first = knoti - 2
+                last = knoti
+                den = Xth2 - Xth1
+                alpha3 = floor((Xth2-knot(knoti)) / den)
+                do tr = 1,oldr-1
+                    i = first
+                    j = last
+                    kj = j - knoti + 1
+                    do while (j-i > tr)
+                        if (i < Xcwi) then
+                            alpha1 = (Xth2-knot(i+1))/(Xth1-knot(i+1))
+                            do ii = 0,dim-1
+                                Xcw_new(i+1,ii+1) = (1-alpha1)*Xcw_new(i,ii+1) + alpha1*Xcw_new(i+1,ii+1)
+                            end do
+                        end if
+                        if (j >= lbz) then
+                            if (j-tr <= knoti-ph+oldr) then
+                                alpha2 = (Xth2-knot_new(j-tr+1)) / den
+                                do ii = 0,dim-1
+                                    ebpts(kj+1,ii+1) = alpha2*ebpts(kj+1,ii+1) + (1-alpha2)*ebpts(kj+2,ii+1)
+                                end do
+                            else
+                                do ii = 0,dim-1
+                                    ebpts(kj+1,ii+1) = (1-alpha3)*ebpts(ii+1,kj+2) + alpha3*ebpts(kj+1,ii+1)
+                                end do
+                            end if
+                        end if
+                        i = i + 1
+                        j = j - 1
+                        kj = kj - 1
+                    end do
+                    first = first - 1
+                    last = last + 1
+                end do
+            end if
+            if (a /= order) then
+                do i = 0,ph-oldr-1
+                    knot_new(knoti+1) = Xth1
+                    knoti = knoti + 1
+                end do
+            end if
+            do j = lbz,rbz
+                do ii = 0,dim-1
+                    Xcw_new(Xcwi+1,ii+1) = ebpts(j+1,ii+1)
+                end do
+                Xcwi = Xcwi + 1
+            end do
+            if (b<m) then
+                do j = 0,r-1
+                    do ii = 0,dim-1
+                        bpts(j+1,ii+1) = Nextbpts(j+1,ii+1)
+                    end do
+                end do
+                do j = r,order
+                    do ii = 0,dim-1
+                        bpts(j+1,ii+1) = Xcw(b-order+j+1,ii+1)
+                    end do
+                end do
+                a = b
+                b = b+1
+                Xth1 = Xth2
+            else
+                do i = 0,ph
+                    knot_new(knoti+i+1) = Xth2
+                end do
+            end if
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function bincoeff(n,k) result(b)
+        integer, intent(in) :: n, k
+        real(rk) :: b
+        b = floor(0.5_rk+exp(factln(n)-factln(k)-factln(n-k)))
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function factln(n) result(f)
+        integer, intent(in) :: n
+        real(rk) :: f
+        if (n <= 1) then
+            f = 0.0_rk
+            return
+        end if
+        f = log(gamma(real(n+1,rk)))
     end function
     !===============================================================================
 

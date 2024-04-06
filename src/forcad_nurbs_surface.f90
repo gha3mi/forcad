@@ -1,7 +1,7 @@
 module forcad_nurbs_surface
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A
 
     implicit none
 
@@ -47,6 +47,7 @@ module forcad_nurbs_surface
         procedure :: derivative           !!> Compute the derivative of the NURBS surface
         procedure :: basis                !!> Compute the basis functions of the NURBS surface
         procedure :: insert_knots         !!> Insert knots
+        procedure :: elevate_degree       !!> Elevate degree
     end type
     !===============================================================================
 
@@ -903,6 +904,124 @@ contains
                     call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
                 end do
 
+
+            end if
+
+            call this%create()
+
+        else
+            error stop 'Invalid direction.'
+        end if
+
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine elevate_degree(this, dir, t)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in) :: dir
+        integer, intent(in) :: t
+        real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
+        integer :: dim, j, nc_new
+        real(rk), allocatable:: Xc3(:,:,:)
+
+
+        if (dir == 1) then ! direction 1
+
+            if (allocated(this%Wc)) then ! NURBS
+
+                dim = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),dim+1))
+                do j = 1, size(this%Xc,1)
+                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,dim+1) = this%Wc(j)
+                end do
+                Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)])
+
+                call elevate_degree_A(t, this%knot1, this%order(1), Xcw, nc_new, knot_new, Xcw_new)
+
+                Xcw_new = reshape(Xcw_new,[this%nc(2)*nc_new,dim+1])
+
+                allocate(Xc_new(1:this%nc(2)*nc_new,1:dim))
+                allocate(Wc_new(1:this%nc(2)*nc_new))
+                do j = 1, this%nc(2)*nc_new
+                    Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                    Wc_new(j) = Xcw_new(j,dim+1)
+                end do
+
+                deallocate(this%Xc, this%knot1, this%Wc)
+                call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new, Wc=Wc_new)
+                deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+
+            else ! B-Spline
+
+                dim = size(this%Xc,2)
+                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim+1)])
+
+                call elevate_degree_A(t, this%knot1, this%order(1), Xc, nc_new, knot_new, Xc_new)
+
+                Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim+1])
+
+                deallocate(this%Xc, this%knot1)
+                call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new)
+                deallocate(Xc, Xc_new)
+
+            end if
+
+            call this%create()
+
+        elseif (dir == 2) then ! direction 2
+
+            if (allocated(this%Wc)) then ! NURBS
+
+                dim = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),dim+1))
+                do j = 1, size(this%Xc,1)
+                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,dim+1) = this%Wc(j)
+                end do
+
+                Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),dim+1])
+                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
+                Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
+
+                call elevate_degree_A(t, this%knot2, this%order(2), Xcw, nc_new, knot_new, Xcw_new)
+
+                Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),dim+1])
+                Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim+1], order=[2,1,3])
+                Xcw_new = reshape(Xc3,[(this%nc(1))*nc_new,dim+1])
+
+                allocate(Xc_new(1:nc_new*this%nc(1),1:dim))
+                allocate(Wc_new(1:nc_new*this%nc(1)))
+                do j = 1, nc_new*this%nc(1)
+                    Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                    Wc_new(j) = Xcw_new(j,dim+1)
+                end do
+
+
+                deallocate(this%Xc, this%knot2, this%Wc)
+                call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new, Wc=Wc_new)
+                deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+
+            else ! B-Spline
+
+                dim = size(this%Xc,2)
+
+                Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),dim])
+                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
+                Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
+
+                call elevate_degree_A(t, this%knot2, this%order(2), Xc, nc_new, knot_new, Xc_new)
+
+                Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
+                Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
+                Xc_new = reshape(Xc3,[(this%nc(1))*nc_new,dim])
+
+                deallocate(this%Xc, this%knot2)
+                call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
 
             end if
 
