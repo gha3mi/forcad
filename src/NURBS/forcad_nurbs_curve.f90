@@ -496,15 +496,13 @@ contains
         integer, intent(in) :: r(:)
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
-        integer, allocatable :: mlp(:)
 
         if (allocated(this%Wc)) then ! NURBS
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%order,Xth(i),this%knot)
-                if (this%knot(k) == Xth(i)) then
-                    mlp = compute_multiplicity(this%knot)
-                    s = mlp(k)
+                if (this%knot(k+1) == Xth(i)) then
+                    s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0
                 end if
@@ -543,9 +541,8 @@ contains
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%order,Xth(i),this%knot)
-                if (this%knot(k) == Xth(i)) then
-                    mlp = compute_multiplicity(this%knot)
-                    s = mlp(k)
+                if (this%knot(k+1) == Xth(i)) then
+                    s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0
                 end if

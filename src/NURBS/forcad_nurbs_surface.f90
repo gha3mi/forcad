@@ -722,9 +722,8 @@ contains
         integer, intent(in) :: dir
         real(rk), intent(in) :: Xth(:)
         integer, intent(in) :: r(:)
-        integer :: k, i, s, dim, j, n_new, jj
+        integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
-        integer, allocatable :: mlp(:)
         real(rk), allocatable:: Xc3(:,:,:)
 
 
@@ -734,9 +733,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%order(1),Xth(i),this%knot1)
-                    if (this%knot1(k) == Xth(i)) then
-                        mlp = compute_multiplicity(this%knot1)
-                        s = mlp(k)
+                    if (this%knot1(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
                     end if
@@ -780,9 +778,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%order(1),Xth(i),this%knot1)
-                    if (this%knot1(k) == Xth(i)) then
-                        mlp = compute_multiplicity(this%knot1)
-                        s = mlp(k)
+                    if (this%knot1(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
                     end if
@@ -820,9 +817,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%order(2),Xth(i),this%knot2)
-                    if (this%knot2(k) == Xth(i)) then
-                        mlp = compute_multiplicity(this%knot2)
-                        s = mlp(k)
+                    if (this%knot2(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0
                     end if
@@ -871,9 +867,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%order(2),Xth(i),this%knot2)
-                    if (this%knot2(k) == Xth(i)) then
-                        mlp = compute_multiplicity(this%knot2)
-                        s = mlp(k)
+                    if (this%knot2(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0
                     end if
