@@ -13,7 +13,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ## fpm dependency
 
-If you want to use `ForCAD` as a dependency in your own fpm project,
+If you want to use ForCAD as a dependency in your own fpm project,
 you can easily include it by adding the following line to your `fpm.toml` file:
 
 ```toml
@@ -27,7 +27,7 @@ To get started, follow these steps:
 
 **Clone the repository:**
 
-Clone the `ForCAD` repository from GitHub:
+Clone the ForCAD repository from GitHub:
 
 ```shell
 git clone https://github.com/gha3mi/forcad.git
@@ -46,7 +46,7 @@ Once the examples have been executed, `.vtk` files will be generated within the 
 
 The most up-to-date API documentation for the master branch is available
 [here](https://gha3mi.github.io/forcad/).
-To generate the API documentation for `ForCAD` using
+To generate the API documentation for ForCAD using
 [ford](https://github.com/Fortran-FOSS-Programmers/ford) run the following
 command:
 
@@ -75,8 +75,11 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
 
 ## Contributing
 
-Contributions to `ForCAD` are welcome!
-If you find any issues or would like to suggest improvements, please open an issue.
+Contributions to ForCAD are welcome!
+
+- If you find any issues or would like to suggest improvements, please open an issue.
+- If you've implemented new features, fixed bugs, or enhanced existing functionality, please consider submitting a pull request (PR).
+- Please share your examples by submitting a pull request (PR).
 
 ## References
 
