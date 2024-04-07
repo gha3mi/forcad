@@ -1,3 +1,6 @@
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+!> This module contains parameters, functions and subroutines that are used in the library.
 module forcad_utils
 
     implicit none
@@ -37,8 +40,8 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function basis_bspline(Xt, knot, nc, order) result(B)
-        integer, intent(in)   :: order
+    pure function basis_bspline(Xt, knot, nc, degree) result(B)
+        integer, intent(in)   :: degree
         real(rk), intent(in)  :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
@@ -48,9 +51,9 @@ contains
         real(rk), allocatable :: B(:)
 
         temp = abs(Xt - knot(size(knot)))
-        allocate(Nt(nc, 0:order), source=0.0_rk)
+        allocate(Nt(nc, 0:degree), source=0.0_rk)
 
-        do p = 0, order
+        do p = 0, degree
             do i = 1, nc
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
@@ -62,15 +65,15 @@ contains
                 if ( Xth_ip1 /= Xth_i1 ) Nt(i,p) = Nt(i,p) + (Xth_ip1 - Xt)/(Xth_ip1  - Xth_i1) * Nt(i+1,p-1)
             end do
         end do
-        B = Nt(:,order)
+        B = Nt(:,degree)
     end function
     !===============================================================================
 
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
-    pure function basis_bspline_der(Xt, knot, nc, order) result(dB)
-        integer, intent(in)   :: order
+    pure function basis_bspline_der(Xt, knot, nc, degree) result(dB)
+        integer, intent(in)   :: degree
         real(rk), intent(in)  :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
@@ -79,9 +82,9 @@ contains
         real(rk)              :: R, L, Rp, Lp, knot_i, knot_ip, knot_jk, knot_jkm, knot_end, a, b, c, d
         integer               :: i, k, n, m, jk
 
-        k = order + 1
+        k = degree + 1
         n = nc - 1
-        allocate(Nt(nc+order, order+1))
+        allocate(Nt(nc+degree, degree+1))
         Nt = 0.0_rk
         do i = 1, n+k
             knot_i   = knot(i)
@@ -93,7 +96,7 @@ contains
                 if ( Xt >= knot_i .and. Xt <= knot_ip ) Nt(i,1) = 1.0_rk
             end if
         end do
-        allocate(dNt_dXt(nc+order, order+1))
+        allocate(dNt_dXt(nc+degree, degree+1))
         dNt_dXt = 0.0_rk
         m = 0
         do jk = 2, k
@@ -131,20 +134,20 @@ contains
         real(rk), intent(in) :: Xt
         integer, intent(in) :: nc
         real(rk), allocatable :: B(:)
-        integer  :: p, order
+        integer  :: p, degree
 
-        order = nc - 1
+        degree = nc - 1
 
         allocate(B(nc), source=0.0_rk)
 
-        do concurrent (p = 0:order)
+        do concurrent (p = 0:degree)
             B(p+1) = gamma(real(nc, kind=rk))/(gamma(real(p+1, kind=rk))*gamma(real(nc-p, kind=rk)))
             if (Xt == 0.0_rk .and. p == 0) then
-                B(p+1) = B(p+1)*(1.0_rk-Xt)**(order-p)
-            else if (Xt == 0.0_rk .and. order-p == 0) then
+                B(p+1) = B(p+1)*(1.0_rk-Xt)**(degree-p)
+            else if (Xt == 0.0_rk .and. degree-p == 0) then
                 B(p+1) = B(p+1)*(Xt**p)
             else
-                B(p+1) = B(p+1)*(Xt**p)*(1.0_rk-Xt)**(order-p)
+                B(p+1) = B(p+1)*(Xt**p)*(1.0_rk-Xt)**(degree-p)
             end if
         end do
     end function
@@ -372,13 +375,13 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function compute_knot_vector(Xth_dir, order, continuity) result(knot)
+    pure function compute_knot_vector(Xth_dir, degree, continuity) result(knot)
         real(rk), intent(in) :: Xth_dir(:)
-        integer, intent(in) :: order
+        integer, intent(in) :: degree
         integer, intent(in) :: continuity(:)
         real(rk), allocatable :: knot(:)
 
-        knot = repelem(Xth_dir, (order - continuity))
+        knot = repelem(Xth_dir, (degree - continuity))
     end function
     !===============================================================================
 
@@ -455,8 +458,8 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function findspan(n,order,Xth,knot) result(s)
-        integer, intent(in) :: n, order
+    pure function findspan(n,degree,Xth,knot) result(s)
+        integer, intent(in) :: n, degree
         real(rk), intent(in) :: Xth
         real(rk), intent(in) :: knot(:)
         integer :: s
@@ -465,7 +468,7 @@ contains
             s = n
             return
         end if
-        low = order
+        low = degree
         high = n + 1
         mid = (low + high) / 2
         do while (Xth < knot(mid+1) .or. Xth >= knot(mid+2))
@@ -484,10 +487,10 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine elevate_degree_A(t, knot, order, Xcw, nc_new, knot_new, Xcw_new)
+    pure subroutine elevate_degree_A(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new)
         integer, intent(in) :: t
         real(rk), intent(in) :: Xcw(:,:), knot(:)
-        integer, intent(in) :: order
+        integer, intent(in) :: degree
         integer, intent(out) :: nc_new
         real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
@@ -502,35 +505,35 @@ contains
         mlp = mlp + t
         nc_new = sum(mlp) - (mlp(1)-1) - 1
         allocate(Xcw_new(nc_new,dim), source=0.0_rk)
-        allocate(bezalfs(order+1,order+t+1), source=0.0_rk)
-        allocate(bpts(order+1,dim), source=0.0_rk)
-        allocate(ebpts(order+t+1,dim), source=0.0_rk)
-        allocate(Nextbpts(order+1,dim), source=0.0_rk)
-        allocate(alfs(order), source=0.0_rk)
+        allocate(bezalfs(degree+1,degree+t+1), source=0.0_rk)
+        allocate(bpts(degree+1,dim), source=0.0_rk)
+        allocate(ebpts(degree+t+1,dim), source=0.0_rk)
+        allocate(Nextbpts(degree+1,dim), source=0.0_rk)
+        allocate(alfs(degree), source=0.0_rk)
         n = nc - 1
-        m = n + order + 1
-        ph = order + t
+        m = n + degree + 1
+        ph = degree + t
         ph2 = ph / 2
         bezalfs(1,1) = 1.0_rk
-        bezalfs(order+1,ph+1) = 1.0_rk
+        bezalfs(degree+1,ph+1) = 1.0_rk
         do i = 1,ph2
             inv = 1.0_rk/bincoeff(ph,i)
-            mpi = min(order,i)
+            mpi = min(degree,i)
             do j = max(0,i-t),mpi
-                bezalfs(j+1,i+1) = inv*bincoeff(order,j)*bincoeff(t,i-j)
+                bezalfs(j+1,i+1) = inv*bincoeff(degree,j)*bincoeff(t,i-j)
             end do
         end do
         do i = ph2+1,ph-1
-            mpi = min(order,i)
+            mpi = min(degree,i)
             do j = max(0,i-t),mpi
-                bezalfs(j+1,i+1) = bezalfs(order-j+1,ph-i+1)
+                bezalfs(j+1,i+1) = bezalfs(degree-j+1,ph-i+1)
             end do
         end do
         mh = ph
         knoti = ph+1
         r = -1
-        a = order
-        b = order+1
+        a = degree
+        b = degree+1
         Xcwi = 1
         Xth1 = knot(1)
         do ii =0,dim-1
@@ -540,7 +543,7 @@ contains
         do i = 0,ph
             knot_new(i+1) = Xth1
         end do
-        do i = 0,order
+        do i = 0,degree
             do ii = 0,dim-1
                 bpts(i+1,ii+1) = Xcw(i+1,ii+1)
             end do
@@ -557,7 +560,7 @@ contains
             mh = mh + mul + t
             Xth2 = knot(b+1)
             oldr = r
-            r = order - mul
+            r = degree - mul
             if (oldr > 0) then
                 lbz = (oldr+2)/2
             else
@@ -570,19 +573,19 @@ contains
             end if
             if (r>0) then
                 numer = Xth2 - Xth1
-                do q = order,mul+1,-1
+                do q = degree,mul+1,-1
                     alfs(q-mul) = numer / (knot(a+q+1)-Xth1)
                 end do
                 do j = 1,r
                     sv = r - j
                     s = mul + j
-                    do q = order,s,-1
+                    do q = degree,s,-1
                         do ii = 0,dim-1
                             bpts(q+1,ii+1) = (1.0_rk-alfs(q-s+1))*bpts(q,ii+1) + alfs(q-s+1)*bpts(q+1,ii+1)
                         end do
                     end do
                     do ii = 0,dim-1
-                        Nextbpts(sv+1,ii+1) = bpts(order+1,ii+1)
+                        Nextbpts(sv+1,ii+1) = bpts(degree+1,ii+1)
                     end do
                 end do
             end if
@@ -590,7 +593,7 @@ contains
                 do ii = 0,dim-1
                     ebpts(i+1,ii+1) = 0.0_rk
                 end do
-                mpi = min(order,i)
+                mpi = min(degree,i)
                 do j = max(0,i-t),mpi
                     do ii = 0,dim-1
                         ebpts(i+1,ii+1) = bezalfs(j+1,i+1)*bpts(j+1,ii+1) + ebpts(i+1,ii+1)
@@ -633,7 +636,7 @@ contains
                     last = last + 1
                 end do
             end if
-            if (a /= order) then
+            if (a /= degree) then
                 do i = 0,ph-oldr-1
                     knot_new(knoti+1) = Xth1
                     knoti = knoti + 1
@@ -651,9 +654,9 @@ contains
                         bpts(j+1,ii+1) = Nextbpts(j+1,ii+1)
                     end do
                 end do
-                do j = r,order
+                do j = r,degree
                     do ii = 0,dim-1
-                        bpts(j+1,ii+1) = Xcw(b-order+j+1,ii+1)
+                        bpts(j+1,ii+1) = Xcw(b-degree+j+1,ii+1)
                     end do
                 end do
                 a = b

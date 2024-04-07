@@ -73,6 +73,7 @@
     <div class="row align-items-center justify-content-between" id="info-bar">
       <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-author"><i class="fa fa-pencil"></i> Seyed Ali Ghasemi</li>
             <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
@@ -142,11 +143,11 @@
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_xg~3">get_Xg</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_xt~3">get_Xt</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_continuity~3">get_continuity</a>
+            <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_degree~2">get_degree</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_knot~3">get_knot</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_multiplicity~3">get_multiplicity</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_nc~3">get_nc</a>
             <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_ng~3">get_ng</a>
-            <a class="list-group-item" href="../module/forcad_nurbs_volume.html#proc-get_order~3">get_order</a>
         </div>
       </div>
     </div>
@@ -191,7 +192,7 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      
+      <p>This module defines the 'nurbs_volume' type for representing a Non-Uniform Rational B-Spline (NURBS) volume.</p>
 <br>          <div class="card mb-4">
       <h3 class="card-header card-title bg-light">Uses</h3>
       <div class="card-body">
@@ -553,7 +554,7 @@ large graphs.</div>
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~16"></span>
+              <span class="anchor" id="variable-wc~15"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -565,12 +566,12 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>weights</p>
+<p>Weights for the control points (1D array: [nc(1)<em>nc(2)</em>nc(3)])</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~18"></span>
+              <span class="anchor" id="variable-xc~17"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -582,7 +583,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>control points</p>
+<p>Control points (2D array: [nc(1)<em>nc(2)</em>nc(3), dim])</p>
             </td>
         </tr>
         <tr>
@@ -599,7 +600,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>geometry points</p>
+<p>Geometry points (2D array: [ng(1)<em>ng(2)</em>ng(3), dim])</p>
             </td>
         </tr>
         <tr>
@@ -616,7 +617,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>parameter values in the first direction</p>
+<p>Evaluation parameter values in the first direction (1D array: [ng(1)])</p>
             </td>
         </tr>
         <tr>
@@ -633,7 +634,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>parameter values in the second direction</p>
+<p>Evaluation parameter values in the second direction (1D array: [ng(2)])</p>
             </td>
         </tr>
         <tr>
@@ -650,7 +651,24 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>parameter values in the third direction</p>
+<p>Evaluation parameter values in the third direction (1D array: [ng(3)])</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~13"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Degree (order) of the volume</p>
             </td>
         </tr>
         <tr>
@@ -667,7 +685,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>knot vector</p>
+<p>Knot vector in the first direction (1D array)</p>
             </td>
         </tr>
         <tr>
@@ -684,12 +702,12 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>knot vector</p>
+<p>Knot vector in the second direction (1D array)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot3"></span>
+              <span class="anchor" id="variable-knot3~2"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -701,7 +719,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>knot vector</p>
+<p>Knot vector in the third direction (1D array)</p>
             </td>
         </tr>
         <tr>
@@ -718,7 +736,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>number of control points in each direction</p>
+<p>Number of control points in each direction</p>
             </td>
         </tr>
         <tr>
@@ -735,24 +753,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>number of geometry points in each direction</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-order~13"></span>
-              integer,
-            </td>
-              <td>private</td>
-            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>order</strong>(3)</td>
-                <td></td>
-                <td></td>
-            <td>
-<p>degree of the first direction</p>
+<p>Number of geometry points in each direction</p>
             </td>
         </tr>
     </tbody>
@@ -826,6 +827,11 @@ large graphs.</div>
               </tr>
               <tr>
                 <td>  procedure, public ::
+  <strong><a href='../type/nurbs_volume.html#boundprocedure-get_degree~2'>get_degree</a></strong></td>
+                <td><p>Get degree of the NURBS volume</p><a href="../type/nurbs_volume.html#boundprocedure-get_degree~2" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+              </tr>
+              <tr>
+                <td>  procedure, public ::
   <strong><a href='../type/nurbs_volume.html#boundprocedure-get_elem_xc~3'>get_elem_Xc</a></strong></td>
                 <td><p>Generate connectivity for control points</p><a href="../type/nurbs_volume.html#boundprocedure-get_elem_xc~3" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
@@ -856,11 +862,6 @@ large graphs.</div>
               </tr>
               <tr>
                 <td>  procedure, public ::
-  <strong><a href='../type/nurbs_volume.html#boundprocedure-get_order~3'>get_order</a></strong></td>
-                <td><p>Get order of the NURBS volume</p><a href="../type/nurbs_volume.html#boundprocedure-get_order~3" class="pull-right"><emph>Read more&hellip;</emph></a></td>
-              </tr>
-              <tr>
-                <td>  procedure, public ::
   <strong><a href='../type/nurbs_volume.html#boundprocedure-insert_knots~3'>insert_knots</a></strong></td>
                 <td><p>Insert knots into the knot vector</p><a href="../type/nurbs_volume.html#boundprocedure-insert_knots~3" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
@@ -887,7 +888,7 @@ large graphs.</div>
               <tr>
                 <td>  procedure, public ::
   <strong><a href='../type/nurbs_volume.html#boundprocedure-set2~3'>set2</a></strong></td>
-                <td><p>Set NURBS volume using nodes of parameter space, order, continuity, control points and weights</p><a href="../type/nurbs_volume.html#boundprocedure-set2~3" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+                <td><p>Set NURBS volume using nodes of parameter space, degree, continuity, control points and weights</p><a href="../type/nurbs_volume.html#boundprocedure-set2~3" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
               <tr>
                 <td>  procedure, public ::
@@ -1180,6 +1181,55 @@ large graphs.</div>
   </div>
 
               <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_degree~2"></span> <h3>private pure function <a href='../proc/get_degree~2.html'>get_degree</a>(this) result(degree)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~60"></span>
+              class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer, (3)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-get_knot~3"></span> <h3>private pure function <a href='../proc/get_knot~3.html'>get_knot</a>(this, dir) result(knot)  
 </h3></div>
     <div class="card-body">
@@ -1396,55 +1446,6 @@ large graphs.</div>
         <tr>
             <td>
               <span class="anchor" id="variable-this~59"></span>
-              class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>this</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>integer, (3)</small>
-    </h4>
-    
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-get_order~3"></span> <h3>private pure function <a href='../proc/get_order~3.html'>get_order</a>(this) result(order)  
-</h3></div>
-    <div class="card-body">
-              <dl class="dl-horizontal">
-        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
-        <dt>License</dt><dd>BSD 3-Clause</dd>
-    </dl>
-
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-this~60"></span>
               class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
             </td>
 <td>intent(in)</td>
@@ -2611,7 +2612,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot3~2"></span>
+              <span class="anchor" id="variable-knot3~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2626,7 +2627,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~19"></span>
+              <span class="anchor" id="variable-xc~18"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2641,7 +2642,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~17"></span>
+              <span class="anchor" id="variable-wc~16"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2662,7 +2663,7 @@ large graphs.</div>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-set2~3"></span> <h3>private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, order, continuity1, continuity2, continuity3, Xc, Wc)  
+    <div class="card-header codesum"><span class="anchor" id="proc-set2~3"></span> <h3>private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, degree, continuity1, continuity2, continuity3, Xc, Wc)  
 </h3></div>
     <div class="card-body">
               <dl class="dl-horizontal">
@@ -2745,7 +2746,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-order~14"></span>
+              <span class="anchor" id="variable-degree~14"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2753,7 +2754,7 @@ large graphs.</div>
               
             </td>
             <td>::</td>
-            <td><strong>order</strong>(:)</td>
+            <td><strong>degree</strong>(:)</td>
             <td>
 
             </td>
@@ -2805,7 +2806,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~20"></span>
+              <span class="anchor" id="variable-xc~19"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2820,7 +2821,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~18"></span>
+              <span class="anchor" id="variable-wc~17"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2894,7 +2895,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~21"></span>
+              <span class="anchor" id="variable-xc~20"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2909,7 +2910,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~19"></span>
+              <span class="anchor" id="variable-wc~18"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2952,7 +2953,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-07T09:32:03.173140             </p>
+ on 2024-04-07T10:12:46.294530             </p>
           </div>
         </div>
         <br>

@@ -1,3 +1,5 @@
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
 module forcad
 
     use forcad_utils

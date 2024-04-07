@@ -118,14 +118,14 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-wc~8">Wc</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-xc~10">Xc</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-wc~10">Wc</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-xc~12">Xc</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#variable-xg~3">Xg</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-xt~5">Xt</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-knot~2">knot</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-nc~5">nc</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-xt~10">Xt</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-degree~10">degree</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-knot~10">knot</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#variable-nc~9">nc</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#variable-ng~4">ng</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#variable-order~4">order</a>
         </div>
       </div>
     </div>
@@ -170,7 +170,7 @@
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-get_multiplicity~2">get_multiplicity</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-get_nc~2">get_nc</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-get_ng~2">get_ng</a>
-            <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-get_order~2">get_order</a>
+            <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-get_order">get_order</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-insert_knots~2">insert_knots</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-modify_wc~2">modify_Wc</a>
             <a class="list-group-item" href="../type/nurbs_curve.html#boundprocedure-modify_xc~2">modify_Xc</a>
@@ -210,7 +210,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~8"></span>
+              <span class="anchor" id="variable-wc~10"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -222,12 +222,12 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>weights</p>
+                <p>Weights for control points (1D array: [nc])</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~10"></span>
+              <span class="anchor" id="variable-xc~12"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -239,7 +239,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>control points</p>
+                <p>Control points (2D array: [nc, dim])</p>
             </td>
         </tr>
         <tr>
@@ -256,12 +256,12 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>geometry points</p>
+                <p>Geometry points (2D array: [ng, dim])</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~5"></span>
+              <span class="anchor" id="variable-xt~10"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -273,12 +273,29 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>evaluation points</p>
+                <p>Evaluation points (1D array: [ng])</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~2"></span>
+              <span class="anchor" id="variable-degree~10"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Degree (order) of the curve</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knot~10"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -290,12 +307,12 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>knot vector</p>
+                <p>Knot vector (1D array)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~5"></span>
+              <span class="anchor" id="variable-nc~9"></span>
               integer,
             </td>
               <td>private</td>
@@ -307,7 +324,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>number of control points</p>
+                <p>Number of control points</p>
             </td>
         </tr>
         <tr>
@@ -324,24 +341,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>number of geometry points</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-order~4"></span>
-              integer,
-            </td>
-              <td>private</td>
-            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>order</strong></td>
-                <td></td>
-                <td></td>
-            <td>
-                <p>order of the curve</p>
+                <p>Number of geometry points</p>
             </td>
         </tr>
     </tbody>
@@ -1779,7 +1779,7 @@
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-get_order~2"></span>
+      <span class="anchor" id="boundprocedure-get_order"></span>
       <h3>
           procedure, public ::
   <strong>get_order</strong>
@@ -1789,13 +1789,13 @@
       <div class="card-body">
         
         <blockquote>
-<p>Get order of the NURBS curve</p>
+<p>Get degree of the NURBS curve</p>
 </blockquote>
       </div>
     <ul class="list-group">
         <li class="list-group-item">
                   <h3>
-    private pure function <a href='../proc/get_order~2.html'>get_order</a>(this) result(order)  
+    private pure function <a href='../proc/get_order.html'>get_order</a>(this) result(degree)  
 </h3>
         <dl class="dl-horizontal">
         <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
@@ -2249,7 +2249,7 @@
         </li>
         <li class="list-group-item">
                   <h3>
-    private pure subroutine <a href='../proc/set2~2.html'>set2</a>(this, Xth_dir, order, continuity, Xc, Wc)  
+    private pure subroutine <a href='../proc/set2~2.html'>set2</a>(this, Xth_dir, degree, continuity, Xc, Wc)  
 </h3>
         <dl class="dl-horizontal">
         <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
@@ -2257,7 +2257,7 @@
     </dl>
 
 
-  <p>Set NURBS curve using nodes of parameter space (Xth), order, continuity, control points and weights.</p>
+  <p>Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -2310,7 +2310,7 @@
               
             </td>
             <td>::</td>
-            <td><strong>order</strong></td>
+            <td><strong>degree</strong></td>
             <td>
 
             </td>
@@ -2564,13 +2564,13 @@
       <div class="card-body">
         
         <blockquote>
-<p>Set NURBS curve using nodes of parameter space, order, continuity, control points and weights</p>
+<p>Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights</p>
 </blockquote>
       </div>
     <ul class="list-group">
         <li class="list-group-item">
                   <h3>
-    private pure subroutine <a href='../proc/set2~2.html'>set2</a>(this, Xth_dir, order, continuity, Xc, Wc)  
+    private pure subroutine <a href='../proc/set2~2.html'>set2</a>(this, Xth_dir, degree, continuity, Xc, Wc)  
 </h3>
         <dl class="dl-horizontal">
         <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
@@ -2578,7 +2578,7 @@
     </dl>
 
 
-  <p>Set NURBS curve using nodes of parameter space (Xth), order, continuity, control points and weights.</p>
+  <p>Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -2631,7 +2631,7 @@
               
             </td>
             <td>::</td>
-            <td><strong>order</strong></td>
+            <td><strong>degree</strong></td>
             <td>
 
             </td>
@@ -2805,7 +2805,7 @@
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-07T09:32:03.173140             </p>
+ on 2024-04-07T10:12:46.294530             </p>
           </div>
         </div>
         <br>

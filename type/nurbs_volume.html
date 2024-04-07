@@ -118,18 +118,18 @@
       </a>
       <div id="vars-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../type/nurbs_volume.html#variable-wc~16">Wc</a>
-            <a class="list-group-item" href="../type/nurbs_volume.html#variable-xc~18">Xc</a>
+            <a class="list-group-item" href="../type/nurbs_volume.html#variable-wc~15">Wc</a>
+            <a class="list-group-item" href="../type/nurbs_volume.html#variable-xc~17">Xc</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-xg~5">Xg</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-xt1~5">Xt1</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-xt2~5">Xt2</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-xt3">Xt3</a>
+            <a class="list-group-item" href="../type/nurbs_volume.html#variable-degree~13">degree</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-knot1~4">knot1</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-knot2~4">knot2</a>
-            <a class="list-group-item" href="../type/nurbs_volume.html#variable-knot3">knot3</a>
+            <a class="list-group-item" href="../type/nurbs_volume.html#variable-knot3~2">knot3</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-nc~12">nc</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#variable-ng~7">ng</a>
-            <a class="list-group-item" href="../type/nurbs_volume.html#variable-order~13">order</a>
         </div>
       </div>
     </div>
@@ -168,13 +168,13 @@
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_xg~3">get_Xg</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_xt~3">get_Xt</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_continuity~3">get_continuity</a>
+            <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_degree~2">get_degree</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_elem_xc~3">get_elem_Xc</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_elem_xg~3">get_elem_Xg</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_knot~3">get_knot</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_multiplicity~3">get_multiplicity</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_nc~3">get_nc</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_ng~3">get_ng</a>
-            <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-get_order~3">get_order</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-insert_knots~3">insert_knots</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-modify_wc~3">modify_Wc</a>
             <a class="list-group-item" href="../type/nurbs_volume.html#boundprocedure-modify_xc~3">modify_Xc</a>
@@ -214,7 +214,7 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~16"></span>
+              <span class="anchor" id="variable-wc~15"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -226,12 +226,12 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>weights</p>
+                <p>Weights for the control points (1D array: [nc(1)<em>nc(2)</em>nc(3)])</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xc~18"></span>
+              <span class="anchor" id="variable-xc~17"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -243,7 +243,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>control points</p>
+                <p>Control points (2D array: [nc(1)<em>nc(2)</em>nc(3), dim])</p>
             </td>
         </tr>
         <tr>
@@ -260,7 +260,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>geometry points</p>
+                <p>Geometry points (2D array: [ng(1)<em>ng(2)</em>ng(3), dim])</p>
             </td>
         </tr>
         <tr>
@@ -277,7 +277,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>parameter values in the first direction</p>
+                <p>Evaluation parameter values in the first direction (1D array: [ng(1)])</p>
             </td>
         </tr>
         <tr>
@@ -294,7 +294,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>parameter values in the second direction</p>
+                <p>Evaluation parameter values in the second direction (1D array: [ng(2)])</p>
             </td>
         </tr>
         <tr>
@@ -311,7 +311,24 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>parameter values in the third direction</p>
+                <p>Evaluation parameter values in the third direction (1D array: [ng(3)])</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~13"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Degree (order) of the volume</p>
             </td>
         </tr>
         <tr>
@@ -328,7 +345,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>knot vector</p>
+                <p>Knot vector in the first direction (1D array)</p>
             </td>
         </tr>
         <tr>
@@ -345,12 +362,12 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>knot vector</p>
+                <p>Knot vector in the second direction (1D array)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot3"></span>
+              <span class="anchor" id="variable-knot3~2"></span>
               real(kind=rk),
             </td>
               <td>private,</td>
@@ -362,7 +379,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>knot vector</p>
+                <p>Knot vector in the third direction (1D array)</p>
             </td>
         </tr>
         <tr>
@@ -379,7 +396,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>number of control points in each direction</p>
+                <p>Number of control points in each direction</p>
             </td>
         </tr>
         <tr>
@@ -396,24 +413,7 @@
                 <td></td>
                 <td></td>
             <td>
-                <p>number of geometry points in each direction</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-order~13"></span>
-              integer,
-            </td>
-              <td>private</td>
-            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>order</strong>(3)</td>
-                <td></td>
-                <td></td>
-            <td>
-                <p>degree of the first direction</p>
+                <p>Number of geometry points in each direction</p>
             </td>
         </tr>
     </tbody>
@@ -1612,6 +1612,75 @@
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
+      <span class="anchor" id="boundprocedure-get_degree~2"></span>
+      <h3>
+          procedure, public ::
+  <strong>get_degree</strong>
+        
+      </h3>
+    </div>
+      <div class="card-body">
+        
+        <blockquote>
+<p>Get degree of the NURBS volume</p>
+</blockquote>
+      </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+                  <h3>
+    private pure function <a href='../proc/get_degree~2.html'>get_degree</a>(this) result(degree)  
+</h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" ></span>
+              class(<a href='nurbs_volume.html'>nurbs_volume</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer, (3)</small>
+    </h4>
+    
+
+        </li>
+    </ul>
+  </div>
+
+          </div>
+          <div class="row">
+              <div class="card mt-3">
+    <div class="card-header codesum">
       <span class="anchor" id="boundprocedure-get_elem_xc~3"></span>
       <h3>
           procedure, public ::
@@ -2121,75 +2190,6 @@
           <div class="row">
               <div class="card mt-3">
     <div class="card-header codesum">
-      <span class="anchor" id="boundprocedure-get_order~3"></span>
-      <h3>
-          procedure, public ::
-  <strong>get_order</strong>
-        
-      </h3>
-    </div>
-      <div class="card-body">
-        
-        <blockquote>
-<p>Get order of the NURBS volume</p>
-</blockquote>
-      </div>
-    <ul class="list-group">
-        <li class="list-group-item">
-                  <h3>
-    private pure function <a href='../proc/get_order~3.html'>get_order</a>(this) result(order)  
-</h3>
-        <dl class="dl-horizontal">
-        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
-        <dt>License</dt><dd>BSD 3-Clause</dd>
-    </dl>
-
-
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" ></span>
-              class(<a href='nurbs_volume.html'>nurbs_volume</a>),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>this</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>integer, (3)</small>
-    </h4>
-    
-
-        </li>
-    </ul>
-  </div>
-
-          </div>
-          <div class="row">
-              <div class="card mt-3">
-    <div class="card-header codesum">
       <span class="anchor" id="boundprocedure-insert_knots~3"></span>
       <h3>
           procedure, public ::
@@ -2636,7 +2636,7 @@
         </li>
         <li class="list-group-item">
                   <h3>
-    private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, order, continuity1, continuity2, continuity3, Xc, Wc)  
+    private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, degree, continuity1, continuity2, continuity3, Xc, Wc)  
 </h3>
         <dl class="dl-horizontal">
         <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
@@ -2727,7 +2727,7 @@
               
             </td>
             <td>::</td>
-            <td><strong>order</strong>(:)</td>
+            <td><strong>degree</strong>(:)</td>
             <td>
 
             </td>
@@ -3056,13 +3056,13 @@
       <div class="card-body">
         
         <blockquote>
-<p>Set NURBS volume using nodes of parameter space, order, continuity, control points and weights</p>
+<p>Set NURBS volume using nodes of parameter space, degree, continuity, control points and weights</p>
 </blockquote>
       </div>
     <ul class="list-group">
         <li class="list-group-item">
                   <h3>
-    private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, order, continuity1, continuity2, continuity3, Xc, Wc)  
+    private pure subroutine <a href='../proc/set2~3.html'>set2</a>(this, Xth_dir1, Xth_dir2, Xth_dir3, degree, continuity1, continuity2, continuity3, Xc, Wc)  
 </h3>
         <dl class="dl-horizontal">
         <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
@@ -3153,7 +3153,7 @@
               
             </td>
             <td>::</td>
-            <td><strong>order</strong>(:)</td>
+            <td><strong>degree</strong>(:)</td>
             <td>
 
             </td>
@@ -3372,7 +3372,7 @@
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-07T09:32:03.173140             </p>
+ on 2024-04-07T10:12:46.294530             </p>
           </div>
         </div>
         <br>

@@ -1,3 +1,6 @@
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+!> This module defines the 'nurbs_curve' type for representing a Non-Uniform Rational B-Spline (NURBS) curve.
 module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
@@ -12,17 +15,17 @@ module forcad_nurbs_curve
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     type nurbs_curve
-        real(rk), allocatable, private :: Xc(:,:) !! control points
-        real(rk), allocatable, private :: Xg(:,:) !! geometry points
-        real(rk), allocatable, private :: Wc(:)   !! weights
-        real(rk), allocatable, private :: Xt(:)   !! evaluation points
-        real(rk), allocatable, private :: knot(:) !! knot vector
-        integer, private :: order                 !! order of the curve
-        integer, private :: nc                    !! number of control points
-        integer, private :: ng                    !! number of geometry points
+        real(rk), allocatable, private :: Xc(:,:) !! Control points (2D array: [nc, dim])
+        real(rk), allocatable, private :: Xg(:,:) !! Geometry points (2D array: [ng, dim])
+        real(rk), allocatable, private :: Wc(:)   !! Weights for control points (1D array: [nc])
+        real(rk), allocatable, private :: Xt(:)   !! Evaluation points (1D array: [ng])
+        real(rk), allocatable, private :: knot(:) !! Knot vector (1D array)
+        integer, private :: degree                !! Degree (order) of the curve
+        integer, private :: nc                    !! Number of control points
+        integer, private :: ng                    !! Number of geometry points
     contains
         procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
-        procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, order, continuity, control points and weights
+        procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
         procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
         generic :: set => set1, set2, set3 !!> Set NURBS curve
         procedure :: create                !!> Generate geometry points
@@ -32,7 +35,7 @@ module forcad_nurbs_curve
         procedure :: get_Xt                !!> Get parameter values
         procedure :: get_knot              !!> Get knot vector
         procedure :: get_ng                !!> Get number of geometry points
-        procedure :: get_order             !!> Get order of the NURBS curve
+        procedure :: get_order             !!> Get degree of the NURBS curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: get_elem_Xc           !!> Generate connectivity for control points
         procedure :: get_elem_Xg           !!> Generate connectivity for geometry points
@@ -66,7 +69,7 @@ contains
         if (allocated(this%Xc)) deallocate(this%Xc)
 
         this%knot = knot
-        this%order = this%get_order()
+        this%degree = this%get_order()
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
@@ -84,17 +87,17 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set NURBS curve using nodes of parameter space (Xth), order, continuity, control points and weights.
-    pure subroutine set2(this, Xth_dir, order, continuity, Xc, Wc)
+    !> Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.
+    pure subroutine set2(this, Xth_dir, degree, continuity, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xth_dir(:)
-        integer, intent(in) :: order
+        integer, intent(in) :: degree
         integer, intent(in) :: continuity(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
 
-        this%knot = compute_knot_vector(Xth_dir, order, continuity)
-        this%order = order
+        this%knot = compute_knot_vector(Xth_dir, degree, continuity)
+        this%degree = degree
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
@@ -127,7 +130,7 @@ contains
         this%knot(1:this%nc) = 0.0_rk
         this%knot(this%nc+1:2*this%nc) = 1.0_rk
 
-        this%order = this%get_order()
+        this%degree = this%get_order()
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
@@ -176,7 +179,7 @@ contains
 
         if (allocated(this%Wc)) then
             do i = 1, size(this%Xt, 1)
-                Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
                 do j = 1, size(this%Xc, 2)
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
@@ -184,7 +187,7 @@ contains
             end do
         else
             do i = 1, size(this%Xt, 1)
-                Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 do j = 1, size(this%Xc, 2)
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
                 end do
@@ -273,14 +276,14 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_order(this) result(order)
+    pure function get_order(this) result(degree)
         class(nurbs_curve), intent(in) :: this
-        integer :: order
+        integer :: degree
         integer, allocatable :: m(:)
 
         m = this%get_multiplicity()
 
-        order = m(1) - 1
+        degree = m(1) - 1
     end function
     !===============================================================================
 
@@ -502,7 +505,7 @@ contains
         if (.not.allocated(this%knot)) then
             error stop 'Knot vector is not set.'
         else
-            c = this%order - compute_multiplicity(this%knot)
+            c = this%degree - compute_multiplicity(this%knot)
         end if
     end function
     !===============================================================================
@@ -515,7 +518,7 @@ contains
         class(nurbs_curve), intent(in) :: this
         integer :: nc
 
-        nc = sum(compute_multiplicity(this%knot)) - this%order - 1
+        nc = sum(compute_multiplicity(this%knot)) - this%degree - 1
     end function
     !===============================================================================
 
@@ -533,7 +536,7 @@ contains
         if (allocated(this%Wc)) then ! NURBS
 
             do i = 1, size(Xth)
-                k = findspan(this%nc-1,this%order,Xth(i),this%knot)
+                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
                 if (this%knot(k+1) == Xth(i)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
@@ -548,7 +551,7 @@ contains
                 end do
 
                 call insert_knot_A_5_1(&
-                    this%order,&
+                    this%degree,&
                     this%knot,&
                     Xcw,&
                     Xth(i),&
@@ -573,7 +576,7 @@ contains
         else ! B-Spline
 
             do i = 1, size(Xth)
-                k = findspan(this%nc-1,this%order,Xth(i),this%knot)
+                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
                 if (this%knot(k+1) == Xth(i)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
@@ -581,7 +584,7 @@ contains
                 end if
 
                 call insert_knot_A_5_1(&
-                    this%order,&
+                    this%degree,&
                     this%knot,&
                     this%Xc,&
                     Xth(i),&
@@ -622,7 +625,7 @@ contains
                 Xcw(j,dim+1) = this%Wc(j)
             end do
 
-            call elevate_degree_A(t, this%knot, this%order, Xcw, nc_new, knot_new, Xcw_new)
+            call elevate_degree_A(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new)
 
             allocate(Xc_new(1:nc_new,1:dim))
             allocate(Wc_new(1:nc_new))
@@ -638,7 +641,7 @@ contains
 
             dim = size(this%Xc,2)
 
-            call elevate_degree_A(t, this%knot, this%order, this%Xc, nc_new, knot_new, Xc_new)
+            call elevate_degree_A(t, this%knot, this%degree, this%Xc, nc_new, knot_new, Xc_new)
 
             call this%set(knot=knot_new, Xc=Xc_new)
             deallocate(Xc_new)
@@ -678,13 +681,13 @@ contains
 
         if (allocated(this%Wc)) then
             do i = 1, size(this%Xt, 1)
-                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%degree)
                 dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
                 dTgc(i,:) = dTgci
             end do
         else
             do i = 1, size(this%Xt, 1)
-                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%order)
+                dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%degree)
                 dTgc(i,:) = dTgci
             end do
         end if
@@ -719,13 +722,13 @@ contains
 
         if (allocated(this%Wc)) then
             do i = 1, size(this%Xt, 1)
-                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
                 Tgc(i,:) = Tgci
             end do
         else
             do i = 1, size(this%Xt, 1)
-                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%order)
+                Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgc(i,:) = Tgci
             end do
         end if

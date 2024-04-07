@@ -73,6 +73,7 @@
     <div class="row align-items-center justify-content-between" id="info-bar">
       <div class="col">
         <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-author"><i class="fa fa-pencil"></i> Seyed Ali Ghasemi</li>
             <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
@@ -142,11 +143,11 @@
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_xg">get_Xg</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_xt">get_Xt</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_continuity">get_continuity</a>
+            <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_degree">get_degree</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_knot">get_knot</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_multiplicity">get_multiplicity</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_nc">get_nc</a>
             <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_ng">get_ng</a>
-            <a class="list-group-item" href="../module/forcad_nurbs_surface.html#proc-get_order">get_order</a>
         </div>
       </div>
     </div>
@@ -191,7 +192,7 @@
     </div>
 
     <div class="col-md-9" id='text'>
-      
+      <p>This module defines the 'nurbs_surface' type for representing a Non-Uniform Rational B-Spline (NURBS) surface.</p>
 <br>          <div class="card mb-4">
       <h3 class="card-header card-title bg-light">Uses</h3>
       <div class="card-body">
@@ -565,7 +566,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>weights</p>
+<p>Weights for control points (1D array: [nc(1)*nc(2)])</p>
             </td>
         </tr>
         <tr>
@@ -582,7 +583,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>control points</p>
+<p>Control points (2D array: [nc(1)*nc(2), dim])</p>
             </td>
         </tr>
         <tr>
@@ -599,7 +600,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>geometry points</p>
+<p>Geometry points (2D array: [ng(1)*ng(2), dim])</p>
             </td>
         </tr>
         <tr>
@@ -616,7 +617,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>parameter values in the first direction</p>
+<p>Evaluation parameter values in the first direction (1D array: [ng(1)])</p>
             </td>
         </tr>
         <tr>
@@ -633,7 +634,24 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>parameter values in the second direction</p>
+<p>Evaluation parameter values in the second direction (1D array: [ng(2)])</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~7"></span>
+              integer,
+            </td>
+              <td>private</td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong>(2)</td>
+                <td></td>
+                <td></td>
+            <td>
+<p>Degree (order) of the surface</p>
             </td>
         </tr>
         <tr>
@@ -650,7 +668,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>knot vector</p>
+<p>Knot vector in the first direction (1D array)</p>
             </td>
         </tr>
         <tr>
@@ -667,12 +685,12 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>knot vector</p>
+<p>Knot vector in the second direction (1D array)</p>
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc"></span>
+              <span class="anchor" id="variable-nc~5"></span>
               integer,
             </td>
               <td>private</td>
@@ -684,7 +702,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>number of control points in each direction</p>
+<p>Number of control points in each direction</p>
             </td>
         </tr>
         <tr>
@@ -701,24 +719,7 @@ large graphs.</div>
                 <td></td>
                 <td></td>
             <td>
-<p>number of geometry points in each direction</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-order"></span>
-              integer,
-            </td>
-              <td>private</td>
-            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>order</strong>(2)</td>
-                <td></td>
-                <td></td>
-            <td>
-<p>degree of each direction</p>
+<p>Number of geometry points in each direction</p>
             </td>
         </tr>
     </tbody>
@@ -792,6 +793,11 @@ large graphs.</div>
               </tr>
               <tr>
                 <td>  procedure, public ::
+  <strong><a href='../type/nurbs_surface.html#boundprocedure-get_degree'>get_degree</a></strong></td>
+                <td><p>Get degree of the NURBS surface</p><a href="../type/nurbs_surface.html#boundprocedure-get_degree" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+              </tr>
+              <tr>
+                <td>  procedure, public ::
   <strong><a href='../type/nurbs_surface.html#boundprocedure-get_elem_xc'>get_elem_Xc</a></strong></td>
                 <td><p>Generate connectivity for control points</p><a href="../type/nurbs_surface.html#boundprocedure-get_elem_xc" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
@@ -822,11 +828,6 @@ large graphs.</div>
               </tr>
               <tr>
                 <td>  procedure, public ::
-  <strong><a href='../type/nurbs_surface.html#boundprocedure-get_order'>get_order</a></strong></td>
-                <td><p>Get order of the NURBS surface</p><a href="../type/nurbs_surface.html#boundprocedure-get_order" class="pull-right"><emph>Read more&hellip;</emph></a></td>
-              </tr>
-              <tr>
-                <td>  procedure, public ::
   <strong><a href='../type/nurbs_surface.html#boundprocedure-insert_knots'>insert_knots</a></strong></td>
                 <td><p>Insert knots into the knot vector</p><a href="../type/nurbs_surface.html#boundprocedure-insert_knots" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
@@ -853,7 +854,7 @@ large graphs.</div>
               <tr>
                 <td>  procedure, public ::
   <strong><a href='../type/nurbs_surface.html#boundprocedure-set2'>set2</a></strong></td>
-                <td><p>Set NURBS surface using nodes of parameter space, order, continuity, control points and weights</p><a href="../type/nurbs_surface.html#boundprocedure-set2" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+                <td><p>Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights</p><a href="../type/nurbs_surface.html#boundprocedure-set2" class="pull-right"><emph>Read more&hellip;</emph></a></td>
               </tr>
               <tr>
                 <td>  procedure, public ::
@@ -1146,6 +1147,55 @@ large graphs.</div>
   </div>
 
               <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-get_degree"></span> <h3>private pure function <a href='../proc/get_degree.html'>get_degree</a>(this) result(degree)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~10"></span>
+              class(<a href='../type/nurbs_surface.html'>nurbs_surface</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer, (2)</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
     <div class="card-header codesum"><span class="anchor" id="proc-get_knot"></span> <h3>private pure function <a href='../proc/get_knot.html'>get_knot</a>(this, dir) result(knot)  
 </h3></div>
     <div class="card-body">
@@ -1362,55 +1412,6 @@ large graphs.</div>
         <tr>
             <td>
               <span class="anchor" id="variable-this~9"></span>
-              class(<a href='../type/nurbs_surface.html'>nurbs_surface</a>),
-            </td>
-<td>intent(in)</td>
-              <td></td>            <td>
-              
-            </td>
-            <td>::</td>
-            <td><strong>this</strong></td>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
-  </table>
-
-    <h4>
-    Return Value
-    <small>integer, (2)</small>
-    </h4>
-    
-
-    </div>
-  </div>
-
-              <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-get_order"></span> <h3>private pure function <a href='../proc/get_order.html'>get_order</a>(this) result(order)  
-</h3></div>
-    <div class="card-body">
-              <dl class="dl-horizontal">
-        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
-        <dt>License</dt><dd>BSD 3-Clause</dd>
-    </dl>
-
-  
-
-  <h4>Arguments</h4>
-      <table class="table table-striped varlist">
-    <thead>
-      <tr>
-        <th scope="col">Type</th>
-<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
-        <th scope="col"></th>
-        <th scope="col">Name</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-this~10"></span>
               class(<a href='../type/nurbs_surface.html'>nurbs_surface</a>),
             </td>
 <td>intent(in)</td>
@@ -1836,7 +1837,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-t"></span>
+              <span class="anchor" id="variable-t~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2057,7 +2058,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-elemconn"></span>
+              <span class="anchor" id="variable-elemconn~4"></span>
               integer,
             </td>
 <td>intent(out),</td>
@@ -2072,7 +2073,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-p"></span>
+              <span class="anchor" id="variable-p~5"></span>
               integer,
             </td>
 <td>intent(in),</td>
@@ -2131,7 +2132,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-elemconn~2"></span>
+              <span class="anchor" id="variable-elemconn~5"></span>
               integer,
             </td>
 <td>intent(out),</td>
@@ -2146,7 +2147,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-p~2"></span>
+              <span class="anchor" id="variable-p~6"></span>
               integer,
             </td>
 <td>intent(in),</td>
@@ -2220,7 +2221,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth"></span>
+              <span class="anchor" id="variable-xth~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2235,7 +2236,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r"></span>
+              <span class="anchor" id="variable-r~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2523,7 +2524,7 @@ large graphs.</div>
   </div>
 
               <div class="card">
-    <div class="card-header codesum"><span class="anchor" id="proc-set2"></span> <h3>private pure subroutine <a href='../proc/set2.html'>set2</a>(this, Xth_dir1, Xth_dir2, order, continuity1, continuity2, Xc, Wc)  
+    <div class="card-header codesum"><span class="anchor" id="proc-set2"></span> <h3>private pure subroutine <a href='../proc/set2.html'>set2</a>(this, Xth_dir1, Xth_dir2, degree, continuity1, continuity2, Xc, Wc)  
 </h3></div>
     <div class="card-body">
               <dl class="dl-horizontal">
@@ -2531,7 +2532,7 @@ large graphs.</div>
         <dt>License</dt><dd>BSD 3-Clause</dd>
     </dl>
 
-  <p>Set NURBS surface using nodes of parameter space, order, continuity, control points and weights</p>
+  <p>Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights</p>
 
   <h4>Arguments</h4>
       <table class="table table-striped varlist">
@@ -2591,7 +2592,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-order~2"></span>
+              <span class="anchor" id="variable-degree~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2599,7 +2600,7 @@ large graphs.</div>
               
             </td>
             <td>::</td>
-            <td><strong>order</strong>(:)</td>
+            <td><strong>degree</strong>(:)</td>
             <td>
 
             </td>
@@ -2710,7 +2711,7 @@ large graphs.</div>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~2"></span>
+              <span class="anchor" id="variable-nc~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2783,7 +2784,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-07T09:32:03.173140             </p>
+ on 2024-04-07T10:12:46.294530             </p>
           </div>
         </div>
         <br>
