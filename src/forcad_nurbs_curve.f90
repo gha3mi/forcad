@@ -50,6 +50,7 @@ module forcad_nurbs_curve
         procedure :: elevate_degree        !!> Elevate the degree of the curve
         procedure :: derivative            !!> Compute the derivative of the NURBS curve
         procedure :: basis                 !!> Compute the basis functions of the NURBS curve
+        procedure :: is_rational           !!> Check if the NURBS curve is rational
     end type
     !===============================================================================
 
@@ -177,7 +178,7 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
         allocate(this%Xg(this%ng, size(this%Xc,2)))
 
-        if (allocated(this%Wc)) then
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(this%Xt, 1)
                 Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
@@ -185,7 +186,7 @@ contains
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
                 end do
             end do
-        else
+        else ! B-Spline
             do i = 1, size(this%Xt, 1)
                 Tgc = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 do j = 1, size(this%Xc, 2)
@@ -533,7 +534,7 @@ contains
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
-        if (allocated(this%Wc)) then ! NURBS
+        if (this%is_rational()) then ! NURBS
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
@@ -616,7 +617,7 @@ contains
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
         integer :: dim, j, nc_new
 
-        if (allocated(this%Wc)) then ! NURBS
+        if (this%is_rational()) then ! NURBS
 
             dim = size(this%Xc,2)
             allocate(Xcw(size(this%Xc,1),dim+1))
@@ -679,13 +680,13 @@ contains
 
         allocate(dTgc(size(this%Xt, 1), this%nc))
 
-        if (allocated(this%Wc)) then
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(this%Xt, 1)
                 dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%degree)
                 dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
                 dTgc(i,:) = dTgci
             end do
-        else
+        else ! B-Spline
             do i = 1, size(this%Xt, 1)
                 dTgci = basis_bspline_der(this%Xt(i), this%knot, this%nc, this%degree)
                 dTgc(i,:) = dTgci
@@ -720,13 +721,13 @@ contains
 
         allocate(Tgc(size(this%Xt, 1), this%nc))
 
-        if (allocated(this%Wc)) then
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(this%Xt, 1)
                 Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
                 Tgc(i,:) = Tgci
             end do
-        else
+        else ! B-Spline
             do i = 1, size(this%Xt, 1)
                 Tgci = basis_bspline(this%Xt(i), this%knot, this%nc, this%degree)
                 Tgc(i,:) = Tgci
@@ -734,5 +735,23 @@ contains
         end if
     end subroutine
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function is_rational(this) result(r)
+        class(nurbs_curve), intent(in) :: this
+        logical :: r
+
+        r = .false.
+        if (allocated(this%Wc)) then
+            if (any(this%Wc /= this%Wc(1))) then
+                r = .true.
+            end if
+        end if
+    end function
+    !===============================================================================
+
 
 end module forcad_nurbs_curve
