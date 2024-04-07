@@ -1,3 +1,6 @@
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+!> This module defines the 'nurbs_surface' type for representing a Non-Uniform Rational B-Spline (NURBS) surface.
 module forcad_nurbs_surface
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
@@ -12,19 +15,19 @@ module forcad_nurbs_surface
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     type nurbs_surface
-        real(rk), allocatable, private :: Xc(:,:)  !! control points
-        real(rk), allocatable, private :: Xg(:,:)  !! geometry points
-        real(rk), allocatable, private :: Wc(:)    !! weights
-        real(rk), allocatable, private :: Xt1(:)   !! parameter values in the first direction
-        real(rk), allocatable, private :: Xt2(:)   !! parameter values in the second direction
-        real(rk), allocatable, private :: knot1(:) !! knot vector
-        real(rk), allocatable, private :: knot2(:) !! knot vector
-        integer, private :: order(2)               !! degree of each direction
-        integer, private :: nc(2)                  !! number of control points in each direction
-        integer, private :: ng(2)                  !! number of geometry points in each direction
+        real(rk), allocatable, private :: Xc(:,:)  !! Control points (2D array: [nc(1)*nc(2), dim])
+        real(rk), allocatable, private :: Xg(:,:)  !! Geometry points (2D array: [ng(1)*ng(2), dim])
+        real(rk), allocatable, private :: Wc(:)    !! Weights for control points (1D array: [nc(1)*nc(2)])
+        real(rk), allocatable, private :: Xt1(:)   !! Evaluation parameter values in the first direction (1D array: [ng(1)])
+        real(rk), allocatable, private :: Xt2(:)   !! Evaluation parameter values in the second direction (1D array: [ng(2)])
+        real(rk), allocatable, private :: knot1(:) !! Knot vector in the first direction (1D array)
+        real(rk), allocatable, private :: knot2(:) !! Knot vector in the second direction (1D array)
+        integer, private :: degree(2)              !! Degree (order) of the surface
+        integer, private :: nc(2)                  !! Number of control points in each direction
+        integer, private :: ng(2)                  !! Number of geometry points in each direction
     contains
         procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS surface object
-        procedure :: set2                   !!> Set NURBS surface using nodes of parameter space, order, continuity, control points and weights
+        procedure :: set2                   !!> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
         procedure :: set3                   !!> Set Bezier or Rational Bezier surface using control points and weights
         generic :: set => set1, set2, set3  !!> Set NURBS surface
         procedure :: create                 !!> Generate geometry points
@@ -34,7 +37,7 @@ module forcad_nurbs_surface
         procedure :: get_Xt                 !!> Get parameter values
         procedure :: get_knot               !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
-        procedure :: get_order              !!> Get order of the NURBS surface
+        procedure :: get_degree             !!> Get degree of the NURBS surface
         procedure :: finalize               !!> Finalize the NURBS surface object
         procedure :: get_elem_Xc            !!> Generate connectivity for control points
         procedure :: get_elem_Xg            !!> Generate connectivity for geometry points
@@ -67,7 +70,7 @@ contains
 
         this%knot1 = knot1
         this%knot2 = knot2
-        this%order = this%get_order()
+        this%degree = this%get_degree()
         this%nc(1) = this%get_nc(1)
         this%nc(2) = this%get_nc(2)
         this%Xc = Xc
@@ -79,19 +82,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set NURBS surface using nodes of parameter space, order, continuity, control points and weights
-    pure subroutine set2(this, Xth_dir1, Xth_dir2, order, continuity1, continuity2, Xc, Wc)
+    !> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
+    pure subroutine set2(this, Xth_dir1, Xth_dir2, degree, continuity1, continuity2, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: Xth_dir1(:), Xth_dir2(:)
-        integer, intent(in) :: order(:)
+        integer, intent(in) :: degree(:)
         integer, intent(in) :: continuity1(:), continuity2(:)
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
 
-        this%knot1 = compute_knot_vector(Xth_dir1, order(1), continuity1)
-        this%knot2 = compute_knot_vector(Xth_dir2, order(2), continuity2)
-        this%order(1) = order(1)
-        this%order(2) = order(2)
+        this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
+        this%knot2 = compute_knot_vector(Xth_dir2, degree(2), continuity2)
+        this%degree(1) = degree(1)
+        this%degree(2) = degree(2)
         this%nc(1) = this%get_nc(1)
         this%nc(2) = this%get_nc(2)
         this%Xc = Xc
@@ -123,7 +126,7 @@ contains
         this%knot2(1:this%nc(2)) = 0.0_rk
         this%knot2(this%nc(2)+1:2*this%nc(2)) = 1.0_rk
 
-        this%order = this%get_order()
+        this%degree = this%get_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)) then
                 error stop 'Number of weights does not match the number of control points.'
@@ -189,8 +192,8 @@ contains
 
         if (allocated(this%Wc)) then ! NURBS surface
             do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgc = kron(Tgc2, Tgc1)
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
                 do j = 1, size(this%Xc, 2)
@@ -199,8 +202,8 @@ contains
             end do
         else
             do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgc = kron(Tgc2, Tgc1)
                 do j = 1, size(this%Xc, 2)
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
@@ -302,16 +305,16 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_order(this) result(order)
+    pure function get_degree(this) result(degree)
         class(nurbs_surface), intent(in) :: this
-        integer :: order(2)
+        integer :: degree(2)
         integer, allocatable :: m1(:), m2(:)
 
         m1 = this%get_multiplicity(1)
         m2 = this%get_multiplicity(2)
 
-        order(1) = m1(1) - 1
-        order(2) = m2(1) - 1
+        degree(1) = m1(1) - 1
+        degree(2) = m2(1) - 1
     end function
     !===============================================================================
 
@@ -567,7 +570,7 @@ contains
             if (.not.allocated(this%knot1)) then
                 error stop 'Knot vector is not set.'
             else
-                c = this%order(1) - compute_multiplicity(this%knot1)
+                c = this%degree(1) - compute_multiplicity(this%knot1)
             end if
 
         elseif (dir == 2) then
@@ -576,7 +579,7 @@ contains
             if (.not.allocated(this%knot2)) then
                 error stop 'Knot vector is not set.'
             else
-                c = this%order(2) - compute_multiplicity(this%knot2)
+                c = this%degree(2) - compute_multiplicity(this%knot2)
             end if
 
         else
@@ -601,7 +604,7 @@ contains
             if (.not.allocated(this%knot1)) then
                 error stop 'Knot vector is not set.'
             else
-                nc = sum(compute_multiplicity(this%knot1)) - this%order(1) - 1
+                nc = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
             end if
 
         elseif (dir == 2) then
@@ -610,7 +613,7 @@ contains
             if (.not.allocated(this%knot2)) then
                 error stop 'Knot vector is not set.'
             else
-                nc = sum(compute_multiplicity(this%knot2)) - this%order(2) - 1
+                nc = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
             end if
 
         else
@@ -668,16 +671,16 @@ contains
 
         if (allocated(this%Wc)) then ! NURBS surface
             do i = 1, size(Xt, 1)
-                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 dTgci = kron(dTgc2, dTgc1)
                 dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
                 dTgc(i,:) = dTgci
             end do
         else
             do i = 1, size(Xt, 1)
-                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 dTgci = kron(dTgc2, dTgc1)
                 dTgc(i,:) = dTgci
             end do
@@ -733,16 +736,16 @@ contains
 
         if (allocated(this%Wc)) then ! NURBS surface
             do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgci = kron(Tgc2, Tgc1)
                 Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
                 Tgc(i,:) = Tgci
             end do
         else
             do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%order(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%order(2))
+                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgci = kron(Tgc2, Tgc1)
                 Tgc(i,:) = Tgci
             end do
@@ -769,7 +772,7 @@ contains
             if (allocated(this%Wc)) then ! NURBS
 
                 do i = 1, size(Xth)
-                    k = findspan(this%nc(1)-1,this%order(1),Xth(i),this%knot1)
+                    k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
                     if (this%knot1(k+1) == Xth(i)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
@@ -785,7 +788,7 @@ contains
                     Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)])
 
                     call insert_knot_A_5_1(&
-                        this%order(1),&
+                        this%degree(1),&
                         this%knot1,&
                         Xcw,&
                         Xth(i),&
@@ -814,7 +817,7 @@ contains
             else ! B-Spline
 
                 do i = 1, size(Xth)
-                    k = findspan(this%nc(1)-1,this%order(1),Xth(i),this%knot1)
+                    k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
                     if (this%knot1(k+1) == Xth(i)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
@@ -826,7 +829,7 @@ contains
                     Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*dim])
 
                     call insert_knot_A_5_1(&
-                        this%order(1),&
+                        this%degree(1),&
                         this%knot1,&
                         Xc,&
                         Xth(i),&
@@ -853,7 +856,7 @@ contains
             if (allocated(this%Wc)) then ! NURBS
 
                 do i = 1, size(Xth)
-                    k = findspan(this%nc(2)-1,this%order(2),Xth(i),this%knot2)
+                    k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
                     if (this%knot2(k+1) == Xth(i)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
@@ -872,7 +875,7 @@ contains
                     Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
 
                     call insert_knot_A_5_1(&
-                        this%order(2),&
+                        this%degree(2),&
                         this%knot2,&
                         Xcw,&
                         Xth(i),&
@@ -903,7 +906,7 @@ contains
             else ! B-Spline
 
                 do i = 1, size(Xth)
-                    k = findspan(this%nc(2)-1,this%order(2),Xth(i),this%knot2)
+                    k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
                     if (this%knot2(k+1) == Xth(i)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
@@ -917,7 +920,7 @@ contains
                     Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
 
                     call insert_knot_A_5_1(&
-                        this%order(2),&
+                        this%degree(2),&
                         this%knot2,&
                         Xc,&
                         Xth(i),&
@@ -973,7 +976,7 @@ contains
                 end do
                 Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot1, this%order(1), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xcw_new = reshape(Xcw_new,[this%nc(2)*nc_new,dim+1])
 
@@ -993,7 +996,7 @@ contains
                 dim = size(this%Xc,2)
                 Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot1, this%order(1), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
                 Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim+1])
 
@@ -1020,7 +1023,7 @@ contains
                 Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
                 Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot2, this%order(2), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),dim+1])
                 Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim+1], order=[2,1,3])
@@ -1046,7 +1049,7 @@ contains
                 Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
                 Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
 
-                call elevate_degree_A(t, this%knot2, this%order(2), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
 
                 Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
                 Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
