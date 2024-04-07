@@ -35,7 +35,7 @@ module forcad_nurbs_curve
         procedure :: get_Xt                !!> Get parameter values
         procedure :: get_knot              !!> Get knot vector
         procedure :: get_ng                !!> Get number of geometry points
-        procedure :: get_order             !!> Get degree of the NURBS curve
+        procedure :: get_degree            !!> Get degree of the NURBS curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: get_elem_Xc           !!> Generate connectivity for control points
         procedure :: get_elem_Xg           !!> Generate connectivity for geometry points
@@ -70,7 +70,7 @@ contains
         if (allocated(this%Xc)) deallocate(this%Xc)
 
         this%knot = knot
-        this%degree = this%get_order()
+        this%degree = this%get_degree()
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
@@ -131,7 +131,7 @@ contains
         this%knot(1:this%nc) = 0.0_rk
         this%knot(this%nc+1:2*this%nc) = 1.0_rk
 
-        this%degree = this%get_order()
+        this%degree = this%get_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
@@ -277,7 +277,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_order(this) result(degree)
+    pure function get_degree(this) result(degree)
         class(nurbs_curve), intent(in) :: this
         integer :: degree
         integer, allocatable :: m(:)
