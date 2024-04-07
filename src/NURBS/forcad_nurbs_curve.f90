@@ -21,31 +21,32 @@ module forcad_nurbs_curve
         integer, private :: nc                    !! number of control points
         integer, private :: ng                    !! number of geometry points
     contains
-        procedure :: set1                !!> Set knot vector, control points and weights for the NURBS curve object
-        procedure :: set2                !!> Set NURBS curve using nodes of parameter space, order, continuity, control points and weights
-        generic :: set => set1, set2     !!> Set NURBS curve
-        procedure :: create              !!> Generate geometry points
-        procedure :: get_Xc              !!> Get control points
-        procedure :: get_Xg              !!> Get geometry points
-        procedure :: get_Wc              !!> Get weights
-        procedure :: get_Xt              !!> Get parameter values
-        procedure :: get_knot            !!> Get knot vector
-        procedure :: get_ng              !!> Get number of geometry points
-        procedure :: get_order           !!> Get order of the NURBS curve
-        procedure :: finalize            !!> Finalize the NURBS curve object
-        procedure :: get_elem_Xc         !!> Generate connectivity for control points
-        procedure :: get_elem_Xg         !!> Generate connectivity for geometry points
-        procedure :: export_Xc           !!> Export control points to VTK file
-        procedure :: export_Xg           !!> Export geometry points to VTK file
-        procedure :: modify_Xc           !!> Modify control points
-        procedure :: modify_Wc           !!> Modify weights
-        procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
-        procedure :: get_continuity      !!> Get continuity of the curve
-        procedure :: get_nc              !!> Get number of required control points
-        procedure :: insert_knots        !!> Insert knots into the knot vector
-        procedure :: elevate_degree      !!> Elevate the degree of the curve
-        procedure :: derivative          !!> Compute the derivative of the NURBS curve
-        procedure :: basis               !!> Compute the basis functions of the NURBS curve
+        procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
+        procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, order, continuity, control points and weights
+        procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
+        generic :: set => set1, set2, set3 !!> Set NURBS curve
+        procedure :: create                !!> Generate geometry points
+        procedure :: get_Xc                !!> Get control points
+        procedure :: get_Xg                !!> Get geometry points
+        procedure :: get_Wc                !!> Get weights
+        procedure :: get_Xt                !!> Get parameter values
+        procedure :: get_knot              !!> Get knot vector
+        procedure :: get_ng                !!> Get number of geometry points
+        procedure :: get_order             !!> Get order of the NURBS curve
+        procedure :: finalize              !!> Finalize the NURBS curve object
+        procedure :: get_elem_Xc           !!> Generate connectivity for control points
+        procedure :: get_elem_Xg           !!> Generate connectivity for geometry points
+        procedure :: export_Xc             !!> Export control points to VTK file
+        procedure :: export_Xg             !!> Export geometry points to VTK file
+        procedure :: modify_Xc             !!> Modify control points
+        procedure :: modify_Wc             !!> Modify weights
+        procedure :: get_multiplicity      !!> Get multiplicity of the knot vector
+        procedure :: get_continuity        !!> Get continuity of the curve
+        procedure :: get_nc                !!> Get number of required control points
+        procedure :: insert_knots          !!> Insert knots into the knot vector
+        procedure :: elevate_degree        !!> Elevate the degree of the curve
+        procedure :: derivative            !!> Compute the derivative of the NURBS curve
+        procedure :: basis                 !!> Compute the basis functions of the NURBS curve
     end type
     !===============================================================================
 
@@ -100,6 +101,38 @@ contains
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
+                this%Wc = Wc
+            end if
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Set Bezier or Rational Bezier curve using control points and weights.
+    pure subroutine set3(this, Xc, Wc)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xc(:,:)
+        real(rk), intent(in), optional :: Wc(:)
+
+        if (allocated(this%knot)) deallocate(this%knot)
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
+        this%Xc = Xc
+        this%nc = size(this%Xc, 1)
+
+        allocate(this%knot(2*this%nc))
+        this%knot(1:this%nc) = 0.0_rk
+        this%knot(this%nc+1:2*this%nc) = 1.0_rk
+
+        this%order = this%get_order()
+        if (present(Wc)) then
+            if (size(Wc) /= this%nc) then
+                error stop 'Number of weights does not match the number of control points.'
+            else
+                if (allocated(this%Wc)) deallocate(this%Wc)
                 this%Wc = Wc
             end if
         end if
