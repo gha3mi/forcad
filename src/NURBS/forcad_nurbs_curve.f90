@@ -21,9 +21,9 @@ module forcad_nurbs_curve
         integer, private :: nc                    !! number of control points
         integer, private :: ng                    !! number of geometry points
     contains
-        procedure :: set1                !!> Set control points and weights
-        procedure :: set2                !!> Set control points and weights
-        generic :: set => set1, set2
+        procedure :: set1                !!> Set knot vector, control points and weights for the NURBS curve object
+        procedure :: set2                !!> Set NURBS curve using nodes of parameter space, order, continuity, control points and weights
+        generic :: set => set1, set2     !!> Set NURBS curve
         procedure :: create              !!> Generate geometry points
         procedure :: get_Xc              !!> Get control points
         procedure :: get_Xg              !!> Get geometry points
@@ -31,8 +31,8 @@ module forcad_nurbs_curve
         procedure :: get_Xt              !!> Get parameter values
         procedure :: get_knot            !!> Get knot vector
         procedure :: get_ng              !!> Get number of geometry points
-        procedure :: get_order           !!> Get order of the Bezier curve
-        procedure :: finalize            !!> Finalize the Bezier curve object
+        procedure :: get_order           !!> Get order of the NURBS curve
+        procedure :: finalize            !!> Finalize the NURBS curve object
         procedure :: get_elem_Xc         !!> Generate connectivity for control points
         procedure :: get_elem_Xg         !!> Generate connectivity for geometry points
         procedure :: export_Xc           !!> Export control points to VTK file
@@ -42,7 +42,7 @@ module forcad_nurbs_curve
         procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
         procedure :: get_continuity      !!> Get continuity of the curve
         procedure :: get_nc              !!> Get number of required control points
-        procedure :: insert_knots         !!> Insert a new knot
+        procedure :: insert_knots        !!> Insert knots into the knot vector
         procedure :: elevate_degree      !!> Elevate the degree of the curve
         procedure :: derivative          !!> Compute the derivative of the NURBS curve
         procedure :: basis               !!> Compute the basis functions of the NURBS curve
@@ -54,7 +54,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set control points and weights for the Bezier curve object.
+    !> Set knot vector, control points and weights for the NURBS curve object.
     pure subroutine set1(this, knot, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: knot(:)
@@ -83,7 +83,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set control points and weights for the Bezier curve object.
+    !> Set NURBS curve using nodes of parameter space (Xth), order, continuity, control points and weights.
     pure subroutine set2(this, Xth_dir, order, continuity, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xth_dir(:)
@@ -203,7 +203,7 @@ contains
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
-            error stop 'The Bezier curve is not rational.'
+            error stop 'The NURBS curve is not rational.'
         end if
     end function
     !===============================================================================
@@ -435,7 +435,7 @@ contains
             this%Wc(num) = W
             call this%set(knot = this%knot, Xc = this%Xc, Wc = this%Wc)
         else
-            error stop 'The Bezier curve is not rational.'
+            error stop 'The NURBS curve is not rational.'
         end if
     end subroutine
     !===============================================================================
