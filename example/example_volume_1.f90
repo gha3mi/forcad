@@ -1,7 +1,7 @@
 !> This program demonstrates the usage of a NURBS (Non-Uniform Rational B-Spline) volume object to create  and finalize a NURBS volume.
 !> It sets up control points, weights, and knot vectors for all three dimensions, generates the volume, and exports the control points and the volume to VTK files.
 
-program example_nurbs_volume
+program example3_volume
 
     use forcad, only: rk, nurbs_volume
 
@@ -91,4 +91,4 @@ contains
     end function
     !-----------------------------------------------------------------------------
 
-end program example_nurbs_volume
+end program example3_volume

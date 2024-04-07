@@ -1,7 +1,7 @@
 !> This program demonstrates the usage of a NURBS (Non-Uniform Rational B-Spline) curve object to create  and finalize a NURBS curve.
 !> It sets up control points, weights, and knot vectors for all three dimensions, generates the curve, and exports the control points and the curve to VTK files.
 
-program example_nurbs_curve
+program example1_curve
 
     use forcad, only: rk, nurbs_curve
 
@@ -67,4 +67,4 @@ program example_nurbs_curve
     ! Finalize the NURBS curve object
     call nurbs%finalize()
 
-end program example_nurbs_curve
+end program example1_curve

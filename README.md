@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/gha3mi/forcad?color=green)](https://github.com/gha3mi/forcad/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/778032800.svg)](https://zenodo.org/doi/10.5281/zenodo.10904447)
 
-**ForCAD**: A Fortran library for Geometric Modeling.
+**ForCAD**: A Fortran library for Geometric Modeling using NURBS (Non-Uniform Rational B-Splines).
 
 ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** curves, surfaces, and volumes.
 
@@ -59,7 +59,6 @@ ford ford.yml
 
 ## ToDo
 
-### B-Splines and NURBS
 - [x] Add `insert_knots()` method for curves, surfaces and volumes.
 - [x] Add `elevate_degree()` method for curves, surfaces and volumes.
 - [x] Add `derivative()` method for curves, surfaces and volumes.
@@ -67,13 +66,6 @@ ford ford.yml
 - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
 - [ ] Add support for multiple patches.
 - [ ] Add extraction of piecewise Bezier objects from NURBS.
-
-### Bezier and Rational Bezier
-- [x] Add `elevate_degree()` method for curves.
-- [ ] Add `elevate_degree()` method for surfaces and volumes.
-- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
-- [ ] Add `derivative()` method.
-- [ ] Add support for multiple patches.
 
 ## Contributing
 

@@ -1,47 +1,47 @@
-!> This program demonstrates the usage of a Bezier volume object to create, and finalize a Bezier volume.
+!> This program demonstrates the usage of a NURBS volume object to create, and finalize a NURBS volume.
 !> It sets up control points and weights, generates the volume, and exports the control points
 !> and the volume to VTK files at various stages.
 
-program example_bezier_volume
+program example_nurbs_volume
 
-    use forcad, only: rk, bezier_volume
+    use forcad, only: rk, nurbs_volume
 
     implicit none
-    type(bezier_volume) :: bezier            !! Declare a bezier volume object
+    type(nurbs_volume) :: nurbs              !! Declare a NURBS volume object
     real(rk), allocatable :: Xc(:,:), Wc(:)  !! Arrays for control points and weights
 
     !-----------------------------------------------------------------------------
-    ! Setting up the bezier volume
+    ! Setting up the NURBS volume
     !-----------------------------------------------------------------------------
 
-    !> Define control points for the Bezier volume
+    !> Define control points for the NURBS volume
     Xc = generate_Xc(1.0_rk)
 
     !> Define weights for the control points
     allocate(Wc(size(Xc, 1)), source=1.0_rk)
 
-    !> Set control points and weights for the bezier volume object
-    call bezier%set([2,2,2], Xc, Wc)
+    !> Set control points and weights for the NURBS volume object
+    call nurbs%set([2,2,2], Xc, Wc)
 
     !> Export initial control points to a VTK file
-    call bezier%export_Xc('vtk/bezier_volume_Xc.vtk')
+    call nurbs%export_Xc('vtk/nurbs_volume_Xc.vtk')
 
     !-----------------------------------------------------------------------------
-    ! Creating the bezier volume
+    ! Creating the NURBS volume
     !-----------------------------------------------------------------------------
 
-    !> Generate the Bezier volume with a resolution of 10x10x10
-    call bezier%create(15, 15, 15)
+    !> Generate the NURBS volume with a resolution of 15X15X15
+    call nurbs%create(15, 15, 15)
 
     !> Export the generated volume to a VTK file
-    call bezier%export_Xg('vtk/bezier_volume_Xg.vtk')
+    call nurbs%export_Xg('vtk/nurbs_volume_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 
-    !> Finalize the Bezier volume object
-    call bezier%finalize()
+    !> Finalize the NURBS volume object
+    call nurbs%finalize()
 
 contains
 
@@ -64,4 +64,4 @@ contains
     end function
     !-----------------------------------------------------------------------------
 
-end program example_bezier_volume
+end program example_nurbs_volume
