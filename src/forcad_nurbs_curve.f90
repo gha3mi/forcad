@@ -97,6 +97,9 @@ contains
         real(rk), intent(in) :: Xc(:,:)
         real(rk), intent(in), optional :: Wc(:)
 
+        if (allocated(this%knot)) deallocate(this%knot)
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
         this%knot = compute_knot_vector(Xth_dir, degree, continuity)
         this%degree = degree
         this%Xc = Xc
@@ -105,6 +108,7 @@ contains
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
+                if (allocated(this%Wc)) deallocate(this%Wc)
                 this%Wc = Wc
             end if
         end if
