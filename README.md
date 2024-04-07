@@ -31,9 +31,6 @@ Clone the `ForCAD` repository from GitHub:
 
 ```shell
 git clone https://github.com/gha3mi/forcad.git
-```
-
-```shell
 cd forcad
 ```
 
@@ -57,15 +54,24 @@ command:
 ford ford.yml
 ```
 
-## ToDo
+## Roadmap
 
-- [x] Add `insert_knots()` method for curves, surfaces and volumes.
-- [x] Add `elevate_degree()` method for curves, surfaces and volumes.
-- [x] Add `derivative()` method for curves, surfaces and volumes.
-- [ ] Add `remove_knots()` method for curves, surfaces and volumes.
-- [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
-- [ ] Add support for multiple patches.
-- [ ] Add extraction of piecewise Bezier objects from NURBS.
+This roadmap outlines upcoming features and enhancements for ForCAD. Feel free to contribute to these tasks or suggest new ideas!
+
+- v0.2.0:
+    - [x] Add `insert_knots()` method for curves, surfaces and volumes.
+    - [x] Add `elevate_degree()` method for curves, surfaces and volumes.
+    - [x] Add `derivative()` method for curves, surfaces and volumes.
+
+- v0.3.0:
+    - [ ] Add `remove_knots()` method for curves, surfaces and volumes.
+    - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
+
+- Future Tasks:
+    - [ ] Design a logo.
+    - [ ] Add support binary `vtk` files.
+    - [ ] Add support for multiple patches.
+    - [ ] Add extraction of piecewise Bezier objects from NURBS.
 
 ## Contributing
 
@@ -74,5 +80,6 @@ If you find any issues or would like to suggest improvements, please open an iss
 
 ## References
 
-- [The NURBS Book](https://doi.org/10.1007/978-3-642-97385-7) by Les Piegl, Wayne Tiller
-- [An Introduction to NURBS](https://doi.org/10.1016/B978-1-55860-669-2.X5000-3) by David F. Rogers
+- Piegl, L., & Tiller, W. (1995). The NURBS Book. In Monographs in Visual Communications. Springer Berlin Heidelberg. [https://doi.org/10.1007/978-3-642-97385-7](https://doi.org/10.1007/978-3-642-97385-7)
+
+- An Introduction to NURBS. (2001). Elsevier. [https://doi.org/10.1016/b978-1-55860-669-2.x5000-3](https://doi.org/10.1016/b978-1-55860-669-2.x5000-3)
