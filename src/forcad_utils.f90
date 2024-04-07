@@ -400,6 +400,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    elemental pure function isnan(x) result(output)
+        real(rk), intent(in) :: x
+        logical :: output
+
+        output =.false.
+        if (x /= x) output = .true.
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw)
         integer, intent(in) :: p, k, s, r
         real(rk), intent(in) :: UP(0:), Pw(0:,:)
