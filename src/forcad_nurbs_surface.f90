@@ -52,6 +52,7 @@ module forcad_nurbs_surface
         procedure :: basis                  !!> Compute the basis functions of the NURBS surface
         procedure :: insert_knots           !!> Insert knots into the knot vector
         procedure :: elevate_degree         !!> Elevate degree
+        procedure :: is_rational            !!> Check if the NURBS surface is rational
     end type
     !===============================================================================
 
@@ -190,7 +191,7 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
         allocate(this%Xg(this%ng(1)*this%ng(2), size(this%Xc,2)))
 
-        if (allocated(this%Wc)) then ! NURBS surface
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -200,7 +201,7 @@ contains
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
                 end do
             end do
-        else
+        else ! B-Spline
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -669,7 +670,7 @@ contains
 
         allocate(dTgc(this%ng(1)*this%ng(2), this%nc(1)*this%nc(2)))
 
-        if (allocated(this%Wc)) then ! NURBS surface
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(Xt, 1)
                 dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -677,7 +678,7 @@ contains
                 dTgci = dTgci*(this%Wc/(dot_product(dTgci,this%Wc)))
                 dTgc(i,:) = dTgci
             end do
-        else
+        else ! B-Spline
             do i = 1, size(Xt, 1)
                 dTgc1 = basis_bspline_der(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 dTgc2 = basis_bspline_der(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -734,7 +735,7 @@ contains
 
         allocate(Tgc(this%ng(1)*this%ng(2), this%nc(1)*this%nc(2)))
 
-        if (allocated(this%Wc)) then ! NURBS surface
+        if (this%is_rational()) then ! NURBS
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -742,7 +743,7 @@ contains
                 Tgci = Tgci*(this%Wc/(dot_product(Tgci,this%Wc)))
                 Tgc(i,:) = Tgci
             end do
-        else
+        else ! B-Spline
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -769,7 +770,7 @@ contains
 
         if (dir == 1) then ! direction 1
 
-            if (allocated(this%Wc)) then ! NURBS
+                if(this%is_rational()) then ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -853,7 +854,7 @@ contains
 
         elseif (dir == 2) then! direction 2
 
-            if (allocated(this%Wc)) then ! NURBS
+                if(this%is_rational()) then ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -966,7 +967,7 @@ contains
 
         if (dir == 1) then ! direction 1
 
-            if (allocated(this%Wc)) then ! NURBS
+                if(this%is_rational()) then ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1010,7 +1011,7 @@ contains
 
         elseif (dir == 2) then ! direction 2
 
-            if (allocated(this%Wc)) then ! NURBS
+                if(this%is_rational()) then ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1067,6 +1068,23 @@ contains
         end if
 
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function is_rational(this) result(r)
+        class(nurbs_surface), intent(in) :: this
+        logical :: r
+
+        r = .false.
+        if(allocated(this%Wc)) then
+            if (any(this%Wc /= this%Wc(1))) then
+                r = .true.
+            end if
+        end if
+    end function
     !===============================================================================
 
 end module forcad_nurbs_surface

@@ -54,6 +54,7 @@ module forcad_nurbs_volume
         procedure :: basis                  !!> Compute the basis functions of the NURBS volume
         procedure :: insert_knots           !!> Insert knots into the knot vector
         procedure :: elevate_degree         !!> Elevate the degree of the NURBS volume
+        procedure :: is_rational            !!> Check if the NURBS volume is rational
     end type
     !===============================================================================
 
@@ -1314,6 +1315,23 @@ contains
         end if
 
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function is_rational(this) result(r)
+        class(nurbs_volume), intent(in) :: this
+        logical :: r
+
+        r = .false.
+        if (allocated(this%Wc)) then
+            if (any(this%Wc /= this%Wc(1))) then
+                r = .true.
+            end if
+        end if
+    end function
     !===============================================================================
 
 end module forcad_nurbs_volume
