@@ -23,31 +23,31 @@ module forcad_nurbs_surface
         integer, private :: nc(2)                  !! number of control points in each direction
         integer, private :: ng(2)                  !! number of geometry points in each direction
     contains
-        procedure :: set1                 !!> Set control points and weights
-        procedure :: set2                 !!> Set control points and weights
-        generic :: set => set1, set2
-        procedure :: create               !!> Generate geometry points
-        procedure :: get_Xc               !!> Get control points
-        procedure :: get_Xg               !!> Get geometry points
-        procedure :: get_Wc               !!> Get weights
-        procedure :: get_Xt               !!> Get parameter values
-        procedure :: get_knot             !!> Get knot vector
-        procedure :: get_ng               !!> Get number of geometry points
-        procedure :: get_order            !!> Get order of the Bezier curve
-        procedure :: finalize             !!> Finalize the NURBS surface object
-        procedure :: get_elem_Xc          !!> Generate connectivity for control points
-        procedure :: get_elem_Xg          !!> Generate connectivity for geometry points
-        procedure :: export_Xc            !!> Export control points to VTK file
-        procedure :: export_Xg            !!> Export geometry points to VTK file
-        procedure :: modify_Xc            !!> Modify control points
-        procedure :: modify_Wc            !!> Modify weights
-        procedure :: get_multiplicity     !!> Get multiplicity of the knot vector
-        procedure :: get_continuity       !!> Get continuity of the surface
-        procedure :: get_nc               !!> Get number of required control points
-        procedure :: derivative           !!> Compute the derivative of the NURBS surface
-        procedure :: basis                !!> Compute the basis functions of the NURBS surface
-        procedure :: insert_knots         !!> Insert knots
-        procedure :: elevate_degree       !!> Elevate degree
+        procedure :: set1                !!> Set knot vectors, control points and weights for the NURBS surface object
+        procedure :: set2                !!> Set NURBS surface using nodes of parameter space, order, continuity, control points and weights
+        generic :: set => set1, set2     !!> Set NURBS surface
+        procedure :: create              !!> Generate geometry points
+        procedure :: get_Xc              !!> Get control points
+        procedure :: get_Xg              !!> Get geometry points
+        procedure :: get_Wc              !!> Get weights
+        procedure :: get_Xt              !!> Get parameter values
+        procedure :: get_knot            !!> Get knot vector
+        procedure :: get_ng              !!> Get number of geometry points
+        procedure :: get_order           !!> Get order of the NURBS surface
+        procedure :: finalize            !!> Finalize the NURBS surface object
+        procedure :: get_elem_Xc         !!> Generate connectivity for control points
+        procedure :: get_elem_Xg         !!> Generate connectivity for geometry points
+        procedure :: export_Xc           !!> Export control points to VTK file
+        procedure :: export_Xg           !!> Export geometry points to VTK file
+        procedure :: modify_Xc           !!> Modify control points
+        procedure :: modify_Wc           !!> Modify weights
+        procedure :: get_multiplicity    !!> Get multiplicity of the knot vector
+        procedure :: get_continuity      !!> Get continuity of the surface
+        procedure :: get_nc              !!> Get number of required control points
+        procedure :: derivative          !!> Compute the derivative of the NURBS surface
+        procedure :: basis               !!> Compute the basis functions of the NURBS surface
+        procedure :: insert_knots        !!> Insert knots into the knot vector
+        procedure :: elevate_degree      !!> Elevate degree
     end type
     !===============================================================================
 
@@ -56,7 +56,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set control points and weights for the NURBS surface object.
+    !> Set knot vectors, control points and weights for the NURBS surface object.
     pure subroutine set1(this, knot1, knot2, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: knot1(:)
@@ -78,7 +78,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    !> Set control points and weights for the NURBS surface object.
+    !> Set NURBS surface using nodes of parameter space, order, continuity, control points and weights
     pure subroutine set2(this, Xth_dir1, Xth_dir2, order, continuity1, continuity2, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: Xth_dir1(:), Xth_dir2(:)
@@ -216,7 +216,7 @@ contains
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
-            error stop 'The Bezier curve is not rational.'
+            error stop 'The NURBS surface is not rational.'
         end if
     end function
     !===============================================================================
