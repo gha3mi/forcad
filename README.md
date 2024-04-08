@@ -71,6 +71,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
 - Future Tasks:
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
+    - [ ] Export to `IGES` format.
     - [ ] Add support for multiple patches.
     - [ ] Add extraction of piecewise Bezier objects from NURBS.
 
