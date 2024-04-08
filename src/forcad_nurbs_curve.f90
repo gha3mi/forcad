@@ -23,6 +23,8 @@ module forcad_nurbs_curve
         integer, private :: degree                !! Degree (order) of the curve
         integer, private :: nc                    !! Number of control points
         integer, private :: ng                    !! Number of geometry points
+        integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
+        integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
     contains
         procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
         procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
@@ -37,8 +39,12 @@ module forcad_nurbs_curve
         procedure :: get_ng                !!> Get number of geometry points
         procedure :: get_degree            !!> Get degree of the NURBS curve
         procedure :: finalize              !!> Finalize the NURBS curve object
-        procedure :: get_elem_Xc           !!> Generate connectivity for control points
-        procedure :: get_elem_Xg           !!> Generate connectivity for geometry points
+        procedure :: cmp_elem_Xc_vis       !!> Generate connectivity for control points
+        procedure :: cmp_elem_Xg_vis       !!> Generate connectivity for geometry points
+        procedure :: get_elem_Xc_vis       !!> Get connectivity for control points
+        procedure :: get_elem_Xg_vis       !!> Get connectivity for geometry points
+        procedure :: set_elem_Xc_vis       !!> Set connectivity for control points
+        procedure :: set_elem_Xg_vis       !!> Set connectivity for geometry points
         procedure :: export_Xc             !!> Export control points to VTK file
         procedure :: export_Xg             !!> Export geometry points to VTK file
         procedure :: modify_Xc             !!> Modify control points
@@ -319,6 +325,8 @@ contains
         if (allocated(this%Wc)) deallocate(this%Wc)
         if (allocated(this%Xt)) deallocate(this%Xt)
         if (allocated(this%knot)) deallocate(this%knot)
+        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
     end subroutine
     !===============================================================================
 
@@ -326,9 +334,9 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine get_elem_Xc(this, elemConn, p)
+    pure function cmp_elem_Xc_vis(this, p) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable, intent(out) :: elemConn
+        integer, dimension(:,:), allocatable :: elemConn
         integer, intent(in), optional :: p
 
         if (present(p)) then
@@ -336,16 +344,16 @@ contains
         else
             elemConn = elemConn_C0(this%nc,1)
         end if
-    end subroutine
+    end function
     !===============================================================================
 
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine get_elem_Xg(this, elemConn, p)
+    pure function cmp_elem_Xg_vis(this, p) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable, intent(out) :: elemConn
+        integer, dimension(:,:), allocatable :: elemConn
         integer, intent(in), optional :: p
 
         if (present(p)) then
@@ -353,7 +361,7 @@ contains
         else
             elemConn = elemConn_C0(this%ng,1)
         end if
-    end subroutine
+    end function
     !===============================================================================
 
 
@@ -371,7 +379,11 @@ contains
             error stop 'Control points are not set.'
         end if
 
-        call this%get_elem_Xc(elemConn)
+        if (.not.allocated(this%elemConn_Xc_vis)) then
+            elemConn = this%cmp_elem_Xc_vis()
+        else
+            elemConn = this%elemConn_Xc_vis
+        end if
 
         nc = size(this%Xc, 1)
 
@@ -415,7 +427,11 @@ contains
             error stop 'Geometry points are not set.'
         end if
 
-        call this%get_elem_Xg(elemConn)
+        if (.not.allocated(this%elemConn_Xg_vis)) then
+            elemConn = this%cmp_elem_Xg_vis()
+        else
+            elemConn = this%elemConn_Xg_vis
+        end if
 
         ng = size(this%Xg, 1)
 
@@ -757,5 +773,54 @@ contains
     end function
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_elem_Xc_vis(this, elemConn)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in) :: elemConn(:,:)
+
+        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        this%elemConn_Xc_vis = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_elem_Xg_vis(this, elemConn)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in) :: elemConn(:,:)
+
+        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
+        this%elemConn_Xg_vis = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem_Xc_vis(this) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, dimension(:,:), allocatable :: elemConn
+
+        elemConn = this%elemConn_Xc_vis
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem_Xg_vis(this) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, dimension(:,:), allocatable :: elemConn
+
+        elemConn = this%elemConn_Xg_vis
+    end function
+    !===============================================================================
 
 end module forcad_nurbs_curve

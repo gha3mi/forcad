@@ -25,6 +25,8 @@ module forcad_nurbs_surface
         integer, private :: degree(2)              !! Degree (order) of the surface
         integer, private :: nc(2)                  !! Number of control points in each direction
         integer, private :: ng(2)                  !! Number of geometry points in each direction
+        integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
+        integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
     contains
         procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS surface object
         procedure :: set2                   !!> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
@@ -39,8 +41,12 @@ module forcad_nurbs_surface
         procedure :: get_ng                 !!> Get number of geometry points
         procedure :: get_degree             !!> Get degree of the NURBS surface
         procedure :: finalize               !!> Finalize the NURBS surface object
-        procedure :: get_elem_Xc            !!> Generate connectivity for control points
-        procedure :: get_elem_Xg            !!> Generate connectivity for geometry points
+        procedure :: cmp_elem_Xc_vis        !!> Generate connectivity for control points
+        procedure :: cmp_elem_Xg_vis        !!> Generate connectivity for geometry points
+        procedure :: get_elem_Xc_vis        !!> Get connectivity for control points
+        procedure :: get_elem_Xg_vis        !!> Get connectivity for geometry points
+        procedure :: set_elem_Xc_vis        !!> Set connectivity for control points
+        procedure :: set_elem_Xg_vis        !!> Set connectivity for geometry points
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: modify_Xc              !!> Modify control points
@@ -360,6 +366,8 @@ contains
         if (allocated(this%Xt2)) deallocate(this%Xt2)
         if (allocated(this%knot1)) deallocate(this%knot1)
         if (allocated(this%knot2)) deallocate(this%knot2)
+        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
     end subroutine
     !===============================================================================
 
@@ -367,9 +375,9 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine get_elem_Xc(this, elemConn, p)
+    pure function cmp_elem_Xc_vis(this, p) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable, intent(out) :: elemConn
+        integer, dimension(:,:), allocatable :: elemConn
         integer, intent(in), optional :: p(:)
 
         if (present(p)) then
@@ -377,16 +385,16 @@ contains
         else
             elemConn = elemConn_C0(this%nc(1), this%nc(2), 1, 1)
         end if
-    end subroutine
+    end function
     !===============================================================================
 
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine get_elem_Xg(this, elemConn, p)
+    pure function cmp_elem_Xg_vis(this, p) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable, intent(out) :: elemConn
+        integer, dimension(:,:), allocatable :: elemConn
         integer, intent(in), optional :: p(:)
 
         if (present(p)) then
@@ -394,7 +402,7 @@ contains
         else
             elemConn = elemConn_C0(this%ng(1), this%ng(2), 1, 1)
         end if
-    end subroutine
+    end function
     !===============================================================================
 
 
@@ -412,7 +420,11 @@ contains
             error stop 'Control points are not set.'
         end if
 
-        call this%get_elem_Xc(elemConn)
+        if (.not.allocated(this%elemConn_Xc_vis)) then
+            elemConn = this%cmp_elem_Xc_vis()
+        else
+            elemConn = this%elemConn_Xc_vis
+        end if
 
         nc = size(this%Xc, 1)
 
@@ -456,7 +468,11 @@ contains
             error stop 'Geometry points are not set.'
         end if
 
-        call this%get_elem_Xg(elemConn)
+        if (.not.allocated(this%elemConn_Xg_vis)) then
+            elemConn = this%cmp_elem_Xg_vis()
+        else
+            elemConn = this%elemConn_Xg_vis
+        end if
 
         ng = size(this%Xg, 1)
 
@@ -770,7 +786,7 @@ contains
 
         if (dir == 1) then ! direction 1
 
-                if(this%is_rational()) then ! NURBS
+            if(this%is_rational()) then ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -854,7 +870,7 @@ contains
 
         elseif (dir == 2) then! direction 2
 
-                if(this%is_rational()) then ! NURBS
+            if(this%is_rational()) then ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -967,7 +983,7 @@ contains
 
         if (dir == 1) then ! direction 1
 
-                if(this%is_rational()) then ! NURBS
+            if(this%is_rational()) then ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1011,7 +1027,7 @@ contains
 
         elseif (dir == 2) then ! direction 2
 
-                if(this%is_rational()) then ! NURBS
+            if(this%is_rational()) then ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1086,5 +1102,56 @@ contains
         end if
     end function
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_elem_Xc_vis(this, elemConn)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in) :: elemConn(:,:)
+
+        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        this%elemConn_Xc_vis = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_elem_Xg_vis(this, elemConn)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in) :: elemConn(:,:)
+
+        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
+        this%elemConn_Xg_vis = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem_Xc_vis(this) result(elemConn)
+        class(nurbs_surface), intent(in) :: this
+        integer, dimension(:,:), allocatable :: elemConn
+
+        elemConn = this%elemConn_Xc_vis
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem_Xg_vis(this) result(elemConn)
+        class(nurbs_surface), intent(in) :: this
+        integer, dimension(:,:), allocatable :: elemConn
+
+        elemConn = this%elemConn_Xg_vis
+    end function
+    !===============================================================================
+
 
 end module forcad_nurbs_surface
