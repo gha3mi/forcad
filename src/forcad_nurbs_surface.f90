@@ -865,8 +865,6 @@ contains
 
             end if
 
-            call this%create()
-
 
         elseif (dir == 2) then! direction 2
 
@@ -959,8 +957,6 @@ contains
 
             end if
 
-            call this%create()
-
         else
             error stop 'Invalid direction.'
         end if
@@ -1023,8 +1019,6 @@ contains
 
             end if
 
-            call this%create()
-
         elseif (dir == 2) then ! direction 2
 
             if(this%is_rational()) then ! NURBS
@@ -1076,8 +1070,6 @@ contains
                 call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
 
             end if
-
-            call this%create()
 
         else
             error stop 'Invalid direction.'
