@@ -7,7 +7,7 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -694,6 +694,37 @@ contains
             return
         end if
         f = log(gamma(real(n+1,rk)))
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function hexahedron_Xc(L, nc) result(Xc)
+        real(rk), intent(in) :: L(3)
+        integer, intent(in) :: nc(3)
+        real(rk), dimension(:,:), allocatable :: Xc
+        real(rk) :: dx, dy, dz
+        integer :: i, j, k, nci
+
+        dx = L(1) / real(nc(1)-1, rk)
+        dy = L(2) / real(nc(2)-1, rk)
+        dz = L(3) / real(nc(3)-1, rk)
+
+        allocate(Xc(nc(1) * nc(2) * nc(3), 3))
+        nci = 1
+        do k = 0, nc(3)-1
+            do j = 0, nc(2)-1
+                do i = 0, nc(1)-1
+                    Xc(nci, 1) = real(i,rk) * dx
+                    Xc(nci, 2) = real(j,rk) * dy
+                    Xc(nci, 3) = real(k,rk) * dz
+                    nci = nci + 1
+                end do
+            end do
+        end do
+
     end function
     !===============================================================================
 
