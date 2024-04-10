@@ -162,13 +162,14 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine create(this, res1, res2, res3, Xt1, Xt2, Xt3)
+    pure subroutine create(this, res1, res2, res3, Xt1, Xt2, Xt3, Xt)
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in), optional :: res1, res2, res3
         real(rk), intent(in), optional :: Xt1(:), Xt2(:), Xt3(:)
         integer :: i, j
         real(rk), dimension(:), allocatable :: Tgc1, Tgc2, Tgc3, Tgc
-        real(rk), dimension(:,:), allocatable :: Xt
+        real(rk), dimension(:,:), allocatable :: Xt_
+        real(rk), dimension(:,:), intent(in), optional :: Xt
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -211,21 +212,26 @@ contains
             ! this%Xt3 = this%Xt3
         end if
 
-        ! Set number of geometry points
-        this%ng(1) = size(this%Xt1,1)
-        this%ng(2) = size(this%Xt2,1)
-        this%ng(3) = size(this%Xt3,1)
+        if (present(Xt)) then
+            Xt_ = Xt
+        else
 
-        call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
+            ! Set number of geometry points
+            this%ng(1) = size(this%Xt1,1)
+            this%ng(2) = size(this%Xt2,1)
+            this%ng(3) = size(this%Xt3,1)
+
+            call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt_)
+        end if
 
         if (allocated(this%Xg)) deallocate(this%Xg)
-        allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
+        allocate(this%Xg(size(Xt_,1), size(this%Xc,2)))
 
         if (allocated(this%Wc)) then ! NURBS volume
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
-                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
+            do i = 1, size(Xt_, 1)
+                Tgc1 = basis_bspline(Xt_(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt_(i,2), this%knot2, this%nc(2), this%degree(2))
+                Tgc3 = basis_bspline(Xt_(i,3), this%knot3, this%nc(3), this%degree(3))
                 Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
                 do j = 1, size(this%Xc, 2)
@@ -233,10 +239,10 @@ contains
                 end do
             end do
         else
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
-                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
+            do i = 1, size(Xt_, 1)
+                Tgc1 = basis_bspline(Xt_(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt_(i,2), this%knot2, this%nc(2), this%degree(2))
+                Tgc3 = basis_bspline(Xt_(i,3), this%knot3, this%nc(3), this%degree(3))
                 Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
                 do j = 1, size(this%Xc, 2)
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
