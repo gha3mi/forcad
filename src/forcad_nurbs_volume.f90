@@ -966,9 +966,6 @@ contains
 
             end if
 
-            call this%create()
-
-
         elseif (dir == 2) then! direction 2
 
             if (allocated(this%Wc)) then ! NURBS
@@ -1059,8 +1056,6 @@ contains
 
 
             end if
-
-            call this%create()
 
         elseif (dir == 3) then! direction 3
 
@@ -1153,8 +1148,6 @@ contains
 
             end if
 
-            call this%create()
-
         else
             error stop 'Invalid direction.'
         end if
@@ -1217,8 +1210,6 @@ contains
 
             end if
 
-            call this%create()
-
         elseif (dir == 2) then ! direction 2
 
             if (allocated(this%Wc)) then ! NURBS
@@ -1273,8 +1264,6 @@ contains
 
             end if
 
-            call this%create()
-
         elseif (dir == 3) then ! direction 3
 
             if (allocated(this%Wc)) then ! NURBS
@@ -1326,8 +1315,6 @@ contains
                 call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new)
 
             end if
-
-            call this%create()
 
         else
             error stop 'Invalid direction.'

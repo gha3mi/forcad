@@ -622,8 +622,6 @@ contains
 
         end if
 
-        call this%create()
-
     end subroutine
     !===============================================================================
 
@@ -668,8 +666,6 @@ contains
             deallocate(Xc_new)
 
         end if
-
-        call this%create()
 
     end subroutine
     !===============================================================================
