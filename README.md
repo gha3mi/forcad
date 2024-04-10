@@ -69,6 +69,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
 
 - Future Tasks:
+    - [ ] Add more examples.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
     - [ ] Export to `IGES` format.
