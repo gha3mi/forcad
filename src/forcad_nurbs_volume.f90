@@ -4,7 +4,7 @@
 module forcad_nurbs_volume
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc
 
     implicit none
 
@@ -61,6 +61,9 @@ module forcad_nurbs_volume
         procedure :: insert_knots           !!> Insert knots into the knot vector
         procedure :: elevate_degree         !!> Elevate the degree of the NURBS volume
         procedure :: is_rational            !!> Check if the NURBS volume is rational
+
+        ! Shapes
+        procedure :: set_hexahedron         !!> Set a hexahedron
     end type
     !===============================================================================
 
@@ -1399,5 +1402,24 @@ contains
         elemConn = this%elemConn_Xg_vis
     end function
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_hexahedron(this, L, nc, Wc)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in) :: L(:)
+        integer, intent(in) :: nc(:)
+        real(rk), intent(in), optional :: Wc(:)
+
+        if (present(Wc)) then
+            call this%set(nc, hexahedron_Xc(L, nc), Wc)
+        else
+            call this%set(nc, hexahedron_Xc(L, nc))
+        end if
+    end subroutine
+    !===============================================================================
+
 
 end module forcad_nurbs_volume
