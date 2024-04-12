@@ -47,18 +47,21 @@ program example3_surface
     ! Refinements
     !-----------------------------------------------------------------------------
 
-    ! Insert knots 0.25, twice and 0.75, once in both directions
+    !> Insert knots 0.25, twice and 0.75, once in both directions
     call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [2,1]) ! direction 1
     call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [2,1]) ! direction 2
 
-    ! Elevate degree by 2 in both directions
+    !> Elevate degree by 2 in both directions
     call nurbs%elevate_degree(1, 2) ! direction 1
     call nurbs%elevate_degree(2, 2) ! direction 2
 
-    ! Export updated control points to a VTK file
+    !> Generate the refined NURBS surface with resolutions of 30 in both dimensions
+    call nurbs%create()
+
+    !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_surface_Xc2.vtk')
 
-    ! Export the refined generated surface to a VTK file
+    !> Export the refined generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
 
     !-----------------------------------------------------------------------------

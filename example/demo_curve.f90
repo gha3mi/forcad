@@ -24,7 +24,7 @@ program example_nurbs_curve
     call nurbs%set(Xc, Wc)
 
     !> Export initial control points to a VTK file
-    call nurbs%export_Xc('vtk/nurbs_curve_Xc.vtk')
+    call nurbs%export_Xc('vtk/demo_curve_Xc.vtk')
 
     !-----------------------------------------------------------------------------
     ! Creating the NURBS curve
@@ -34,7 +34,7 @@ program example_nurbs_curve
     call nurbs%create(res=500)
 
     !> Export the generated curve to a VTK file
-    call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
+    call nurbs%export_Xg('vtk/demo_curve_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

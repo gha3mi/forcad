@@ -47,20 +47,23 @@ program example3_volume
     ! Refinements
     !-----------------------------------------------------------------------------
 
-    ! Insert knots 0.25 and 0.75 in all three directions
+    !> Insert knots 0.25 and 0.75 in all three directions
     call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [1,1]) ! direction 1
     call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
     call nurbs%insert_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
 
-    ! Elevate degree by 2 in all three directions
+    !> Elevate degree by 2 in all three directions
     call nurbs%elevate_degree(1, 2) ! direction 1
     call nurbs%elevate_degree(2, 2) ! direction 2
     call nurbs%elevate_degree(3, 2) ! direction 3
 
-    ! Export updated control points to a VTK file
+    !> Generate the refined NURBS volume with resolutions of 40, 40, and 40 in the three dimensions
+    call nurbs%create()
+
+    !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc2.vtk')
 
-    ! Export the refined generated volume to a VTK file
+    !> Export the refined generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_volume_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
