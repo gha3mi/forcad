@@ -70,6 +70,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
 - Future Tasks:
     - [ ] Add `morph()` method for morphing box.
     - [ ] Add more examples.
+    - [ ] Add unit tests.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
     - [ ] Export to `IGES` format.
