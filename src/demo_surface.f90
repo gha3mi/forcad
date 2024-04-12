@@ -24,7 +24,7 @@ program example_nurbs_surface
     call nurbs%set([10,10],Xc,Wc)
 
     !> Export initial control points to a VTK file
-    call nurbs%export_Xc('vtk/nurbs_surface_Xc.vtk')
+    call nurbs%export_Xc('vtk/demo_surface_Xc.vtk')
 
     !-----------------------------------------------------------------------------
     ! Creating the NURBS surface
@@ -34,7 +34,7 @@ program example_nurbs_surface
     call nurbs%create(res1=30, res2=30)
 
     !> Export the generated surface to a VTK file
-    call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
+    call nurbs%export_Xg('vtk/demo_surface_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

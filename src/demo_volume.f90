@@ -24,7 +24,7 @@ program example_nurbs_volume
     call nurbs%set([2,2,2], Xc, Wc)
 
     !> Export initial control points to a VTK file
-    call nurbs%export_Xc('vtk/nurbs_volume_Xc.vtk')
+    call nurbs%export_Xc('vtk/demo_volume_Xc.vtk')
 
     !-----------------------------------------------------------------------------
     ! Creating the NURBS volume
@@ -34,7 +34,7 @@ program example_nurbs_volume
     call nurbs%create(15, 15, 15)
 
     !> Export the generated volume to a VTK file
-    call nurbs%export_Xg('vtk/nurbs_volume_Xg.vtk')
+    call nurbs%export_Xg('vtk/demo_volume_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
