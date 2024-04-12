@@ -1522,6 +1522,8 @@ contains
                         knot_new,&
                         Xcw_new)
 
+                    if (allocated(Xcw)) deallocate(Xcw)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1537,7 +1539,7 @@ contains
 
                         deallocate(this%Xc, this%knot1, this%Wc)
                         call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
-                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                        deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
                 end do
 
@@ -1568,6 +1570,8 @@ contains
                         t,&
                         knot_new,&
                         Xc_new)
+
+                    if (allocated(Xc)) deallocate(Xc)
 
                     if (t == 0) then
                         ! no change
@@ -1618,6 +1622,8 @@ contains
                         knot_new,&
                         Xcw_new)
 
+                    if (allocated(Xcw)) deallocate(Xcw)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1637,7 +1643,7 @@ contains
 
                         deallocate(this%Xc, this%knot2, this%Wc)
                         call this%set(knot1=this%knot1, knot2=knot_new, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
-                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                        deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
                 end do
 
@@ -1669,6 +1675,8 @@ contains
                         t,&
                         knot_new,&
                         Xc_new)
+
+                    if (allocated(Xc)) deallocate(Xc)
 
                     if (t == 0) then
                         ! no change
@@ -1723,6 +1731,8 @@ contains
                         knot_new,&
                         Xcw_new)
 
+                    if (allocated(Xcw)) deallocate(Xcw)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1742,7 +1752,7 @@ contains
 
                         deallocate(this%Xc, this%knot3, this%Wc)
                         call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
-                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                        deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
                 end do
 
@@ -1774,6 +1784,8 @@ contains
                         t,&
                         knot_new,&
                         Xc_new)
+
+                    if (allocated(Xc)) deallocate(Xc)
 
                     if (t == 0) then
                         ! no change
