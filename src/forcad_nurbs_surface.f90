@@ -1008,11 +1008,11 @@ contains
             else ! B-Spline
 
                 dim = size(this%Xc,2)
-                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim+1)])
+                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim)])
 
                 call elevate_degree_A(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
-                Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim+1])
+                Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim])
 
                 deallocate(this%Xc, this%knot1)
                 call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new)
@@ -1193,6 +1193,8 @@ contains
                         knot_new,&
                         Xcw_new)
 
+                    if (allocated(Xcw)) deallocate(Xcw)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1208,7 +1210,7 @@ contains
 
                         deallocate(this%Xc, this%knot1, this%Wc)
                         call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new, Wc=Wc_new)
-                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                        deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
                 end do
 
