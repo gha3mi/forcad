@@ -47,15 +47,45 @@ program example3_volume
     ! Refinements
     !-----------------------------------------------------------------------------
 
+    !> Print size of knot vectors
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+    print*, size(nurbs%get_knot(3))
+
     !> Insert knots 0.25 and 0.75 in all three directions
     call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [1,1]) ! direction 1
     call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
     call nurbs%insert_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
 
+    !> Print size of knot vectors after inserting knots
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+    print*, size(nurbs%get_knot(3))
+
+    !> Print degrees
+    print*, nurbs%get_degree()
+
     !> Elevate degree by 2 in all three directions
     call nurbs%elevate_degree(1, 2) ! direction 1
     call nurbs%elevate_degree(2, 2) ! direction 2
     call nurbs%elevate_degree(3, 2) ! direction 3
+
+    !> Print degrees after elevating
+    print*, nurbs%get_degree()
+
+    !> Print size of knot vectors
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+    print*, size(nurbs%get_knot(3))
+
+    call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [1,1]) ! direction 1
+    call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
+    call nurbs%remove_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
+
+    !> Print size of knot vectors after removing knots
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+    print*, size(nurbs%get_knot(3))
 
     !> Generate the refined NURBS volume with resolutions of 40, 40, and 40 in the three dimensions
     call nurbs%create()

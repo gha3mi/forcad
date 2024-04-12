@@ -47,13 +47,39 @@ program example3_surface
     ! Refinements
     !-----------------------------------------------------------------------------
 
+    !> Print size of the knot vectors
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+
     !> Insert knots 0.25, twice and 0.75, once in both directions
     call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [2,1]) ! direction 1
     call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [2,1]) ! direction 2
 
+    !> Print size of the knot vectors after inserting knots
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+
+    !> Print the degrees
+    print*, nurbs%get_degree()
+
     !> Elevate degree by 2 in both directions
     call nurbs%elevate_degree(1, 2) ! direction 1
     call nurbs%elevate_degree(2, 2) ! direction 2
+
+    !> Print the degrees after elevating
+    print*, nurbs%get_degree()
+
+    !> Print size of the knot vectors
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
+
+    !> Remove knots 0.25, twice and 0.75, once in both directions
+    call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [2,1]) ! direction 1
+    call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [2,1]) ! direction 2
+
+    !> Print size of the knot vectors after removing knots
+    print*, size(nurbs%get_knot(1))
+    print*, size(nurbs%get_knot(2))
 
     !> Generate the refined NURBS surface with resolutions of 30 in both dimensions
     call nurbs%create()

@@ -48,11 +48,32 @@ program example1_curve
     ! Refinements
     !-----------------------------------------------------------------------------
 
+    !> Print size of the knot vector
+    print*, size(nurbs%get_knot())
+
     !> Insert knots 0.25, twice and 0.75, once
     call nurbs%insert_knots([0.25_rk, 0.75_rk], [2,1])
 
+    !> Print size of the updated knot vector
+    print*, size(nurbs%get_knot())
+
+    !> Print the degree of the curve
+    print*, nurbs%get_degree()
+
     !> Elevate the degree of the curve (2 times)
     call nurbs%elevate_degree(2)
+
+    !> Print the updated degree of the curve
+    print*, nurbs%get_degree()
+
+    !> Print size of the knot vector
+    print*, size(nurbs%get_knot())
+
+    !> Remove knots 0.25, twice and 0.75, once
+    call nurbs%remove_knots([0.25_rk, 0.75_rk], [2,1])
+
+    !> Print size of the updated knot vector
+    print*, size(nurbs%get_knot())
 
     !> Generate the refined curve with a resolution of 20
     call nurbs%create()
