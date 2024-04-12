@@ -4,7 +4,7 @@
 module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
-        insert_knot_A_5_1, findspan, elevate_degree_A
+        insert_knot_A_5_1, findspan, elevate_degree_A, remove_knots_A_5_8
 
     implicit none
 
@@ -57,6 +57,7 @@ module forcad_nurbs_curve
         procedure :: derivative            !!> Compute the derivative of the NURBS curve
         procedure :: basis                 !!> Compute the basis functions of the NURBS curve
         procedure :: is_rational           !!> Check if the NURBS curve is rational
+        procedure :: remove_knots          !!> Remove knots from the knot vector
     end type
     !===============================================================================
 
@@ -817,6 +818,103 @@ contains
 
         elemConn = this%elemConn_Xg_vis
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine remove_knots(this,Xth,r)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xth(:)
+        integer, intent(in) :: r(:)
+        integer :: k, i, s, dim, j, nc_new, t
+        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
+
+        if (this%is_rational()) then ! NURBS
+
+            do i = 1, size(Xth)
+                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
+                if (this%knot(k+1) == Xth(i)) then
+                    s = compute_multiplicity(this%knot,Xth(i))
+                else
+                    s = 0
+                end if
+                k = k + 1
+
+                dim = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),dim+1))
+                do j = 1, size(this%Xc,1)
+                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,dim+1) = this%Wc(j)
+                end do
+
+                call remove_knots_A_5_8(&
+                    this%degree,&
+                    this%knot,&
+                    Xcw,&
+                    Xth(i),&
+                    k,&
+                    s,&
+                    r(i),&
+                    t,&
+                    knot_new,&
+                    Xcw_new)
+
+                if (t == 0) then
+                    ! no change
+                else
+                    nc_new = size(Xcw_new,1)
+                    allocate(Xc_new(nc_new,dim))
+                    allocate(Wc_new(nc_new))
+                    do j = 1, nc_new
+                        Xc_new(j,:) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                        Wc_new(j) = Xcw_new(j,dim+1)
+                    end do
+                    
+                    deallocate(this%Xc, this%knot, this%Wc)
+                    call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
+                    if (allocated(Xcw)) deallocate(Xcw)
+                    if (allocated(Xcw_new)) deallocate(Xcw_new)
+                    if (allocated(Xc_new)) deallocate(Xc_new)
+                    if (allocated(Wc_new)) deallocate(Wc_new)
+                end if
+            end do
+
+        else ! B-Spline
+
+            do i = 1, size(Xth)
+                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
+                if (this%knot(k+1) == Xth(i)) then
+                    s = compute_multiplicity(this%knot,Xth(i))
+                else
+                    s = 0
+                end if
+                k = k + 1
+
+                call remove_knots_A_5_8(&
+                    this%degree,&
+                    this%knot,&
+                    this%Xc,&
+                    Xth(i),&
+                    k,&
+                    s,&
+                    r(i),&
+                    t,&
+                    knot_new,&
+                    Xc_new)
+
+                if (t == 0) then
+                    ! no change
+                else
+                    deallocate(this%Xc, this%knot)
+                    call this%set(knot=knot_new, Xc=Xc_new)    
+                end if
+            end do
+
+        end if
+
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_curve

@@ -4,7 +4,7 @@
 module forcad_nurbs_volume
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc, remove_knots_A_5_8
 
     implicit none
 
@@ -62,6 +62,7 @@ module forcad_nurbs_volume
         procedure :: elevate_degree         !!> Elevate the degree of the NURBS volume
         procedure :: is_rational            !!> Check if the NURBS volume is rational
         procedure :: put_to_nurbs           !!> Put a shape to a NURBS volume
+        procedure :: remove_knots           !!> Remove knots from the knot vector
 
         ! Shapes
         procedure :: set_hexahedron         !!> Set a hexahedron
@@ -1470,6 +1471,330 @@ contains
         end if
 
         call this%set_elem_Xg_vis(elemConn)
+
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine remove_knots(this, dir ,Xth,r)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in) :: dir
+        real(rk), intent(in) :: Xth(:)
+        integer, intent(in) :: r(:)
+        integer :: k, i, s, dim, j, nc_new, t
+        real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
+        real(rk), allocatable :: Xc4(:,:,:,:)
+
+
+        if (dir == 1) then ! direction 1
+
+            if (allocated(this%Wc)) then ! NURBS
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
+                    if (this%knot1(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot1, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    do j = 1, size(this%Xc,1)
+                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,dim+1) = this%Wc(j)
+                    end do
+                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(1),&
+                        this%knot1,&
+                        Xcw,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xcw_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+                        Xcw_new = reshape(Xcw_new,[(nc_new)*this%nc(2)*this%nc(3),dim+1])
+
+                        allocate(Xc_new(1:(nc_new)*this%nc(2)*this%nc(3),1:dim))
+                        allocate(Wc_new(1:(nc_new)*this%nc(2)*this%nc(3)))
+                        do j = 1, (nc_new)*this%nc(2)*this%nc(3)
+                            Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                            Wc_new(j) = Xcw_new(j,dim+1)
+                        end do
+
+                        deallocate(this%Xc, this%knot1, this%Wc)
+                        call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
+                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                    end if
+                end do
+
+
+            else ! B-Spline
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
+                    if (this%knot1(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot1, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+
+                    Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*this%nc(3)*dim])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(1),&
+                        this%knot1,&
+                        Xc,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xc_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+                        Xc_new = reshape(Xc_new,[(nc_new)*this%nc(2)*this%nc(3),dim])
+
+                        deallocate(this%Xc, this%knot1)
+                        call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new)
+                    end if
+                end do
+
+            end if
+
+        elseif (dir == 2) then! direction 2
+
+            if (allocated(this%Wc)) then ! NURBS
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
+                    if (this%knot2(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot2, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    do j = 1, size(this%Xc,1)
+                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,dim+1) = this%Wc(j)
+                    end do
+
+                    Xc4 = reshape(Xcw, [this%nc(1),this%nc(2),this%nc(3),dim+1])
+                    Xc4 = reshape(Xc4, [this%nc(2),this%nc(1),this%nc(3),dim+1], order=[2,1,3,4])
+                    Xcw = reshape(Xc4,[this%nc(2),this%nc(1)*this%nc(3)*(dim+1)])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(2),&
+                        this%knot2,&
+                        Xcw,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xcw_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+
+                        Xc4 = reshape(Xcw_new, [nc_new,this%nc(1),this%nc(3),dim+1])
+                        Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim+1], order=[2,1,3,4])
+                        Xcw_new = reshape(Xc4,[this%nc(1)*(nc_new)*this%nc(3),dim+1])
+
+                        allocate(Xc_new(1:this%nc(1)*(nc_new)*this%nc(3),1:dim))
+                        allocate(Wc_new(1:this%nc(1)*(nc_new)*this%nc(3)))
+                        do j = 1, this%nc(1)*(nc_new)*this%nc(3)
+                            Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                            Wc_new(j) = Xcw_new(j,dim+1)
+                        end do
+
+
+                        deallocate(this%Xc, this%knot2, this%Wc)
+                        call this%set(knot1=this%knot1, knot2=knot_new, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
+                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                    end if
+                end do
+
+            else ! B-Spline
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
+                    if (this%knot2(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot2, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+
+                    Xc4 = reshape(this%Xc, [this%nc(1),this%nc(2),this%nc(3),dim])
+                    Xc4 = reshape(Xc4, [this%nc(2),this%nc(1),this%nc(3),dim], order=[2,1,3,4])
+                    Xc = reshape(Xc4,[this%nc(2),this%nc(1)*this%nc(3)*dim])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(2),&
+                        this%knot2,&
+                        Xc,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xc_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+
+                        Xc4 = reshape(Xc_new, [nc_new,this%nc(1),this%nc(3),dim])
+                        Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim], order=[2,1,3,4])
+                        Xc_new = reshape(Xc4,[this%nc(1)*(nc_new)*this%nc(3),dim])
+
+                        deallocate(this%Xc, this%knot2)
+                        call this%set(knot1=this%knot1, knot2=knot_new, knot3= this%knot3, Xc=Xc_new)
+                    end if
+                end do
+
+
+            end if
+
+        elseif (dir == 3) then! direction 3
+
+            if (allocated(this%Wc)) then ! NURBS
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
+                    if (this%knot3(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot3, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    do j = 1, size(this%Xc,1)
+                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,dim+1) = this%Wc(j)
+                    end do
+
+                    Xc4 = reshape(Xcw, [this%nc(1),this%nc(2),this%nc(3),dim+1])
+                    Xc4 = reshape(Xc4, [this%nc(3),this%nc(2),this%nc(1),dim+1], order=[3,2,1,4])
+                    Xcw = reshape(Xc4,[this%nc(3),this%nc(2)*this%nc(1)*(dim+1)])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(3),&
+                        this%knot3,&
+                        Xcw,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xcw_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+
+                        Xc4 = reshape(Xcw_new, [nc_new,this%nc(2),this%nc(1),dim+1])
+                        Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim+1], order=[3,2,1,4])
+                        Xcw_new = reshape(Xc4,[this%nc(1)*this%nc(2)*(nc_new),dim+1])
+
+                        allocate(Xc_new(1:this%nc(1)*this%nc(2)*(nc_new),1:dim))
+                        allocate(Wc_new(1:this%nc(1)*this%nc(2)*(nc_new)))
+                        do j = 1, this%nc(1)*this%nc(2)*(nc_new)
+                            Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                            Wc_new(j) = Xcw_new(j,dim+1)
+                        end do
+
+
+                        deallocate(this%Xc, this%knot3, this%Wc)
+                        call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
+                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                    end if
+                end do
+
+            else ! B-Spline
+
+                do i = 1, size(Xth)
+                    k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
+                    if (this%knot3(k+1) == Xth(i)) then
+                        s = compute_multiplicity(this%knot3, Xth(i))
+                    else
+                        s = 0
+                    end if
+                    k = k + 1
+
+                    dim = size(this%Xc,2)
+
+                    Xc4 = reshape(this%Xc, [this%nc(1),this%nc(2),this%nc(3),dim])
+                    Xc4 = reshape(Xc4, [this%nc(3),this%nc(2),this%nc(1),dim], order=[3,2,1,4])
+                    Xc = reshape(Xc4,[this%nc(3),this%nc(2)*this%nc(1)*dim])
+
+                    call remove_knots_A_5_8(&
+                        this%degree(3),&
+                        this%knot3,&
+                        Xc,&
+                        Xth(i),&
+                        k,&
+                        s,&
+                        r(i),&
+                        t,&
+                        knot_new,&
+                        Xc_new)
+
+                    if (t == 0) then
+                        ! no change
+                    else
+                        nc_new = size(Xcw_new,1)
+
+                        Xc4 = reshape(Xc_new, [nc_new,this%nc(2),this%nc(1),dim])
+                        Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim], order=[3,2,1,4])
+                        Xc_new = reshape(Xc4,[this%nc(1)*this%nc(2)*(nc_new),dim])
+
+                        deallocate(this%Xc, this%knot3)
+                        call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new)
+                    end if
+                end do
+
+
+            end if
+
+        else
+            error stop 'Invalid direction.'
+        end if
 
     end subroutine
     !===============================================================================

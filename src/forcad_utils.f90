@@ -7,7 +7,7 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc, remove_knots_A_5_8
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -726,6 +726,109 @@ contains
         end do
 
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine remove_knots_A_5_8(p,knot,Pw,u,r,s,num,t, knot_new, Pw_new)
+        real(rk), intent(in) :: u
+        integer, intent(in) :: p, r, s, num
+        real(rk), intent(in) :: knot(:)
+        real(rk), intent(in) :: Pw(:,:)
+        real(rk), allocatable, intent(out) :: knot_new(:)
+        real(rk), allocatable, intent(out) :: Pw_new(:,:)
+        real(rk), allocatable :: Pw_copy(:,:), knot_copy(:)
+        integer, intent(out) :: t
+        real(rk) :: tol, alfi, alfj
+        real(rk), allocatable :: temp(:,:)
+        integer :: i, j, ii, jj, remflag, off, first, last, ord, fout, m, k, n, nc, dim, tt
+
+        dim = size(Pw,2)
+        nc = size(Pw,1)
+        n = nc
+        m = n+p+1
+        ord = p+1
+        fout = (2*r-s-p)/2
+        last = r-s
+        first = r-p
+
+        Pw_copy = Pw
+        knot_copy = knot
+
+        ! TODO:
+        tol = 1.0e-6_rk * minval(Pw(:,dim))/(1.0_rk + maxval(sqrt(sum(Pw**2, 2))))
+
+        allocate(temp(2*p+1,dim), source=0.0_rk)
+        t = 0
+        do tt = 0, num-1
+            off = first-1
+            temp(1,:) = Pw_copy(off,:)
+            temp(last+1-off+1,:) = Pw_copy(last+1,:)
+            i = first
+            j = last
+            ii = 1
+            jj = last-off
+            remflag = 0
+            do while (j-i>t)
+                alfi = (u-knot_copy(i))/(knot_copy(i+ord+t)-knot_copy(i))
+                alfj = (u-knot_copy(j-t))/(knot_copy(j+ord)-knot_copy(j-t))
+                temp(ii+1,:) = (Pw_copy(i,:)-(1.0_rk-alfi)*temp(ii-1+1,:))/alfi
+                temp(jj+1,:) = (Pw_copy(j,:)-alfj*temp(jj+1+1,:))/(1.0_rk-alfj)
+                i = i+1
+                ii = ii+1
+                j = j-1
+                jj = jj-1
+            end do
+            if (j-i<=t) then
+                if (norm2(temp(ii-1+1,:) - temp(jj+1+1,:))<=tol) then
+                    remflag = 1
+                else
+                    alfi = (u-knot_copy(i))/(knot_copy(i+ord+t)-knot_copy(i))
+                    if (norm2(Pw_copy(i,:) - (alfi*temp(ii+t+1+1,:)+(1.0_rk-alfi)*temp(ii-1+1,:)))<=tol) then
+                        remflag = 1
+                    end if
+                end if
+            end if
+            if (remflag == 0) then
+                exit
+            else
+                i = first
+                j = last
+                do while(j-i>t)
+                    Pw_copy(i,:) = temp(i-off+1,:)
+                    Pw_copy(j,:) = temp(j-off+1,:)
+                    i = i+1
+                    j = j-1
+                end do
+            end if
+            first = first-1
+            last = last+1
+            t=t+1
+        end do
+        if (t==0) then
+            return
+        end if
+        do k = r+1, m
+            knot_copy(k-t) = knot_copy(k)
+        end do
+        j = fout
+        i = j
+        do k = 1, t-1
+            if (mod(k,2)==1) then
+                i = i+1
+            else
+                j = j-1
+            end if
+        end do
+        do k = i+1, n
+            Pw_copy(j,:) = Pw_copy(k,:)
+            j = j+1
+        end do
+        knot_new = knot_copy(1:size(knot_copy)-t)
+        Pw_new = Pw_copy(1:size(Pw_copy,1)-t,:)
+    end subroutine
     !===============================================================================
 
 end module forcad_utils
