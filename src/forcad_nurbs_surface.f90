@@ -1242,6 +1242,8 @@ contains
                         knot_new,&
                         Xc_new)
 
+                    if (allocated(Xc)) deallocate(Xc)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1292,6 +1294,8 @@ contains
                         knot_new,&
                         Xcw_new)
 
+                    if (allocated(Xcw)) deallocate(Xcw)
+
                     if (t == 0) then
                         ! no change
                     else
@@ -1311,7 +1315,7 @@ contains
 
                         deallocate(this%Xc, this%knot2, this%Wc)
                         call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new, Wc=Wc_new)
-                        deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+                        deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
 
                 end do
@@ -1344,6 +1348,8 @@ contains
                         t,&
                         knot_new,&
                         Xc_new)
+
+                    if (allocated(Xc)) deallocate(Xc)
 
                     if (t == 0) then
                         ! no change
