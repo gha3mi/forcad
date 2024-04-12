@@ -64,11 +64,11 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
     - [x] Add `derivative()` method for curves, surfaces and volumes.
 
 - v0.3.0:
-    - [ ] Add `morph()` method for morphing box.
-    - [ ] Add `remove_knots()` method for curves, surfaces and volumes.
+    - [x] Add `remove_knots()` method for curves, surfaces and volumes.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
 
 - Future Tasks:
+    - [ ] Add `morph()` method for morphing box.
     - [ ] Add more examples.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
