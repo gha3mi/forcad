@@ -49,6 +49,19 @@ jobs:
       if: contains(matrix.os, 'macos')
       run: brew install gcc@10
 
+    - name: Run Tests (Debug)
+      run: |
+        fpm run test --profile debug --compiler ${{ env.FC}}
+      env:
+        FC: ${{ steps.setup-fortran.outputs.fc }}
+
+    - name: Run Tests (Release)
+      run: |
+        fpm run test --profile release --compiler ${{ env.FC}}
+      env:
+        FC: ${{ steps.setup-fortran.outputs.fc }}
+  
+
     - name: Run Examples (Debug)
       run: |
         fpm run --example demo_curve        --profile debug --compiler ${{ env.FC}}
