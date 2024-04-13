@@ -495,7 +495,7 @@ contains
         real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
         real(rk) :: inv, alpha1, alpha2, Xth1, Xth2, numer, den
-        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, ii, dim, nc
+        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, dim, nc
         integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
         integer, allocatable :: mlp(:)
 
@@ -536,17 +536,11 @@ contains
         b = degree+1
         Xcwi = 1
         Xth1 = knot(1)
-        do ii =0,dim-1
-            Xcw_new(1,ii+1) = Xcw(1,ii+1)
-        end do
+        Xcw_new(1,:) = Xcw(1,:)
         allocate(knot_new(sum(mlp)), source=0.0_rk)
-        do i = 0,ph
-            knot_new(i+1) = Xth1
-        end do
+        knot_new(1:ph+1) = Xth1
         do i = 0,degree
-            do ii = 0,dim-1
-                bpts(i+1,ii+1) = Xcw(i+1,ii+1)
-            end do
+            bpts(i+1,:) = Xcw(i+1,:)
         end do
         do while (b<m)
             i = b
@@ -580,24 +574,16 @@ contains
                     sv = r - j
                     s = mul + j
                     do q = degree,s,-1
-                        do ii = 0,dim-1
-                            bpts(q+1,ii+1) = (1.0_rk-alfs(q-s+1))*bpts(q,ii+1) + alfs(q-s+1)*bpts(q+1,ii+1)
-                        end do
+                        bpts(q+1,:) = (1.0_rk-alfs(q-s+1))*bpts(q,:) + alfs(q-s+1)*bpts(q+1,:)
                     end do
-                    do ii = 0,dim-1
-                        Nextbpts(sv+1,ii+1) = bpts(degree+1,ii+1)
-                    end do
+                    Nextbpts(sv+1,:) = bpts(degree+1,:)
                 end do
             end if
             do i = lbz,ph
-                do ii = 0,dim-1
-                    ebpts(i+1,ii+1) = 0.0_rk
-                end do
+                ebpts(i+1,:) = 0.0_rk
                 mpi = min(degree,i)
                 do j = max(0,i-t),mpi
-                    do ii = 0,dim-1
-                        ebpts(i+1,ii+1) = bezalfs(j+1,i+1)*bpts(j+1,ii+1) + ebpts(i+1,ii+1)
-                    end do
+                    ebpts(i+1,:) = bezalfs(j+1,i+1)*bpts(j+1,:) + ebpts(i+1,:)
                 end do
             end do
             if (oldr > 1) then
@@ -612,20 +598,14 @@ contains
                     do while (j-i > tr)
                         if (i < Xcwi) then
                             alpha1 = (Xth2-knot(i+1))/(Xth1-knot(i+1))
-                            do ii = 0,dim-1
-                                Xcw_new(i+1,ii+1) = (1-alpha1)*Xcw_new(i,ii+1) + alpha1*Xcw_new(i+1,ii+1)
-                            end do
+                            Xcw_new(i+1,:) = (1-alpha1)*Xcw_new(i,:) + alpha1*Xcw_new(i+1,:)
                         end if
                         if (j >= lbz) then
                             if (j-tr <= knoti-ph+oldr) then
                                 alpha2 = (Xth2-knot_new(j-tr+1)) / den
-                                do ii = 0,dim-1
-                                    ebpts(kj+1,ii+1) = alpha2*ebpts(kj+1,ii+1) + (1-alpha2)*ebpts(kj+2,ii+1)
-                                end do
+                                ebpts(kj+1,:) = alpha2*ebpts(kj+1,:) + (1-alpha2)*ebpts(kj+2,:)
                             else
-                                do ii = 0,dim-1
-                                    ebpts(kj+1,ii+1) = (1-alpha3)*ebpts(ii+1,kj+2) + alpha3*ebpts(kj+1,ii+1)
-                                end do
+                                ebpts(kj+1,:) = (1-alpha3)*ebpts(:,kj+2) + alpha3*ebpts(kj+1,:)
                             end if
                         end if
                         i = i + 1
@@ -643,21 +623,15 @@ contains
                 end do
             end if
             do j = lbz,rbz
-                do ii = 0,dim-1
-                    Xcw_new(Xcwi+1,ii+1) = ebpts(j+1,ii+1)
-                end do
+                Xcw_new(Xcwi+1,:) = ebpts(j+1,:)
                 Xcwi = Xcwi + 1
             end do
             if (b<m) then
                 do j = 0,r-1
-                    do ii = 0,dim-1
-                        bpts(j+1,ii+1) = Nextbpts(j+1,ii+1)
-                    end do
+                    bpts(j+1,:) = Nextbpts(j+1,:)
                 end do
                 do j = r,degree
-                    do ii = 0,dim-1
-                        bpts(j+1,ii+1) = Xcw(b-degree+j+1,ii+1)
-                    end do
+                    bpts(j+1,:) = Xcw(b-degree+j+1,:)
                 end do
                 a = b
                 b = b+1
