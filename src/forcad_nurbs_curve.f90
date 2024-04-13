@@ -567,10 +567,11 @@ contains
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
+
                 do j = 1, size(this%Xc,1)
                     Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
-                    Xcw(j,dim+1) = this%Wc(j)
                 end do
+                Xcw(:,dim+1) = this%Wc(:)
 
                 call insert_knot_A_5_1(&
                     this%degree,&
@@ -651,8 +652,8 @@ contains
             allocate(Wc_new(1:nc_new))
             do j = 1, nc_new
                 Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
-                Wc_new(j) = Xcw_new(j,dim+1)
             end do
+            Wc_new(:) = Xcw_new(:,dim+1)
 
             call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
             deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
@@ -846,8 +847,8 @@ contains
                 allocate(Xcw(size(this%Xc,1),dim+1))
                 do j = 1, size(this%Xc,1)
                     Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
-                    Xcw(j,dim+1) = this%Wc(j)
                 end do
+                Xcw(:,dim+1) = this%Wc(:)
 
                 call remove_knots_A_5_8(&
                     this%degree,&
@@ -861,6 +862,8 @@ contains
                     knot_new,&
                     Xcw_new)
 
+                if (allocated(Xcw)) deallocate(Xcw)
+
                 if (t == 0) then
                     ! no change
                 else
@@ -869,12 +872,11 @@ contains
                     allocate(Wc_new(nc_new))
                     do j = 1, nc_new
                         Xc_new(j,:) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
-                        Wc_new(j) = Xcw_new(j,dim+1)
                     end do
-                    
+                    Wc_new(:) = Xcw_new(:,dim+1)
+
                     deallocate(this%Xc, this%knot, this%Wc)
                     call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
-                    if (allocated(Xcw)) deallocate(Xcw)
                     if (allocated(Xcw_new)) deallocate(Xcw_new)
                     if (allocated(Xc_new)) deallocate(Xc_new)
                     if (allocated(Wc_new)) deallocate(Wc_new)
@@ -908,7 +910,7 @@ contains
                     ! no change
                 else
                     deallocate(this%Xc, this%knot)
-                    call this%set(knot=knot_new, Xc=Xc_new)    
+                    call this%set(knot=knot_new, Xc=Xc_new)
                 end if
             end do
 
