@@ -1261,11 +1261,11 @@ contains
                 end do
                 Xcw(:,dim+1) = this%Wc(:)
 
-                Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)])
+                Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)],order=[1,2])
 
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
 
-                Xcw_new = reshape(Xcw_new,[nc_new*this%nc(2)*this%nc(3),dim+1])
+                Xcw_new = reshape(Xcw_new,[nc_new*this%nc(2)*this%nc(3),dim+1],order=[1,2])
 
                 allocate(Xc_new(1:nc_new*this%nc(2)*this%nc(3),1:dim))
                 allocate(Wc_new(1:nc_new*this%nc(2)*this%nc(3)))
@@ -1282,11 +1282,11 @@ contains
 
                 dim = size(this%Xc,2)
 
-                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*this%nc(3)*dim])
+                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*this%nc(3)*dim],order=[1,2])
 
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
-                Xc_new = reshape(Xc_new,[nc_new*this%nc(2)*this%nc(3),dim])
+                Xc_new = reshape(Xc_new,[nc_new*this%nc(2)*this%nc(3),dim],order=[1,2])
 
                 deallocate(this%Xc, this%knot1)
                 call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new)
@@ -1586,7 +1586,7 @@ contains
                     end do
                     Xcw(:,dim+1) = this%Wc(:)
 
-                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)])
+                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)],order=[1,2])
 
                     call remove_knots_A_5_8(&
                         this%degree(1),&
@@ -1606,7 +1606,7 @@ contains
                         ! no change
                     else
                         nc_new = size(Xcw_new,1)
-                        Xcw_new = reshape(Xcw_new,[(nc_new)*this%nc(2)*this%nc(3),dim+1])
+                        Xcw_new = reshape(Xcw_new,[(nc_new)*this%nc(2)*this%nc(3),dim+1],order=[1,2])
 
                         allocate(Xc_new(1:(nc_new)*this%nc(2)*this%nc(3),1:dim))
                         allocate(Wc_new(1:(nc_new)*this%nc(2)*this%nc(3)))
