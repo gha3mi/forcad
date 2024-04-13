@@ -1247,7 +1247,7 @@ contains
                     if (t == 0) then
                         ! no change
                     else
-                        nc_new = size(Xcw_new,1)
+                        nc_new = size(Xc_new,1)
                         Xc_new = reshape(Xc_new,[(this%nc(2))*(nc_new),dim])
 
                         deallocate(this%Xc, this%knot1)
@@ -1354,7 +1354,7 @@ contains
                     if (t == 0) then
                         ! no change
                     else
-                        nc_new = size(Xcw_new,1)
+                        nc_new = size(Xc_new,1)
 
                         Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
                         Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
