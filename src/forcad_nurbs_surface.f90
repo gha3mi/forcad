@@ -150,13 +150,14 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine create(this, res1, res2, Xt1, Xt2)
+    pure subroutine create(this, res1, res2, Xt1, Xt2, Xt)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), optional :: res1, res2
         real(rk), intent(in), optional :: Xt1(:), Xt2(:)
+        real(rk), dimension(:,:), intent(in), optional :: Xt
         integer :: i, j
         real(rk), dimension(:), allocatable :: Tgc1, Tgc2, Tgc
-        real(rk), dimension(:,:), allocatable :: Xt
+        real(rk), dimension(:,:), allocatable :: Xt_
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -188,20 +189,24 @@ contains
             ! this%Xt2 = this%Xt2
         end if
 
+        if (present(Xt)) then
+            Xt_ = Xt
+        else
 
-        ! Set number of geometry points
-        this%ng(1) = size(this%Xt1,1)
-        this%ng(2) = size(this%Xt2,1)
+            ! Set number of geometry points
+            this%ng(1) = size(this%Xt1,1)
+            this%ng(2) = size(this%Xt2,1)
 
-        call ndgrid(this%Xt1, this%Xt2, Xt)
+            call ndgrid(this%Xt1, this%Xt2, Xt_)
+        end if
 
         if (allocated(this%Xg)) deallocate(this%Xg)
-        allocate(this%Xg(this%ng(1)*this%ng(2), size(this%Xc,2)))
+        allocate(this%Xg(size(Xt_,1), size(this%Xc,2)))
 
         if (this%is_rational()) then ! NURBS
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
+            do i = 1, size(Xt_, 1)
+                Tgc1 = basis_bspline(Xt_(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt_(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgc = kron(Tgc2, Tgc1)
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
                 do j = 1, size(this%Xc, 2)
@@ -209,9 +214,9 @@ contains
                 end do
             end do
         else ! B-Spline
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
+            do i = 1, size(Xt_, 1)
+                Tgc1 = basis_bspline(Xt_(i,1), this%knot1, this%nc(1), this%degree(1))
+                Tgc2 = basis_bspline(Xt_(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgc = kron(Tgc2, Tgc1)
                 do j = 1, size(this%Xc, 2)
                     this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))

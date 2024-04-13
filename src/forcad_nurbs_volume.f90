@@ -168,10 +168,10 @@ contains
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in), optional :: res1, res2, res3
         real(rk), intent(in), optional :: Xt1(:), Xt2(:), Xt3(:)
+        real(rk), dimension(:,:), intent(in), optional :: Xt
         integer :: i, j
         real(rk), dimension(:), allocatable :: Tgc1, Tgc2, Tgc3, Tgc
         real(rk), dimension(:,:), allocatable :: Xt_
-        real(rk), dimension(:,:), intent(in), optional :: Xt
 
         ! check
         if (.not.allocated(this%Xc)) then
