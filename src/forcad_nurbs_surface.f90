@@ -41,7 +41,9 @@ module forcad_nurbs_surface
         procedure, private :: get_knoti     !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
-        procedure :: get_degree             !!> Get degree of the NURBS surface
+        procedure, private :: get_degree_all!!> Get degree of the NURBS surface in both directions
+        procedure, private :: get_degree_dir!!> Get degree of the NURBS surface in a specific direction
+        generic :: get_degree => get_degree_all, get_degree_dir !!> Get degree of the NURBS surface
         procedure :: finalize               !!> Finalize the NURBS surface object
         procedure :: cmp_elem_Xc_vis        !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis        !!> Generate connectivity for geometry points
@@ -320,7 +322,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_degree(this) result(degree)
+    pure function get_degree_all(this) result(degree)
         class(nurbs_surface), intent(in) :: this
         integer :: degree(2)
         integer, allocatable :: m1(:), m2(:)
@@ -330,6 +332,28 @@ contains
 
         degree(1) = m1(1) - 1
         degree(2) = m2(1) - 1
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_degree_dir(this,dir) result(degree)
+        class(nurbs_surface), intent(in) :: this
+        integer, intent(in) :: dir
+        integer :: degree
+        integer, allocatable :: m1(:), m2(:)
+
+        if (dir == 1) then
+            m1 = this%get_multiplicity(1)
+            degree = m1(1) - 1
+        else if (dir == 2) then
+            m2 = this%get_multiplicity(2)
+            degree = m2(1) - 1
+        else
+            error stop 'Invalid direction for degree.'
+        end if
     end function
     !===============================================================================
 
