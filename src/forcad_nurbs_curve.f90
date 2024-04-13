@@ -35,7 +35,9 @@ module forcad_nurbs_curve
         procedure :: get_Xg                !!> Get geometry points
         procedure :: get_Wc                !!> Get weights
         procedure :: get_Xt                !!> Get parameter values
-        procedure :: get_knot              !!> Get knot vector
+        procedure, private :: get_knot_all !!> Get all knot vectors
+        procedure, private :: get_knoti    !!> Get i-th knot value
+        generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                !!> Get number of geometry points
         procedure :: get_degree            !!> Get degree of the NURBS curve
         procedure :: finalize              !!> Finalize the NURBS curve object
@@ -303,12 +305,33 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_knot(this) result(knot)
+    pure function get_knot_all(this) result(knot)
         class(nurbs_curve), intent(in) :: this
         real(rk), allocatable :: knot(:)
 
         if (allocated(this%knot)) then
             knot = this%knot
+        else
+            error stop 'Knot vector is not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_knoti(this,i) result(knot)
+        class(nurbs_curve), intent(in) :: this
+        integer, intent(in) :: i
+        real(rk) :: knot
+
+        if (allocated(this%knot)) then
+            if (i < 1 .or. i > size(this%knot)) then
+                error stop 'Invalid index for knot vector.'
+            else
+                knot = this%knot(i)
+            end if
         else
             error stop 'Knot vector is not set.'
         end if

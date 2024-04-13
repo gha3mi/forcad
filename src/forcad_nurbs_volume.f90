@@ -39,7 +39,9 @@ module forcad_nurbs_volume
         procedure :: get_Xg                 !!> Get geometry points
         procedure :: get_Wc                 !!> Get weights
         procedure :: get_Xt                 !!> Get parameter values
-        procedure :: get_knot               !!> Get knot vector
+        procedure, private :: get_knot_all  !!> Get all knot vectors
+        procedure, private :: get_knoti     !!> Get i-th knot value
+        generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
         procedure :: get_degree             !!> Get degree of the NURBS volume
         procedure :: finalize               !!> Finalize the NURBS volume object
@@ -371,7 +373,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_knot(this, dir) result(knot)
+    pure function get_knot_all(this, dir) result(knot)
         class(nurbs_volume), intent(in) :: this
         integer, intent(in) :: dir
         real(rk), allocatable :: knot(:)
@@ -391,6 +393,53 @@ contains
         elseif (dir == 3) then
             if (allocated(this%knot3)) then
                 knot = this%knot3
+            else
+                error stop 'Knot vector is not set.'
+            end if
+        else
+            error stop 'Invalid direction for knot vector.'
+        end if
+
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_knoti(this, dir, i) result(knot)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: dir
+        integer, intent(in) :: i
+        real(rk) :: knot
+
+        if (dir == 1) then
+            if (allocated(this%knot1)) then
+                if (i < 1 .or. i > size(this%knot1)) then
+                    error stop 'Invalid index for knot vector.'
+                else
+                    knot = this%knot1(i)
+                end if
+            else
+                error stop 'Knot vector is not set.'
+            end if
+        elseif (dir == 2) then
+            if (allocated(this%knot2)) then
+                if (i < 1 .or. i > size(this%knot2)) then
+                    error stop 'Invalid index for knot vector.'
+                else
+                    knot = this%knot2(i)
+                end if
+            else
+                error stop 'Knot vector is not set.'
+            end if
+        elseif (dir == 3) then
+            if (allocated(this%knot3)) then
+                if (i < 1 .or. i > size(this%knot3)) then
+                    error stop 'Invalid index for knot vector.'
+                else
+                    knot = this%knot3(i)
+                end if
             else
                 error stop 'Knot vector is not set.'
             end if
