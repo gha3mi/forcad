@@ -4,7 +4,7 @@
 module forcad_nurbs_surface
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, remove_knots_A_5_8
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8
 
     implicit none
 
@@ -991,7 +991,7 @@ contains
 
                 Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xcw_new = reshape(Xcw_new,[this%nc(2)*nc_new,dim+1])
 
@@ -1012,7 +1012,7 @@ contains
                 dim = size(this%Xc,2)
                 Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim)])
 
-                call elevate_degree_A(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
                 Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim])
 
@@ -1038,7 +1038,7 @@ contains
                 Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
                 Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),dim+1])
                 Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim+1], order=[2,1,3])
@@ -1064,7 +1064,7 @@ contains
                 Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
                 Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
 
-                call elevate_degree_A(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
 
                 Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
                 Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])

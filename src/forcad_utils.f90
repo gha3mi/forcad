@@ -7,7 +7,7 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc, remove_knots_A_5_8
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, remove_knots_A_5_8
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -487,7 +487,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine elevate_degree_A(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new)
+    pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new)
         integer, intent(in) :: t
         real(rk), intent(in) :: Xcw(:,:), knot(:)
         integer, intent(in) :: degree

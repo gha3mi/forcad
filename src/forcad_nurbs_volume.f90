@@ -4,7 +4,7 @@
 module forcad_nurbs_volume
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A, hexahedron_Xc, remove_knots_A_5_8
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, remove_knots_A_5_8
 
     implicit none
 
@@ -1187,7 +1187,7 @@ contains
 
                 Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*this%nc(3)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xcw_new = reshape(Xcw_new,[nc_new*this%nc(2)*this%nc(3),dim+1])
 
@@ -1208,7 +1208,7 @@ contains
 
                 Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*this%nc(3)*dim])
 
-                call elevate_degree_A(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
                 Xc_new = reshape(Xc_new,[nc_new*this%nc(2)*this%nc(3),dim])
 
@@ -1235,7 +1235,7 @@ contains
                 Xcw = reshape(Xc4,[this%nc(2),this%nc(1)*this%nc(3)*(dim+1)])
 
 
-                call elevate_degree_A(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xc4 = reshape(Xcw_new, [nc_new,this%nc(1),this%nc(3),dim+1])
                 Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim+1], order=[2,1,3,4])
@@ -1261,7 +1261,7 @@ contains
                 Xc4 = reshape(Xc4, [this%nc(2),this%nc(1),this%nc(3),dim], order=[2,1,3,4])
                 Xc = reshape(Xc4,[this%nc(2),this%nc(1)*this%nc(3)*dim])
 
-                call elevate_degree_A(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
 
                 Xc4 = reshape(Xc_new, [nc_new,this%nc(1),this%nc(3),dim])
                 Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim], order=[2,1,3,4])
@@ -1288,7 +1288,7 @@ contains
                 Xc4 = reshape(Xc4, [this%nc(3),this%nc(2),this%nc(1),dim+1], order=[3,2,1,4])
                 Xcw = reshape(Xc4,[this%nc(3),this%nc(2)*this%nc(1)*(dim+1)])
 
-                call elevate_degree_A(t, this%knot3, this%degree(3), Xcw, nc_new, knot_new, Xcw_new)
+                call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xcw, nc_new, knot_new, Xcw_new)
 
                 Xc4 = reshape(Xcw_new, [nc_new,this%nc(2),this%nc(1),dim+1])
                 Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim+1], order=[3,2,1,4])
@@ -1314,7 +1314,7 @@ contains
                 Xc4 = reshape(Xc4, [this%nc(3),this%nc(2),this%nc(1),dim], order=[3,2,1,4])
                 Xc = reshape(Xc4,[this%nc(3),this%nc(2)*this%nc(1)*dim])
 
-                call elevate_degree_A(t, this%knot3, this%degree(3), Xc, nc_new, knot_new, Xc_new)
+                call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xc, nc_new, knot_new, Xc_new)
 
                 Xc4 = reshape(Xc_new, [nc_new,this%nc(2),this%nc(1),dim])
                 Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim], order=[3,2,1,4])
