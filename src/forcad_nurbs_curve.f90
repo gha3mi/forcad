@@ -4,7 +4,7 @@
 module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
-        insert_knot_A_5_1, findspan, elevate_degree_A, remove_knots_A_5_8
+        insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8
 
     implicit none
 
@@ -646,7 +646,7 @@ contains
                 Xcw(j,dim+1) = this%Wc(j)
             end do
 
-            call elevate_degree_A(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new)
+            call elevate_degree_A_5_9(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new)
 
             allocate(Xc_new(1:nc_new,1:dim))
             allocate(Wc_new(1:nc_new))
@@ -662,7 +662,7 @@ contains
 
             dim = size(this%Xc,2)
 
-            call elevate_degree_A(t, this%knot, this%degree, this%Xc, nc_new, knot_new, Xc_new)
+            call elevate_degree_A_5_9(t, this%knot, this%degree, this%Xc, nc_new, knot_new, Xc_new)
 
             call this%set(knot=knot_new, Xc=Xc_new)
             deallocate(Xc_new)

@@ -77,7 +77,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="16.2% of total for source files.">570 statements</a>
+                 title="16.3% of total for source files.">570 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -458,7 +458,7 @@ large graphs.</div>
 <a id="ln-4" name="ln-4" href="#ln-4"></a><span class="k">module </span><span class="n">forcad_nurbs_curve</span>
 <a id="ln-5" name="ln-5" href="#ln-5"></a>
 <a id="ln-6" name="ln-6" href="#ln-6"></a><span class="w">    </span><span class="k">use </span><span class="n">forcad_utils</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span><span class="p">,</span><span class="w"> </span><span class="n">basis_bspline</span><span class="p">,</span><span class="w"> </span><span class="n">elemConn_C0</span><span class="p">,</span><span class="w"> </span><span class="n">compute_multiplicity</span><span class="p">,</span><span class="w"> </span><span class="n">compute_knot_vector</span><span class="p">,</span><span class="w"> </span><span class="n">basis_bspline_der</span><span class="p">,&amp;</span>
-<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">        </span><span class="n">insert_knot_A_5_1</span><span class="p">,</span><span class="w"> </span><span class="n">findspan</span><span class="p">,</span><span class="w"> </span><span class="n">elevate_degree_A</span><span class="p">,</span><span class="w"> </span><span class="n">remove_knots_A_5_8</span>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">        </span><span class="n">insert_knot_A_5_1</span><span class="p">,</span><span class="w"> </span><span class="n">findspan</span><span class="p">,</span><span class="w"> </span><span class="n">elevate_degree_A_5_9</span><span class="p">,</span><span class="w"> </span><span class="n">remove_knots_A_5_8</span>
 <a id="ln-8" name="ln-8" href="#ln-8"></a>
 <a id="ln-9" name="ln-9" href="#ln-9"></a><span class="w">    </span><span class="k">implicit none</span>
 <a id="ln-10" name="ln-10" href="#ln-10"></a>
@@ -1100,7 +1100,7 @@ large graphs.</div>
 <a id="ln-646" name="ln-646" href="#ln-646"></a><span class="w">                </span><span class="n">Xcw</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="nb">dim</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Wc</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <a id="ln-647" name="ln-647" href="#ln-647"></a><span class="w">            </span><span class="k">end do</span>
 <a id="ln-648" name="ln-648" href="#ln-648"></a>
-<a id="ln-649" name="ln-649" href="#ln-649"></a><span class="k">            call </span><span class="n">elevate_degree_A</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">Xcw</span><span class="p">,</span><span class="w"> </span><span class="n">nc_new</span><span class="p">,</span><span class="w"> </span><span class="n">knot_new</span><span class="p">,</span><span class="w"> </span><span class="n">Xcw_new</span><span class="p">)</span>
+<a id="ln-649" name="ln-649" href="#ln-649"></a><span class="k">            call </span><span class="n">elevate_degree_A_5_9</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">Xcw</span><span class="p">,</span><span class="w"> </span><span class="n">nc_new</span><span class="p">,</span><span class="w"> </span><span class="n">knot_new</span><span class="p">,</span><span class="w"> </span><span class="n">Xcw_new</span><span class="p">)</span>
 <a id="ln-650" name="ln-650" href="#ln-650"></a>
 <a id="ln-651" name="ln-651" href="#ln-651"></a><span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">Xc_new</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nc_new</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="nb">dim</span><span class="p">))</span>
 <a id="ln-652" name="ln-652" href="#ln-652"></a><span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">Wc_new</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nc_new</span><span class="p">))</span>
@@ -1116,7 +1116,7 @@ large graphs.</div>
 <a id="ln-662" name="ln-662" href="#ln-662"></a>
 <a id="ln-663" name="ln-663" href="#ln-663"></a><span class="w">            </span><span class="nb">dim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <a id="ln-664" name="ln-664" href="#ln-664"></a>
-<a id="ln-665" name="ln-665" href="#ln-665"></a><span class="w">            </span><span class="k">call </span><span class="n">elevate_degree_A</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="n">nc_new</span><span class="p">,</span><span class="w"> </span><span class="n">knot_new</span><span class="p">,</span><span class="w"> </span><span class="n">Xc_new</span><span class="p">)</span>
+<a id="ln-665" name="ln-665" href="#ln-665"></a><span class="w">            </span><span class="k">call </span><span class="n">elevate_degree_A_5_9</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="n">nc_new</span><span class="p">,</span><span class="w"> </span><span class="n">knot_new</span><span class="p">,</span><span class="w"> </span><span class="n">Xc_new</span><span class="p">)</span>
 <a id="ln-666" name="ln-666" href="#ln-666"></a>
 <a id="ln-667" name="ln-667" href="#ln-667"></a><span class="w">            </span><span class="k">call </span><span class="n">this</span><span class="p">%</span><span class="n">set</span><span class="p">(</span><span class="n">knot</span><span class="o">=</span><span class="n">knot_new</span><span class="p">,</span><span class="w"> </span><span class="n">Xc</span><span class="o">=</span><span class="n">Xc_new</span><span class="p">)</span>
 <a id="ln-668" name="ln-668" href="#ln-668"></a><span class="w">            </span><span class="k">deallocate</span><span class="p">(</span><span class="n">Xc_new</span><span class="p">)</span>
@@ -1395,7 +1395,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-13T01:51:20.994272             </p>
+ on 2024-04-13T09:25:27.050117             </p>
           </div>
         </div>
         <br>
