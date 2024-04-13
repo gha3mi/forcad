@@ -66,11 +66,11 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
 - v0.3.0:
     - [x] Add `remove_knots()` method for curves, surfaces and volumes.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
+    - [x] Add unit tests.
 
 - Future Tasks:
     - [ ] Add `morph()` method for morphing box.
     - [ ] Add more examples.
-    - [ ] Add unit tests.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
     - [ ] Export to `IGES` format.
