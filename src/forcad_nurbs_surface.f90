@@ -49,13 +49,13 @@ module forcad_nurbs_surface
         procedure :: finalize               !!> Finalize the NURBS surface object
         procedure :: cmp_elem_Xc_vis        !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis        !!> Generate connectivity for geometry points
-        procedure :: cmp_elem
+        procedure :: cmp_elem               !!> Generate IGA element connectivity
         procedure :: get_elem_Xc_vis        !!> Get connectivity for control points
         procedure :: get_elem_Xg_vis        !!> Get connectivity for geometry points
-        procedure :: get_elem
+        procedure :: get_elem               !!> Get IGA element connectivity
         procedure :: set_elem_Xc_vis        !!> Set connectivity for control points
         procedure :: set_elem_Xg_vis        !!> Set connectivity for geometry points
-        procedure :: set_elem
+        procedure :: set_elem               !!> Set IGA element connectivity
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: modify_Xc              !!> Modify control points
