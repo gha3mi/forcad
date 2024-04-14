@@ -49,7 +49,7 @@ contains
     function generate_Xc(num_coils, radius, height, num_points_per_coil) result(control_points)
         integer, intent(in) :: num_coils, num_points_per_coil
         real(rk), intent(in) :: radius, height
-        real(rk), dimension(:,:), allocatable :: control_points
+        real(rk), allocatable :: control_points(:,:)
         integer :: coil, i
         real(rk) :: theta, coil_height
         allocate(control_points(num_coils * num_points_per_coil, 3))
