@@ -78,7 +78,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="18.9% of total for modules and submodules.">642 statements</a>
+                 title="21.5% of total for modules and submodules.">770 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -137,7 +137,9 @@
         <div class="list-group list-group-flush">
             <a class="list-group-item" href="../module/forcad_utils.html#interface-compute_multiplicity">compute_multiplicity</a>
             <a class="list-group-item" href="../module/forcad_utils.html#interface-elemconn_c0">elemConn_C0</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#interface-elemconn_cn">elemConn_Cn</a>
             <a class="list-group-item" href="../module/forcad_utils.html#interface-ndgrid">ndgrid</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#interface-unique">unique</a>
         </div>
       </div>
     </div>
@@ -169,6 +171,8 @@
             <a class="list-group-item" href="../module/forcad_utils.html#proc-isinf">isinf</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-isnan">isnan</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-repelem">repelem</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#proc-unique_integer">unique_integer</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#proc-unique_real">unique_real</a>
         </div>
       </div>
     </div>
@@ -183,6 +187,9 @@
             <a class="list-group-item" href="../module/forcad_utils.html#proc-elevate_degree_a_5_9">elevate_degree_A_5_9</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-insert_knot_a_5_1">insert_knot_A_5_1</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-remove_knots_a_5_8">remove_knots_A_5_8</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#proc-cmp_elemconn_cn_l">cmp_elemConn_Cn_L</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#proc-cmp_elemconn_cn_s">cmp_elemConn_Cn_S</a>
+            <a class="list-group-item" href="../module/forcad_utils.html#proc-cmp_elemconn_cn_v">cmp_elemConn_Cn_V</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-ndgrid2">ndgrid2</a>
             <a class="list-group-item" href="../module/forcad_utils.html#proc-ndgrid3">ndgrid3</a>
         </div>
@@ -613,7 +620,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~5"></span>
+              <span class="anchor" id="variable-knot~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -661,7 +668,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~6"></span>
+              <span class="anchor" id="variable-knot~4"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -676,7 +683,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth~3"></span>
+              <span class="anchor" id="variable-xth~2"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -749,7 +756,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-p~5"></span>
+              <span class="anchor" id="variable-p~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -993,6 +1000,505 @@ parameter
 
               <div class="card">
     <div class="card-header bg-light codesum">
+      <span class="anchor" id="interface-elemconn_cn"></span>
+      <h3>public        interface <a href='../interface/elemconn_cn.html'>elemConn_Cn</a> 
+      </h3>
+    </div>
+    <ul class="list-group">
+          <li class="list-group-item">
+                <h3>
+    private pure subroutine <a href='../proc/cmp_elemconn_cn_l.html'>cmp_elemConn_Cn_L</a>(nnode, p, Xth, vecKnot_mul, elemConn)  
+
+    </h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~4"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          </li>
+          <li class="list-group-item">
+                <h3>
+    private pure subroutine <a href='../proc/cmp_elemconn_cn_s.html'>cmp_elemConn_Cn_S</a>(nnode1, nnode2, p1, p2, Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)  
+
+    </h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode1~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode2~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p1~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p2~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth1"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul1"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~5"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          </li>
+          <li class="list-group-item">
+                <h3>
+    private pure subroutine <a href='../proc/cmp_elemconn_cn_v.html'>cmp_elemConn_Cn_V</a>(nnode1, nnode2, nnode3, p1, p2, p3, Xth1, Xth2, Xth3, vecKnot_mul1, vecKnot_mul2, vecKnot_mul3, elemConn)  
+
+    </h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode1~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode2~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode3~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode3</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p1~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p2~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p3~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p3</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth1~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth2~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth3"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth3</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul1~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul2~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul3"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul3</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~6"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+          </li>
+    </ul>
+  </div>
+
+              <div class="card">
+    <div class="card-header bg-light codesum">
       <span class="anchor" id="interface-ndgrid"></span>
       <h3>public        interface <a href='../interface/ndgrid.html'>ndgrid</a> 
       </h3>
@@ -1053,7 +1559,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~8"></span>
+              <span class="anchor" id="variable-xt~4"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -1141,7 +1647,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~9"></span>
+              <span class="anchor" id="variable-xt~5"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -1157,6 +1663,112 @@ parameter
     </tbody>
   </table>
 
+
+          </li>
+    </ul>
+  </div>
+
+              <div class="card">
+    <div class="card-header bg-light codesum">
+      <span class="anchor" id="interface-unique"></span>
+      <h3>public        interface <a href='../interface/unique.html'>unique</a> 
+      </h3>
+    </div>
+    <ul class="list-group">
+          <li class="list-group-item">
+                <h3>
+    private pure function <a href='../proc/unique_integer.html'>unique_integer</a>(vec) result(unique)  
+
+    </h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vec"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              dimension(:), contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vec</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer, dimension(:), allocatable</small>
+    </h4>
+    
+
+          </li>
+          <li class="list-group-item">
+                <h3>
+    private pure function <a href='../proc/unique_real.html'>unique_real</a>(vec) result(unique)  
+
+    </h3>
+        <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vec~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              dimension(:), contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vec</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=rk), dimension(:), allocatable</small>
+    </h4>
+    
 
           </li>
     </ul>
@@ -1193,7 +1805,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~7"></span>
+              <span class="anchor" id="variable-xt~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1208,7 +1820,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~8"></span>
+              <span class="anchor" id="variable-nc~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1257,7 +1869,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~5"></span>
+              <span class="anchor" id="variable-xt"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1272,7 +1884,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~3"></span>
+              <span class="anchor" id="variable-knot"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -1287,7 +1899,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~6"></span>
+              <span class="anchor" id="variable-nc"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1302,7 +1914,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-degree~5"></span>
+              <span class="anchor" id="variable-degree"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1351,7 +1963,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~6"></span>
+              <span class="anchor" id="variable-xt~2"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1366,7 +1978,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~4"></span>
+              <span class="anchor" id="variable-knot~2"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -1381,7 +1993,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~7"></span>
+              <span class="anchor" id="variable-nc~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1396,7 +2008,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-degree~6"></span>
+              <span class="anchor" id="variable-degree~2"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1460,7 +2072,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-degree~8"></span>
+              <span class="anchor" id="variable-degree~4"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1524,7 +2136,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-n~6"></span>
+              <span class="anchor" id="variable-n~8"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1539,7 +2151,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-degree~9"></span>
+              <span class="anchor" id="variable-degree~5"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1554,7 +2166,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth~4"></span>
+              <span class="anchor" id="variable-xth~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1569,7 +2181,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~8"></span>
+              <span class="anchor" id="variable-knot~6"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -1618,7 +2230,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-l~4"></span>
+              <span class="anchor" id="variable-l~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1633,7 +2245,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~10"></span>
+              <span class="anchor" id="variable-nc~5"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1746,7 +2358,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-l~5"></span>
+              <span class="anchor" id="variable-l~4"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -1761,7 +2373,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc~11"></span>
+              <span class="anchor" id="variable-nc~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1810,7 +2422,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-n~8"></span>
+              <span class="anchor" id="variable-n~10"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -1889,7 +2501,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-p~5"></span>
+              <span class="anchor" id="variable-p~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2156,7 +2768,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~5"></span>
+              <span class="anchor" id="variable-knot~3"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2205,7 +2817,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~6"></span>
+              <span class="anchor" id="variable-knot~4"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2220,7 +2832,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth~3"></span>
+              <span class="anchor" id="variable-xth~2"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -2269,7 +2881,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-n~9"></span>
+              <span class="anchor" id="variable-n~11"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2456,6 +3068,104 @@ parameter
     </div>
   </div>
 
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unique_integer"></span> <h3>private pure function <a href='../proc/unique_integer.html'>unique_integer</a>(vec) result(unique)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vec"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              dimension(:), contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vec</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>integer, dimension(:), allocatable</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-unique_real"></span> <h3>private pure function <a href='../proc/unique_real.html'>unique_real</a>(vec) result(unique)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vec~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              dimension(:), contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vec</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=rk), dimension(:), allocatable</small>
+    </h4>
+    
+
+    </div>
+  </div>
+
         </section>
         <br>
 
@@ -2485,7 +3195,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-t~3"></span>
+              <span class="anchor" id="variable-t"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2500,7 +3210,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~9"></span>
+              <span class="anchor" id="variable-knot~7"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2515,7 +3225,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-degree~10"></span>
+              <span class="anchor" id="variable-degree~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2530,7 +3240,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xcw~4"></span>
+              <span class="anchor" id="variable-xcw"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2545,7 +3255,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-nc_new~3"></span>
+              <span class="anchor" id="variable-nc_new"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -2560,7 +3270,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot_new~4"></span>
+              <span class="anchor" id="variable-knot_new"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -2575,7 +3285,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xcw_new~4"></span>
+              <span class="anchor" id="variable-xcw_new"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -2619,7 +3329,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-p~6"></span>
+              <span class="anchor" id="variable-p~5"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2694,7 +3404,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-s~3"></span>
+              <span class="anchor" id="variable-s"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2709,7 +3419,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r~4"></span>
+              <span class="anchor" id="variable-r"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2798,7 +3508,7 @@ parameter
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-p~7"></span>
+              <span class="anchor" id="variable-p~6"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2813,7 +3523,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot~10"></span>
+              <span class="anchor" id="variable-knot~8"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -2858,7 +3568,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-r~6"></span>
+              <span class="anchor" id="variable-r~3"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2873,7 +3583,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-s~6"></span>
+              <span class="anchor" id="variable-s~4"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2888,7 +3598,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-num~3"></span>
+              <span class="anchor" id="variable-num"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -2903,7 +3613,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-t~4"></span>
+              <span class="anchor" id="variable-t~2"></span>
               integer,
             </td>
 <td>intent(out)</td>
@@ -2918,7 +3628,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-knot_new~5"></span>
+              <span class="anchor" id="variable-knot_new~2"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -2942,6 +3652,498 @@ parameter
             </td>
             <td>::</td>
             <td><strong>Pw_new</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-cmp_elemconn_cn_l"></span> <h3>private pure subroutine <a href='../proc/cmp_elemconn_cn_l.html'>cmp_elemConn_Cn_L</a>(nnode, p, Xth, vecKnot_mul, elemConn)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~4"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-cmp_elemconn_cn_s"></span> <h3>private pure subroutine <a href='../proc/cmp_elemconn_cn_s.html'>cmp_elemConn_Cn_S</a>(nnode1, nnode2, p1, p2, Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode1~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode2~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p1~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p2~3"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth1"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul1"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~5"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-cmp_elemconn_cn_v"></span> <h3>private pure subroutine <a href='../proc/cmp_elemconn_cn_v.html'>cmp_elemConn_Cn_V</a>(nnode1, nnode2, nnode3, p1, p2, p3, Xth1, Xth2, Xth3, vecKnot_mul1, vecKnot_mul2, vecKnot_mul3, elemConn)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode1~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode2~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nnode3~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nnode3</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p1~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p1</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p2~4"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p2</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-p3~2"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>p3</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth1~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth2~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xth3"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>Xth3</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul1~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul1</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul2~2"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul2</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-vecknot_mul3"></span>
+              integer,
+            </td>
+<td>intent(in),</td>
+              <td></td>            <td>
+              contiguous
+            </td>
+            <td>::</td>
+            <td><strong>vecKnot_mul3</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elemconn~6"></span>
+              integer,
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elemConn</strong>(:,:)</td>
             <td>
 
             </td>
@@ -3007,7 +4209,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~8"></span>
+              <span class="anchor" id="variable-xt~4"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -3096,7 +4298,7 @@ parameter
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xt~9"></span>
+              <span class="anchor" id="variable-xt~5"></span>
               real(kind=rk),
             </td>
 <td>intent(out),</td>
@@ -3139,7 +4341,7 @@ parameter
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-04-14T10:01:25.697986             </p>
+ on 2024-04-14T23:31:45.550201             </p>
           </div>
         </div>
         <br>

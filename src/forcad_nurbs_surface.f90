@@ -4,7 +4,8 @@
 module forcad_nurbs_surface
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, tetragon_Xc
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, tetragon_Xc, &
+        elemConn_Cn, unique
 
     implicit none
 
@@ -27,6 +28,7 @@ module forcad_nurbs_surface
         integer, private :: ng(2)                  !! Number of geometry points in each direction
         integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
         integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
+        integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
         procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS surface object
         procedure :: set2                   !!> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
@@ -47,10 +49,13 @@ module forcad_nurbs_surface
         procedure :: finalize               !!> Finalize the NURBS surface object
         procedure :: cmp_elem_Xc_vis        !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis        !!> Generate connectivity for geometry points
+        procedure :: cmp_elem
         procedure :: get_elem_Xc_vis        !!> Get connectivity for control points
         procedure :: get_elem_Xg_vis        !!> Get connectivity for geometry points
+        procedure :: get_elem
         procedure :: set_elem_Xc_vis        !!> Set connectivity for control points
         procedure :: set_elem_Xg_vis        !!> Set connectivity for geometry points
+        procedure :: set_elem
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: modify_Xc              !!> Modify control points
@@ -1200,6 +1205,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure subroutine set_elem(this, elemConn)
+        class(nurbs_surface), intent(inout) :: this
+        integer, intent(in), contiguous :: elemConn(:,:)
+
+        if (allocated(this%elemConn)) deallocate(this%elemConn)
+        this%elemConn = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function get_elem_Xc_vis(this) result(elemConn)
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
@@ -1217,6 +1235,18 @@ contains
         integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xg_vis
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem(this) result(elemConn)
+        class(nurbs_surface), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+
+        elemConn = this%elemConn
     end function
     !===============================================================================
 
@@ -1465,6 +1495,22 @@ contains
 
         call this%set(nc = nc, Xc = tetragon_Xc(L, nc), Wc = Wc)
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elem(this) result(elemConn)
+        class(nurbs_surface), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+
+        call elemConn_Cn(this%nc(1), this%nc(2),&
+            this%degree(1),this%degree(2),&
+            unique(this%knot1),unique(this%knot2),&
+            this%get_multiplicity(1),this%get_multiplicity(2),&
+            elemConn)
+    end function
     !===============================================================================
 
 end module forcad_nurbs_surface
