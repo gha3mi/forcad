@@ -54,7 +54,7 @@ contains
         real(rk) :: theta, coil_height
         allocate(control_points(num_coils * num_points_per_coil, 3))
         do coil = 1, num_coils
-            coil_height = height * (coil-1) / real(num_coils-1, rk)
+            coil_height = height * real(coil-1, rk) / real(num_coils-1, rk)
             theta = 0.0_rk
             do i = 1, num_points_per_coil
                 theta = theta + 2.0_rk * acos(-1.0_rk) / real(num_points_per_coil, rk)

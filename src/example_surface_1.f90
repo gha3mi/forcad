@@ -106,15 +106,15 @@ contains
         real(rk), allocatable :: control_points(:,:)
         integer :: i, j
         real(rk) :: x_spacing, y_spacing, x_offset, y_offset
-        x_spacing = 1.0_rk / real(num_cols - 1)
-        y_spacing = 1.0_rk / real(num_rows - 1)
+        x_spacing = 1.0_rk / real(num_cols - 1, rk)
+        y_spacing = 1.0_rk / real(num_rows - 1, rk)
         x_offset = -0.5_rk
         y_offset = -0.5_rk
         allocate(control_points(num_rows * num_cols, 3))
         do i = 1, num_rows
             do j = 1, num_cols
-                control_points((i - 1) * num_cols + j, 1) = x_offset + real(j - 1) * x_spacing
-                control_points((i - 1) * num_cols + j, 2) = y_offset + real(i - 1) * y_spacing
+                control_points((i - 1) * num_cols + j, 1) = x_offset + real(j - 1, rk) * x_spacing
+                control_points((i - 1) * num_cols + j, 2) = y_offset + real(i - 1, rk) * y_spacing
                 control_points((i - 1) * num_cols + j, 3) = &
                     peak_height * exp(-((control_points((i - 1) * num_cols + j, 1) ** 2) &
                     + (control_points((i - 1) * num_cols + j, 2) ** 2))) + 0.5_rk * peak_height * 0.2_rk

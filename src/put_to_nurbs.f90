@@ -5,26 +5,27 @@ program example_morph
 
     implicit none
 
-    type(nurbs_volume) :: shape, control_shape
+    type(nurbs_volume) :: control_shape
     real(rk), allocatable :: X(:,:)
     integer, allocatable :: elem(:,:)
-    integer:: i
+    integer:: i, nunit
 
     !> You can create your shape or use a predefined one
     !> Read coordinates from file
     allocate(X(23200,3))
-    open(unit=10, file='example/put_to_nurbs_X.txt')
+    open(newunit=nunit, file='example/put_to_nurbs_X.txt')
     do i = 1,23200
-        read(10,*) X(i,1), X(i,2), X(i,3)
+        read(nunit,*) X(i,1), X(i,2), X(i,3)
     end do
-    close(10)
+    close(nunit)
 
     !> Read element connectivities from file
     allocate(elem(20577,8))
-    open(unit=10, file='example/put_to_nurbs_elem.txt')
+    open(newunit=nunit, file='example/put_to_nurbs_elem.txt')
     do i = 1,20577
-        read(10,*) elem(i,1), elem(i,2), elem(i,4), elem(i,3), elem(i,5), elem(i,6), elem(i,8), elem(i,7)
+        read(nunit,*) elem(i,1), elem(i,2), elem(i,4), elem(i,3), elem(i,5), elem(i,6), elem(i,8), elem(i,7)
     end do
+    close(nunit)
 
     !> Set a control shape that will be used to put the shape into
     !> The contol shape is a hexahedron with 100x40x10 with 10x5x3 number of control points
