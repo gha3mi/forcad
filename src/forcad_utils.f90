@@ -42,7 +42,7 @@ contains
     !> license: BSD 3-Clause
     pure function basis_bspline(Xt, knot, nc, degree) result(B)
         integer, intent(in)   :: degree
-        real(rk), intent(in)  :: knot(:)
+        real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
@@ -74,7 +74,7 @@ contains
     !> author: Seyed Ali Ghasemi
     pure function basis_bspline_der(Xt, knot, nc, degree) result(dB)
         integer, intent(in)   :: degree
-        real(rk), intent(in)  :: knot(:)
+        real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
         real(rk), allocatable :: dB(:)
@@ -158,9 +158,9 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function kron(u,v) result(w)
-        real(rk), dimension(:), intent(in), contiguous  :: u, v
-        real(rk), dimension(size(u)*size(v)) :: w
-        integer                              :: i, j, m, n
+        real(rk), intent(in), contiguous :: u(:), v(:)
+        real(rk) :: w(size(u)*size(v))
+        integer :: i, j, m, n
 
         m = size(u)
         n = size(v)
@@ -178,8 +178,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
-        real(rk), dimension(:), intent(in), contiguous :: X_dir1, X_dir2
-        real(rk), dimension(:,:), allocatable, intent(out) :: Xt
+        real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
+        real(rk), allocatable, intent(out) :: Xt(:,:)
         integer :: s1, s2, i, j, n
 
         s1 = size(X_dir1)
@@ -201,8 +201,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine ndgrid3(X_dir1,X_dir2,X_dir3, Xt)
-        real(rk), dimension(:), intent(in), contiguous :: X_dir1, X_dir2, X_dir3
-        real(rk), dimension(:,:), allocatable, intent(out) :: Xt
+        real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:), X_dir3(:)
+        real(rk), allocatable, intent(out) :: Xt(:,:)
         integer :: s1, s2, s3, i, j, k, n
 
         s1 = size(X_dir1)
@@ -228,9 +228,9 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function repelem(a, b) result(c)
-        real(rk), dimension(:), intent(in), contiguous  :: a
-        integer, dimension(:), intent(in), contiguous  :: b
-        real(rk), dimension(sum(b)) :: c
+        real(rk), intent(in), contiguous :: a(:)
+        integer, intent(in), contiguous :: b(:)
+        real(rk) :: c(sum(b))
         integer :: i, l, n
 
         l = 0
@@ -249,9 +249,9 @@ contains
     pure function cmp_elemConn_C0_L(nnode,p) result(elemConn)
         integer, intent(in) :: nnode
         integer, intent(in) :: p
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
         integer :: i, l
-        integer, dimension(:), allocatable :: nodes
+        integer, allocatable :: nodes(:)
 
         allocate(elemConn( ((nnode-p) / p) ,2))
         nodes = [(i, i=1,nnode)]
@@ -270,9 +270,9 @@ contains
     pure function cmp_elemConn_C0_S(nnode1,nnode2,p1,p2) result(elemConn)
         integer, intent(in) :: nnode1, nnode2
         integer, intent(in) :: p1, p2
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
         integer :: i, j, l
-        integer, dimension(:,:), allocatable :: nodes
+        integer, allocatable :: nodes(:,:)
 
         allocate(elemConn( ((nnode1-p1) / p1) * ((nnode2-p2) / p2) ,4))
         nodes = reshape([(i, i=1,nnode1*nnode2)], [nnode1, nnode2])
@@ -293,9 +293,9 @@ contains
     pure function cmp_elemConn_C0_V(nnode1,nnode2,nnode3,p1,p2,p3) result(elemConn)
         integer, intent(in) :: nnode1, nnode2, nnode3
         integer, intent(in) :: p1, p2, p3
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
         integer :: i, j, k, l
-        integer, dimension(:,:,:), allocatable :: nodes
+        integer, allocatable :: nodes(:,:,:)
 
         allocate(elemConn( ((nnode1-p1) / p1) * ((nnode2-p2) / p2) * ((nnode3-p3) / p3) ,8))
         nodes = reshape([(i, i=1,nnode1*nnode2*nnode3)], [nnode1, nnode2, nnode3])
@@ -316,8 +316,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function compute_multiplicity1(knot) result(multiplicity)
-        real(rk), intent(in) :: knot(:)
-        integer, dimension(:), allocatable :: multiplicity
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, allocatable :: multiplicity(:)
         integer :: i, count
 
         count = 1
@@ -346,7 +346,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function compute_multiplicity2(knot, Xth) result(multiplicity)
-        real(rk), dimension(:), intent(in) :: knot
+        real(rk), intent(in), contiguous :: knot(:)
         real(rk), intent(in) :: Xth
         integer :: multiplicity
         integer :: i, count, size_knot
@@ -376,9 +376,9 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function compute_knot_vector(Xth_dir, degree, continuity) result(knot)
-        real(rk), intent(in) :: Xth_dir(:)
+        real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
-        integer, intent(in) :: continuity(:)
+        integer, intent(in), contiguous :: continuity(:)
         real(rk), allocatable :: knot(:)
 
         knot = repelem(Xth_dir, (degree - continuity))
@@ -418,7 +418,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw)
         integer, intent(in) :: p, k, s, r
-        real(rk), intent(in) :: UP(0:), Pw(0:,:)
+        real(rk), intent(in), contiguous :: UP(0:), Pw(0:,:)
         real(rk), intent(in) :: u
         real(rk), allocatable, intent(out) :: UQ(:), Qw(:,:)
         integer, intent(out) :: nq
@@ -461,7 +461,7 @@ contains
     pure function findspan(n,degree,Xth,knot) result(s)
         integer, intent(in) :: n, degree
         real(rk), intent(in) :: Xth
-        real(rk), intent(in) :: knot(:)
+        real(rk), intent(in), contiguous :: knot(:)
         integer :: s
         integer :: low, high, mid
         if (Xth == knot(n+2)) then
@@ -489,7 +489,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new)
         integer, intent(in) :: t
-        real(rk), intent(in) :: Xcw(:,:), knot(:)
+        real(rk), intent(in), contiguous :: Xcw(:,:), knot(:)
         integer, intent(in) :: degree
         integer, intent(out) :: nc_new
         real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
@@ -678,7 +678,7 @@ contains
     pure function hexahedron_Xc(L, nc) result(Xc)
         real(rk), intent(in) :: L(3)
         integer, intent(in) :: nc(3)
-        real(rk), dimension(:,:), allocatable :: Xc
+        real(rk), allocatable :: Xc(:,:)
         real(rk) :: dx, dy, dz
         integer :: i, j, k, nci
 
@@ -709,8 +709,8 @@ contains
     pure subroutine remove_knots_A_5_8(p,knot,Pw,u,r,s,num,t, knot_new, Pw_new)
         real(rk), intent(in) :: u
         integer, intent(in) :: p, r, s, num
-        real(rk), intent(in) :: knot(:)
-        real(rk), intent(in) :: Pw(:,:)
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in), contiguous :: Pw(:,:)
         real(rk), allocatable, intent(out) :: knot_new(:)
         real(rk), allocatable, intent(out) :: Pw_new(:,:)
         real(rk), allocatable :: Pw_copy(:,:), knot_copy(:)

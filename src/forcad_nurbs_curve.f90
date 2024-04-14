@@ -71,9 +71,9 @@ contains
     !> Set knot vector, control points and weights for the NURBS curve object.
     pure subroutine set1(this, knot, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: knot(:)
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
         if (allocated(this%Xc)) deallocate(this%Xc)
@@ -100,11 +100,11 @@ contains
     !> Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.
     pure subroutine set2(this, Xth_dir, degree, continuity, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: Xth_dir(:)
+        real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
-        integer, intent(in) :: continuity(:)
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        integer, intent(in), contiguous :: continuity(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
         if (allocated(this%Xc)) deallocate(this%Xc)
@@ -131,8 +131,8 @@ contains
     !> Set Bezier or Rational Bezier curve using control points and weights.
     pure subroutine set3(this, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
         if (allocated(this%Xc)) deallocate(this%Xc)
@@ -163,7 +163,7 @@ contains
     pure subroutine create(this, res, Xt)
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), optional :: res
-        real(rk), intent(in), optional :: Xt(:)
+        real(rk), intent(in), contiguous, optional :: Xt(:)
         real(rk), allocatable :: Tgc(:)
         integer :: i, j
 
@@ -360,7 +360,7 @@ contains
     !> license: BSD 3-Clause
     pure function cmp_elem_Xc_vis(this, p) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
         integer, intent(in), optional :: p
 
         if (present(p)) then
@@ -377,7 +377,7 @@ contains
     !> license: BSD 3-Clause
     pure function cmp_elem_Xg_vis(this, p) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
         integer, intent(in), optional :: p
 
         if (present(p)) then
@@ -396,7 +396,7 @@ contains
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
         integer :: i, nc, nunit
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -444,7 +444,7 @@ contains
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
         integer :: i, ng, nunit
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         ! check
         if (.not.allocated(this%Xg)) then
@@ -573,8 +573,8 @@ contains
     !> license: BSD 3-Clause
     pure subroutine insert_knots(this,Xth,r)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: Xth(:)
-        integer, intent(in) :: r(:)
+        real(rk), intent(in), contiguous :: Xth(:)
+        integer, intent(in), contiguous :: r(:)
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
@@ -702,7 +702,7 @@ contains
     pure subroutine derivative(this, res, Xt, dTgc)
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), optional :: res
-        real(rk), intent(in), optional :: Xt(:)
+        real(rk), intent(in), contiguous, optional :: Xt(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable :: dTgci(:)
         integer :: i
@@ -743,7 +743,7 @@ contains
     pure subroutine basis(this, res, Xt, Tgc)
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), optional :: res
-        real(rk), intent(in), optional :: Xt(:)
+        real(rk), intent(in), contiguous, optional :: Xt(:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk), allocatable :: Tgci(:)
         integer :: i
@@ -800,7 +800,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine set_elem_Xc_vis(this, elemConn)
         class(nurbs_curve), intent(inout) :: this
-        integer, intent(in) :: elemConn(:,:)
+        integer, intent(in), contiguous :: elemConn(:,:)
 
         if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
         this%elemConn_Xc_vis = elemConn
@@ -813,7 +813,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine set_elem_Xg_vis(this, elemConn)
         class(nurbs_curve), intent(inout) :: this
-        integer, intent(in) :: elemConn(:,:)
+        integer, intent(in), contiguous :: elemConn(:,:)
 
         if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
         this%elemConn_Xg_vis = elemConn
@@ -826,7 +826,7 @@ contains
     !> license: BSD 3-Clause
     pure function get_elem_Xc_vis(this) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xc_vis
     end function
@@ -838,7 +838,7 @@ contains
     !> license: BSD 3-Clause
     pure function get_elem_Xg_vis(this) result(elemConn)
         class(nurbs_curve), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xg_vis
     end function
@@ -850,8 +850,8 @@ contains
     !> license: BSD 3-Clause
     pure subroutine remove_knots(this,Xth,r)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: Xth(:)
-        integer, intent(in) :: r(:)
+        real(rk), intent(in), contiguous :: Xth(:)
+        integer, intent(in), contiguous :: r(:)
         integer :: k, i, s, dim, j, nc_new, t
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 

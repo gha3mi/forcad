@@ -109,7 +109,7 @@ contains
     function generate_Xc(L) result(control_points)
         implicit none
         real(rk), intent(in) :: L
-        real(rk), dimension(:,:), allocatable :: control_points
+        real(rk), allocatable :: control_points(:,:)
         real(rk) :: L2
         L2 = L / 2.0_rk
         allocate(control_points(8, 3))

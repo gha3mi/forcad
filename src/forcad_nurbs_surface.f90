@@ -75,10 +75,10 @@ contains
     !> Set knot vectors, control points and weights for the NURBS surface object.
     pure subroutine set1(this, knot1, knot2, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
-        real(rk), intent(in) :: knot1(:)
-        real(rk), intent(in) :: knot2(:)
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        real(rk), intent(in), contiguous :: knot1(:)
+        real(rk), intent(in), contiguous :: knot2(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         this%knot1 = knot1
         this%knot2 = knot2
@@ -97,11 +97,11 @@ contains
     !> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
     pure subroutine set2(this, Xth_dir1, Xth_dir2, degree, continuity1, continuity2, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
-        real(rk), intent(in) :: Xth_dir1(:), Xth_dir2(:)
-        integer, intent(in) :: degree(:)
-        integer, intent(in) :: continuity1(:), continuity2(:)
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        real(rk), intent(in), contiguous :: Xth_dir1(:), Xth_dir2(:)
+        integer, intent(in), contiguous :: degree(:)
+        integer, intent(in), contiguous :: continuity1(:), continuity2(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
         this%knot2 = compute_knot_vector(Xth_dir2, degree(2), continuity2)
@@ -121,9 +121,9 @@ contains
     !> Set Bezier or Rational Bezier surface using control points and weights.
     pure subroutine set3(this, nc, Xc, Wc)
         class(nurbs_surface), intent(inout) :: this
-        integer, intent(in) :: nc(:)
-        real(rk), intent(in) :: Xc(:,:)
-        real(rk), intent(in), optional :: Wc(:)
+        integer, intent(in), contiguous :: nc(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%Xc)) deallocate(this%Xc)
 
@@ -157,11 +157,11 @@ contains
     pure subroutine create(this, res1, res2, Xt1, Xt2, Xt)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), optional :: res1, res2
-        real(rk), intent(in), optional :: Xt1(:), Xt2(:)
-        real(rk), dimension(:,:), intent(in), optional :: Xt
+        real(rk), intent(in), contiguous, optional :: Xt1(:), Xt2(:)
+        real(rk), contiguous, intent(in), optional :: Xt(:,:)
         integer :: i, j
-        real(rk), dimension(:), allocatable :: Tgc1, Tgc2, Tgc
-        real(rk), dimension(:,:), allocatable :: Xt_
+        real(rk), allocatable :: Tgc1(:), Tgc2(:), Tgc(:)
+        real(rk), allocatable :: Xt_(:,:)
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -446,8 +446,8 @@ contains
     !> license: BSD 3-Clause
     pure function cmp_elem_Xc_vis(this, p) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
-        integer, intent(in), optional :: p(:)
+        integer, allocatable :: elemConn(:,:)
+        integer, intent(in), contiguous, optional :: p(:)
 
         if (present(p)) then
             elemConn = elemConn_C0(this%nc(1), this%nc(2), p(1), p(2))
@@ -463,8 +463,8 @@ contains
     !> license: BSD 3-Clause
     pure function cmp_elem_Xg_vis(this, p) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
-        integer, intent(in), optional :: p(:)
+        integer, allocatable :: elemConn(:,:)
+        integer, intent(in), contiguous, optional :: p(:)
 
         if (present(p)) then
             elemConn = elemConn_C0(this%ng(1), this%ng(2), p(1), p(2))
@@ -482,7 +482,7 @@ contains
         class(nurbs_surface), intent(in) :: this
         character(len=*), intent(in) :: filename
         integer :: i, nc, nunit
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         ! check
         if (.not.allocated(this%Xc)) then
@@ -530,7 +530,7 @@ contains
         class(nurbs_surface), intent(in) :: this
         character(len=*), intent(in) :: filename
         integer :: i, ng, nunit
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         ! check
         if (.not.allocated(this%Xg)) then
@@ -716,12 +716,12 @@ contains
     pure subroutine derivative(this, res1, res2, Xt1, Xt2, dTgc)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), optional :: res1, res2
-        real(rk), intent(in), optional :: Xt1(:), Xt2(:)
+        real(rk), intent(in), contiguous, optional :: Xt1(:), Xt2(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable :: dTgci(:)
         integer :: i
-        real(rk), dimension(:), allocatable :: dTgc1, dTgc2
-        real(rk), dimension(:,:), allocatable :: Xt
+        real(rk), allocatable :: dTgc1(:), dTgc2(:)
+        real(rk), allocatable :: Xt(:,:)
 
         ! Set parameter values
         if (present(Xt1)) then
@@ -781,12 +781,12 @@ contains
     pure subroutine basis(this, res1, res2, Xt1, Xt2, Tgc)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), optional :: res1, res2
-        real(rk), intent(in), optional :: Xt1(:), Xt2(:)
+        real(rk), intent(in), contiguous, optional :: Xt1(:), Xt2(:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk), allocatable :: Tgci(:)
         integer :: i
-        real(rk), dimension(:), allocatable :: Tgc1, Tgc2
-        real(rk), dimension(:,:), allocatable :: Xt
+        real(rk), allocatable :: Tgc1(:), Tgc2(:)
+        real(rk), allocatable :: Xt(:,:)
 
         ! Set parameter values
         if (present(Xt1)) then
@@ -846,8 +846,8 @@ contains
     pure subroutine insert_knots(this, dir ,Xth,r)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in) :: dir
-        real(rk), intent(in) :: Xth(:)
-        integer, intent(in) :: r(:)
+        real(rk), intent(in), contiguous :: Xth(:)
+        integer, intent(in), contiguous :: r(:)
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
@@ -1173,7 +1173,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine set_elem_Xc_vis(this, elemConn)
         class(nurbs_surface), intent(inout) :: this
-        integer, intent(in) :: elemConn(:,:)
+        integer, intent(in), contiguous :: elemConn(:,:)
 
         if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
         this%elemConn_Xc_vis = elemConn
@@ -1186,7 +1186,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine set_elem_Xg_vis(this, elemConn)
         class(nurbs_surface), intent(inout) :: this
-        integer, intent(in) :: elemConn(:,:)
+        integer, intent(in), contiguous :: elemConn(:,:)
 
         if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
         this%elemConn_Xg_vis = elemConn
@@ -1199,7 +1199,7 @@ contains
     !> license: BSD 3-Clause
     pure function get_elem_Xc_vis(this) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xc_vis
     end function
@@ -1211,7 +1211,7 @@ contains
     !> license: BSD 3-Clause
     pure function get_elem_Xg_vis(this) result(elemConn)
         class(nurbs_surface), intent(in) :: this
-        integer, dimension(:,:), allocatable :: elemConn
+        integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xg_vis
     end function
@@ -1224,8 +1224,8 @@ contains
     pure subroutine remove_knots(this, dir ,Xth,r)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in) :: dir
-        real(rk), intent(in) :: Xth(:)
-        integer, intent(in) :: r(:)
+        real(rk), intent(in), contiguous :: Xth(:)
+        integer, intent(in), contiguous :: r(:)
         integer :: k, i, s, dim, j, nc_new, t
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)

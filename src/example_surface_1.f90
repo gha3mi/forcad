@@ -103,7 +103,7 @@ contains
     function generate_Xc(num_rows, num_cols, peak_height) result(control_points)
         integer, intent(in) :: num_rows, num_cols
         real(rk), intent(in) :: peak_height
-        real(rk), dimension(:,:), allocatable :: control_points
+        real(rk), allocatable :: control_points(:,:)
         integer :: i, j
         real(rk) :: x_spacing, y_spacing, x_offset, y_offset
         x_spacing = 1.0_rk / real(num_cols - 1)
