@@ -60,6 +60,9 @@ module forcad_nurbs_curve
         procedure :: basis                 !!> Compute the basis functions of the NURBS curve
         procedure :: is_rational           !!> Check if the NURBS curve is rational
         procedure :: remove_knots          !!> Remove knots from the knot vector
+
+        ! Shapes
+        procedure :: set_circle            !!> Set a circle
     end type
     !===============================================================================
 
@@ -939,6 +942,43 @@ contains
 
         end if
 
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_circle(this, center, radius)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot(:)
+        integer :: i
+
+        ! Define control points for circle
+        allocate(Xc(7, 3))
+        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(6,:)= [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
+        Xc(7,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk]
+
+        ! Define knot vector
+        knot = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/3.0_rk, 1.0_rk/3.0_rk, 2.0_rk/3.0_rk, 2.0_rk/3.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot, Xc, Wc)
     end subroutine
     !===============================================================================
 
