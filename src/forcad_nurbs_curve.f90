@@ -4,7 +4,8 @@
 module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
-        insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8
+        insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, &
+        elemConn_Cn, unique
 
     implicit none
 
@@ -25,6 +26,7 @@ module forcad_nurbs_curve
         integer, private :: ng                    !! Number of geometry points
         integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
         integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
+        integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
         procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
         procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
@@ -43,10 +45,13 @@ module forcad_nurbs_curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: cmp_elem_Xc_vis       !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis       !!> Generate connectivity for geometry points
+        procedure :: cmp_elem
         procedure :: get_elem_Xc_vis       !!> Get connectivity for control points
         procedure :: get_elem_Xg_vis       !!> Get connectivity for geometry points
+        procedure :: get_elem
         procedure :: set_elem_Xc_vis       !!> Set connectivity for control points
         procedure :: set_elem_Xg_vis       !!> Set connectivity for geometry points
+        procedure :: set_elem
         procedure :: export_Xc             !!> Export control points to VTK file
         procedure :: export_Xg             !!> Export geometry points to VTK file
         procedure :: modify_Xc             !!> Modify control points
@@ -827,6 +832,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure subroutine set_elem(this, elemConn)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in), contiguous :: elemConn(:,:)
+
+        if (allocated(this%elemConn)) deallocate(this%elemConn)
+        this%elemConn = elemConn
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function get_elem_Xc_vis(this) result(elemConn)
         class(nurbs_curve), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
@@ -844,6 +862,18 @@ contains
         integer, allocatable :: elemConn(:,:)
 
         elemConn = this%elemConn_Xg_vis
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_elem(this) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+
+        elemConn = this%elemConn
     end function
     !===============================================================================
 
@@ -980,6 +1010,19 @@ contains
         ! Set knot vector, control points, and weights
         call this%set(knot, Xc, Wc)
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elem(this) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+
+        call elemConn_Cn(this%nc, this%degree, unique(this%knot), this%get_multiplicity(),&
+            elemConn)
+    end function
     !===============================================================================
 
 end module forcad_nurbs_curve

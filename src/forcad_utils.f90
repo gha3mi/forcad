@@ -7,7 +7,8 @@ module forcad_utils
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
+        elemConn_Cn, unique
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -16,6 +17,15 @@ module forcad_utils
         module procedure cmp_elemConn_C0_L
         module procedure cmp_elemConn_C0_S
         module procedure cmp_elemConn_C0_V
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface elemConn_Cn
+        module procedure cmp_elemConn_Cn_L
+        module procedure cmp_elemConn_Cn_S
+        module procedure cmp_elemConn_Cn_V
     end interface
     !===============================================================================
 
@@ -32,6 +42,14 @@ module forcad_utils
     interface compute_multiplicity
         module procedure compute_multiplicity1
         module procedure compute_multiplicity2
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface unique
+        module procedure unique_integer
+        module procedure unique_real
     end interface
     !===============================================================================
 
@@ -72,6 +90,7 @@ contains
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function basis_bspline_der(Xt, knot, nc, degree) result(dB)
         integer, intent(in)   :: degree
         real(rk), intent(in), contiguous :: knot(:)
@@ -309,6 +328,128 @@ contains
             end do
         end do
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_elemConn_Cn_L(nnode, p, Xth,vecKnot_mul, elemConn)
+        integer, intent(in) :: p, nnode
+        integer, intent(in), contiguous :: vecKnot_mul(:)
+        real(rk), intent(in), contiguous :: Xth(:)
+        integer, allocatable, intent(out) :: elemConn(:,:)
+        integer, allocatable :: nodes(:)
+        integer :: i, l, nnel, m, nelem
+
+        nnel = p + 1
+        nodes = [(i, i=1, nnode)]
+        nelem = size(Xth) - 1
+        allocate(elemConn(nelem,nnel))
+        l = 0
+        m = -p
+        do i = 1, nelem
+            m = m + vecKnot_mul(i)
+            l = l + 1
+            elemConn(l,:) = nodes(m:m+p)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_elemConn_Cn_S(nnode1,nnode2,p1,p2,&
+        Xth1,Xth2,vecKnot_mul1,vecKnot_mul2, elemConn)
+        integer, intent(in) :: p1, p2, nnode1, nnode2
+        integer, intent(in), contiguous :: vecKnot_mul1(:), vecKnot_mul2(:)
+        real(rk), intent(in), contiguous :: Xth1(:), Xth2(:)
+        integer, allocatable, intent(out) :: elemConn(:,:)
+        integer, allocatable :: nodes(:,:), nodes_vec(:)
+        integer :: nnd_total, i, j, k, l, nnel1, nnel2, m, n, o, nelem1, nelem2, nelem
+
+        nnel1 = p1 + 1
+        nnel2 = p2 + 1
+
+        nnd_total = nnode1*nnode2
+        allocate(nodes_vec(nnd_total))
+
+        Nodes_vec = [(i, i=1, nnd_total)]
+        nodes = reshape(nodes_vec,[nnode1,nnode2])
+
+        nelem1 = size(Xth1) - 1
+        nelem2 = size(Xth2) - 1
+
+        nelem = nelem1*nelem2
+
+        allocate(elemConn(nelem,nnel1*nnel2))
+
+        l = 0
+
+        n = -p2
+        do j = 1, nelem2
+            n = n + vecKnot_mul2(j)
+            m = -p1
+            do i = 1, nelem1
+                m = m + vecKnot_mul1(i)
+                l = l + 1
+                elemConn(l,:) = reshape(nodes(m:m+p1,n:n+p2), [nnel1*nnel2])
+            end do
+        end do
+
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_elemConn_Cn_V(nnode1,nnode2,nnode3,p1,p2,p3,&
+        Xth1,Xth2,Xth3,vecKnot_mul1,vecKnot_mul2,vecKnot_mul3, elemConn)
+        integer, intent(in) :: p1, p2, p3, nnode1, nnode2, nnode3
+        integer, intent(in), contiguous :: vecKnot_mul1(:), vecKnot_mul2(:), vecKnot_mul3(:)
+        real(rk), intent(in), contiguous :: Xth1(:), Xth2(:), Xth3(:)
+        integer, allocatable, intent(out) :: elemConn(:,:)
+        integer, allocatable :: nodes(:,:,:), nodes_vec(:)
+        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, m, n, o, nelem1, nelem2, nelem3, nelem
+
+        nnel1 = p1 + 1
+        nnel2 = p2 + 1
+        nnel3 = p3 + 1
+
+        nnd_total = nnode1*nnode2*nnode3
+        allocate(nodes_vec(nnd_total))
+
+        Nodes_vec = [(i, i=1, nnd_total)]
+        nodes = reshape(nodes_vec,[nnode1,nnode2,nnode3])
+
+        nelem1 = size(Xth1) - 1
+        nelem2 = size(Xth2) - 1
+        nelem3 = size(Xth3) - 1
+
+        nelem = nelem1*nelem2*nelem3
+
+        allocate(elemConn(nelem,nnel1*nnel2*nnel3))
+
+        l = 0
+
+        o = -p3
+        do k = 1, nelem3
+            o = o + vecKnot_mul3(k)
+            n = -p2
+            do j = 1, nelem2
+                n = n + vecKnot_mul2(j)
+                m = -p1
+                do i = 1, nelem1
+                    m = m + vecKnot_mul1(i)
+                    l = l + 1
+                    elemConn(l,:) = reshape(nodes(m:m+p1,n:n+p2,o:o+p3), [nnel1*nnel2*nnel3])
+                end do
+            end do
+        end do
+
+    end subroutine
     !===============================================================================
 
 
@@ -718,17 +859,18 @@ contains
 
         allocate(Xc(nc(1) * nc(2), 3))
         nci = 1
-            do j = 0, nc(2)-1
-                do i = 0, nc(1)-1
-                    Xc(nci, 1) = real(i,rk) * dx
-                    Xc(nci, 2) = real(j,rk) * dy
-                    Xc(nci, 3) = 0.0_rk
-                    nci = nci + 1
-                end do
+        do j = 0, nc(2)-1
+            do i = 0, nc(1)-1
+                Xc(nci, 1) = real(i,rk) * dx
+                Xc(nci, 2) = real(j,rk) * dy
+                Xc(nci, 3) = 0.0_rk
+                nci = nci + 1
             end do
+        end do
 
     end function
     !===============================================================================
+
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
@@ -830,6 +972,54 @@ contains
         knot_new = knot_copy(1:size(knot_copy)-t)
         Pw_new = Pw_copy(1:size(Pw_copy,1)-t,:)
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function unique_integer(vec) result(unique)
+        integer, dimension(:), intent(in), contiguous :: vec
+        integer, dimension(:), allocatable :: unique
+        integer :: i, j, k
+        allocate(unique(0))
+        do i = 1, size(vec)
+            k = 0
+            do j = 1, size(unique)
+                if (vec(i) == unique(j)) then
+                    k = k + 1
+                    exit
+                end if
+            end do
+            if (k == 0) then
+                unique = [unique, vec(i)]
+            end if
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function unique_real(vec) result(unique)
+        real(rk), dimension(:), intent(in), contiguous :: vec
+        real(rk), dimension(:), allocatable :: unique
+        integer :: i, j, k
+        allocate(unique(0))
+        do i = 1, size(vec)
+            k = 0
+            do j = 1, size(unique)
+                if (vec(i) == unique(j)) then
+                    k = k + 1
+                    exit
+                end if
+            end do
+            if (k == 0) then
+                unique = [unique, vec(i)]
+            end if
+        end do
+    end function
     !===============================================================================
 
 end module forcad_utils
