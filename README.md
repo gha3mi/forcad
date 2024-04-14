@@ -21,11 +21,11 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Export NURBS objects to VTK files for visualization.
 - Includes predefined NURBS shapes.
 
-<!-- ## Predefined NURBS Shapes
+## Predefined NURBS Shapes
 
 - Curves: Circle
-- Surfaces: -
-- Volumes: Hexahedron -->
+- Surfaces: Tetragon
+- Volumes: Hexahedron
 
 ## fpm dependency
 
@@ -83,7 +83,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [x] Add `remove_knots()` method for curves, surfaces and volumes.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [x] Add `put_to_nurbs()` method for volumes.
-    - [x] Add predefined shapes: `Circle`, `Hexahedron`.
+    - [x] Add predefined shapes: `Circle`, `Tetragon`, `Hexahedron`.
     - [x] Add basic unit tests.
     - [x] Add simple examples.
 
