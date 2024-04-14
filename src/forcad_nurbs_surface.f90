@@ -4,7 +4,7 @@
 module forcad_nurbs_surface
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8
+        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, tetragon_Xc
 
     implicit none
 
@@ -64,6 +64,9 @@ module forcad_nurbs_surface
         procedure :: elevate_degree         !!> Elevate degree
         procedure :: is_rational            !!> Check if the NURBS surface is rational
         procedure :: remove_knots           !!> Remove knots from the knot vector
+
+        ! Shapes
+        procedure :: set_tetragon           !!> Set a tetragon
     end type
     !===============================================================================
 
@@ -1447,6 +1450,20 @@ contains
             error stop 'Invalid direction.'
         end if
 
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_tetragon(this, L, nc, Wc)
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in) :: L(2)
+        integer, intent(in) :: nc(2)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+
+        call this%set(nc = nc, Xc = tetragon_Xc(L, nc), Wc = Wc)
     end subroutine
     !===============================================================================
 
