@@ -11,6 +11,22 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 <img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bezier.png" width="750">
 
+## Key Features
+
+- Create NURBS objects by specifying control points, weights and knots.
+- Refine NURBS objects by inserting or removing knots and elevating degree.
+- Compute basis functions and derivatives of NURBS objects.
+- Obtain visualized elements connectivity and coordinates for geometry and control geometry.
+- Mesh insertion into a NURBS object.
+- Export NURBS objects to VTK files for visualization.
+- Includes predefined NURBS shapes.
+
+<!-- ## Predefined NURBS Shapes
+
+- Curves: Circle
+- Surfaces: -
+- Volumes: Hexahedron -->
+
 ## fpm dependency
 
 If you want to use ForCAD as a dependency in your own fpm project,
@@ -56,7 +72,7 @@ ford ford.yml
 
 ## Roadmap
 
-This roadmap outlines upcoming features and enhancements for ForCAD. Feel free to contribute to these tasks or suggest new ideas!
+This roadmap outlines upcoming features and enhancements for ForCAD. Contributions and suggestions are welcome!
 
 - v0.2.0:
     - [x] Add `insert_knots()` method for curves, surfaces and volumes.
@@ -66,16 +82,21 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Feel free t
 - v0.3.0:
     - [x] Add `remove_knots()` method for curves, surfaces and volumes.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
-    - [x] Add unit tests.
+    - [x] Add `put_to_nurbs()` method for volumes.
+    - [x] Add predefined shapes: `Circle`, `Hexahedron`.
+    - [x] Add basic unit tests.
+    - [x] Add simple examples.
 
 - Future Tasks:
     - [ ] Add `morph()` method for morphing box.
-    - [ ] Add more examples.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
     - [ ] Export to `IGES` format.
     - [ ] Add support for multiple patches.
     - [ ] Add extraction of piecewise Bezier objects from NURBS.
+    - [ ] Add more unit tests.
+    - [ ] Add more examples.
+    - [ ] Add more predefined shapes.
 
 ## Contributing
 
@@ -84,6 +105,22 @@ Contributions to ForCAD are welcome!
 - If you find any issues or would like to suggest improvements, please open an issue.
 - If you've implemented new features, fixed bugs, or enhanced existing functionality, please consider submitting a pull request (PR).
 - Please share your examples by submitting a pull request (PR).
+
+## Citation
+
+If you use ForCAD in your research, please cite it as follows:
+
+
+```bibtex
+@software{seyed_ali_ghasemi_2024_10938054,
+  author       = {Seyed Ali Ghasemi},
+  title        = {gha3mi/ForCAD},
+  year         = 2024,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.10938054},
+  url          = {https://doi.org/10.5281/zenodo.10938054}
+}
+```
 
 ## References
 
