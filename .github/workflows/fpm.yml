@@ -49,12 +49,14 @@ jobs:
       if: contains(matrix.os, 'macos')
       run: brew install gcc@10
 
-    - name: Install Python and PyVista
-      uses: actions/setup-python@v5
+    - name: Setup Python
+      uses: actions/setup-python@v2
       with:
-      python-version: '3.10' 
-        run: pip install pyvista
+        python-version: '3.10'
 
+    - name: Install PyVista
+      run: pip install pyvista
+    
     - name: Run Tests (Debug)
       run: |
         fpm test --profile debug --compiler ${{ env.FC}}
