@@ -367,7 +367,7 @@ contains
         real(rk), intent(in), contiguous :: Xth1(:), Xth2(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, k, l, nnel1, nnel2, m, n, o, nelem1, nelem2, nelem
+        integer :: nnd_total, i, j, l, nnel1, nnel2, m, n, nelem1, nelem2, nelem
 
         nnel1 = p1 + 1
         nnel2 = p2 + 1
@@ -978,21 +978,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function unique_integer(vec) result(unique)
+    pure function unique_integer(vec) result(output)
         integer, dimension(:), intent(in), contiguous :: vec
-        integer, dimension(:), allocatable :: unique
+        integer, dimension(:), allocatable :: output
         integer :: i, j, k
-        allocate(unique(0))
+        allocate(output(0))
         do i = 1, size(vec)
             k = 0
-            do j = 1, size(unique)
-                if (vec(i) == unique(j)) then
+            do j = 1, size(output)
+                if (vec(i) == output(j)) then
                     k = k + 1
                     exit
                 end if
             end do
             if (k == 0) then
-                unique = [unique, vec(i)]
+                output = [output, vec(i)]
             end if
         end do
     end function
@@ -1002,21 +1002,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function unique_real(vec) result(unique)
+    pure function unique_real(vec) result(output)
         real(rk), dimension(:), intent(in), contiguous :: vec
-        real(rk), dimension(:), allocatable :: unique
+        real(rk), dimension(:), allocatable :: output
         integer :: i, j, k
-        allocate(unique(0))
+        allocate(output(0))
         do i = 1, size(vec)
             k = 0
-            do j = 1, size(unique)
-                if (vec(i) == unique(j)) then
+            do j = 1, size(output)
+                if (vec(i) == output(j)) then
                     k = k + 1
                     exit
                 end if
             end do
             if (k == 0) then
-                unique = [unique, vec(i)]
+                output = [output, vec(i)]
             end if
         end do
     end function
