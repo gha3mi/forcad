@@ -85,6 +85,28 @@ program example1_curve
     call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Transformations
+    !-----------------------------------------------------------------------------
+
+    !> Rotate the control points
+    call nurbs%rotate_Xc(alpha=45.0_rk, beta=0.0_rk, theta=90.0_rk)
+
+    !> Rotate the generated curve
+    call nurbs%rotate_Xg(alpha=-45.0_rk, beta=0.0_rk, theta=-90.0_rk)
+
+    !> Translate the control points
+    call nurbs%translate_Xc([1.0_rk, 2.0_rk, -3.0_rk])
+
+    !> Translate the generated curve
+    call nurbs%translate_Xg([-1.0_rk, -2.0_rk, 3.0_rk])
+
+    !> Export the transformed control points to a VTK file
+    call nurbs%export_Xc('vtk/nurbs_curve_Xc3.vtk')
+
+    !> Export the transformed generated volume to a VTK file
+    call nurbs%export_Xg('vtk/nurbs_curve_Xg3.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 
