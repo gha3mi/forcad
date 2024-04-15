@@ -30,6 +30,14 @@ program shape_tetragon
     call shape%export_Xg('vtk/shape_tetragon_Xg.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call shape%show('vtk/shape_tetragon_Xc.vtk','vtk/shape_tetragon_Xg.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 

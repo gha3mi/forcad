@@ -39,4 +39,12 @@ program example_morph
     call control_shape%export_Xc('vtk/control_shape.vtk')
     call control_shape%export_Xg('vtk/shape.vtk')
 
+    !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call control_shape%show('vtk/control_shape.vtk','vtk/shape.vtk')
+
 end program
