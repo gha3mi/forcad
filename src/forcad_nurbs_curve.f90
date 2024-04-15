@@ -5,7 +5,7 @@ module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
         insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, &
-        elemConn_Cn, unique
+        elemConn_Cn, unique, rotation
 
     implicit none
 
@@ -65,6 +65,10 @@ module forcad_nurbs_curve
         procedure :: basis                 !!> Compute the basis functions of the NURBS curve
         procedure :: is_rational           !!> Check if the NURBS curve is rational
         procedure :: remove_knots          !!> Remove knots from the knot vector
+        procedure :: rotate_Xc             !!> Rotate control points
+        procedure :: rotate_Xg             !!> Rotate geometry points
+        procedure :: translate_Xc          !!> Translate control points
+        procedure :: translate_Xg          !!> Translate geometry points
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -1023,6 +1027,66 @@ contains
         call elemConn_Cn(this%nc, this%degree, unique(this%knot), this%get_multiplicity(),&
             elemConn)
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine rotate_Xc(this, alpha, beta, theta)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: alpha, beta, theta
+        integer :: i
+
+        do i = 1, this%nc
+            this%Xc(i, :) = matmul(rotation(alpha,beta,theta), this%Xc(i, :))
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine rotate_Xg(this, alpha, beta, theta)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: alpha, beta, theta
+        integer :: i
+
+        do i = 1, this%ng
+            this%Xg(i, :) = matmul(rotation(alpha,beta,theta), this%Xg(i, :))
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine translate_Xc(this, vec)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: vec(:)
+        integer :: i
+
+        do i = 1, this%nc
+            this%Xc(i, :) = this%Xc(i, :) + vec
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine translate_Xg(this, vec)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: vec(:)
+        integer :: i
+
+        do i = 1, this%nc
+            this%Xg(i, :) = this%Xg(i, :) + vec
+        end do
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_curve

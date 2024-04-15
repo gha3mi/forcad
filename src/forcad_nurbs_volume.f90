@@ -5,7 +5,7 @@ module forcad_nurbs_volume
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique
+        elemConn_Cn, unique, rotation
 
     implicit none
 
@@ -72,6 +72,10 @@ module forcad_nurbs_volume
         procedure :: is_rational            !!> Check if the NURBS volume is rational
         procedure :: put_to_nurbs           !!> Put a shape to a NURBS volume
         procedure :: remove_knots           !!> Remove knots from the knot vector
+        procedure :: rotate_Xc              !!> Rotate control points
+        procedure :: rotate_Xg              !!> Rotate geometry points
+        procedure :: translate_Xc           !!> Translate control points
+        procedure :: translate_Xg           !!> Translate geometry points
 
         ! Shapes
         procedure :: set_hexahedron         !!> Set a hexahedron
@@ -1932,6 +1936,66 @@ contains
             this%get_multiplicity(1),this%get_multiplicity(2),this%get_multiplicity(3),&
             elemConn)
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine rotate_Xc(this, alpha, beta, theta)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in) :: alpha, beta, theta
+        integer :: i
+
+        do i = 1, this%nc(1)*this%nc(2)*this%nc(3)
+            this%Xc(i, :) = matmul(rotation(alpha,beta,theta), this%Xc(i, :))
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine rotate_Xg(this, alpha, beta, theta)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in) :: alpha, beta, theta
+        integer :: i
+
+        do i = 1, this%ng(1)*this%ng(2)*this%ng(3)
+            this%Xg(i, :) = matmul(rotation(alpha,beta,theta), this%Xg(i, :))
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine translate_Xc(this, vec)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in) :: vec(:)
+        integer :: i
+
+        do i = 1, this%nc(1)*this%nc(2)*this%nc(3)
+            this%Xc(i, :) = this%Xc(i, :) + vec
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine translate_Xg(this, vec)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in) :: vec(:)
+        integer :: i
+
+        do i = 1, this%ng(1)*this%ng(2)*this%ng(3)
+            this%Xg(i, :) = this%Xg(i, :) + vec
+        end do
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_volume

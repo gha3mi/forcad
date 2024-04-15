@@ -8,7 +8,7 @@ module forcad_utils
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique
+        elemConn_Cn, unique, rotation
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -1019,6 +1019,26 @@ contains
                 unique = [unique, vec(i)]
             end if
         end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function rotation(alpha, beta, theta) result(R)
+        real(rk), intent(in) :: alpha, beta, theta
+        real(rk), dimension(3,3) :: R
+
+        R(1,1) = cosd(beta)*cosd(theta)
+        R(2,1) = cosd(beta)*sind(theta)
+        R(3,1) = -sind(beta)
+        R(1,2) = sind(alpha)*sind(beta)*cosd(theta) - cosd(alpha)*sind(theta)
+        R(2,2) = sind(alpha)*sind(beta)*sind(theta) + cosd(alpha)*cosd(theta)
+        R(3,2) = sind(alpha)*cosd(beta)
+        R(1,3) = cosd(alpha)*sind(beta)*cosd(theta) + sind(alpha)*sind(theta)
+        R(2,3) = cosd(alpha)*sind(beta)*sind(theta) - sind(alpha)*cosd(theta)
+        R(3,3) = cosd(alpha)*cosd(beta)
     end function
     !===============================================================================
 
