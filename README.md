@@ -85,6 +85,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [x] Add `put_to_nurbs()` method for volumes.
     - [x] Get IGA elements connectivity.
     - [x] Add predefined shapes: `Circle`, `Tetragon`, `Hexahedron`.
+    - [x] Add `rotate_Xc` and `rotate_Xg` methods for curves, surfaces and volumes. 
     - [x] Add basic unit tests.
     - [x] Add simple examples.
 
