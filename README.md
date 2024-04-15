@@ -11,7 +11,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 <img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bezier.png" width="750">
 
-## Key Features
+## Main Features
 
 - Create NURBS objects by specifying control points, weights and knots.
 - Refine NURBS objects by inserting or removing knots and elevating degree.
