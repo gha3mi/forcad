@@ -7,7 +7,6 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
 
 - v0.3.0:
     - [x] Add `remove_knots()` method for curves, surfaces and volumes.
-    - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [x] Add `put_to_nurbs()` method for volumes.
     - [x] Get IGA elements connectivity.
     - [x] Add predefined shapes: `Circle`, `Tetragon`, `Hexahedron`.
@@ -16,7 +15,8 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [x] Add basic unit tests.
     - [x] Add simple examples.
 
-- Future Tasks:
+- Additional Ideas:
+    - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [ ] Add `morph()` method for morphing box.
     - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
