@@ -22,6 +22,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Export NURBS objects to VTK files for visualization.
 - Includes predefined NURBS shapes: Circle, Tetragon, Hexahedron.
 - Rotate and translate NURBS objects.
+- Visualization using provided python PyVista scripts.
 
 ## Installation
 
@@ -29,6 +30,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 - A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx/ifort`) or [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`).
 - The Fortran Package Manager [fpm](https://fpm.fortran-lang.org/).
+- [PyVista](https://pyvista.org/) (Recommended) or [ParaView](https://www.paraview.org/) for visualization. (Optional)
 
 ### Clone the repository
 
@@ -39,12 +41,20 @@ git clone https://github.com/gha3mi/forcad.git
 cd forcad
 ```
 
+### Install PyVista (Optional)
+
+To install PyVista, run the following command:
+
+```shell
+pip install pyvista
+```
+
 ### Running Examples with fpm
 
 ```shell
 fpm run --example <file name excluding the .f90 extension>
 ```
-Once the examples have been executed, `.vtk` files will be generated within the `vtk` directory. These files can then be visualized using tools such as [ParaView](https://www.paraview.org/).
+After executing the examples, `.vtk` files will be generated in the `vtk` directory. To visualize these files, a `show()` method is provided which utilizes PyVista. Alternatively, other visualization tools like ParaView can also be used.
 
 ### Using ForCAD as a fpm Dependency
 
@@ -101,3 +111,5 @@ If you use ForCAD in your research, please cite it as follows:
 - Piegl, L., & Tiller, W. (1995). The NURBS Book. In Monographs in Visual Communications. Springer Berlin Heidelberg. [https://doi.org/10.1007/978-3-642-97385-7](https://doi.org/10.1007/978-3-642-97385-7)
 
 - An Introduction to NURBS. (2001). Elsevier. [https://doi.org/10.1016/b978-1-55860-669-2.x5000-3](https://doi.org/10.1016/b978-1-55860-669-2.x5000-3)
+
+- Sullivan et al., (2019). PyVista: 3D plotting and mesh analysis through a streamlined interface for the Visualization Toolkit (VTK). Journal of Open Source Software, 4(37), 1450, https://doi.org/10.21105/joss.01450

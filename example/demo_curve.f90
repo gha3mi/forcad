@@ -37,6 +37,14 @@ program example_nurbs_curve
     call nurbs%export_Xg('vtk/demo_curve_Xg.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/demo_curve_Xc.vtk','vtk/demo_curve_Xg.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 

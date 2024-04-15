@@ -44,6 +44,14 @@ program example3_surface
     call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_surface_Xc.vtk','vtk/nurbs_surface_Xg.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Refinements
     !-----------------------------------------------------------------------------
 
@@ -91,6 +99,14 @@ program example3_surface
     call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_surface_Xc2.vtk','vtk/nurbs_surface_Xg2.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Transformations
     !-----------------------------------------------------------------------------
 
@@ -111,6 +127,14 @@ program example3_surface
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg3.vtk')
+
+    !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_surface_Xc3.vtk','vtk/nurbs_surface_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

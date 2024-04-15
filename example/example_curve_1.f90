@@ -44,6 +44,15 @@ program example1_curve
     !> Export the generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
 
+
+    !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_curve_Xc.vtk','vtk/nurbs_curve_Xg.vtk')
+
     !-----------------------------------------------------------------------------
     ! Refinements
     !-----------------------------------------------------------------------------
@@ -85,6 +94,14 @@ program example1_curve
     call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_curve_Xc2.vtk','vtk/nurbs_curve_Xg2.vtk')
+
+    !-----------------------------------------------------------------------------
     ! Transformations
     !-----------------------------------------------------------------------------
 
@@ -105,6 +122,14 @@ program example1_curve
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg3.vtk')
+
+    !-----------------------------------------------------------------------------
+    ! Visualization using PyVista
+    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
+    !-----------------------------------------------------------------------------
+
+    !> Show the control geometry and geometry using PyVista
+    call nurbs%show('vtk/nurbs_curve_Xc3.vtk','vtk/nurbs_curve_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

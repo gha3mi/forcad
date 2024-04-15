@@ -15,6 +15,9 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [x] Add basic unit tests.
     - [x] Add simple examples.
 
+- v0.4.0:
+    - [x] Visualization using PyVista.
+
 - Additional Ideas:
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [ ] Add `morph()` method for morphing box.
@@ -26,3 +29,4 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Add more unit tests.
     - [ ] Add more examples.
     - [ ] Add more predefined shapes.
+    - [ ] Improve PyVista scripts.

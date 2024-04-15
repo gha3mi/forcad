@@ -73,6 +73,7 @@ module forcad_nurbs_surface
         procedure :: rotate_Xg              !!> Rotate geometry points
         procedure :: translate_Xc           !!> Translate control points
         procedure :: translate_Xg           !!> Translate geometry points
+        procedure :: show                   !!> Show the NURBS object using PyVista
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -1574,6 +1575,132 @@ contains
         do i = 1, this%ng(1)*this%ng(2)
             this%Xg(i, :) = this%Xg(i, :) + vec
         end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine show(this, vtkfile_Xc, vtkfile_Xg)
+        class(nurbs_surface), intent(inout) :: this
+        character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
+        character(len=3000) :: pyvista_script
+        integer :: nunit
+
+        pyvista_script = &
+            "import pyvista as pv"//achar(10)//&
+            "pv.global_theme.color = 'white'"//achar(10)//&
+            "Xc = pv.read('"//trim(vtkfile_Xc)//"')"//achar(10)//&
+            "Xg = pv.read('"//trim(vtkfile_Xg)//"')"//achar(10)//&
+            "p = pv.Plotter(lighting='light kit')"//achar(10)//&
+            "actor_Xcp = p.add_mesh("//achar(10)//&
+            "    Xc,"//achar(10)//&
+            "    style='points',"//achar(10)//&
+            "    point_size=10,"//achar(10)//&
+            "    color='red',"//achar(10)//&
+            "    render_points_as_spheres=True,"//achar(10)//&
+            "    opacity=0.5,"//achar(10)//&
+            ")"//achar(10)//&
+            "actor_Xcw = p.add_mesh("//achar(10)//&
+            "    Xc,"//achar(10)//&
+            "    show_edges=True,"//achar(10)//&
+            "    color='yellow',"//achar(10)//&
+            "    line_width=3,"//achar(10)//&
+            "    style='wireframe',"//achar(10)//&
+            "    opacity=0.2"//achar(10)//&
+            ")"//achar(10)//&
+            "actor_Xg = p.add_mesh("//achar(10)//&
+            "    Xg,"//achar(10)//&
+            "    show_edges=False,"//achar(10)//&
+            "    color='cyan',"//achar(10)//&
+            "    line_width=7,"//achar(10)//&
+            "    metallic=0.6,"//achar(10)//&
+            "    pbr=True,"//achar(10)//&
+            "    split_sharp_edges=True,"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_axes(interactive=False)"//achar(10)//&
+            "def point_picker_callback(point):"//achar(10)//&
+            "    mesh = Xc"//achar(10)//&
+            "    point_id = mesh.find_closest_point(point)"//achar(10)//&
+            "    point_coords = mesh.points[point_id]"//achar(10)//&
+            "    label = f'ID: {point_id + 1}\n({point_coords[0]:.3f}, {point_coords[1]:.3f}, {point_coords[2]:.3f})'"//achar(10)//&
+            "    p.add_point_labels("//achar(10)//&
+            "        [point_coords],"//achar(10)//&
+            "        [label],"//achar(10)//&
+            "        font_size=14,"//achar(10)//&
+            "        text_color='black',"//achar(10)//&
+            "        show_points=False,"//achar(10)//&
+            "        fill_shape=False,"//achar(10)//&
+            "        shape=None,"//achar(10)//&
+            "    )"//achar(10)//&
+            "picker = p.enable_point_picking(callback=point_picker_callback, show_message=False)"//achar(10)//&
+            "window_size = p.window_size"//achar(10)//&
+            "y_pos = window_size[1]"//achar(10)//&
+            "def Xcp_toggle_vis(flag):"//achar(10)//&
+            "    actor_Xcp.SetVisibility(flag)"//achar(10)//&
+            "def Xcw_toggle_vis(flag):"//achar(10)//&
+            "    actor_Xcw.SetVisibility(flag)"//achar(10)//&
+            "def Xg_toggle_vis(flag):"//achar(10)//&
+            "    actor_Xg.SetVisibility(flag)"//achar(10)//&
+            "p.add_checkbox_button_widget("//achar(10)//&
+            "    Xcp_toggle_vis,"//achar(10)//&
+            "    value=True,"//achar(10)//&
+            "    color_on='red',"//achar(10)//&
+            "    size=25,"//achar(10)//&
+            "    position=(0, y_pos - 1 * 25),"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_checkbox_button_widget("//achar(10)//&
+            "    Xcw_toggle_vis,"//achar(10)//&
+            "    value=True,"//achar(10)//&
+            "    color_on='yellow',"//achar(10)//&
+            "    size=25,"//achar(10)//&
+            "    position=(0, y_pos - 2 * 25),"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_checkbox_button_widget("//achar(10)//&
+            "    Xg_toggle_vis,"//achar(10)//&
+            "    value=True,"//achar(10)//&
+            "    color_on='cyan',"//achar(10)//&
+            "    size=25,"//achar(10)//&
+            "    position=(0, y_pos - 3 * 25),"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_text("//achar(10)//&
+            "    'Xc (Points)',"//achar(10)//&
+            "    position=(25 + 3, y_pos - 1 * 25),"//achar(10)//&
+            "    font_size=8,"//achar(10)//&
+            "    color='black',"//achar(10)//&
+            "    font='times',"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_text("//achar(10)//&
+            "    'Xc (Control geometry)',"//achar(10)//&
+            "    position=(25 + 3, y_pos - 2 * 25),"//achar(10)//&
+            "    font_size=8,"//achar(10)//&
+            "    color='black',"//achar(10)//&
+            "    font='times',"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_text("//achar(10)//&
+            "    'Xg (Geometry)',"//achar(10)//&
+            "    position=(25 + 3, y_pos - 3 * 25),"//achar(10)//&
+            "    font_size=8,"//achar(10)//&
+            "    color='black',"//achar(10)//&
+            "    font='times',"//achar(10)//&
+            ")"//achar(10)//&
+            "p.add_text('ForCAD', position=(0.0, 10.0), font_size=14, color='black', font='times')"//achar(10)//&
+            "p.add_text("//achar(10)//&
+            "    'https://github.com/gha3mi/forcad',"//achar(10)//&
+            "    position=(0.0, 0.0),"//achar(10)//&
+            "    font_size=7,"//achar(10)//&
+            "    color='blue',"//achar(10)//&
+            "    font='times',"//achar(10)//&
+            ")"//achar(10)//&
+            "p.show(title='ForCAD', interactive=True)"
+
+
+        open(newunit=nunit, file='pyvista_script.py', status='replace')
+        write(nunit, '(a)') pyvista_script
+        close(nunit)
+
+        call execute_command_line('python pyvista_script.py')
     end subroutine
     !===============================================================================
 
