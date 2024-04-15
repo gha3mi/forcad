@@ -23,21 +23,14 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Includes predefined NURBS shapes: Circle, Tetragon, Hexahedron.
 - Rotate and translate NURBS objects.
 
-## fpm dependency
+## Installation
 
-If you want to use ForCAD as a dependency in your own fpm project,
-you can easily include it by adding the following line to your `fpm.toml` file:
+### Reuirements
 
-```toml
-[dependencies]
-forcad = {git="https://github.com/gha3mi/forcad.git"}
-```
+- A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx/ifort`) or [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`).
+- The Fortran Package Manager [fpm](https://fpm.fortran-lang.org/).
 
-## How to run examples
-
-To get started, follow these steps:
-
-**Clone the repository:**
+### Clone the repository
 
 Clone the ForCAD repository from GitHub:
 
@@ -46,13 +39,22 @@ git clone https://github.com/gha3mi/forcad.git
 cd forcad
 ```
 
-### Using fpm
-
+### Running Examples with fpm
 
 ```shell
 fpm run --example <file name excluding the .f90 extension>
 ```
 Once the examples have been executed, `.vtk` files will be generated within the `vtk` directory. These files can then be visualized using tools such as [ParaView](https://www.paraview.org/).
+
+### Using ForCAD as a fpm Dependency
+
+If you want to use ForCAD as a dependency in your own fpm project,
+you can easily include it by adding the following line to your `fpm.toml` file:
+
+```toml
+[dependencies]
+forcad = {git="https://github.com/gha3mi/forcad.git"}
+```
 
 ## API documentation
 
