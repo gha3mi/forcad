@@ -16,10 +16,12 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Create NURBS objects by specifying control points, weights and knots.
 - Refine NURBS objects by inserting or removing knots and elevating degree.
 - Compute basis functions and derivatives of NURBS objects.
+- Obtain IGA elements connectivity.
 - Obtain visualized elements connectivity and coordinates for geometry and control geometry.
 - Mesh insertion into a NURBS object.
 - Export NURBS objects to VTK files for visualization.
 - Includes predefined NURBS shapes.
+- Rotate and translate NURBS objects.
 
 ## Predefined NURBS Shapes
 
