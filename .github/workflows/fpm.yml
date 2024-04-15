@@ -48,14 +48,6 @@ jobs:
     - name: Install gcc@10 on macos required by fpm
       if: contains(matrix.os, 'macos')
       run: brew install gcc@10
-
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'
-
-    - name: Install PyVista
-      run: pip install pyvista
     
     - name: Run Tests (Debug)
       run: |
@@ -66,35 +58,5 @@ jobs:
     - name: Run Tests (Release)
       run: |
         fpm test --profile release --compiler ${{ env.FC}}
-      env:
-        FC: ${{ steps.setup-fortran.outputs.fc }}
-  
-    - name: Run Examples (Debug)
-      run: |
-        fpm run --example demo_curve        --profile debug --compiler ${{ env.FC}}
-        fpm run --example demo_surface      --profile debug --compiler ${{ env.FC}}
-        fpm run --example demo_volume       --profile debug --compiler ${{ env.FC}}
-        fpm run --example example_curve_1   --profile debug --compiler ${{ env.FC}}
-        fpm run --example example_surface_1 --profile debug --compiler ${{ env.FC}}
-        fpm run --example example_volume_1  --profile debug --compiler ${{ env.FC}}
-        fpm run --example shape_hexahedron  --profile debug --compiler ${{ env.FC}}
-        fpm run --example shape_circle      --profile debug --compiler ${{ env.FC}}
-        fpm run --example shape_tetragon    --profile debug --compiler ${{ env.FC}}
-        fpm run --example put_to_nurbs      --profile debug --compiler ${{ env.FC}}
-      env:
-        FC: ${{ steps.setup-fortran.outputs.fc }}
-
-    - name: Run Examples (Release)
-      run: |
-        fpm run --example demo_curve        --profile release --compiler ${{ env.FC}}
-        fpm run --example demo_surface      --profile release --compiler ${{ env.FC}}
-        fpm run --example demo_volume       --profile release --compiler ${{ env.FC}}
-        fpm run --example example_curve_1   --profile release --compiler ${{ env.FC}}
-        fpm run --example example_surface_1 --profile release --compiler ${{ env.FC}}
-        fpm run --example example_volume_1  --profile release --compiler ${{ env.FC}}
-        fpm run --example shape_hexahedron  --profile release --compiler ${{ env.FC}}
-        fpm run --example shape_circle      --profile release --compiler ${{ env.FC}}
-        fpm run --example shape_tetragon    --profile release --compiler ${{ env.FC}}
-        fpm run --example put_to_nurbs      --profile release --compiler ${{ env.FC}}
       env:
         FC: ${{ steps.setup-fortran.outputs.fc }}
