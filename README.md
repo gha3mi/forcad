@@ -26,7 +26,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ## Installation
 
-### Reuirements
+### Requirements
 
 - A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx/ifort`) or [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`).
 - The Fortran Package Manager [fpm](https://fpm.fortran-lang.org/).
