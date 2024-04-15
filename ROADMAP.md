@@ -30,3 +30,5 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Add more examples.
     - [ ] Add more predefined shapes.
     - [ ] Improve PyVista scripts.
+    - [ ] Use ForCAD for IGA simulations.
+    - [ ] Use ForCAD for FEM simulations.
