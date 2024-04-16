@@ -610,10 +610,19 @@ contains
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: W
         integer, intent(in) :: num
+        real(rk), allocatable :: knot1(:), knot2(:), Xc(:,:), Wc(:)
 
         if (allocated(this%Wc)) then
             this%Wc(num) = W
-            call this%set(knot1 = this%knot1, knot2 = this%knot2, Xc = this%Xc, Wc = this%Wc)
+            Xc = this%Xc
+            Wc = this%Wc
+            if (allocated(this%knot1) .and. allocated(this%knot2)) then
+                knot1 = this%knot1
+                knot2 = this%knot2
+                call this%set(knot1 = knot1, knot2 = knot2, Xc = Xc, Wc = Wc)
+            else
+                call this%set(nc = this%nc, Xc = Xc, Wc = Wc)
+            end if
         else
             error stop 'The NURBS surface is not rational.'
         end if
