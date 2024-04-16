@@ -524,10 +524,18 @@ contains
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: W
         integer, intent(in) :: num
+        real(rk), allocatable :: knot(:), Xc(:,:), Wc(:)
 
         if (allocated(this%Wc)) then
             this%Wc(num) = W
-            call this%set(knot = this%knot, Xc = this%Xc, Wc = this%Wc)
+            Xc = this%Xc
+            Wc = this%Wc
+            if (allocated(this%knot)) then
+                knot = this%knot
+                call this%set(knot = knot, Xc = Xc, Wc = Wc)
+            else
+                call this%set(Xc = Xc, Wc = Wc)                
+            end if
         else
             error stop 'The NURBS curve is not rational.'
         end if
