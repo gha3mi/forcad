@@ -37,9 +37,17 @@ module forcad_nurbs_volume
         procedure :: set3                   !!> Set Bezier or Rational Bezier volume using control points and weights
         generic :: set => set1, set2, set3  !!> Set NURBS volume
         procedure :: create                 !!> Generate geometry points
-        procedure :: get_Xc                 !!> Get control points
-        procedure :: get_Xg                 !!> Get geometry points
-        procedure :: get_Wc                 !!> Get weights
+        procedure, private :: get_Xc_all   !!> Get all control points
+        procedure, private :: get_Xci      !!> Get i-th control point
+        procedure, private :: get_Xcid     !!> Get i-th control point in a specific direction
+        generic :: get_Xc => get_Xc_all, get_Xci, get_Xcid !!> Get control points
+        procedure, private :: get_Xg_all   !!> Get all geometry points
+        procedure, private :: get_Xgi      !!> Get i-th geometry point
+        procedure, private :: get_Xgid     !!> Get i-th geometry point in a specific direction
+        generic :: get_Xg => get_Xg_all, get_Xgi, get_Xgid !!> Get geometry points
+        procedure, private :: get_Wc_all   !!> Get all weights
+        procedure, private :: get_Wci      !!> Get i-th weight
+        generic :: get_Wc => get_Wc_all, get_Wci !!> Get weights
         procedure :: get_Xt                 !!> Get parameter values
         procedure, private :: get_knot_all  !!> Get all knot vectors
         procedure, private :: get_knoti     !!> Get i-th knot value
@@ -291,7 +299,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_Xc(this) result(Xc)
+    pure function get_Xc_all(this) result(Xc)
         class(nurbs_volume), intent(in) :: this
         real(rk), allocatable :: Xc(:,:)
 
@@ -307,7 +315,42 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_Xg(this) result(Xg)
+    pure function get_Xci(this, n) result(Xc)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: n
+        real(rk), allocatable :: Xc(:)
+
+        if (allocated(this%Xc)) then
+            Xc(:) = this%Xc(n,:)
+        else
+            error stop 'Control points are not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_Xcid(this, n, dir) result(Xc)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: n
+        integer, intent(in) :: dir
+        real(rk) :: Xc
+
+        if (allocated(this%Xc)) then
+            Xc = this%Xc(n, dir)
+        else
+            error stop 'Control points are not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_Xg_all(this) result(Xg)
         class(nurbs_volume), intent(in) :: this
         real(rk), allocatable :: Xg(:,:)
 
@@ -323,14 +366,66 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_Wc(this) result(Wc)
+    pure function get_Xgi(this, n) result(Xg)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: n
+        real(rk), allocatable :: Xg(:)
+
+        if (allocated(this%Xg)) then
+            Xg(:) = this%Xg(n,:)
+        else
+            error stop 'Control points are not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_Xgid(this, n, dir) result(Xg)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: n
+        integer, intent(in) :: dir
+        real(rk) :: Xg
+
+        if (allocated(this%Xg)) then
+            Xg = this%Xg(n, dir)
+        else
+            error stop 'Control points are not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_Wc_all(this) result(Wc)
         class(nurbs_volume), intent(in) :: this
         real(rk), allocatable :: Wc(:)
 
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
-            error stop 'The NURBS volume is not rational.'
+            error stop 'The NURBS volume is not rational or weights are not set.'
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_Wci(this, n) result(Wc)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: n
+        real(rk) :: Wc
+
+        if (allocated(this%Wc)) then
+            Wc = this%Wc(n)
+        else
+            error stop 'The NURBS volume is not rational or weights are not set.'
         end if
     end function
     !===============================================================================
