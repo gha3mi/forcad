@@ -185,6 +185,10 @@ contains
             error stop 'Control points are not set.'
         end if
 
+        if (.not.allocated(this%knot)) then
+            error stop 'Knot vector is not set.'
+        end if
+
         ! Set parameter values
         if (present(Xt)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
@@ -534,7 +538,7 @@ contains
                 knot = this%knot
                 call this%set(knot = knot, Xc = Xc, Wc = Wc)
             else
-                call this%set(Xc = Xc, Wc = Wc)                
+                call this%set(Xc = Xc, Wc = Wc)
             end if
         else
             error stop 'The NURBS curve is not rational.'
