@@ -181,6 +181,10 @@ contains
             error stop 'Control points are not set.'
         end if
 
+        if (.not.allocated(this%knot1) .or. .not.allocated(this%knot2)) then
+            error stop 'Knot vector(s) is/are not set.'
+        end if
+
 
         ! Set parameter values
         if (present(Xt1)) then
