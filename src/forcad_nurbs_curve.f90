@@ -153,6 +153,7 @@ contains
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
 
+        if (allocated(this%knot)) deallocate(this%knot)
         allocate(this%knot(2*this%nc))
         this%knot(1:this%nc) = 0.0_rk
         this%knot(this%nc+1:2*this%nc) = 1.0_rk
@@ -667,7 +668,6 @@ contains
                     knot_new,&
                     Xc_new)
 
-                deallocate(this%Xc, this%knot)
                 call this%set(knot=knot_new, Xc=Xc_new)
             end do
 
@@ -949,7 +949,6 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    deallocate(this%Xc, this%knot, this%Wc)
                     call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
                     if (allocated(Xcw_new)) deallocate(Xcw_new)
                     if (allocated(Xc_new)) deallocate(Xc_new)
@@ -983,7 +982,6 @@ contains
                 if (t == 0) then
                     ! no change
                 else
-                    deallocate(this%Xc, this%knot)
                     call this%set(knot=knot_new, Xc=Xc_new)
                 end if
             end do

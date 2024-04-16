@@ -150,14 +150,17 @@ contains
         this%Xc = Xc
         this%nc = nc
 
+        if (allocated(this%knot1)) deallocate(this%knot1)
         allocate(this%knot1(2*this%nc(1)))
         this%knot1(1:this%nc(1)) = 0.0_rk
         this%knot1(this%nc(1)+1:2*this%nc(1)) = 1.0_rk
 
+        if (allocated(this%knot2)) deallocate(this%knot2)
         allocate(this%knot2(2*this%nc(2)))
         this%knot2(1:this%nc(2)) = 0.0_rk
         this%knot2(this%nc(2)+1:2*this%nc(2)) = 1.0_rk
 
+        if (allocated(this%knot3)) deallocate(this%knot3)
         allocate(this%knot3(2*this%nc(3)))
         this%knot3(1:this%nc(3)) = 0.0_rk
         this%knot3(this%nc(3)+1:2*this%nc(3)) = 1.0_rk
@@ -1036,7 +1039,6 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    deallocate(this%Xc, this%knot1, this%Wc)
                     call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
@@ -1070,7 +1072,6 @@ contains
 
                     Xc_new = reshape(Xc_new,[(n_new+1)*this%nc(2)*this%nc(3),dim])
 
-                    deallocate(this%Xc, this%knot1)
                     call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new)
                 end do
 
@@ -1122,7 +1123,6 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    deallocate(this%Xc, this%knot2, this%Wc)
                     call this%set(knot1=this%knot1, knot2=knot_new, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
@@ -1159,7 +1159,6 @@ contains
                     Xc4 = reshape(Xc4, [this%nc(1),n_new+1,this%nc(3),dim], order=[2,1,3,4])
                     Xc_new = reshape(Xc4,[this%nc(1)*(n_new+1)*this%nc(3),dim])
 
-                    deallocate(this%Xc, this%knot2)
                     call this%set(knot1=this%knot1, knot2=knot_new, knot3= this%knot3, Xc=Xc_new)
                 end do
 
@@ -1212,7 +1211,6 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    deallocate(this%Xc, this%knot3, this%Wc)
                     call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
@@ -1249,7 +1247,6 @@ contains
                     Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),n_new+1,dim], order=[3,2,1,4])
                     Xc_new = reshape(Xc4, [this%nc(1)*this%nc(2)*(n_new+1),dim])
 
-                    deallocate(this%Xc, this%knot3)
                     call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new)
                 end do
 
@@ -1299,7 +1296,6 @@ contains
                 end do
                 Wc_new(:) = Xcw_new(:,dim+1)
 
-                deallocate(this%Xc, this%knot1, this%Wc)
                 call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
@@ -1313,7 +1309,6 @@ contains
 
                 Xc_new = reshape(Xc_new,[nc_new*this%nc(2)*this%nc(3),dim],order=[1,2])
 
-                deallocate(this%Xc, this%knot1)
                 call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new)
 
             end if
@@ -1350,7 +1345,6 @@ contains
 
                 Wc_new(:) = Xcw_new(:,dim+1)
 
-                deallocate(this%Xc, this%knot2, this%Wc)
                 call this%set(knot1=this%knot1, knot2=knot_new, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
@@ -1368,7 +1362,6 @@ contains
                 Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim], order=[2,1,3,4])
                 Xc_new = reshape(Xc4,[this%nc(1)*nc_new*this%nc(3),dim])
 
-                deallocate(this%Xc, this%knot2)
                 call this%set(knot1=this%knot1, knot2=knot_new, knot3= this%knot3, Xc=Xc_new)
 
             end if
@@ -1403,7 +1396,6 @@ contains
 
                 Wc_new(:) = Xcw_new(:,dim+1)
 
-                deallocate(this%Xc, this%knot3, this%Wc)
                 call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
@@ -1421,7 +1413,6 @@ contains
                 Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim], order=[3,2,1,4])
                 Xc_new = reshape(Xc4,[this%nc(1)*this%nc(2)*nc_new,dim])
 
-                deallocate(this%Xc, this%knot3)
                 call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new)
 
             end if
@@ -1665,7 +1656,6 @@ contains
                         end do
                         Wc_new(:) = Xcw_new(:,dim+1)
 
-                        deallocate(this%Xc, this%knot1, this%Wc)
                         call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
@@ -1707,7 +1697,6 @@ contains
                         nc_new = size(Xcw_new,1)
                         Xc_new = reshape(Xc_new,[(nc_new)*this%nc(2)*this%nc(3),dim])
 
-                        deallocate(this%Xc, this%knot1)
                         call this%set(knot1=knot_new, knot2=this%knot2, knot3=this%knot3, Xc=Xc_new)
                     end if
                 end do
@@ -1770,7 +1759,6 @@ contains
 
                         Wc_new(:) = Xcw_new(:,dim+1)
 
-                        deallocate(this%Xc, this%knot2, this%Wc)
                         call this%set(knot1=this%knot1, knot2=knot_new, knot3=this%knot3, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
@@ -1816,7 +1804,6 @@ contains
                         Xc4 = reshape(Xc4, [this%nc(1),nc_new,this%nc(3),dim], order=[2,1,3,4])
                         Xc_new = reshape(Xc4, [this%nc(1)*(nc_new)*this%nc(3),dim])
 
-                        deallocate(this%Xc, this%knot2)
                         call this%set(knot1=this%knot1, knot2=knot_new, knot3= this%knot3, Xc=Xc_new)
                     end if
                 end do
@@ -1877,7 +1864,6 @@ contains
                         end do
                         Wc_new(:) = Xcw_new(:,dim+1)
 
-                        deallocate(this%Xc, this%knot3, this%Wc)
                         call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
@@ -1923,7 +1909,6 @@ contains
                         Xc4 = reshape(Xc4, [this%nc(1),this%nc(2),nc_new,dim], order=[3,2,1,4])
                         Xc_new = reshape(Xc4, [this%nc(1)*this%nc(2)*(nc_new),dim])
 
-                        deallocate(this%Xc, this%knot3)
                         call this%set(knot1=this%knot1, knot2=this%knot2, knot3=knot_new, Xc=Xc_new)
                     end if
                 end do
