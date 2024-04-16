@@ -1600,7 +1600,6 @@ contains
         class(nurbs_surface), intent(inout) :: this
         character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
         character(len=3000) :: pyvista_script
-        integer :: nunit
 
         pyvista_script = &
             "import pyvista as pv"//achar(10)//&
