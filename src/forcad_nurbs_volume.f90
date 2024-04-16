@@ -508,6 +508,7 @@ contains
         if (allocated(this%knot3)) deallocate(this%knot3)
         if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
         if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
+        if (allocated(this%elemConn)) deallocate(this%elemConn)
     end subroutine
     !===============================================================================
 
