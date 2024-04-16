@@ -93,13 +93,24 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
+        if (allocated(this%knot1)) deallocate(this%knot1)
+        if (allocated(this%knot2)) deallocate(this%knot2)
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
         this%knot1 = knot1
         this%knot2 = knot2
         this%degree = this%get_degree()
         this%nc(1) = this%get_nc(1)
         this%nc(2) = this%get_nc(2)
         this%Xc = Xc
-        if (present(Wc)) this%Wc = Wc
+        if (present(Wc)) then
+            if (size(Wc) /= this%nc(1)*this%nc(2)) then
+                error stop 'Number of weights does not match the number of control points.'
+            else
+                if (allocated(this%Wc)) deallocate(this%Wc)
+                this%Wc = Wc
+            end if
+        end if
     end subroutine
     !===============================================================================
 
@@ -880,6 +891,7 @@ contains
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
+        real(rk), allocatable :: knot1(:), knot2(:)
 
 
         if (dir == 1) then ! direction 1
@@ -924,7 +936,8 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new, Wc=Wc_new)
+                    knot2 = this%knot2
+                    call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
 
@@ -957,7 +970,8 @@ contains
 
                     Xc_new = reshape(Xc_new,[(this%nc(2))*(n_new+1),dim])
 
-                    call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new)
+                    knot2 = this%knot2
+                    call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new)
                 end do
 
             end if
@@ -1009,7 +1023,8 @@ contains
                     end do
                     Wc_new(:) = Xcw_new(:,dim+1)
 
-                    call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new, Wc=Wc_new)
+                    knot1 = this%knot1
+                    call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
 
@@ -1045,7 +1060,8 @@ contains
                     Xc3 = reshape(Xc3, [this%nc(1),n_new+1,dim], order=[2,1,3])
                     Xc_new = reshape(Xc3,[(this%nc(1))*(n_new+1),dim])
 
-                    call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
+                    knot1 = this%knot1
+                    call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new)
                 end do
 
 
@@ -1069,6 +1085,7 @@ contains
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
         integer :: dim, j, nc_new
         real(rk), allocatable:: Xc3(:,:,:)
+        real(rk), allocatable :: knot1(:), knot2(:)
 
 
         if (dir == 1) then ! direction 1
@@ -1096,7 +1113,8 @@ contains
 
                 Wc_new(:) = Xcw_new(:,dim+1)
 
-                call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new, Wc=Wc_new)
+                knot2 = this%knot2
+                call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
             else ! B-Spline
@@ -1108,7 +1126,8 @@ contains
 
                 Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim],order=[1,2])
 
-                call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new)
+                knot2 = this%knot2
+                call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new)
                 deallocate(Xc, Xc_new)
 
             end if
@@ -1143,7 +1162,8 @@ contains
 
                 Wc_new(:) = Xcw_new(:,dim+1)
 
-                call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new, Wc=Wc_new)
+                knot1 = this%knot1
+                call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
             else ! B-Spline
@@ -1160,7 +1180,8 @@ contains
                 Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
                 Xc_new = reshape(Xc3,[(this%nc(1))*nc_new,dim])
 
-                call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
+                knot1 = this%knot1
+                call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new)
 
             end if
 
@@ -1275,6 +1296,7 @@ contains
         integer :: k, i, s, dim, j, nc_new, t
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
+        real(rk), allocatable :: knot1(:), knot2(:)
 
 
         if (dir == 1) then ! direction 1
@@ -1327,7 +1349,8 @@ contains
 
                         Wc_new(:) = Xcw_new(:,dim+1)
 
-                        call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new, Wc=Wc_new)
+                        knot2 = this%knot2
+                        call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
                 end do
@@ -1368,7 +1391,8 @@ contains
                         nc_new = size(Xc_new,1)
                         Xc_new = reshape(Xc_new,[(this%nc(2))*(nc_new),dim],order=[1,2])
 
-                        call this%set(knot1=knot_new, knot2=this%knot2, Xc=Xc_new)
+                        knot2 = this%knot2
+                        call this%set(knot1=knot_new, knot2=knot2, Xc=Xc_new)
                     end if
                 end do
 
@@ -1431,7 +1455,8 @@ contains
 
                         Wc_new(:) = Xcw_new(:,dim+1)
 
-                        call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new, Wc=Wc_new)
+                        knot1 = this%knot1
+                        call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
                     end if
 
@@ -1477,7 +1502,8 @@ contains
                         Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
                         Xc_new = reshape(Xc3,[(this%nc(1))*(nc_new),dim])
 
-                        call this%set(knot2=knot_new, knot1=this%knot1, Xc=Xc_new)
+                        knot1 = this%knot1
+                        call this%set(knot2=knot_new, knot1=knot1, Xc=Xc_new)
                     end if
 
                 end do
