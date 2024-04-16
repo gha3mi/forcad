@@ -2116,12 +2116,7 @@ contains
             ")"//achar(10)//&
             "p.show(title='ForCAD', interactive=True)"
 
-
-        open(newunit=nunit, file='pyvista_script.py', status='replace')
-        write(nunit, '(a)') pyvista_script
-        close(nunit)
-
-        call execute_command_line('python pyvista_script.py')
+        call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
     end subroutine
     !===============================================================================
 
