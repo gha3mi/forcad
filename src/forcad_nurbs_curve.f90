@@ -49,6 +49,7 @@ module forcad_nurbs_curve
         procedure, private :: get_knoti    !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                !!> Get number of geometry points
+        procedure :: cmp_degree            !!> Compute degree of the NURBS curve
         procedure :: get_degree            !!> Get degree of the NURBS curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: cmp_elem_Xc_vis       !!> Generate connectivity for control points
@@ -64,9 +65,10 @@ module forcad_nurbs_curve
         procedure :: export_Xg             !!> Export geometry points to VTK file
         procedure :: modify_Xc             !!> Modify control points
         procedure :: modify_Wc             !!> Modify weights
-        procedure :: get_multiplicity      !!> Get multiplicity of the knot vector
-        procedure :: get_continuity        !!> Get continuity of the curve
-        procedure :: get_nc                !!> Get number of required control points
+        procedure :: get_multiplicity      !!> Compute and return the multiplicity of the knots
+        procedure :: get_continuity        !!> Compute and return the continuity of the curve
+        procedure :: cmp_nc                !!> Compute number of required control points
+        procedure :: get_nc                !!> Get number of control points
         procedure :: insert_knots          !!> Insert knots into the knot vector
         procedure :: elevate_degree        !!> Elevate the degree of the curve
         procedure :: derivative            !!> Compute the derivative of the NURBS curve
@@ -100,7 +102,7 @@ contains
         if (allocated(this%Xc)) deallocate(this%Xc)
 
         this%knot = knot
-        this%degree = this%get_degree()
+        call this%cmp_degree()
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
@@ -166,7 +168,7 @@ contains
         this%knot(1:this%nc) = 0.0_rk
         this%knot(this%nc+1:2*this%nc) = 1.0_rk
 
-        this%degree = this%get_degree()
+        call this%cmp_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
@@ -424,14 +426,25 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_degree(this) result(degree)
-        class(nurbs_curve), intent(in) :: this
-        integer :: degree
+    pure subroutine cmp_degree(this)
+        class(nurbs_curve), intent(inout) :: this
         integer, allocatable :: m(:)
 
         m = this%get_multiplicity()
 
-        degree = m(1) - 1
+        this%degree = m(1) - 1
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_degree(this) result(degree)
+        class(nurbs_curve), intent(in) :: this
+        integer :: degree
+
+        degree = this%degree
     end function
     !===============================================================================
 
@@ -631,7 +644,11 @@ contains
 
         if (allocated(this%Xc)) then
             this%Xc(num,dir) = X
-            call this%set(knot = this%knot, Xc = this%Xc, Wc = this%Wc)
+            if (allocated(this%Wc)) then
+                call this%set(knot=this%get_knot(), Xc=this%get_Xc(), Wc=this%get_Wc())
+            else
+                call this%set(knot=this%get_knot(), Xc=this%get_Xc())
+            end if
         else
             error stop 'Control points are not set.'
         end if
@@ -646,17 +663,13 @@ contains
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: W
         integer, intent(in) :: num
-        real(rk), allocatable :: knot(:), Xc(:,:), Wc(:)
 
         if (allocated(this%Wc)) then
             this%Wc(num) = W
-            Xc = this%Xc
-            Wc = this%Wc
             if (allocated(this%knot)) then
-                knot = this%knot
-                call this%set(knot = knot, Xc = Xc, Wc = Wc)
+                call this%set(knot=this%get_knot(), Xc=this%get_Xc(), Wc=this%get_Wc())
             else
-                call this%set(Xc = Xc, Wc = Wc)
+                call this%set(Xc=this%get_Xc(), Wc=this%get_Wc())
             end if
         else
             error stop 'The NURBS curve is not rational.'
@@ -702,11 +715,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure subroutine cmp_nc(this)
+        class(nurbs_curve), intent(inout) :: this
+
+        this%nc = sum(compute_multiplicity(this%knot)) - this%degree - 1
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function get_nc(this) result(nc)
         class(nurbs_curve), intent(in) :: this
         integer :: nc
-
-        nc = sum(compute_multiplicity(this%knot)) - this%degree - 1
+        nc = this%nc
     end function
     !===============================================================================
 
