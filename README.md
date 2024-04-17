@@ -20,7 +20,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Obtain visualized elements connectivity and coordinates for geometry and control geometry.
 - Mesh insertion into a NURBS object.
 - Export NURBS objects to VTK files for visualization.
-- Includes predefined NURBS shapes: Circle, Tetragon, Hexahedron.
+- Includes predefined NURBS shapes: Circle, Tetragon, Hexahedron, Ring.
 - Rotate and translate NURBS objects.
 - Visualization using provided python PyVista scripts.
 
