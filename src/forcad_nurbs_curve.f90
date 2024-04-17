@@ -262,6 +262,9 @@ contains
         real(rk), allocatable :: Xc(:)
 
         if (allocated(this%Xc)) then
+            if (n<lbound(this%Xc,1) .or. n>ubound(this%Xc,1)) then
+                error stop 'Invalid index for control points.'
+            end if
             Xc(:) = this%Xc(n,:)
         else
             error stop 'Control points are not set.'
@@ -280,6 +283,12 @@ contains
         real(rk) :: Xc
 
         if (allocated(this%Xc)) then
+            if (n<lbound(this%Xc,1) .or. n>ubound(this%Xc,1)) then
+                error stop 'Invalid index for control points.'
+            end if
+            if (dir<lbound(this%Xc,2) .or. dir>ubound(this%Xc,2)) then
+                error stop 'Invalid index for control points.'
+            end if
             Xc = this%Xc(n, dir)
         else
             error stop 'Control points are not set.'
@@ -313,6 +322,9 @@ contains
         real(rk), allocatable :: Xg(:)
 
         if (allocated(this%Xg)) then
+            if (n<lbound(this%Xg,1) .or. n>ubound(this%Xg,1)) then
+                error stop 'Invalid index for geometry points.'
+            end if
             Xg(:) = this%Xg(n,:)
         else
             error stop 'Control points are not set.'
@@ -331,6 +343,12 @@ contains
         real(rk) :: Xg
 
         if (allocated(this%Xg)) then
+            if (n<lbound(this%Xg,1) .or. n>ubound(this%Xg,1)) then
+                error stop 'Invalid index for geometry points.'
+            end if
+            if (dir<lbound(this%Xg,2) .or. dir>ubound(this%Xg,2)) then
+                error stop 'Invalid index for geometry points.'
+            end if
             Xg = this%Xg(n, dir)
         else
             error stop 'Control points are not set.'
@@ -364,6 +382,9 @@ contains
         real(rk) :: Wc
 
         if (allocated(this%Wc)) then
+            if (n<lbound(this%Wc,1) .or. n>ubound(this%Wc,1)) then
+                error stop 'Invalid index for weights.'
+            end if
             Wc = this%Wc(n)
         else
             error stop 'The NURBS curve is not rational or weights are not set.'
