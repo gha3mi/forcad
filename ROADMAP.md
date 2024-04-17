@@ -34,3 +34,4 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Use ForCAD for FEM simulations.
     - [ ] Get surfaces and edges from volumes.
     - [ ] Get edges from surfaces.
+    - [ ] Add extrude method for surfaces.
