@@ -267,7 +267,7 @@ contains
             if (n<lbound(this%Xc,1) .or. n>ubound(this%Xc,1)) then
                 error stop 'Invalid index for control points.'
             end if
-            Xc(:) = this%Xc(n,:)
+            Xc = this%Xc(n,:)
         else
             error stop 'Control points are not set.'
         end if
@@ -327,7 +327,7 @@ contains
             if (n<lbound(this%Xg,1) .or. n>ubound(this%Xg,1)) then
                 error stop 'Invalid index for geometry points.'
             end if
-            Xg(:) = this%Xg(n,:)
+            Xg = this%Xg(n,:)
         else
             error stop 'Control points are not set.'
         end if
