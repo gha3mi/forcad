@@ -35,3 +35,4 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Get surfaces and edges from volumes.
     - [ ] Get edges from surfaces.
     - [ ] Add extrude method for surfaces.
+    - [ ] Improve documentation.
