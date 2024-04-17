@@ -53,6 +53,7 @@ module forcad_nurbs_volume
         procedure, private :: get_knoti     !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
+        procedure :: cmp_degree             !!> Compute degree of the NURBS volume
         procedure, private :: get_degree_all!!> Get degree of the NURBS volume in all directions
         procedure, private :: get_degree_dir!!> Get degree of the NURBS volume in a specific direction
         generic :: get_degree => get_degree_all, get_degree_dir !!> Get degree of the NURBS volume
@@ -70,9 +71,9 @@ module forcad_nurbs_volume
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: modify_Xc              !!> Modify control points
         procedure :: modify_Wc              !!> Modify weights
-        procedure :: get_multiplicity       !!> Get multiplicity of the knot vector
-        procedure :: get_continuity         !!> Get continuity of the volume
-        procedure :: get_nc                 !!> Get number of required control points
+        procedure :: get_multiplicity       !!> Compute and return the multiplicity of the knots
+        procedure :: get_continuity         !!> Compute and return the continuity of the NURBS volume
+        procedure :: cmp_nc                 !!> Compute number of required control points
         procedure :: derivative             !!> Compute the derivative of the NURBS volume
         procedure :: basis                  !!> Compute the basis functions of the NURBS volume
         procedure :: insert_knots           !!> Insert knots into the knot vector
@@ -111,10 +112,8 @@ contains
         this%knot1 = knot1
         this%knot2 = knot2
         this%knot3 = knot3
-        this%degree = this%get_degree()
-        this%nc(1) = this%get_nc(1)
-        this%nc(2) = this%get_nc(2)
-        this%nc(3) = this%get_nc(3)
+        call this%cmp_degree()
+        call this%cmp_nc()
         this%Xc = Xc
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)*this%nc(3)) then
@@ -146,9 +145,7 @@ contains
         this%degree(1) = degree(1)
         this%degree(2) = degree(2)
         this%degree(3) = degree(3)
-        this%nc(1) = this%get_nc(1)
-        this%nc(2) = this%get_nc(2)
-        this%nc(3) = this%get_nc(3)
+        call this%cmp_nc()
         this%Xc = Xc
         if (present(Wc)) this%Wc = Wc
     end subroutine
@@ -185,7 +182,7 @@ contains
         this%knot3(1:this%nc(3)) = 0.0_rk
         this%knot3(this%nc(3)+1:2*this%nc(3)) = 1.0_rk
 
-        this%degree = this%get_degree()
+        call this%cmp_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)*this%nc(3)) then
                 error stop 'Number of weights does not match the number of control points.'
@@ -501,18 +498,49 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure subroutine cmp_degree(this, dir)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in), optional :: dir
+        integer, allocatable :: m1(:), m2(:), m3(:)
+
+        if (present(dir)) then
+            if (dir == 1) then
+                m1 = this%get_multiplicity(1)
+                this%degree(1) = m1(1) - 1
+            else if (dir == 2) then
+                m2 = this%get_multiplicity(2)
+                this%degree(2) = m2(1) - 1
+            else if (dir == 3) then
+                m3 = this%get_multiplicity(3)
+                this%degree(3) = m3(1) - 1
+            else
+                error stop 'Invalid direction for degree.'
+            end if
+        else
+            m1 = this%get_multiplicity(1)
+            this%degree(1) = m1(1) - 1
+
+            m2 = this%get_multiplicity(2)
+            this%degree(2) = m2(1) - 1
+
+            m3 = this%get_multiplicity(3)
+            this%degree(3) = m3(1) - 1
+        end if
+
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function get_degree_all(this) result(degree)
         class(nurbs_volume), intent(in) :: this
         integer :: degree(3)
-        integer, allocatable :: m1(:), m2(:), m3(:)
 
-        m1 = this%get_multiplicity(1)
-        m2 = this%get_multiplicity(2)
-        m3 = this%get_multiplicity(3)
-
-        degree(1) = m1(1) - 1
-        degree(2) = m2(1) - 1
-        degree(3) = m3(1) - 1
+        degree(1) = this%degree(1)
+        degree(2) = this%degree(2)
+        degree(3) = this%degree(3)
     end function
     !===============================================================================
 
@@ -524,17 +552,13 @@ contains
         class(nurbs_volume), intent(in) :: this
         integer, intent(in) :: dir
         integer :: degree
-        integer, allocatable :: m1(:), m2(:), m3(:)
 
         if (dir == 1) then
-            m1 = this%get_multiplicity(1)
-            degree = m1(1) - 1
+            degree = this%degree(1)
         else if (dir == 2) then
-            m2 = this%get_multiplicity(2)
-            degree = m2(1) - 1
+            degree = this%degree(2)
         else if (dir == 3) then
-            m3 = this%get_multiplicity(3)
-            degree = m3(1) - 1
+            degree = this%degree(3)
         else
             error stop 'Invalid direction for degree.'
         end if
@@ -787,7 +811,13 @@ contains
 
         if (allocated(this%Xc)) then
             this%Xc(num,dir) = X
-            call this%set(knot1 = this%knot1, knot2 = this%knot2, knot3 = this%knot3, Xc = this%Xc, Wc = this%Wc)
+            if (allocated(this%Wc)) then
+                call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=this%get_knot(3),&
+                    Xc=this%get_Xc(), Wc=this%get_Wc())
+            else
+                call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=this%get_knot(3),&
+                    Xc=this%get_Xc())
+            end if
         else
             error stop 'Control points are not set.'
         end if
@@ -802,19 +832,14 @@ contains
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in) :: W
         integer, intent(in) :: num
-        real(rk), allocatable :: knot1(:), knot2(:), knot3(:), Xc(:,:), Wc(:)
 
         if (allocated(this%Wc)) then
             this%Wc(num) = W
-            Xc = this%Xc
-            Wc = this%Wc
             if (allocated(this%knot1) .and. allocated(this%knot2) .and. allocated(this%knot3)) then
-                knot1 = this%knot1
-                knot2 = this%knot2
-                knot3 = this%knot3
-                call this%set(knot1 = knot1, knot2 = knot2, knot3 = knot3, Xc = Xc, Wc = Wc)
+                call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=this%get_knot(3),&
+                    Xc=this%get_Xc(), Wc=this%get_Wc())
             else
-                call this%set(nc = this%nc, Xc = Xc, Wc = Wc)
+                call this%set(nc=this%nc, Xc=this%get_Xc(), Wc=this%get_Wc())
             end if
         else
             error stop 'The NURBS volume is not rational.'
@@ -906,6 +931,75 @@ contains
         end if
 
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_nc(this, dir)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in), optional :: dir
+
+        if (present(dir)) then
+
+            if (dir == 1) then
+
+                ! check
+                if (.not.allocated(this%knot1)) then
+                    error stop 'Knot vector is not set.'
+                else
+                    this%nc(1) = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
+                end if
+
+            elseif (dir == 2) then
+
+                ! check
+                if (.not.allocated(this%knot2)) then
+                    error stop 'Knot vector is not set.'
+                else
+                    this%nc(2) = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
+                end if
+
+            elseif (dir == 3) then
+
+                ! check
+                if (.not.allocated(this%knot3)) then
+                    error stop 'Knot vector is not set.'
+                else
+                    this%nc(3) = sum(compute_multiplicity(this%knot3)) - this%degree(3) - 1
+                end if
+
+            else
+                error stop 'Invalid direction.'
+            end if
+
+        else
+
+            ! check
+            if (.not.allocated(this%knot1)) then
+                error stop 'Knot vector is not set.'
+            else
+                this%nc(1) = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
+            end if
+
+            ! check
+            if (.not.allocated(this%knot2)) then
+                error stop 'Knot vector is not set.'
+            else
+                this%nc(2) = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
+            end if
+
+            ! check
+            if (.not.allocated(this%knot3)) then
+                error stop 'Knot vector is not set.'
+            else
+                this%nc(3) = sum(compute_multiplicity(this%knot3)) - this%degree(3) - 1
+            end if
+
+        end if
+
+    end subroutine
     !===============================================================================
 
 
