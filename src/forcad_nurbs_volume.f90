@@ -90,6 +90,8 @@ module forcad_nurbs_volume
         ! Shapes
         procedure :: set_hexahedron         !!> Set a hexahedron
         procedure :: set_ring               !!> Set a ring
+        procedure :: set_half_ring          !!> Set a half ring
+        procedure :: set_C                  !!> Set a C-shape
     end type
     !===============================================================================
 
@@ -2353,7 +2355,7 @@ contains
         real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:), knot3(:)
         integer :: i
 
-        ! Define control points for circle
+        ! Define control points for ring
         allocate(Xc(28, 3))
         Xc(1,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
         Xc(2,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
@@ -2404,6 +2406,131 @@ contains
 
         ! Define knot vector
         knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/3.0_rk, 1.0_rk/3.0_rk, 2.0_rk/3.0_rk, 2.0_rk/3.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+        knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+        knot3 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot1, knot2, knot3, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_C(this, center, radius1, radius2, length)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius1, radius2, length
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:), knot3(:)
+        integer :: i
+
+        ! Define control points for C-shape
+        allocate(Xc(20, 3))
+        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+
+        Xc(6,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(7,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(8,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(9,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(10,:)=[-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+
+        Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
+
+        Xc(11,:)= [ 1.0_rk,  0.0_rk,              length]
+        Xc(12,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
+        Xc(13,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(14,:)= [-2.0_rk,  0.0_rk,              length]
+        Xc(15,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
+
+        Xc(16,:)= [ 1.0_rk,  0.0_rk,              length]
+        Xc(17,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
+        Xc(18,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(19,:)= [-2.0_rk,  0.0_rk,              length]
+        Xc(20,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
+
+        Xc(16:20,1:2) = Xc(16:20,1:2) * radius2
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius1
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk,&
+            1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk,&
+            1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk,&
+            1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk]
+
+        ! Define knot vector
+        knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, 1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+        knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+        knot3 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot1, knot2, knot3, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_half_ring(this, center, radius1, radius2, length)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius1, radius2, length
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:), knot3(:)
+        integer :: i
+
+        ! Define control points for half ring
+        allocate(Xc(20, 3))
+        Xc(1,:)  = [ 0.5_rk, 0.0_rk, 0.0_rk]
+        Xc(2,:)  = [ 0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(3,:)  = [ 0.0_rk, 0.5_rk, 0.0_rk]
+        Xc(4,:)  = [-0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(5,:)  = [-0.5_rk, 0.0_rk, 0.0_rk]
+
+        Xc(6,:)  = [ 0.5_rk, 0.0_rk, 0.0_rk]
+        Xc(7,:)  = [ 0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(8,:)  = [ 0.0_rk, 0.5_rk, 0.0_rk]
+        Xc(9,:)  = [-0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(10,:) = [-0.5_rk, 0.0_rk, 0.0_rk]
+
+        Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
+
+        Xc(11,:) = [ 0.5_rk, 0.0_rk, length]
+        Xc(12,:) = [ 0.5_rk, 0.5_rk, length]
+        Xc(13,:) = [ 0.0_rk, 0.5_rk, length]
+        Xc(14,:) = [-0.5_rk, 0.5_rk, length]
+        Xc(15,:) = [-0.5_rk, 0.0_rk, length]
+
+        Xc(16,:) = [ 0.5_rk, 0.0_rk, length]
+        Xc(17,:) = [ 0.5_rk, 0.5_rk, length]
+        Xc(18,:) = [ 0.0_rk, 0.5_rk, length]
+        Xc(19,:) = [-0.5_rk, 0.5_rk, length]
+        Xc(20,:) = [-0.5_rk, 0.0_rk, length]
+
+        Xc(16:20,1:2) = Xc(16:20,1:2) * radius2
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius1
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk,&
+            1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk,&
+            1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk,&
+            1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk]
+
+        ! Define knot vector
+        knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, &
+            1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
         knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
         knot3 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
 

@@ -88,6 +88,8 @@ module forcad_nurbs_surface
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
         procedure :: set_ring               !!> Set a ring
+        procedure :: set_half_ring          !!> Set a half ring
+        procedure :: set_C                  !!> Set a C-shape
     end type
     !===============================================================================
 
@@ -1915,7 +1917,7 @@ contains
         real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
         integer :: i
 
-        ! Define control points for circle
+        ! Define control points for ring
         allocate(Xc(14, 3))
         Xc(1,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
         Xc(2,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
@@ -1946,6 +1948,97 @@ contains
 
         ! Define knot vector
         knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/3.0_rk, 1.0_rk/3.0_rk, 2.0_rk/3.0_rk, 2.0_rk/3.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+        knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot1, knot2, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_C(this, center, radius1, radius2)
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius1, radius2
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
+        integer :: i
+
+        ! Define control points for C-shape
+        allocate(Xc(10, 3))
+        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+
+        Xc(6,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(7,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(8,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(9,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(10,:)=[-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+
+        Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius1
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk,&
+            1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk]
+
+        ! Define knot vector
+        knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, 1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+        knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot1, knot2, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_half_ring(this, center, radius1, radius2)
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius1, radius2
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
+        integer :: i
+
+        ! Define control points for half ring
+        allocate(Xc(10, 3))
+        Xc(1,:)  = [ 0.5_rk, 0.0_rk, 0.0_rk]
+        Xc(2,:)  = [ 0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(3,:)  = [ 0.0_rk, 0.5_rk, 0.0_rk]
+        Xc(4,:)  = [-0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(5,:)  = [-0.5_rk, 0.0_rk, 0.0_rk]
+
+        Xc(6,:)  = [ 0.5_rk, 0.0_rk, 0.0_rk]
+        Xc(7,:)  = [ 0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(8,:)  = [ 0.0_rk, 0.5_rk, 0.0_rk]
+        Xc(9,:)  = [-0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(10,:) = [-0.5_rk, 0.0_rk, 0.0_rk]
+
+        Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius1
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk,&
+            1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk]
+
+        ! Define knot vector
+        knot1 = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, &
+            1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
         knot2 = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
 
         ! Set knot vector, control points, and weights

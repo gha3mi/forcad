@@ -1,22 +1,22 @@
-program shape_ring_3d
+program shape_half_circle
 
-    use forcad, only: rk, nurbs_volume
+    use forcad, only: rk, nurbs_curve
 
     implicit none
-    type(nurbs_volume) :: shape
+    type(nurbs_curve) :: shape
 
 
-    !> Set up a ring shape centered at 0,0,0 with inner radius 1, outer radius 2, and length 1.
-    call shape%set_ring([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk, 2.0_rk, 1.0_rk)
+    !> Set up a half circle shape centered at the 0,0,0 with a radius of 1
+    call shape%set_half_circle([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk)
 
     !> Export the control points to a VTK file for visualization.
-    call shape%export_Xc('vtk/shape_ring_3d_Xc.vtk')
+    call shape%export_Xc('vtk/shape_half_circle_Xc.vtk')
 
     !> Create the shape using the specified number of elements in each direction.
-    call shape%create(60, 15, 10)
+    call shape%create(60)
 
     !> Export the geometry to a VTK file for visualization.
-    call shape%export_Xg('vtk/shape_ring_3d_Xg.vtk')
+    call shape%export_Xg('vtk/shape_half_circle_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -24,7 +24,7 @@ program shape_ring_3d
     !-----------------------------------------------------------------------------
 
     !> Show the control geometry and geometry using PyVista
-    call shape%show('vtk/shape_ring_3d_Xc.vtk','vtk/shape_ring_3d_Xg.vtk')
+    call shape%show('vtk/shape_half_circle_Xc.vtk','vtk/shape_half_circle_Xg.vtk')
 
     !> Finalize and clean up the shape object.
     call shape%finalize()
