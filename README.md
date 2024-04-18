@@ -5,11 +5,11 @@
 [![License](https://img.shields.io/github/license/gha3mi/forcad?color=green)](https://github.com/gha3mi/forcad/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/778032800.svg)](https://zenodo.org/doi/10.5281/zenodo.10904447)
 
+![logo](logo/logo.png)
+
 **ForCAD**: A Fortran library for Geometric Modeling using NURBS (Non-Uniform Rational B-Splines).
 
 ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** curves, surfaces, and volumes.
-
-<img alt="example_bezier" src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bezier.png" width="750">
 
 ## Main Features
 
