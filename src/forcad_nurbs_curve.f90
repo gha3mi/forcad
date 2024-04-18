@@ -1145,13 +1145,13 @@ contains
 
         ! Define control points for circle
         allocate(Xc(7, 3))
-        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(6,:)= [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
-        Xc(7,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(1,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(3,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(6,:)= [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(7,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
 
         ! Scale and translate the control points
         do i = 1, size(Xc, 1)

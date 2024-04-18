@@ -2357,39 +2357,39 @@ contains
 
         ! Define control points for ring
         allocate(Xc(28, 3))
-        Xc(1,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(2,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(3,:) = [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(4,:) = [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(5,:) = [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(6,:) = [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
-        Xc(7,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(1,:) = [ 1.0_rk/2.0_rk,  0.0_rk/2.0_rk,       0.0_rk]
+        Xc(2,:) = [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(3,:) = [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(4,:) = [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:) = [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(6,:) = [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(7,:) = [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
 
-        Xc(8,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(9,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(10,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(11,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(12,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(13,:)= [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
-        Xc(14,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(8,:) = [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(9,:) = [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(10,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(11,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(12,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(13,:)= [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(14,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
 
         Xc(8:14,1:2) = Xc(8:14,1:2) * radius2
 
-        Xc(15,:)= [ 1.0_rk,  0.0_rk,              length]
-        Xc(16,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
-        Xc(17,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
-        Xc(18,:)= [-2.0_rk,  0.0_rk,              length]
-        Xc(19,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
-        Xc(20,:)= [ 1.0_rk, -sqrt(3.0_rk),        length]
-        Xc(21,:)= [ 1.0_rk,  0.0_rk,              length]
+        Xc(15,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(16,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(17,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, length]
+        Xc(18,:)= [-2.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(19,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, length]
+        Xc(20,:)= [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, length]
+        Xc(21,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
 
-        Xc(22,:)= [ 1.0_rk,  0.0_rk,              length]
-        Xc(23,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
-        Xc(24,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
-        Xc(25,:)= [-2.0_rk,  0.0_rk,              length]
-        Xc(26,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
-        Xc(27,:)= [ 1.0_rk, -sqrt(3.0_rk),        length]
-        Xc(28,:)= [ 1.0_rk,  0.0_rk,              length]
+        Xc(22,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(23,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(24,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, length]
+        Xc(25,:)= [-2.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(26,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, length]
+        Xc(27,:)= [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, length]
+        Xc(28,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
 
         Xc(22:28,1:2) = Xc(22:28,1:2) * radius2
 
@@ -2427,31 +2427,31 @@ contains
 
         ! Define control points for C-shape
         allocate(Xc(20, 3))
-        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(1,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(3,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
 
-        Xc(6,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(7,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(8,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(9,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(10,:)=[-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(6,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(7,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(8,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(9,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(10,:)=[-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
 
         Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
 
-        Xc(11,:)= [ 1.0_rk,  0.0_rk,              length]
-        Xc(12,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
-        Xc(13,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
-        Xc(14,:)= [-2.0_rk,  0.0_rk,              length]
-        Xc(15,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
+        Xc(11,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(12,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(13,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, length]
+        Xc(14,:)= [-2.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(15,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, length]
 
-        Xc(16,:)= [ 1.0_rk,  0.0_rk,              length]
-        Xc(17,:)= [ 1.0_rk,  sqrt(3.0_rk),        length]
-        Xc(18,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, length]
-        Xc(19,:)= [-2.0_rk,  0.0_rk,              length]
-        Xc(20,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, length]
+        Xc(16,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(17,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, length]
+        Xc(18,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, length]
+        Xc(19,:)= [-2.0_rk/2.0_rk,  0.0_rk,              length]
+        Xc(20,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, length]
 
         Xc(16:20,1:2) = Xc(16:20,1:2) * radius2
 

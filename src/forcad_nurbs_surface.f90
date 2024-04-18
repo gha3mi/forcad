@@ -1919,21 +1919,21 @@ contains
 
         ! Define control points for ring
         allocate(Xc(14, 3))
-        Xc(1,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(2,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(3,:) = [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(4,:) = [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(5,:) = [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(6,:) = [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
-        Xc(7,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(1,:) = [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:) = [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(3,:) = [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(4,:) = [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:) = [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(6,:) = [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(7,:) = [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
 
-        Xc(8,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(9,:) = [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(10,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(11,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(12,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(13,:)= [ 1.0_rk, -sqrt(3.0_rk),        0.0_rk]
-        Xc(14,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(8,:) = [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(9,:) = [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(10,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(11,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(12,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(13,:)= [ 1.0_rk/2.0_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(14,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
 
         Xc(8:14,1:2) = Xc(8:14,1:2) * radius2
 
@@ -1968,17 +1968,17 @@ contains
 
         ! Define control points for C-shape
         allocate(Xc(10, 3))
-        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(1,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(3,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
 
-        Xc(6,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
-        Xc(7,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
-        Xc(8,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
-        Xc(9,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
-        Xc(10,:)=[-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(6,:)= [ 1.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(7,:)= [ 1.0_rk/2.0_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(8,:)= [-0.5_rk/2.0_rk,  sqrt(3.0_rk)/4.0_rk, 0.0_rk]
+        Xc(9,:)= [-2.0_rk/2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(10,:)=[-0.5_rk/2.0_rk, -sqrt(3.0_rk)/4.0_rk, 0.0_rk]
 
         Xc(6:10,1:2) = Xc(6:10,1:2) * radius2
 
