@@ -18,10 +18,17 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
 - v0.4.0:
     - [x] Visualization using PyVista.
 
+- v0.4.1:
+    - [x] Add new predefined shapes: `half circle`, `2D ring`, `half 2D ring`, `3D ring`, `half 3D ring`, `c-shapes`.
+    - [x] Add new examples.
+    - [x] Add generic procedures `get_Xc()`, `get_Xg()` and `get_Wc()`
+    - [x] Add `cmp_degree()`.
+    - [x] Design a logo with ForCAD.
+    - [x] Improvements and bug fixes.
+
 - Additional Ideas:
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [ ] Add `morph()` method for morphing box.
-    - [ ] Design a logo.
     - [ ] Add support binary `vtk` files.
     - [ ] Export to `IGES` format.
     - [ ] Add support for multiple patches.
