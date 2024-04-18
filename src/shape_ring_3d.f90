@@ -6,7 +6,7 @@ program shape_ring_3d
     type(nurbs_volume) :: shape
 
 
-    !> Set up a ring shape with inner radius 1.0, outer radius 2.0, and thickness 1.0.
+    !> Set up a ring shape centered at 0,0,0 with inner radius 1, outer radius 2, and length 1.
     call shape%set_ring([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk, 2.0_rk, 1.0_rk)
 
     !> Export the control points to a VTK file for visualization.

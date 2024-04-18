@@ -83,6 +83,8 @@ module forcad_nurbs_curve
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
+        procedure :: set_half_circle       !!> Set a half circle
+        procedure :: set_C                 !!> Set a C-shape
     end type
     !===============================================================================
 
@@ -1171,6 +1173,41 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure subroutine set_C(this, center, radius)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot(:)
+        integer :: i
+
+        ! Define control points for C-shape
+        allocate(Xc(5, 3))
+        Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
+        Xc(2,:)= [ 1.0_rk,  sqrt(3.0_rk),        0.0_rk]
+        Xc(3,:)= [-0.5_rk,  sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+        Xc(4,:)= [-2.0_rk,  0.0_rk,              0.0_rk]
+        Xc(5,:)= [-0.5_rk, -sqrt(3.0_rk)/2.0_rk, 0.0_rk]
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 0.5_rk, 1.0_rk, 0.5_rk, 1.0_rk]
+
+        ! Define knot vector
+        knot = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, 1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function cmp_elem(this) result(elemConn)
         class(nurbs_curve), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
@@ -1357,6 +1394,42 @@ contains
             "p.show(title='ForCAD', interactive=True)"
 
         call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set_half_circle(this, center, radius)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: center(:)
+        real(rk), intent(in) :: radius
+        real(rk), allocatable :: Xc(:,:), Wc(:), knot(:)
+        integer :: i
+
+        ! Define control points for half circle
+        allocate(Xc(5, 3))
+        Xc(1,:) = [ 0.5_rk, 0.0_rk, 0.0_rk]
+        Xc(2,:) = [ 0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(3,:) = [ 0.0_rk, 0.5_rk, 0.0_rk]
+        Xc(4,:) = [-0.5_rk, 0.5_rk, 0.0_rk]
+        Xc(5,:) = [-0.5_rk, 0.0_rk, 0.0_rk]
+
+        ! Scale and translate the control points
+        do i = 1, size(Xc, 1)
+            Xc(i,:) = center + Xc(i,:) * radius
+        end do
+
+        ! Define weights for the control points
+        Wc = [1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk, 1.0_rk/sqrt(2.0_rk), 1.0_rk]
+
+        ! Define knot vector
+        knot = [0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk/2.0_rk, &
+            1.0_rk/2.0_rk, 1.0_rk, 1.0_rk, 1.0_rk]
+
+        ! Set knot vector, control points, and weights
+        call this%set(knot, Xc, Wc)
     end subroutine
     !===============================================================================
 
