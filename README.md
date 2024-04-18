@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/gha3mi/forcad?color=green)](https://github.com/gha3mi/forcad/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/778032800.svg)](https://zenodo.org/doi/10.5281/zenodo.10904447)
 
-![logo](logo/logo.png)
+![](logo/logo.png)
 
 **ForCAD**: A Fortran library for Geometric Modeling using NURBS (Non-Uniform Rational B-Splines).
 
