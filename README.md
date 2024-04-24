@@ -84,11 +84,7 @@ For a detailed roadmap outlining upcoming features and enhancements, please refe
 
 ## Contributing
 
-Contributions to ForCAD are welcome!
-
-- If you find any issues or would like to suggest improvements, please open an issue.
-- If you've implemented new features, fixed bugs, or enhanced existing functionality, please consider submitting a pull request (PR).
-- Please share your examples by submitting a pull request (PR).
+To contribute to ForCAD, please review the [CONTRIBUTING.md](https://github.com/gha3mi/forcad/blob/main/CONTRIBUTING.md).
 
 ## Citation
 
