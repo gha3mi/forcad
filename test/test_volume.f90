@@ -1,12 +1,14 @@
 program test_volume
 
     use forcad, only: rk, nurbs_volume
+    use forunittest, only: unit_test
 
     implicit none
     type(nurbs_volume) :: nurbs, bsp
     real(rk), allocatable :: Xc(:,:), Wc(:)
     real(rk), allocatable :: Xg(:,:), Xgb(:,:)
     real(rk) :: knot1(4), knot2(4), knot3(4)
+    type(unit_test) :: ut
 
     Xc = generate_Xc(5.0_rk)
 
@@ -37,8 +39,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 13: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 14: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 13")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 14")
 
     call nurbs%elevate_degree(1, 2)
     call nurbs%elevate_degree(2, 2)
@@ -51,8 +53,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 15: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 16: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 15")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 16")
 
     call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [1,1])
     call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [1,1])
@@ -65,8 +67,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 17: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 18: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 17")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 18")
 
     call nurbs%finalize()
     call bsp%finalize()

@@ -1,12 +1,14 @@
 program test_curve
 
     use forcad, only: rk, nurbs_curve
+    use forunittest, only: unit_test
 
     implicit none
     type(nurbs_curve) :: nurbs, bsp
     real(rk), allocatable :: Xc(:,:), Wc(:)
     real(rk), allocatable :: Xg(:,:), Xgb(:,:)
     real(rk) :: knot(6)
+    type(unit_test) :: ut
 
     allocate(Xc(3, 3))
     Xc(1,:) = [0.0_rk, 0.0_rk, 0.0_rk]
@@ -33,8 +35,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 01: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 02: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 01")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 02")
 
     call nurbs%elevate_degree(2)
     call bsp%elevate_degree(2)
@@ -42,8 +44,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 03: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 04: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 03")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 04")
 
     call nurbs%remove_knots([0.25_rk, 0.75_rk], [2,1])
     call bsp%remove_knots([0.25_rk, 0.75_rk], [2,1])
@@ -51,8 +53,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    print*,'test 05: ', norm2(Xg - nurbs%get_Xg())
-    print*,'test 06: ', norm2(Xgb - bsp%get_Xg())
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 05")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 06")
 
     call nurbs%finalize()
     call bsp%finalize()
