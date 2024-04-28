@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `CHANGELOG.md` file.
 - Added `CONTRIBUTING.md` file.
-- Updated `README.md` file.
 - Add NURBS surface to PPM conversion examples.
-- Utilize ForUnitTest for testing.
+- Utilized ForUnitTest for testing.
+
+### Changed
+
+- Updated `README.md` file.
+- Updated tests to use ForUnitTest.
+- Added ParaView to the list of References in the README file.
+
+### Removed
+
+- Excluded macOS from CI due to a problem with fpm.
+- Excluded NVIDIA from CI due to a problem with ForColormap or a bug with the NVIDIA compiler.
