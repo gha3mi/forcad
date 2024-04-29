@@ -27,9 +27,9 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ## Simple Examples
 
-<img src="https://github.com/gha3mi/forcad/raw/main/gif/1.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/2.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/3.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/4.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/5.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/6.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/7.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/8.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/9.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/10.gif" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/11.gif" width="300"/>
+<img src="https://github.com/gha3mi/forcad/raw/main/gif/1.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/2.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/3.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/4.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/5.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/6.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/7.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/8.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/9.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/10.gif" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/gif/11.gif" width="250"/>
 
-<img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="300"/><img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="300"/>
+<img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="250"/><img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="250"/>
 
 ## Installation
 
