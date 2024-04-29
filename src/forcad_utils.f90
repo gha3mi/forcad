@@ -199,18 +199,14 @@ contains
     pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, i, j, n
+        integer :: s1, s2, i, j
 
         s1 = size(X_dir1)
         s2 = size(X_dir2)
         allocate(Xt(s1*s2,2))
-        n = 0
-        do j = 1, s2
-            do i = 1, s1
-                n = n + 1
-                Xt(n,1) = X_dir1(i)
-                Xt(n,2) = X_dir2(j)
-            end do
+        do concurrent (j = 1:s2, i = 1: s1)
+            Xt((j - 1) * s1 + i,1) = X_dir1(i)
+            Xt((j - 1) * s1 + i,2) = X_dir2(j)
         end do
     end subroutine
     !===============================================================================
@@ -222,22 +218,16 @@ contains
     pure subroutine ndgrid3(X_dir1,X_dir2,X_dir3, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:), X_dir3(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, s3, i, j, k, n
+        integer :: s1, s2, s3, i, j, k
 
         s1 = size(X_dir1)
         s2 = size(X_dir2)
         s3 = size(X_dir3)
         allocate(Xt(s1*s2*s3,3))
-        n = 0
-        do k = 1, s3
-            do j = 1, s2
-                do i = 1, s1
-                    n = n + 1
-                    Xt(n,1) = X_dir1(i)
-                    Xt(n,2) = X_dir2(j)
-                    Xt(n,3) = X_dir3(k)
-                end do
-            end do
+        do concurrent (k = 1:s3, j = 1:s2, i = 1: s1)
+            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,1) = X_dir1(i)
+            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,2) = X_dir2(j)
+            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,3) = X_dir3(k)
         end do
     end subroutine
     !===============================================================================
@@ -269,15 +259,13 @@ contains
         integer, intent(in) :: nnode
         integer, intent(in) :: p
         integer, allocatable :: elemConn(:,:)
-        integer :: i, l
+        integer :: i, j
         integer, allocatable :: nodes(:)
 
         allocate(elemConn( ((nnode-p) / p) ,2))
         nodes = [(i, i=1,nnode)]
-        l = 0
-        do i = 1,nnode-p, p
-            l = l+1
-            elemConn(l,:) = reshape(nodes(i:i+p),[(p + 1)])
+        do concurrent (i = 1: (nnode-p)/p)
+            elemConn(i,:) = [(j, j = i*p, i*p + p)]
         end do
     end function
     !===============================================================================
