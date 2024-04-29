@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Add NURBS surface to PPM conversion examples.
 - Utilized ForUnitTest for testing.
 - Added Support for `OpenMP` and `do concurrent`.
+- Added gifs and pngs to the `README.md` file.
 
 ### Changed
 
