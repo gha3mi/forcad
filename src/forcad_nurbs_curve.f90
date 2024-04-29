@@ -193,12 +193,13 @@ contains
         integer :: i
 
         interface
-            pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
+            pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
                 import :: rk
                 real(rk), intent(in), contiguous :: f_Xt(:)
                 real(rk), intent(in), contiguous :: f_knot(:)
                 integer, intent(in) :: f_degree
                 integer, intent(in) :: f_nc
+                integer, intent(in) :: f_ng
                 real(rk), intent(in), contiguous :: f_Xc(:,:)
                 real(rk), intent(in), contiguous :: f_Wc(:)
                 real(rk), allocatable :: f_Xg(:,:)
@@ -206,12 +207,13 @@ contains
         end interface
 
         interface
-            pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_Xc) result(f_Xg)
+            pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
                 import :: rk
                 real(rk), intent(in), contiguous :: f_Xt(:)
                 real(rk), intent(in), contiguous :: f_knot(:)
                 integer, intent(in) :: f_degree
                 integer, intent(in) :: f_nc
+                integer, intent(in) :: f_ng
                 real(rk), intent(in), contiguous :: f_Xc(:,:)
                 real(rk), allocatable :: f_Xg(:,:)
             end function
@@ -245,9 +247,9 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (this%is_rational()) then ! NURBS
-            this%Xg = compute_Xg_nurbs_1d(this%Xt, this%knot, this%degree, this%nc, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else ! B-Spline
-            this%Xg = compute_Xg_bspline_1d(this%Xt, this%knot, this%degree, this%nc, this%Xc)
+            this%Xg = compute_Xg_bspline_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
@@ -1486,7 +1488,7 @@ end module forcad_nurbs_curve
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Xg_nurbs_1d(Xt, knot, degree, nc, Xc, Wc) result(Xg)
+impure function compute_Xg_nurbs_1d(Xt, knot, degree, nc, ng, Xc, Wc) result(Xg)
     use forcad_utils, only: rk, basis_bspline
 
     implicit none
@@ -1494,15 +1496,16 @@ impure function compute_Xg_nurbs_1d(Xt, knot, degree, nc, Xc, Wc) result(Xg)
     real(rk), intent(in), contiguous :: knot(:)
     integer, intent(in) :: degree
     integer, intent(in) :: nc
+    integer, intent(in) :: ng
     real(rk), intent(in), contiguous :: Xc(:,:)
     real(rk), intent(in), contiguous :: Wc(:)
     real(rk), allocatable :: Xg(:,:)
     real(rk), allocatable :: Tgc(:)
     integer :: i
 
-    allocate(Xg(size(Xt), size(Xc,2)))
+    allocate(Xg(ng, size(Xc,2)))
     !$OMP PARALLEL DO PRIVATE(Tgc)
-    do i = 1, size(Xt)
+    do i = 1, ng
         Tgc = basis_bspline(Xt(i), knot, nc, degree)
         Tgc = Tgc*(Wc/(dot_product(Tgc,Wc)))
         Xg(i,:) = matmul(Tgc, Xc)
@@ -1515,7 +1518,7 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Xg_bspline_1d(Xt, knot, degree, nc, Xc) result(Xg)
+impure function compute_Xg_bspline_1d(Xt, knot, degree, nc, ng, Xc) result(Xg)
     use forcad_utils, only: rk, basis_bspline
 
     implicit none
@@ -1523,13 +1526,14 @@ impure function compute_Xg_bspline_1d(Xt, knot, degree, nc, Xc) result(Xg)
     real(rk), intent(in), contiguous :: knot(:)
     integer, intent(in) :: degree
     integer, intent(in) :: nc
+    integer, intent(in) :: ng
     real(rk), intent(in), contiguous :: Xc(:,:)
     real(rk), allocatable :: Xg(:,:)
     integer :: i
 
-    allocate(Xg(size(Xt), size(Xc,2)))
+    allocate(Xg(ng, size(Xc,2)))
     !$OMP PARALLEL DO
-    do i = 1, size(Xt)
+    do i = 1, ng
         Xg(i,:) = matmul(basis_bspline(Xt(i), knot, nc, degree), Xc)
     end do
     !$OMP END PARALLEL DO

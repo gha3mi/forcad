@@ -210,12 +210,13 @@ contains
         real(rk), allocatable :: Xt_(:,:)
 
         interface
-            pure function compute_Xg_nurbs_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
+            pure function compute_Xg_nurbs_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
                 import :: rk
                 real(rk), intent(in), contiguous :: f_Xt(:,:)
                 real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
                 integer, intent(in) :: f_degree(3)
                 integer, intent(in) :: f_nc(3)
+                integer, intent(in) :: f_ng(3)
                 real(rk), intent(in), contiguous :: f_Xc(:,:)
                 real(rk), intent(in), contiguous :: f_Wc(:)
                 real(rk), allocatable :: f_Xg(:,:)
@@ -223,12 +224,13 @@ contains
         end interface
 
         interface
-            pure function compute_Xg_bspline_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc) result(f_Xg)
+            pure function compute_Xg_bspline_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
                 import :: rk
                 real(rk), intent(in), contiguous :: f_Xt(:,:)
                 real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
                 integer, intent(in) :: f_degree(3)
                 integer, intent(in) :: f_nc(3)
+                integer, intent(in) :: f_ng(3)
                 real(rk), intent(in), contiguous :: f_Xc(:,:)
                 real(rk), allocatable :: f_Xg(:,:)
             end function
@@ -294,9 +296,9 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (allocated(this%Wc)) then ! NURBS volume
-            this%Xg = compute_Xg_nurbs_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else
-            this%Xg = compute_Xg_bspline_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Xc)
+            this%Xg = compute_Xg_bspline_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
@@ -2578,7 +2580,7 @@ end module forcad_nurbs_volume
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Xg_nurbs_3d(Xt, knot1, knot2, knot3, degree, nc, Xc, Wc) result(Xg)
+impure function compute_Xg_nurbs_3d(Xt, knot1, knot2, knot3, degree, nc, ng, Xc, Wc) result(Xg)
     use forcad_utils, only: rk, basis_bspline, kron
 
     implicit none
@@ -2586,15 +2588,16 @@ impure function compute_Xg_nurbs_3d(Xt, knot1, knot2, knot3, degree, nc, Xc, Wc)
     real(rk), intent(in), contiguous :: knot1(:), knot2(:), knot3(:)
     integer, intent(in) :: degree(3)
     integer, intent(in) :: nc(3)
+    integer, intent(in) :: ng(3)
     real(rk), intent(in), contiguous :: Xc(:,:)
     real(rk), intent(in), contiguous :: Wc(:)
     real(rk), allocatable :: Xg(:,:)
     real(rk), allocatable :: Tgc(:)
     integer :: i
 
-    allocate(Xg(size(Xt,1), size(Xc,2)))
+    allocate(Xg(ng(1)*ng(2)*ng(3), size(Xc,2)))
     !$OMP PARALLEL DO PRIVATE(Tgc)
-    do i = 1, size(Xt, 1)
+    do i = 1, ng(1)*ng(2)*ng(3)
         Tgc = kron(basis_bspline(Xt(i,3), knot3, nc(3), degree(3)),&
             kron(&
             basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
@@ -2610,7 +2613,7 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Xg_bspline_3d(Xt, knot1, knot2, knot3, degree, nc, Xc) result(Xg)
+impure function compute_Xg_bspline_3d(Xt, knot1, knot2, knot3, degree, nc, ng, Xc) result(Xg)
     use forcad_utils, only: rk, basis_bspline, kron
 
     implicit none
@@ -2618,13 +2621,14 @@ impure function compute_Xg_bspline_3d(Xt, knot1, knot2, knot3, degree, nc, Xc) r
     real(rk), intent(in), contiguous :: knot1(:), knot2(:), knot3(:)
     integer, intent(in) :: degree(3)
     integer, intent(in) :: nc(3)
+    integer, intent(in) :: ng(3)
     real(rk), intent(in), contiguous :: Xc(:,:)
     real(rk), allocatable :: Xg(:,:)
     integer :: i
 
-    allocate(Xg(size(Xt,1), size(Xc,2)))
+    allocate(Xg(ng(1)*ng(2)*ng(3), size(Xc,2)))
     !$OMP PARALLEL DO
-    do i = 1, size(Xt, 1)
+    do i = 1, ng(1)*ng(2)*ng(3)
         Xg(i,:) = matmul(kron(basis_bspline(Xt(i,3), knot3, nc(3), degree(3)), kron(&
             basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
             basis_bspline(Xt(i,1), knot1, nc(1), degree(1)))),&
