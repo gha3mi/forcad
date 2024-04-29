@@ -35,7 +35,7 @@ program example_ppm3
     call t%timer_start()
     call background_color%set('white', use_library=.true.)
 
-    do concurrent (i = 1: width)
+    do i = 1, width
         px(:, 3*(i-1)+1) = background_color%get_r()
         px(:, 3*(i-1)+2) = background_color%get_g()
         px(:, 3*(i-1)+3) = background_color%get_b()
@@ -84,7 +84,7 @@ program example_ppm3
     allocate(idx(ng(1)*ng(2),2))
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
-    do concurrent (i = 1: ng(1)*ng(2))
+    do i = 1, ng(1)*ng(2)
         call cmap%compute_RGB(z_values(i), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
@@ -136,7 +136,7 @@ program example_ppm3
     allocate(idx(ng(1)*ng(2),2))
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
-    do concurrent (i = 1: ng(1)*ng(2))
+    do i = 1, ng(1)*ng(2)
         call cmap%compute_RGB(z_values(i), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
@@ -195,7 +195,7 @@ program example_ppm3
     allocate(idx(ng(1)*ng(2),2))
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
-    do concurrent (i = 1: ng(1)*ng(2))
+    do i = 1, ng(1)*ng(2)
         call cmap%compute_RGB(z_values(i), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
@@ -253,7 +253,7 @@ program example_ppm3
     allocate(idx(ng(1)*ng(2),2))
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
-    do concurrent (i = 1: ng(1)*ng(2))
+    do i = 1, ng(1)*ng(2)
         call cmap%compute_RGB(z_values(i), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
@@ -316,7 +316,7 @@ program example_ppm3
     allocate(idx(ng(1)*ng(2),2))
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
-    do concurrent (i = 1: ng(1)*ng(2))
+    do i = 1, ng(1)*ng(2)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
         px(idx(i,2), 3*(idx(i,1)-1)+3) = blue

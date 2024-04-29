@@ -5,8 +5,6 @@ program shape_tetragon
     implicit none
 
     type(nurbs_surface) :: shape                !! Declare a NURBS surface object
-    real(rk), allocatable :: Xc(:,:), Wc(:)     !! Arrays for control points and weights
-    real(rk), allocatable :: knot1(:), knot2(:) !! Arrays for knot vectors in both dimensions
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS tetrangon
