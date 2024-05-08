@@ -15,7 +15,7 @@ program example_ppm3
     type(colormap)           :: cmap
     integer(ik), allocatable :: px(:, :)
     real(rk), allocatable    :: Xg(:,:), z_values(:)
-    real(rk)                 :: z, center(3), inner_radius, outer_radius, aspect_ratio
+    real(rk)                 :: aspect_ratio
     integer                  :: height, width, ng(2), red, green, blue, res1, res2, i
     integer, allocatable     :: idx(:,:)
     type(timer)              :: t
@@ -353,7 +353,7 @@ program example_ppm3
 
 
     ! Clean up
-    ! call cmap%finalize()
+    call cmap%finalize()
     deallocate(px, Xg, z_values)
 
 end program

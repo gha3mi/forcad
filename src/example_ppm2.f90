@@ -370,7 +370,7 @@ program example_ppm2
 
 
     ! Clean up
-    ! call cmap%finalize()
+    call cmap%finalize()
     deallocate(px, Xg, z_values)
 
 end program

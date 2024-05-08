@@ -1792,7 +1792,7 @@ contains
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in), contiguous :: X(:,:)
         integer, intent(in), contiguous :: elemConn(:,:)
-        integer :: i, j
+        integer :: i
         real(rk), allocatable :: Tgc1(:), Tgc2(:), Tgc3(:), Tgc(:)
         real(rk), allocatable :: Xt(:,:)
         real(rk) :: min_X1, max_X1, min_X2, max_X2, min_X3, max_X3
