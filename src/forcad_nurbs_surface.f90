@@ -2103,6 +2103,8 @@ impure function compute_Xg_nurbs_2d(Xt, knot1, knot2, degree, nc, ng, Xc, Wc) re
     integer :: i
 
     allocate(Xg(ng(1)*ng(2), size(Xc,2)))
+    allocate(Tgc(nc(1)*nc(2)))
+
     !$OMP PARALLEL DO PRIVATE(Tgc)
     do i = 1, ng(1)*ng(2)
         Tgc = kron(&
