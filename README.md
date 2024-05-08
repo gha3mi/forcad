@@ -27,11 +27,11 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ## Examples
 
-<img src="vtk/1.png" width="30%"> <img src="vtk/2.png" width="30%"> <img src="vtk/3.png" width="30%">
+<img src="https://github.com/gha3mi/forcad/raw/main/vtk/1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/3.png" width="30%">
 
-<img src="vtk/4.png" width="30%"> <img src="vtk/5.png" width="30%"> <img src="vtk/6.png" width="30%">
+<img src="https://github.com/gha3mi/forcad/raw/main/vtk/4.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/5.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/6.png" width="30%">
 
-<img src="ppm/example_ppm1.png" width="30%"> <img src="ppm/example_ppm2.png" width="30%"> <img src="ppm/example_ppm3.png" width="30%">
+<img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="30%">
 
 ## Installation
 
