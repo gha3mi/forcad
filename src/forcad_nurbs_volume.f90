@@ -294,7 +294,8 @@ contains
         end if
 
         if (allocated(this%Xg)) deallocate(this%Xg)
-
+        allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
+        
         if (allocated(this%Wc)) then ! NURBS volume
             this%Xg = compute_Xg_nurbs_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else
@@ -1813,6 +1814,7 @@ contains
         Xt(:,3) = (X(:,3) -  min_X3) / (max_X3 -  min_X3)
 
         allocate(this%Xg(size(Xt,1), size(this%Xc,2)))
+        allocate(Tgc(this%nc(1)*this%nc(2)*this%nc(3)))
 
         if (allocated(this%Wc)) then ! NURBS volume
             do i = 1, size(Xt, 1)
@@ -1821,9 +1823,7 @@ contains
                 Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
                 Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
-                do j = 1, size(this%Xc, 2)
-                    this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
-                end do
+                this%Xg(i,:) = matmul(Tgc,this%Xc)
             end do
         else ! B-Spline volume
             do i = 1, size(Xt, 1)
@@ -1831,9 +1831,7 @@ contains
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
                 Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
                 Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
-                do j = 1, size(this%Xc, 2)
-                    this%Xg(i,j) = dot_product(Tgc,this%Xc(:,j))
-                end do
+                this%Xg(i,:) = matmul(Tgc,this%Xc)
             end do
         end if
 
@@ -2596,6 +2594,8 @@ impure function compute_Xg_nurbs_3d(Xt, knot1, knot2, knot3, degree, nc, ng, Xc,
     integer :: i
 
     allocate(Xg(ng(1)*ng(2)*ng(3), size(Xc,2)))
+    allocate(Tgc(nc(1)*nc(2)*nc(3)))
+
     !$OMP PARALLEL DO PRIVATE(Tgc)
     do i = 1, ng(1)*ng(2)*ng(3)
         Tgc = kron(basis_bspline(Xt(i,3), knot3, nc(3), degree(3)),&
