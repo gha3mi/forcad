@@ -35,6 +35,9 @@ program example_morph
     !> Map the shape into the shape
     call control_shape%put_to_nurbs(X, elem)
 
+    !> Deallocate local variables
+    deallocate(X, elem)
+
     !> Export the shape and the control shape to vtk files
     call control_shape%export_Xc('vtk/control_shape.vtk')
     call control_shape%export_Xg('vtk/shape.vtk')
@@ -46,5 +49,8 @@ program example_morph
 
     !> Show the control geometry and geometry using PyVista
     call control_shape%show('vtk/control_shape.vtk','vtk/shape.vtk')
+
+    !> Finalize the control shape
+    call control_shape%finalize()
 
 end program

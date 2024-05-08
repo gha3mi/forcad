@@ -30,6 +30,9 @@ program example3_volume
     !> Wc is optional.
     call nurbs%set(knot1, knot2, knot3, Xc, Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export the control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc.vtk')
 

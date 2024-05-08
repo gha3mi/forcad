@@ -66,6 +66,7 @@ program test_surface
 
     call nurbs%finalize()
     call bsp%finalize()
+    deallocate(Xc, Wc, Xg, Xgb)
 
 contains
 
