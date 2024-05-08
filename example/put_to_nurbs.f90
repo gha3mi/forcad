@@ -1,4 +1,4 @@
-program example_morph
+program example_put_to_nurbs
 
     use forcad
     use forcad_utils, only: hexahedron_Xc
