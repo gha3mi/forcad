@@ -248,7 +248,7 @@ contains
             c(l+1:l+n) = a(i)
             l = l + n
         end do
-    end function repelem
+    end function
     !===============================================================================
 
 
@@ -328,18 +328,16 @@ contains
         real(rk), intent(in), contiguous :: Xth(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:)
-        integer :: i, l, nnel, m, nelem
+        integer :: i, nnel, m, nelem
 
         nnel = p + 1
         nodes = [(i, i=1, nnode)]
         nelem = size(Xth) - 1
         allocate(elemConn(nelem,nnel))
-        l = 0
         m = -p
         do i = 1, nelem
             m = m + vecKnot_mul(i)
-            l = l + 1
-            elemConn(l,:) = nodes(m:m+p)
+            elemConn(i,:) = nodes(m:m+p)
         end do
     end subroutine
     !===============================================================================

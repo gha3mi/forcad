@@ -23,6 +23,9 @@ program example_nurbs_curve
     !> Set control points and weights for the NURBS curve object
     call nurbs%set(Xc, Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export initial control points to a VTK file
     call nurbs%export_Xc('vtk/demo_curve_Xc.vtk')
 

@@ -23,6 +23,9 @@ program example_nurbs_surface
     !> Set control points and weights for the NURBS surface object
     call nurbs%set([10,10],Xc,Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export initial control points to a VTK file
     call nurbs%export_Xc('vtk/demo_surface_Xc.vtk')
 

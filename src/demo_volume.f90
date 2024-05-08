@@ -23,6 +23,9 @@ program example_nurbs_volume
     !> Set control points and weights for the NURBS volume object
     call nurbs%set([2,2,2], Xc, Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export initial control points to a VTK file
     call nurbs%export_Xc('vtk/demo_volume_Xc.vtk')
 

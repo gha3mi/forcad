@@ -31,6 +31,9 @@ program example1_curve
     !> Wc is optional
     call nurbs%set(knot, Xc, Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc.vtk')
 
