@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added Support for `OpenMP` and `do concurrent`.
 - Implemented memory cleanup in the examples and tests.
 - Added cleanup for colormap type in the ppm examples.
+- Added screenshots to the README file.
 
 ### Changed
 

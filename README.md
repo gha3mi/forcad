@@ -25,6 +25,14 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Rotate and translate NURBS objects.
 - Visualization using provided python PyVista scripts.
 
+## Examples
+
+<img src="vtk/1.png" width="30%"> <img src="vtk/2.png" width="30%"> <img src="vtk/3.png" width="30%">
+
+<img src="vtk/4.png" width="30%"> <img src="vtk/5.png" width="30%"> <img src="vtk/6.png" width="30%">
+
+<img src="ppm/example_ppm1.png" width="30%"> <img src="ppm/example_ppm2.png" width="30%"> <img src="ppm/example_ppm3.png" width="30%">
+
 ## Installation
 
 ### Requirements
