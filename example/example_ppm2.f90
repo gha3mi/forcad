@@ -363,4 +363,14 @@ program example_ppm2
     call image%finalize()
     call t%timer_stop(message='Saving the image')
 
+
+
+
+
+
+
+    ! Clean up
+    ! call cmap%finalize()
+    deallocate(px, Xg, z_values)
+
 end program

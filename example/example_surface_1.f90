@@ -30,6 +30,9 @@ program example3_surface
     !> Set knot vectors, control points, and weights for the NURBS surface object
     call nurbs%set(knot1, knot2, Xc, Wc)
 
+    !> Deallocate local arrays
+    deallocate(Xc, Wc)
+
     !> Export the control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_surface_Xc.vtk')
 

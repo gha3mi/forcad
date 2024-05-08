@@ -58,5 +58,6 @@ program test_curve
 
     call nurbs%finalize()
     call bsp%finalize()
+    deallocate(Xc, Wc, Xg, Xgb)
 
 end program
