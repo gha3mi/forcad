@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Implemented memory cleanup in the examples and tests.
 - Added cleanup for colormap type in the ppm examples.
 - Added screenshots to the README file.
+- Included nvidia compiler in the CI.
+- Added missing allocation for `Tgc` in the `compute_Xg_nurbs_1d` subroutine.
 
 ### Changed
 
@@ -30,4 +32,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - Excluded macOS from CI due to a problem with fpm.
-- Excluded NVIDIA from CI due to a problem with ForColormap or a bug with the NVIDIA compiler.
