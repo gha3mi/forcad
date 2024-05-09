@@ -1504,6 +1504,7 @@ impure function compute_Xg_nurbs_1d(Xt, knot, degree, nc, ng, Xc, Wc) result(Xg)
     integer :: i
 
     allocate(Xg(ng, size(Xc,2)))
+    allocate(Tgc(nc))
     !$OMP PARALLEL DO PRIVATE(Tgc)
     do i = 1, ng
         Tgc = basis_bspline(Xt(i), knot, nc, degree)
