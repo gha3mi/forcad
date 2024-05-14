@@ -6,7 +6,7 @@ program nearest_point_2d
 
     type(nurbs_surface) :: shape           !! Declare a NURBS surface object
     real(rk), allocatable :: nearest_Xg(:) !! Coordinates of the nearest point on the surface
-    real(rk), allocatable :: nearest_Xt(:) !! Coordinates of the nearest point in the parametric space
+    real(rk), allocatable :: nearest_Xt(:) !! Corresponding parametric coordinates of the nearest point
     integer :: id                          !! id of the nearest point
 
     !-----------------------------------------------------------------------------
@@ -30,7 +30,7 @@ program nearest_point_2d
 
     !> Find the nearest point on the surface to a given point
     ! nearest_Xg: Coordinates of the nearest point on the surface (optional)
-    ! nearest_Xt: Coordinates of the nearest point in the parametric space (optional)
+    ! nearest_Xt: Corresponding parametric coordinates of the nearest point (optional)
     ! id: id of the nearest point (optional)
     call shape%nearest_point([2.0_rk, 3.0_rk, 5.0_rk], nearest_Xg, nearest_Xt, id)
     print *, 'Nearest point on the surface:', nearest_Xg, 'with parametric coordinates:', nearest_Xt, 'and id:', id
