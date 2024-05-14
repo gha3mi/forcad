@@ -2087,20 +2087,31 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine nearest_point(this, point, nearest, id)
+    pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_surface), intent(in) :: this
-        real(rk), intent(in) :: point(:)
-        real(rk), intent(out), allocatable :: nearest(:)
-        integer, intent(out) :: id
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
+        real(rk), allocatable :: Xt(:,:)
+        integer, intent(out), optional :: id
+        integer :: id_
         real(rk), allocatable :: distances(:)
         integer :: i
 
         allocate(distances(this%ng(1)*this%ng(2)))
         do concurrent (i = 1: this%ng(1)*this%ng(2))
-            distances(i) = norm2(this%Xg(i,:) - point)
+            distances(i) = norm2(this%Xg(i,:) - point_Xg)
         end do
-        id = minloc(distances, dim=1)
-        nearest = this%Xg(id,:)
+        
+        id_ = minloc(distances, dim=1)
+        if (present(id)) id = id_
+
+        if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
+
+        if (present(nearest_Xt)) then
+            call ndgrid(this%Xt1, this%Xt2, Xt)
+            nearest_Xt = Xt(id_,:)
+        end if
     end subroutine
     !===============================================================================
 
