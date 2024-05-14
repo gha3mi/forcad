@@ -84,6 +84,7 @@ module forcad_nurbs_surface
         procedure :: translate_Xc           !!> Translate control points
         procedure :: translate_Xg           !!> Translate geometry points
         procedure :: show                   !!> Show the NURBS object using PyVista
+        procedure :: nearest_point          !!> Find the nearest point on the NURBS surface
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -2079,6 +2080,27 @@ contains
 
         ! Set knot vector, control points, and weights
         call this%set(knot1, knot2, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine nearest_point(this, point, nearest, id)
+        class(nurbs_surface), intent(in) :: this
+        real(rk), intent(in) :: point(:)
+        real(rk), intent(out), allocatable :: nearest(:)
+        integer, intent(out) :: id
+        real(rk), allocatable :: distances(:)
+        integer :: i
+
+        allocate(distances(this%ng(1)*this%ng(2)))
+        do concurrent (i = 1: this%ng(1)*this%ng(2))
+            distances(i) = norm2(this%Xg(i,:) - point)
+        end do
+        id = minloc(distances, dim=1)
+        nearest = this%Xg(id,:)
     end subroutine
     !===============================================================================
 
