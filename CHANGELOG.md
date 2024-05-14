@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added screenshots to the README file.
 - Included nvidia compiler in the CI.
 - Added missing allocation for `Tgc` in the `compute_Xg_nurbs_1d` subroutine.
+- Added `nearest_point()` procedures to the `nurbs_curve`, `nurbs_surface` and `nurbs_volume`.
+- Added examples for the `nearest_point()` method.
+- Added `Xt` to the `nurbs_surface` and `nurbs_volume` derived types.
 
 ### Changed
 
