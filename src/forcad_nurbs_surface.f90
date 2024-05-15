@@ -276,9 +276,11 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (this%is_rational()) then ! NURBS
-            this%Xg = compute_Xg_nurbs_2d(this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_2d(&
+            this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else ! B-Spline
-            this%Xg = compute_Xg_bspline_2d(this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg_bspline_2d(&
+            this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================

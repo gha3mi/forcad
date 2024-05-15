@@ -298,9 +298,11 @@ contains
         allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
         
         if (allocated(this%Wc)) then ! NURBS volume
-            this%Xg = compute_Xg_nurbs_3d(this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_3d(&
+            this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else
-            this%Xg = compute_Xg_bspline_3d(this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg_bspline_3d(&
+            this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
