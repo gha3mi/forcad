@@ -2315,7 +2315,7 @@ impure function nearest_point_help(ng, Xg, point_Xg) result(distances)
     integer :: i
 
     allocate(distances(ng(1)*ng(2)))
-    !$OMP PARALLEL DO DEFAULT(NONE) SHARED(Xg, point_Xg, distances)
+    !$OMP PARALLEL DO
     do i = 1, ng(1)*ng(2)
         distances(i) = norm2(Xg(i,:) - point_Xg)
     end do
