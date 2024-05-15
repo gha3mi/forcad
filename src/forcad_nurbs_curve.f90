@@ -1498,12 +1498,19 @@ contains
         integer, intent(out), optional :: id
         integer :: id_
         real(rk), allocatable :: distances(:)
-        integer :: i
+
+        interface
+            pure function nearest_point_help(f_ng, f_Xg, f_point_Xg) result(f_distances)
+                import :: rk
+                integer, intent(in) :: f_ng
+                real(rk), intent(in), contiguous :: f_Xg(:,:)
+                real(rk), intent(in), contiguous :: f_point_Xg(:)
+                real(rk), allocatable :: f_distances(:)
+            end function
+        end interface
 
         allocate(distances(this%ng))
-        do concurrent (i = 1: this%ng)
-            distances(i) = norm2(this%Xg(i,:) - point_Xg)
-        end do
+        distances = nearest_point_help(this%ng, this%Xg, point_Xg)
         
         id_ = minloc(distances, dim=1)
         if (present(id)) id = id_
@@ -1676,5 +1683,29 @@ impure function compute_Tgc_bspline_1d(Xt, knot, degree, nc, ng) result(Tgc)
         Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
     end do
     !$OMP END PARALLEL DO
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function nearest_point_help(ng, Xg, point_Xg) result(distances)
+    use forcad_utils, only: rk
+
+    implicit none
+    integer, intent(in) :: ng
+    real(rk), intent(in), contiguous :: Xg(:,:)
+    real(rk), intent(in), contiguous :: point_Xg(:)
+    real(rk), allocatable :: distances(:)
+    integer :: i
+
+    allocate(distances(ng))
+    !$OMP PARALLEL DO DEFAULT(NONE) SHARED(Xg, point_Xg, distances)
+    do i = 1, ng
+        distances(i) = norm2(Xg(i,:) - point_Xg)
+    end do
+    !$OMP END PARALLEL DO
+
 end function
 !===============================================================================
