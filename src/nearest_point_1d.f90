@@ -40,5 +40,6 @@ program nearest_point_1d
 
     !> Finalize the NURBS curve object
     call shape%finalize()
+    deallocate(nearest_Xg)
 
 end program

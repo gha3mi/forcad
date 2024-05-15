@@ -41,5 +41,6 @@ program nearest_point_3d
 
     !> Finalize the NURBS volume object
     call shape%finalize()
+    deallocate(nearest_Xg, nearest_Xt)
 
 end program

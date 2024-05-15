@@ -41,5 +41,6 @@ program nearest_point_2d
 
     !> Finalize the NURBS surface object
     call shape%finalize()
+    deallocate(nearest_Xg, nearest_Xt)
 
 end program
