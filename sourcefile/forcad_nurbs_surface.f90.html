@@ -141,7 +141,7 @@
             <a class="list-group-item" href="../proc/compute_dtgc_bspline_2d.html">compute_dTgc_bspline_2d</a>
             <a class="list-group-item" href="../proc/compute_tgc_nurbs_2d.html">compute_Tgc_nurbs_2d</a>
             <a class="list-group-item" href="../proc/compute_tgc_bspline_2d.html">compute_Tgc_bspline_2d</a>
-            <a class="list-group-item" href="../proc/nearest_point_help~2.html">nearest_point_help</a>
+            <a class="list-group-item" href="../proc/nearest_point_help_2d.html">nearest_point_help_2d</a>
         </div>
       </div>
     </div>
@@ -2811,7 +2811,7 @@ large graphs.</div>
 <a id="ln-2100" name="ln-2100" href="#ln-2100"></a><span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">distances</span><span class="p">(:)</span>
 <a id="ln-2101" name="ln-2101" href="#ln-2101"></a>
 <a id="ln-2102" name="ln-2102" href="#ln-2102"></a><span class="w">        </span><span class="k">interface</span>
-<a id="ln-2103" name="ln-2103" href="#ln-2103"></a><span class="k">            pure function </span><span class="n">nearest_point_help</span><span class="p">(</span><span class="n">f_ng</span><span class="p">,</span><span class="w"> </span><span class="n">f_Xg</span><span class="p">,</span><span class="w"> </span><span class="n">f_point_Xg</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">f_distances</span><span class="p">)</span>
+<a id="ln-2103" name="ln-2103" href="#ln-2103"></a><span class="k">            pure function </span><span class="n">nearest_point_help_2d</span><span class="p">(</span><span class="n">f_ng</span><span class="p">,</span><span class="w"> </span><span class="n">f_Xg</span><span class="p">,</span><span class="w"> </span><span class="n">f_point_Xg</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">f_distances</span><span class="p">)</span>
 <a id="ln-2104" name="ln-2104" href="#ln-2104"></a><span class="w">                </span><span class="k">import</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rk</span>
 <a id="ln-2105" name="ln-2105" href="#ln-2105"></a><span class="w">                </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">f_ng</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <a id="ln-2106" name="ln-2106" href="#ln-2106"></a><span class="w">                </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">contiguous</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">f_Xg</span><span class="p">(:,:)</span>
@@ -2821,7 +2821,7 @@ large graphs.</div>
 <a id="ln-2110" name="ln-2110" href="#ln-2110"></a><span class="k">        end interface</span>
 <a id="ln-2111" name="ln-2111" href="#ln-2111"></a>
 <a id="ln-2112" name="ln-2112" href="#ln-2112"></a><span class="k">        allocate</span><span class="p">(</span><span class="n">distances</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">ng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">this</span><span class="p">%</span><span class="n">ng</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
-<a id="ln-2113" name="ln-2113" href="#ln-2113"></a><span class="w">        </span><span class="n">distances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nearest_point_help</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xg</span><span class="p">,</span><span class="w"> </span><span class="n">point_Xg</span><span class="p">)</span>
+<a id="ln-2113" name="ln-2113" href="#ln-2113"></a><span class="w">        </span><span class="n">distances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nearest_point_help_2d</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xg</span><span class="p">,</span><span class="w"> </span><span class="n">point_Xg</span><span class="p">)</span>
 <a id="ln-2114" name="ln-2114" href="#ln-2114"></a><span class="w">        </span>
 <a id="ln-2115" name="ln-2115" href="#ln-2115"></a><span class="w">        </span><span class="n">id_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">minloc</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <a id="ln-2116" name="ln-2116" href="#ln-2116"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">present</span><span class="p">(</span><span class="n">id</span><span class="p">))</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id_</span>
@@ -3015,7 +3015,7 @@ large graphs.</div>
 <a id="ln-2304" name="ln-2304" href="#ln-2304"></a><span class="c">!===============================================================================</span>
 <a id="ln-2305" name="ln-2305" href="#ln-2305"></a><span class="c">!&gt; author: Seyed Ali Ghasemi</span>
 <a id="ln-2306" name="ln-2306" href="#ln-2306"></a><span class="c">!&gt; license: BSD 3-Clause</span>
-<a id="ln-2307" name="ln-2307" href="#ln-2307"></a><span class="k">impure function </span><span class="n">nearest_point_help</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">Xg</span><span class="p">,</span><span class="w"> </span><span class="n">point_Xg</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+<a id="ln-2307" name="ln-2307" href="#ln-2307"></a><span class="k">impure function </span><span class="n">nearest_point_help_2d</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span><span class="w"> </span><span class="n">Xg</span><span class="p">,</span><span class="w"> </span><span class="n">point_Xg</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
 <a id="ln-2308" name="ln-2308" href="#ln-2308"></a><span class="w">    </span><span class="k">use </span><span class="n">forcad_utils</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span>
 <a id="ln-2309" name="ln-2309" href="#ln-2309"></a>
 <a id="ln-2310" name="ln-2310" href="#ln-2310"></a><span class="w">    </span><span class="k">implicit none</span>
@@ -3055,7 +3055,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-05-15T12:13:10.637732             </p>
+ on 2024-05-15T12:20:41.402484             </p>
           </div>
         </div>
         <br>

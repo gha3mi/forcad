@@ -1500,7 +1500,7 @@ contains
         real(rk), allocatable :: distances(:)
 
         interface
-            pure function nearest_point_help(f_ng, f_Xg, f_point_Xg) result(f_distances)
+            pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
                 import :: rk
                 integer, intent(in) :: f_ng
                 real(rk), intent(in), contiguous :: f_Xg(:,:)
@@ -1510,7 +1510,7 @@ contains
         end interface
 
         allocate(distances(this%ng))
-        distances = nearest_point_help(this%ng, this%Xg, point_Xg)
+        distances = nearest_point_help_1d(this%ng, this%Xg, point_Xg)
         
         id_ = minloc(distances, dim=1)
         if (present(id)) id = id_
@@ -1690,7 +1690,7 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function nearest_point_help(ng, Xg, point_Xg) result(distances)
+impure function nearest_point_help_1d(ng, Xg, point_Xg) result(distances)
     use forcad_utils, only: rk
 
     implicit none
