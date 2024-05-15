@@ -22,6 +22,7 @@ module forcad_nurbs_volume
         real(rk), allocatable, private :: Xt1(:)   !! Evaluation parameter values in the first direction (1D array: [ng(1)])
         real(rk), allocatable, private :: Xt2(:)   !! Evaluation parameter values in the second direction (1D array: [ng(2)])
         real(rk), allocatable, private :: Xt3(:)   !! Evaluation parameter values in the third direction (1D array: [ng(3)])
+        real(rk), allocatable, private :: Xt(:,:)  !! Evaluation parameter values (2D array: [ng(1)*ng(2)*ng(3), dim]
         real(rk), allocatable, private :: knot1(:) !! Knot vector in the first direction (1D array)
         real(rk), allocatable, private :: knot2(:) !! Knot vector in the second direction (1D array)
         real(rk), allocatable, private :: knot3(:) !! Knot vector in the third direction (1D array)
@@ -86,6 +87,7 @@ module forcad_nurbs_volume
         procedure :: translate_Xc           !!> Translate control points
         procedure :: translate_Xg           !!> Translate geometry points
         procedure :: show                   !!> Show the NURBS object using PyVista
+        procedure :: nearest_point          !!> Find the nearest point on the NURBS volume
 
         ! Shapes
         procedure :: set_hexahedron         !!> Set a hexahedron
@@ -207,7 +209,6 @@ contains
         real(rk), intent(in), contiguous, optional :: Xt1(:), Xt2(:), Xt3(:)
         real(rk), intent(in), contiguous, optional :: Xt(:,:)
         integer :: i
-        real(rk), allocatable :: Xt_(:,:)
 
         interface
             pure function compute_Xg_nurbs_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
@@ -282,7 +283,7 @@ contains
         end if
 
         if (present(Xt)) then
-            Xt_ = Xt
+            this%Xt = Xt
         else
 
             ! Set number of geometry points
@@ -290,16 +291,16 @@ contains
             this%ng(2) = size(this%Xt2,1)
             this%ng(3) = size(this%Xt3,1)
 
-            call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt_)
+            call ndgrid(this%Xt1, this%Xt2, this%Xt3, this%Xt)
         end if
 
         if (allocated(this%Xg)) deallocate(this%Xg)
         allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
         
         if (allocated(this%Wc)) then ! NURBS volume
-            this%Xg = compute_Xg_nurbs_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_3d(this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else
-            this%Xg = compute_Xg_bspline_3d(Xt_, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg_bspline_3d(this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
@@ -670,6 +671,7 @@ contains
         if (allocated(this%Xt1)) deallocate(this%Xt1)
         if (allocated(this%Xt2)) deallocate(this%Xt2)
         if (allocated(this%Xt3)) deallocate(this%Xt3)
+        if (allocated(this%Xt)) deallocate(this%Xt)
         if (allocated(this%knot1)) deallocate(this%knot1)
         if (allocated(this%knot2)) deallocate(this%knot2)
         if (allocated(this%knot3)) deallocate(this%knot3)
@@ -2570,6 +2572,32 @@ contains
 
         ! Set knot vector, control points, and weights
         call this%set(knot1, knot2, knot3, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
+        class(nurbs_volume), intent(in) :: this
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
+        integer, intent(out), optional :: id
+        integer :: id_
+        real(rk), allocatable :: distances(:)
+        integer :: i
+
+        allocate(distances(this%ng(1)*this%ng(2)*this%ng(3)))
+        do concurrent (i = 1: this%ng(1)*this%ng(2)*this%ng(3))
+            distances(i) = norm2(this%Xg(i,:) - point_Xg)
+        end do
+        
+        id_ = minloc(distances, dim=1)
+        if (present(id)) id = id_
+        if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
+        if (present(nearest_Xt)) nearest_Xt = this%Xt(id_,:)
     end subroutine
     !===============================================================================
 

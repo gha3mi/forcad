@@ -80,6 +80,7 @@ module forcad_nurbs_curve
         procedure :: translate_Xc          !!> Translate control points
         procedure :: translate_Xg          !!> Translate geometry points
         procedure :: show                  !!> Show the NURBS object using PyVista
+        procedure :: nearest_point         !!> Find the nearest point on the NURBS curve
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -1480,6 +1481,32 @@ contains
 
         ! Set knot vector, control points, and weights
         call this%set(knot, Xc, Wc)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
+        class(nurbs_curve), intent(in) :: this
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(out), optional :: nearest_Xt
+        integer, intent(out), optional :: id
+        integer :: id_
+        real(rk), allocatable :: distances(:)
+        integer :: i
+
+        allocate(distances(this%ng))
+        do concurrent (i = 1: this%ng)
+            distances(i) = norm2(this%Xg(i,:) - point_Xg)
+        end do
+        
+        id_ = minloc(distances, dim=1)
+        if (present(id)) id = id_
+        if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
+        if (present(nearest_Xt)) nearest_Xt = this%Xt(id_)
     end subroutine
     !===============================================================================
 
