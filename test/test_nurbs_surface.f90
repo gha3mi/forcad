@@ -1,4 +1,4 @@
-program test_surface
+program test_nurbs_surface
 
     use forcad, only: rk, nurbs_surface
     use forunittest, only: unit_test
@@ -37,8 +37,8 @@ program test_surface
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 07")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 08")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 01")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 02")
 
     call nurbs%elevate_degree(1, 2)
     call nurbs%elevate_degree(2, 2)
@@ -49,8 +49,8 @@ program test_surface
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 09")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 10")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 03")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 04")
 
     call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [2,1])
     call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [2,1])
@@ -61,8 +61,8 @@ program test_surface
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 11")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 12")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 05")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 06")
 
     call nurbs%finalize()
     call bsp%finalize()
