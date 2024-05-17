@@ -1596,12 +1596,11 @@ impure function compute_dTgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(dTgc)
     integer :: i
 
     allocate(dTgc(ng, nc))
-
+    allocate(dTgci(nc))
     !$OMP PARALLEL DO PRIVATE(dTgci)
     do i = 1, size(Xt)
         dTgci = basis_bspline_der(Xt(i), knot, nc, degree)
-        dTgci = dTgci*(Wc/(dot_product(dTgci,Wc)))
-        dTgc(i,:) = dTgci
+        dTgc(i,:) = dTgci*(Wc/(dot_product(dTgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
@@ -1651,11 +1650,11 @@ impure function compute_Tgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(Tgc)
     integer :: i
 
     allocate(Tgc(ng, nc))
+    allocate(Tgci(nc))
     !$OMP PARALLEL DO PRIVATE(Tgci)
     do i = 1, size(Xt,1)
         Tgci = basis_bspline(Xt(i), knot, nc, degree)
-        Tgci = Tgci*(Wc/(dot_product(Tgci,Wc)))
-        Tgc(i,:) = Tgci
+        Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
