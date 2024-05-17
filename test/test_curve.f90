@@ -9,6 +9,8 @@ program test_curve
     real(rk), allocatable :: Xg(:,:), Xgb(:,:)
     real(rk) :: knot(6)
     integer, allocatable :: elemConn(:,:)
+    real(rk), allocatable :: Tgc(:,:), dTgc(:,:)
+    integer :: i
     type(unit_test) :: ut
 
     allocate(Xc(3, 3))
@@ -139,6 +141,7 @@ program test_curve
     elemConn = bsp%cmp_elem()
     call bsp%set_elem(elemConn)
     call ut%check(res=bsp%get_elem(), expected=elemConn, msg="test_curve: 46")
+    deallocate(elemConn)
 
     call nurbs%modify_Xc(Xc(1,1), 1,1)
     call bsp%modify_Xc(Xc(1,1), 1,1)
@@ -150,6 +153,90 @@ program test_curve
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 47")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 48")
+
+    call nurbs%basis(res=23, Tgc=Tgc)
+    call bsp%basis(res=23, Tgc=Tgc)
+
+    call nurbs%basis(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], Tgc=Tgc)
+    call bsp%basis(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], Tgc=Tgc)
+
+    call nurbs%derivative(res=23, dTgc=dTgc)
+    call bsp%derivative(res=23, dTgc=dTgc)
+
+    call nurbs%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc)
+    call bsp%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc)
+
+    call nurbs%rotate_Xc(45.0_rk, 0.0_rk, 0.0_rk)
+    call nurbs%rotate_Xc(-45.0_rk, 0.0_rk, 0.0_rk)
+
+    call bsp%rotate_Xc(45.0_rk, 0.0_rk, 0.0_rk)
+    call bsp%rotate_Xc(-45.0_rk, 0.0_rk, 0.0_rk)
+
+    call ut%check(res=nurbs%get_Xc(), expected=Xc,  tol=1e-5_rk, msg="test_curve: 49")
+    call ut%check(res=bsp%get_Xc(),   expected=Xc, tol=1e-5_rk, msg="test_curve: 50")
+
+    call nurbs%rotate_Xc(0.0_rk, 45.0_rk, 0.0_rk)
+    call nurbs%rotate_Xc(0.0_rk, -45.0_rk, 0.0_rk)
+
+    call bsp%rotate_Xc(0.0_rk, 45.0_rk, 0.0_rk)
+    call bsp%rotate_Xc(0.0_rk, -45.0_rk, 0.0_rk)
+
+    call ut%check(res=nurbs%get_Xc(), expected=Xc,  tol=1e-5_rk, msg="test_curve: 51")
+    call ut%check(res=bsp%get_Xc(),   expected=Xc, tol=1e-5_rk, msg="test_curve: 52")
+
+    call nurbs%rotate_Xc(0.0_rk, 0.0_rk, 45.0_rk)
+    call nurbs%rotate_Xc(0.0_rk, 0.0_rk, -45.0_rk)
+
+    call bsp%rotate_Xc(0.0_rk, 0.0_rk, 45.0_rk)
+    call bsp%rotate_Xc(0.0_rk, 0.0_rk, -45.0_rk)
+
+    call ut%check(res=nurbs%get_Xc(), expected=Xc,  tol=1e-5_rk, msg="test_curve: 53")
+    call ut%check(res=bsp%get_Xc(),   expected=Xc, tol=1e-5_rk, msg="test_curve: 54")
+
+    call nurbs%rotate_Xg(45.0_rk, 0.0_rk, 0.0_rk)
+    call nurbs%rotate_Xg(-45.0_rk, 0.0_rk, 0.0_rk)
+
+    call bsp%rotate_Xg(45.0_rk, 0.0_rk, 0.0_rk)
+    call bsp%rotate_Xg(-45.0_rk, 0.0_rk, 0.0_rk)
+
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 55")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 56")
+
+    call nurbs%rotate_Xg(0.0_rk, 45.0_rk, 0.0_rk)
+    call nurbs%rotate_Xg(0.0_rk, -45.0_rk, 0.0_rk)
+
+    call bsp%rotate_Xg(0.0_rk, 45.0_rk, 0.0_rk)
+    call bsp%rotate_Xg(0.0_rk, -45.0_rk, 0.0_rk)
+
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 57")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 58")
+
+    call nurbs%rotate_Xg(0.0_rk, 0.0_rk, 45.0_rk)
+    call nurbs%rotate_Xg(0.0_rk, 0.0_rk, -45.0_rk)
+
+    call bsp%rotate_Xg(0.0_rk, 0.0_rk, 45.0_rk)
+    call bsp%rotate_Xg(0.0_rk, 0.0_rk, -45.0_rk)
+
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 59")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 60")
+
+    call nurbs%translate_Xc([5.0_rk, 5.0_rk, 5.0_rk])
+    call nurbs%translate_Xc([-5.0_rk, -5.0_rk, -5.0_rk])
+
+    call bsp%translate_Xc([5.0_rk, 5.0_rk, 5.0_rk])
+    call bsp%translate_Xc([-5.0_rk, -5.0_rk, -5.0_rk])
+
+    call ut%check(res=nurbs%get_Xc(), expected=Xc,  tol=1e-5_rk, msg="test_curve: 61")
+    call ut%check(res=bsp%get_Xc(),   expected=Xc, tol=1e-5_rk, msg="test_curve: 62")
+
+    call nurbs%translate_Xg([5.0_rk, 5.0_rk, 5.0_rk])
+    call nurbs%translate_Xg([-5.0_rk, -5.0_rk, -5.0_rk])
+
+    call bsp%translate_Xg([5.0_rk, 5.0_rk, 5.0_rk])
+    call bsp%translate_Xg([-5.0_rk, -5.0_rk, -5.0_rk])
+
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 63")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 64")
 
     call nurbs%export_Xc("vtk/test_curve_Xc.vtk")
     call nurbs%export_Xg("vtk/test_curve_Xg.vtk")
@@ -163,8 +250,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 49")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 50")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 65")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 66")
 
     call nurbs%elevate_degree(2)
     call bsp%elevate_degree(2)
@@ -172,8 +259,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 51")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 52")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 67")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 68")
 
     call nurbs%remove_knots([0.25_rk, 0.75_rk], [2,1])
     call bsp%remove_knots([0.25_rk, 0.75_rk], [2,1])
@@ -181,8 +268,8 @@ program test_curve
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 53")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 54")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_curve: 69")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_curve: 70")
 
     call nurbs%finalize()
     call bsp%finalize()
