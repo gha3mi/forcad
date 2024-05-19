@@ -72,7 +72,7 @@ contains
         allocate(Nt(nc, 0:degree), source=0.0_rk)
 
         do p = 0, degree
-            do i = 1, nc
+            do concurrent (i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
@@ -179,15 +179,12 @@ contains
     pure function kron(u,v) result(w)
         real(rk), intent(in), contiguous :: u(:), v(:)
         real(rk) :: w(size(u)*size(v))
-        integer :: i, j, m, n
+        integer :: i, j, n
 
-        m = size(u)
         n = size(v)
 
-        do i = 1, m
-            do j = 1, n
-                w((i-1)*n + j) = u(i)*v(j)
-            end do
+        do concurrent(i = 1:size(u), j = 1:n)
+            w((i-1)*n + j) = u(i)*v(j)
         end do
     end function
     !===============================================================================
