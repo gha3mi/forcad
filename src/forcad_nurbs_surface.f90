@@ -21,6 +21,7 @@ module forcad_nurbs_surface
         real(rk), allocatable, private :: Wc(:)    !! Weights for control points (1D array: [nc(1)*nc(2)])
         real(rk), allocatable, private :: Xt1(:)   !! Evaluation parameter values in the first direction (1D array: [ng(1)])
         real(rk), allocatable, private :: Xt2(:)   !! Evaluation parameter values in the second direction (1D array: [ng(2)])
+        real(rk), allocatable, private :: Xt(:,:)  !! Evaluation parameter values (2D array: [ng(1)*ng(2), 2])
         real(rk), allocatable, private :: knot1(:) !! Knot vector in the first direction (1D array)
         real(rk), allocatable, private :: knot2(:) !! Knot vector in the second direction (1D array)
         integer, private :: degree(2)              !! Degree (order) of the surface
@@ -84,6 +85,7 @@ module forcad_nurbs_surface
         procedure :: translate_Xc           !!> Translate control points
         procedure :: translate_Xg           !!> Translate geometry points
         procedure :: show                   !!> Show the NURBS object using PyVista
+        procedure :: nearest_point          !!> Find the nearest point on the NURBS surface
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -197,7 +199,6 @@ contains
         real(rk), intent(in), contiguous, optional :: Xt1(:), Xt2(:)
         real(rk), contiguous, intent(in), optional :: Xt(:,:)
         integer :: i
-        real(rk), allocatable :: Xt_(:,:)
 
         interface
             pure function compute_Xg_nurbs_2d(f_Xt, f_knot1, f_knot2, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
@@ -262,22 +263,24 @@ contains
         end if
 
         if (present(Xt)) then
-            Xt_ = Xt
+            this%Xt = Xt
         else
 
             ! Set number of geometry points
             this%ng(1) = size(this%Xt1,1)
             this%ng(2) = size(this%Xt2,1)
 
-            call ndgrid(this%Xt1, this%Xt2, Xt_)
+            call ndgrid(this%Xt1, this%Xt2, this%Xt)
         end if
 
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (this%is_rational()) then ! NURBS
-            this%Xg = compute_Xg_nurbs_2d(Xt_, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_2d(&
+            this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else ! B-Spline
-            this%Xg = compute_Xg_bspline_2d(Xt_, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg_bspline_2d(&
+            this%Xt, this%knot1, this%knot2, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
@@ -615,6 +618,7 @@ contains
         if (allocated(this%Wc)) deallocate(this%Wc)
         if (allocated(this%Xt1)) deallocate(this%Xt1)
         if (allocated(this%Xt2)) deallocate(this%Xt2)
+        if (allocated(this%Xt)) deallocate(this%Xt)
         if (allocated(this%knot1)) deallocate(this%knot1)
         if (allocated(this%knot2)) deallocate(this%knot2)
         if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
@@ -2082,6 +2086,39 @@ contains
     end subroutine
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
+        class(nurbs_surface), intent(in) :: this
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
+        integer, intent(out), optional :: id
+        integer :: id_
+        real(rk), allocatable :: distances(:)
+
+        interface
+            pure function nearest_point_help_2d(f_ng, f_Xg, f_point_Xg) result(f_distances)
+                import :: rk
+                integer, intent(in) :: f_ng(2)
+                real(rk), intent(in), contiguous :: f_Xg(:,:)
+                real(rk), intent(in), contiguous :: f_point_Xg(:)
+                real(rk), allocatable :: f_distances(:)
+            end function
+        end interface
+
+        allocate(distances(this%ng(1)*this%ng(2)))
+        distances = nearest_point_help_2d(this%ng, this%Xg, point_Xg)
+        
+        id_ = minloc(distances, dim=1)
+        if (present(id)) id = id_
+        if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
+        if (present(nearest_Xt)) nearest_Xt = this%Xt(id_,:)
+    end subroutine
+    !===============================================================================
+
 end module forcad_nurbs_surface
 
 !===============================================================================
@@ -2165,14 +2202,13 @@ impure function compute_dTgc_nurbs_2d(Xt, knot1, knot2, degree, nc, ng, Wc) resu
     integer :: i
 
     allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2)))
-
+    allocate(dTgci(nc(1)*nc(2)))
     !$OMP PARALLEL DO PRIVATE(dTgci)
     do i = 1, size(Xt, 1)
         dTgci = kron(&
             basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2)),&
             basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1)))
-        dTgci = dTgci*(Wc/(dot_product(dTgci,Wc)))
-        dTgc(i,:) = dTgci
+        dTgc(i,:) = dTgci*(Wc/(dot_product(dTgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
@@ -2224,13 +2260,13 @@ impure function compute_Tgc_nurbs_2d(Xt, knot1, knot2, degree, nc, ng, Wc) resul
     integer :: i
 
     allocate(Tgc(ng(1)*ng(2), nc(1)*nc(2)))
+    allocate(Tgci(nc(1)*nc(2)))
     !$OMP PARALLEL DO PRIVATE(Tgci)
     do i = 1, size(Xt, 1)
         Tgci = kron(&
         basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
         basis_bspline(Xt(i,1), knot1, nc(1), degree(1)))
-        Tgci = Tgci*(Wc/(dot_product(Tgci,Wc)))
-        Tgc(i,:) = Tgci
+        Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
@@ -2260,5 +2296,29 @@ impure function compute_Tgc_bspline_2d(Xt, knot1, knot2, degree, nc, ng) result(
         basis_bspline(Xt(i,1), knot1, nc(1), degree(1)))
     end do
     !$OMP END PARALLEL DO
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function nearest_point_help_2d(ng, Xg, point_Xg) result(distances)
+    use forcad_utils, only: rk
+
+    implicit none
+    integer, intent(in) :: ng(2)
+    real(rk), intent(in), contiguous :: Xg(:,:)
+    real(rk), intent(in), contiguous :: point_Xg(:)
+    real(rk), allocatable :: distances(:)
+    integer :: i
+
+    allocate(distances(ng(1)*ng(2)))
+    !$OMP PARALLEL DO
+    do i = 1, ng(1)*ng(2)
+        distances(i) = norm2(Xg(i,:) - point_Xg)
+    end do
+    !$OMP END PARALLEL DO
+
 end function
 !===============================================================================

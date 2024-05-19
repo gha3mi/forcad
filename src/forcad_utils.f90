@@ -72,7 +72,7 @@ contains
         allocate(Nt(nc, 0:degree), source=0.0_rk)
 
         do p = 0, degree
-            do i = 1, nc
+            do concurrent (i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
@@ -179,15 +179,12 @@ contains
     pure function kron(u,v) result(w)
         real(rk), intent(in), contiguous :: u(:), v(:)
         real(rk) :: w(size(u)*size(v))
-        integer :: i, j, m, n
+        integer :: i, j, n
 
-        m = size(u)
         n = size(v)
 
-        do i = 1, m
-            do j = 1, n
-                w((i-1)*n + j) = u(i)*v(j)
-            end do
+        do concurrent(i = 1:size(u), j = 1:n)
+            w((i-1)*n + j) = u(i)*v(j)
         end do
     end function
     !===============================================================================
@@ -259,13 +256,17 @@ contains
         integer, intent(in) :: nnode
         integer, intent(in) :: p
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j
+        integer :: i, l
         integer, allocatable :: nodes(:)
 
-        allocate(elemConn( ((nnode-p) / p) ,2))
+        if (mod(nnode-1,p) /= 0) error stop 'cmp_elemConn_C0_L: nnode-1 must be divisible by p'
+
+        allocate(elemConn( (nnode-1) / p ,p+1))
         nodes = [(i, i=1,nnode)]
-        do concurrent (i = 1: (nnode-p)/p)
-            elemConn(i,:) = [(j, j = i*p, i*p + p)]
+        l = 0
+        do i = 1,nnode-p, p
+            l = l+1
+            elemConn(l,:) = reshape(nodes(i:i+p),[(p + 1)])
         end do
     end function
     !===============================================================================
@@ -281,7 +282,10 @@ contains
         integer :: i, j, l
         integer, allocatable :: nodes(:,:)
 
-        allocate(elemConn( ((nnode1-p1) / p1) * ((nnode2-p2) / p2) ,4))
+        if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
+        if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
+
+        allocate(elemConn( ((nnode1-1) / p1) * ((nnode2-1) / p2), (p1+1)*(p2+1)))
         nodes = reshape([(i, i=1,nnode1*nnode2)], [nnode1, nnode2])
         l = 0
         do j = 1,nnode2-p2, p2
@@ -304,7 +308,11 @@ contains
         integer :: i, j, k, l
         integer, allocatable :: nodes(:,:,:)
 
-        allocate(elemConn( ((nnode1-p1) / p1) * ((nnode2-p2) / p2) * ((nnode3-p3) / p3) ,8))
+        if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_V: nnode1-1 must be divisible by p1'
+        if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_V: nnode2-1 must be divisible by p2'
+        if (mod(nnode3-1,p3) /= 0) error stop 'cmp_elemConn_C0_V: nnode3-1 must be divisible by p3'
+
+        allocate(elemConn( ((nnode1-1) / p1) * ((nnode2-1) / p2) * ((nnode3-1) / p3) ,(p1+1)*(p2+1)*(p3+1)))
         nodes = reshape([(i, i=1,nnode1*nnode2*nnode3)], [nnode1, nnode2, nnode3])
         l = 0
         do k = 1,nnode3-p3, p3

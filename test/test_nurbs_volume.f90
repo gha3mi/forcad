@@ -1,4 +1,4 @@
-program test_volume
+program test_nurbs_volume
 
     use forcad, only: rk, nurbs_volume
     use forunittest, only: unit_test
@@ -39,8 +39,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 13")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 14")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 01")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 02")
 
     call nurbs%elevate_degree(1, 2)
     call nurbs%elevate_degree(2, 2)
@@ -53,8 +53,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 15")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 16")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 03")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 04")
 
     call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [1,1])
     call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [1,1])
@@ -67,8 +67,8 @@ program test_volume
     call nurbs%create()
     call bsp%create()
 
-    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test 17")
-    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test 18")
+    call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 05")
+    call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 06")
 
     call nurbs%finalize()
     call bsp%finalize()

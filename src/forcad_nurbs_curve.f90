@@ -80,6 +80,7 @@ module forcad_nurbs_curve
         procedure :: translate_Xc          !!> Translate control points
         procedure :: translate_Xg          !!> Translate geometry points
         procedure :: show                  !!> Show the NURBS object using PyVista
+        procedure :: nearest_point         !!> Find the nearest point on the NURBS curve
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -247,9 +248,11 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (this%is_rational()) then ! NURBS
-            this%Xg = compute_Xg_nurbs_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg_nurbs_1d(&
+            this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else ! B-Spline
-            this%Xg = compute_Xg_bspline_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg_bspline_1d(&
+            this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
     !===============================================================================
@@ -1483,6 +1486,39 @@ contains
     end subroutine
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
+        class(nurbs_curve), intent(in) :: this
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(out), optional :: nearest_Xt
+        integer, intent(out), optional :: id
+        integer :: id_
+        real(rk), allocatable :: distances(:)
+
+        interface
+            pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
+                import :: rk
+                integer, intent(in) :: f_ng
+                real(rk), intent(in), contiguous :: f_Xg(:,:)
+                real(rk), intent(in), contiguous :: f_point_Xg(:)
+                real(rk), allocatable :: f_distances(:)
+            end function
+        end interface
+
+        allocate(distances(this%ng))
+        distances = nearest_point_help_1d(this%ng, this%Xg, point_Xg)
+        
+        id_ = minloc(distances, dim=1)
+        if (present(id)) id = id_
+        if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
+        if (present(nearest_Xt)) nearest_Xt = this%Xt(id_)
+    end subroutine
+    !===============================================================================
+
 end module forcad_nurbs_curve
 
 !===============================================================================
@@ -1560,12 +1596,11 @@ impure function compute_dTgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(dTgc)
     integer :: i
 
     allocate(dTgc(ng, nc))
-
+    allocate(dTgci(nc))
     !$OMP PARALLEL DO PRIVATE(dTgci)
     do i = 1, size(Xt)
         dTgci = basis_bspline_der(Xt(i), knot, nc, degree)
-        dTgci = dTgci*(Wc/(dot_product(dTgci,Wc)))
-        dTgc(i,:) = dTgci
+        dTgc(i,:) = dTgci*(Wc/(dot_product(dTgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
@@ -1615,11 +1650,11 @@ impure function compute_Tgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(Tgc)
     integer :: i
 
     allocate(Tgc(ng, nc))
+    allocate(Tgci(nc))
     !$OMP PARALLEL DO PRIVATE(Tgci)
     do i = 1, size(Xt,1)
         Tgci = basis_bspline(Xt(i), knot, nc, degree)
-        Tgci = Tgci*(Wc/(dot_product(Tgci,Wc)))
-        Tgc(i,:) = Tgci
+        Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
     end do
     !$OMP END PARALLEL DO
 end function
@@ -1647,5 +1682,29 @@ impure function compute_Tgc_bspline_1d(Xt, knot, degree, nc, ng) result(Tgc)
         Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
     end do
     !$OMP END PARALLEL DO
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function nearest_point_help_1d(ng, Xg, point_Xg) result(distances)
+    use forcad_utils, only: rk
+
+    implicit none
+    integer, intent(in) :: ng
+    real(rk), intent(in), contiguous :: Xg(:,:)
+    real(rk), intent(in), contiguous :: point_Xg(:)
+    real(rk), allocatable :: distances(:)
+    integer :: i
+
+    allocate(distances(ng))
+    !$OMP PARALLEL DO
+    do i = 1, ng
+        distances(i) = norm2(Xg(i,:) - point_Xg)
+    end do
+    !$OMP END PARALLEL DO
+
 end function
 !===============================================================================
