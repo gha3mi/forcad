@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `nearest_point()` procedures to the `nurbs_curve`, `nurbs_surface` and `nurbs_volume`.
 - Added examples for the `nearest_point()` method.
 - Added `Xt` to the `nurbs_surface` and `nurbs_volume` derived types.
+- Added codecoverage to the CI.
+- Added allocate(Tgci) and allocate(dTgci) to `compute_Tgc_nurbs_*d()` and `compute_dTgc_nurbs_*d()` subroutines.
 
 ### Changed
 
@@ -31,6 +33,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Removed unused variables in the `put_to_nurbs` subroutine.
 - Removed unused variables in the `example_ppm3.f90` file.
 - Renamed program name in the example `put_to_nurbs.f90` file.
+- Parallelized calculation of distance in the `nearest_point()` method.
+- Updated `ROADMAP.md` file.
+- Updated unit tests for `nurbs_curve`.
+- Improved `elemConn_C0` to support higher order elements and check for the number of elements.
+- Renamed test files to match the module name.
+- Used `do concurrent` within `kron` and `basis_bspline` functions.
 
 ### Removed
 
