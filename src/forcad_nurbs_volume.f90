@@ -89,6 +89,12 @@ module forcad_nurbs_volume
         procedure :: show                   !!> Show the NURBS object using PyVista
         procedure :: nearest_point          !!> Find the nearest point on the NURBS volume
 
+        ! Faces
+        procedure :: cmp_elemFace_Xc_vis   !!> Compute faces of the control points
+        procedure :: cmp_elemFace_Xg_vis   !!> Compute faces of the geometry points
+        procedure :: cmp_elemFace          !!> Compute faces of the IGA elements
+        procedure :: cmp_degreeFace        !!> Compute degrees of the faces
+
         ! Shapes
         procedure :: set_hexahedron         !!> Set a hexahedron
         procedure :: set_ring               !!> Set a ring
@@ -296,7 +302,7 @@ contains
 
         if (allocated(this%Xg)) deallocate(this%Xg)
         allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
-        
+
         if (allocated(this%Wc)) then ! NURBS volume
             this%Xg = compute_Xg_nurbs_3d(&
             this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
@@ -2602,12 +2608,199 @@ contains
 
         allocate(distances(this%ng(1)*this%ng(2)*this%ng(3)))
         distances = nearest_point_help_3d(this%ng, this%Xg, point_Xg)
-        
+
         id_ = minloc(distances, dim=1)
         if (present(id)) id = id_
         if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
         if (present(nearest_Xt)) nearest_Xt = this%Xt(id_,:)
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elemFace(this, elem, face) result(elemConn)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: elem
+        integer, intent(in) :: face
+        integer, allocatable :: elemConn(:)
+        integer :: n(3), ii, jj, k
+
+        !> number of nodes in each direction
+        n = this%degree + 1
+
+        select case(face)
+          case(1)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn(elem, 1 : n(1)*n(2))
+          case(2)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn(elem, n(1)*n(2)*n(3)-n(1)*n(2)+1 : n(1)*n(2)*n(3))
+          case(3)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn(elem, n(1)*n(2)*jj + ii - n(1)*n(2))
+                end do
+            end do
+          case(4)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn(elem, n(1)*n(2)*jj + ii - n(1))
+                end do
+            end do
+          case(5)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn(elem, n(1)*ii - n(1) + 1)
+            end do
+          case(6)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn(elem, n(1)*ii)
+            end do
+        end select
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elemFace_Xc_vis(this, elem, face) result(elemConn)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: elem
+        integer, intent(in) :: face
+        integer, allocatable :: elemConn(:)
+        integer :: n(3), ii, jj, k
+
+        !> number of nodes in each direction
+        n = [2,2,2]
+
+        select case(face)
+          case(1)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn_Xc_vis(elem, 1 : n(1)*n(2))
+          case(2)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn_Xc_vis(elem, n(1)*n(2)*n(3)-n(1)*n(2)+1 : n(1)*n(2)*n(3))
+          case(3)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn_Xc_vis(elem, n(1)*n(2)*jj + ii - n(1)*n(2))
+                end do
+            end do
+          case(4)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn_Xc_vis(elem, n(1)*n(2)*jj + ii - n(1))
+                end do
+            end do
+          case(5)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn_Xc_vis(elem, n(1)*ii - n(1) + 1)
+            end do
+          case(6)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn_Xc_vis(elem, n(1)*ii)
+            end do
+        end select
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elemFace_Xg_vis(this, elem, face) result(elemConn)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: elem
+        integer, intent(in) :: face
+        integer, allocatable :: elemConn(:)
+        integer :: n(3), ii, jj, k
+
+        !> number of nodes in each direction
+        n = [2,2,2]
+
+        select case(face)
+          case(1)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn_Xg_vis(elem, 1 : n(1)*n(2))
+          case(2)
+            allocate(elemConn(n(1)*n(2)))
+            elemConn = this%elemConn_Xg_vis(elem, n(1)*n(2)*n(3)-n(1)*n(2)+1 : n(1)*n(2)*n(3))
+          case(3)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn_Xg_vis(elem, n(1)*n(2)*jj + ii - n(1)*n(2))
+                end do
+            end do
+          case(4)
+            allocate(elemConn(n(1)*n(3)))
+            k = 0
+            do jj = 1, n(3)
+                do ii = 1, n(1)
+                    k = k+1
+                    elemConn(k) = this%elemConn_Xg_vis(elem, n(1)*n(2)*jj + ii - n(1))
+                end do
+            end do
+          case(5)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn_Xg_vis(elem, n(1)*ii - n(1) + 1)
+            end do
+          case(6)
+            allocate(elemConn(n(2)*n(3)))
+            do ii = 1, n(2)*n(3)
+                elemConn(ii) = this%elemConn_Xg_vis(elem, n(1)*ii)
+            end do
+        end select
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_degreeFace(this, face) result(degree)
+        class(nurbs_volume), intent(in) :: this
+        integer, intent(in) :: face
+        integer :: degree(3)
+
+        select case (face)
+          case(1)
+            degree = [this%degree(1), this%degree(2), 0]
+          case(2)
+            degree = [this%degree(1), this%degree(2), 0]
+          case(3)
+            degree = [this%degree(1), 0, this%degree(3)]
+          case(4)
+            degree = [this%degree(1), 0, this%degree(3)]
+          case(5)
+            degree = [0, this%degree(2), this%degree(3)]
+          case(6)
+            degree = [0, this%degree(2), this%degree(3)]
+          case default
+            error stop 'Invalid face number'
+        end select
+    end function
     !===============================================================================
 
 end module forcad_nurbs_volume
