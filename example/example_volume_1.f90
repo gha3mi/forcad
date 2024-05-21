@@ -146,6 +146,29 @@ program example3_volume
     call nurbs%show('vtk/nurbs_volume_Xc3.vtk','vtk/nurbs_volume_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
+    ! Extract faces
+    !-----------------------------------------------------------------------------
+
+    !> first compute and set the connectivities of volume elements
+    call nurbs%set_elem(nurbs%cmp_elem())
+
+    !> get the connectivity of the face1 of the first element
+    print*, 'Face 1 of element 1:', nurbs%cmp_elemFace(elem=1, face=1)
+    print*, 'Face 2 of element 1:', nurbs%cmp_elemFace(elem=1, face=2)
+    print*, 'Face 3 of element 1:', nurbs%cmp_elemFace(elem=1, face=3)
+    print*, 'Face 4 of element 1:', nurbs%cmp_elemFace(elem=1, face=4)
+    print*, 'Face 5 of element 1:', nurbs%cmp_elemFace(elem=1, face=5)
+    print*, 'Face 6 of element 1:', nurbs%cmp_elemFace(elem=1, face=6)
+
+    !> get the degree of the faces
+    print*, 'Degree of face 1:', nurbs%cmp_degreeFace(face=1)
+    print*, 'Degree of face 2:', nurbs%cmp_degreeFace(face=2)
+    print*, 'Degree of face 3:', nurbs%cmp_degreeFace(face=3)
+    print*, 'Degree of face 4:', nurbs%cmp_degreeFace(face=4)
+    print*, 'Degree of face 5:', nurbs%cmp_degreeFace(face=5)
+    print*, 'Degree of face 6:', nurbs%cmp_degreeFace(face=6)
+    
+    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 
