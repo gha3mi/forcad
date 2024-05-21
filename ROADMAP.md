@@ -41,7 +41,8 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Improve PyVista scripts.
     - [ ] Use ForCAD for IGA simulations.
     - [ ] Use ForCAD for FEM simulations.
-    - [ ] Get surfaces and edges from volumes.
+    - [x] Get surfaces from volumes.
+    - [ ] Get edges from volumes.
     - [ ] Get edges from surfaces.
     - [ ] Add extrude method for surfaces.
     - [ ] Improve documentation.

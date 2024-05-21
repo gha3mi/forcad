@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `Xt` to the `nurbs_surface` and `nurbs_volume` derived types.
 - Added codecoverage to the CI.
 - Added allocate(Tgci) and allocate(dTgci) to `compute_Tgc_nurbs_*d()` and `compute_dTgc_nurbs_*d()` subroutines.
+- Added `cmp_elemFace_Xc_vis()` to extract element connectivity of the faces of control geometry.
+- Added `cmp_elemFace_Xg_vis()` to extract element connectivity of the faces of visualization geometry points.
+- Added `cmp_elemFace()` to extract element connectivity of faces.
+- Added `cmp_degreeFace()` to extract the degrees of faces.
+- Updated `example_volume_1` to use `cmp_elemFace()` and `cmp_degreeFace()`.
 
 ### Changed
 
