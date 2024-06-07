@@ -91,58 +91,47 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function basis_bspline_der(Xt, knot, nc, degree) result(dB)
+    pure subroutine basis_bspline_der(Xt, knot, nc, degree, dB, B)
         integer, intent(in)   :: degree
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk), allocatable :: dB(:)
-        real(rk), allocatable :: Nt(:,:), dNt_dXt(:,:)
-        real(rk)              :: R, L, Rp, Lp, knot_i, knot_ip, knot_jk, knot_jkm, knot_end, a, b, c, d
-        integer               :: i, k, n, m, jk
+        real(rk), allocatable, intent(out) :: dB(:)
+        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), allocatable :: N(:,:), dN_dXt(:,:)
+        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
+        integer               :: i, p
 
-        k = degree + 1
-        n = nc - 1
-        allocate(Nt(nc+degree, degree+1))
-        Nt = 0.0_rk
-        do i = 1, n+k
-            knot_i   = knot(i)
-            knot_ip  = knot(i+1)
-            knot_end = knot(size(knot))
-            if ( abs(Xt - knot_end) > tiny(0.0_rk) ) then
-                if ( Xt >= knot_i .and. Xt < knot_ip ) Nt(i,1) = 1.0_rk
-            elseif ( abs(Xt - knot_end) < tiny(0.0_rk) ) then
-                if ( Xt >= knot_i .and. Xt <= knot_ip ) Nt(i,1) = 1.0_rk
-            end if
-        end do
-        allocate(dNt_dXt(nc+degree, degree+1))
-        dNt_dXt = 0.0_rk
-        m = 0
-        do jk = 2, k
-            m = m + 1
-            do i = 1, n + k - m
-                knot_i   = knot(i)
-                knot_ip  = knot(i+1)
-                knot_jk  = knot(i+jk)
-                knot_jkm = knot(i+jk-1)
-                a        = (knot_jkm - knot_i)
-                b        = (knot_jk - Xt)
-                c        = (knot_jk - knot_ip)
-                d        = (Xt - knot_i)
-                R = d/a
-                if ( isnan(R) .or. isinf(R) .or. abs(R) < tiny(0.0_rk) ) R = 0.0_rk
-                L = b/c
-                if ( isnan(L) .or. isinf(L) .or. abs(L) < tiny(0.0_rk) ) L = 0.0_rk
-                Nt(i,jk) = R*Nt(i,jk-1) + L*Nt(i+1,jk-1)
-                Rp = (Nt(i,jk-1) + d*dNt_dXt(i,jk-1)) / a
-                if ( isnan(Rp) .or. isinf(Rp) .or. abs(Rp) < tiny(0.0_rk) ) Rp = 0.0_rk
-                Lp = (b*dNt_dXt(i+1,jk-1) - Nt(i+1,jk-1)) / c
-                if ( isnan(Lp) .or. isinf(Lp) .or. abs(Lp) < tiny(0.0_rk) ) Lp = 0.0_rk
-                dNt_dXt(i,jk) = Rp + Lp
+        temp = abs(Xt - knot(size(knot)))
+        allocate(N(nc, 0:degree), source=0.0_rk)
+        allocate(dN_dXt(nc, 0:degree), source=0.0_rk)
+
+        do p = 0, degree
+            do concurrent (i = 1:nc)
+                Xth_i   = knot(i)
+                Xth_i1  = knot(i+1)
+                Xth_ip  = knot(i+p)
+                Xth_ip1 = knot(i+p+1)
+
+                if ( temp /= tiny(0.0_rk) .and. Xth_i <= Xt  .and. Xt <= Xth_i1 ) then
+                    N(i,0) = 1.0_rk
+                    dN_dXt(i,0) = 0.0_rk
+                end if
+                if ( Xth_ip /= Xth_i ) then
+                    N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
+                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i) 
+                end if
+                if ( Xth_ip1 /= Xth_i1 ) then
+                    N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
+                    dN_dXt(i,p) = dN_dXt(i,p) - ( N(i+1,p-1) - (Xth_ip1 - Xt)*dN_dXt(i+1,p-1) ) / (Xth_ip1  - Xth_i1)
+                end if
+
             end do
         end do
-        dB = dNt_dXt(1:nc,k)
-    end function
+
+        dB = dN_dXt(:,degree)
+        if (present(B)) B = N(:,degree)
+    end subroutine
     !===============================================================================
 
 

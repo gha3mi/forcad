@@ -2883,17 +2883,30 @@ impure function compute_dTgc_nurbs_3d(Xt, knot1, knot2, knot3, degree, nc, ng, W
     integer, intent(in) :: ng(3)
     real(rk), intent(in), contiguous :: Wc(:)
     real(rk), allocatable :: dTgc(:,:)
-    real(rk), allocatable :: dTgci(:)
+    real(rk), allocatable :: dTgci(:), dTgc1(:), dTgc2(:), dTgc3(:)
+    real(rk), allocatable :: Tgci(:), Tgc1(:), Tgc2(:), Tgc3(:)
     integer :: i
 
     allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
     allocate(dTgci(nc(1)*nc(2)*nc(3)))
-    !$OMP PARALLEL DO PRIVATE(dTgci)
+    allocate(dTgc1(nc(1)))
+    allocate(dTgc2(nc(2)))
+    allocate(dTgc2(nc(3)))
+    allocate(Tgci(nc(1)*nc(2)*nc(3)))
+    allocate(Tgc1(nc(1)))
+    allocate(Tgc2(nc(2)))
+    allocate(Tgc3(nc(3)))
+    !$OMP PARALLEL DO PRIVATE(dTgci, dTgc1, dTgc2, dTgc3, Tgci, Tgc1, Tgc2, Tgc3)
     do i = 1, size(Xt, 1)
-        dTgci = kron(basis_bspline_der(Xt(i,3), knot3, nc(3), degree(3)), kron(&
-            basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2)),&
-            basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1))))
-        dTgc(i,:) = dTgci*(Wc/(dot_product(dTgci,Wc)))
+        call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dTgc1, Tgc1)
+        call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dTgc2, Tgc2)
+        call basis_bspline_der(Xt(i,3), knot3, nc(3), degree(3), dTgc3, Tgc3)
+
+        dTgci = kron(dTgc3, kron(dTgc2, dTgc1))
+        Tgci  = kron( Tgc3, kron( Tgc2,  Tgc1))
+        Tgci = Tgci*(Wc/(dot_product(Tgci,Wc)))
+
+        dTgc(i,:) = ( dTgci*Wc - Tgci*dot_product(Tgci,Wc) ) / dot_product(dTgci,Wc)
     end do
     !$OMP END PARALLEL DO
 end function
@@ -2912,15 +2925,20 @@ impure function compute_dTgc_bspline_3d(Xt, knot1, knot2, knot3, degree, nc, ng)
     integer, intent(in) :: degree(3)
     integer, intent(in) :: nc(3)
     integer, intent(in) :: ng(3)
-    real(rk), allocatable :: dTgc(:,:)
+    real(rk), allocatable :: dTgc(:,:), dTgc1(:), dTgc2(:), dTgc3(:)
     integer :: i
 
     allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-    !$OMP PARALLEL DO
+    allocate(dTgc1(nc(1)))
+    allocate(dTgc2(nc(2)))
+    allocate(dTgc3(nc(3)))
+    !$OMP PARALLEL DO PRIVATE(dTgc1, dTgc2, dTgc3)
     do i = 1, size(Xt, 1)
-        dTgc(i,:) = kron(basis_bspline_der(Xt(i,3), knot3, nc(3), degree(3)), kron(&
-            basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2)),&
-            basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1))))
+        call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dTgc1)
+        call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dTgc2)
+        call basis_bspline_der(Xt(i,3), knot3, nc(3), degree(3), dTgc3)
+
+        dTgc(i,:) = kron(dTgc3, kron(dTgc2, dTgc1))
     end do
     !$OMP END PARALLEL DO
 end function
