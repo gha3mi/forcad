@@ -44,6 +44,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Improved `elemConn_C0` to support higher order elements and check for the number of elements.
 - Renamed test files to match the module name.
 - Used `do concurrent` within `kron` and `basis_bspline` functions.
+- Converted the `basis_bspline_der` function to a subroutine.
+- Fixed NURBS derivative calculations.
 
 ### Removed
 
