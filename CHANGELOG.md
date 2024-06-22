@@ -28,6 +28,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `cmp_elemFace()` to extract element connectivity of faces.
 - Added `cmp_degreeFace()` to extract the degrees of faces.
 - Updated `example_volume_1` to use `cmp_elemFace()` and `cmp_degreeFace()`.
+- Added `cmp_Xg()` to evaluate the geometry points.
+- Added generic method `derivative2()` to compute the second derivative of a NURBS objects.
+- Added `nearest_point2()` to compute the nearest point on a NURBS object using optimization.
+- Added Interfaces.
+- Added new tests: fdm_curve.f90, fdm_surface.f90, fdm_volume.f90.
+- Updated nearest_point_* examples to use the new `nearest_point2()` method.
 
 ### Changed
 
@@ -46,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Used `do concurrent` within `kron` and `basis_bspline` functions.
 - Converted the `basis_bspline_der` function to a subroutine.
 - Fixed NURBS derivative calculations.
+- Made `basis` and `derivative` generic methods.
 
 ### Removed
 

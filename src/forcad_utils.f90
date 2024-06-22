@@ -8,7 +8,7 @@ module forcad_utils
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation
+        elemConn_Cn, unique, rotation, basis_bspline_2der
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -130,6 +130,61 @@ contains
         end do
 
         dB = dN_dXt(:,degree)
+        if (present(B)) B = N(:,degree)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_bspline_2der(Xt, knot, nc, degree, d2B, dB, B)
+        integer, intent(in)   :: degree
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in)   :: nc
+        real(rk), intent(in)  :: Xt
+        real(rk), allocatable, intent(out) :: d2B(:)
+        real(rk), allocatable, intent(out), optional :: dB(:)
+        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), allocatable :: N(:,:), dN_dXt(:,:), d2N_dXt2(:,:)
+        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
+        integer               :: i, p
+
+        temp = abs(Xt - knot(size(knot)))
+        allocate(N(nc, 0:degree), source=0.0_rk)
+        allocate(dN_dXt(nc, 0:degree), source=0.0_rk)
+        allocate(d2N_dXt2(nc, 0:degree), source=0.0_rk)
+
+        do p = 0, degree
+            do concurrent (i = 1:nc)
+                Xth_i   = knot(i)
+                Xth_i1  = knot(i+1)
+                Xth_ip  = knot(i+p)
+                Xth_ip1 = knot(i+p+1)
+
+                if ( temp /= tiny(0.0_rk) .and. Xth_i <= Xt  .and. Xt <= Xth_i1 ) then
+                    N(i,0) = 1.0_rk
+                    dN_dXt(i,0) = 0.0_rk
+                    d2N_dXt2(i,0) = 0.0_rk
+                end if
+                if ( Xth_ip /= Xth_i) then
+                    N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
+                    ! dN_dXt(i,p) = p*(N(i,p-1)/(Xth_ip - Xth_i))
+                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i) 
+                    d2N_dXt2(i,p) = (2*dN_dXt(i,p-1) + (Xt - Xth_i)*d2N_dXt2(i,p-1)) / (Xth_ip - Xth_i)
+                end if
+                if ( Xth_ip1 /= Xth_i1 ) then
+                    N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
+                    ! dN_dXt(i,p) = dN_dXt(i,p) - p*( N(i+1,p-1)/(Xth_ip1 - Xth_i1))
+                    dN_dXt(i,p) = dN_dXt(i,p) - ( N(i+1,p-1) - (Xth_ip1 - Xt)*dN_dXt(i+1,p-1) ) / (Xth_ip1  - Xth_i1)
+                    d2N_dXt2(i,p) = d2N_dXt2(i,p) - (2*dN_dXt(i+1,p-1) - (Xth_ip1 - Xt)*d2N_dXt2(i+1,p-1)) / (Xth_ip1 - Xth_i1)
+                end if
+
+            end do
+        end do
+
+        d2B = d2N_dXt2(:,degree)
+        if (present(dB)) dB = dN_dXt(:,degree)
         if (present(B)) B = N(:,degree)
     end subroutine
     !===============================================================================

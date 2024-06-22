@@ -33,6 +33,7 @@ module forcad_nurbs_curve
         procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
         generic :: set => set1, set2, set3 !!> Set NURBS curve
         procedure :: create                !!> Generate geometry points
+        procedure :: cmp_Xg                !!> Compute geometry points
         procedure, private :: get_Xc_all   !!> Get all control points
         procedure, private :: get_Xci      !!> Get i-th control point
         procedure, private :: get_Xcid     !!> Get i-th control point in a specific direction
@@ -71,8 +72,15 @@ module forcad_nurbs_curve
         procedure :: get_nc                !!> Get number of control points
         procedure :: insert_knots          !!> Insert knots into the knot vector
         procedure :: elevate_degree        !!> Elevate the degree of the curve
-        procedure :: derivative            !!> Compute the derivative of the NURBS curve
-        procedure :: basis                 !!> Compute the basis functions of the NURBS curve
+        procedure, private :: basis_vector !!> Compute the basis functions of the NURBS curve
+        procedure, private :: basis_scalar !!> Compute the basis functions of the NURBS curve
+        generic :: basis => basis_vector, basis_scalar   !!> Compute the basis functions of the NURBS curve
+        procedure, private :: derivative_vector      !!> Compute the derivative of the NURBS curve
+        procedure, private :: derivative_scalar      !!> Compute the derivative of the NURBS curve
+        generic :: derivative => derivative_vector, derivative_scalar   !!> Compute the derivative of the NURBS curve
+        procedure, private :: derivative2_vector     !!> Compute the second derivative of the NURBS curve
+        procedure, private :: derivative2_scalar     !!> Compute the second derivative of the NURBS curve
+        generic :: derivative2 => derivative2_vector, derivative2_scalar !!> Compute the second derivative of the NURBS curve
         procedure :: is_rational           !!> Check if the NURBS curve is rational
         procedure :: remove_knots          !!> Remove knots from the knot vector
         procedure :: rotate_Xc             !!> Rotate control points
@@ -80,7 +88,8 @@ module forcad_nurbs_curve
         procedure :: translate_Xc          !!> Translate control points
         procedure :: translate_Xg          !!> Translate geometry points
         procedure :: show                  !!> Show the NURBS object using PyVista
-        procedure :: nearest_point         !!> Find the nearest point on the NURBS curve
+        procedure :: nearest_point         !!> Find the nearest point on the NURBS curve (Approximation)
+        procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newton's method)
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -88,6 +97,201 @@ module forcad_nurbs_curve
         procedure :: set_C                 !!> Set a C-shape
     end type
     !===============================================================================
+
+
+    interface compute_Xg
+        pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Xc(:,:)
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable :: f_Xg(:,:)
+        end function
+
+        pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Xc(:,:)
+            real(rk), allocatable :: f_Xg(:,:)
+        end function
+
+        pure function compute_Xg_nurbs_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), intent(in), contiguous :: f_Xc(:,:)
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable :: f_Xg(:)
+        end function
+
+        pure function compute_Xg_bspline_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc) result(f_Xg)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), intent(in), contiguous :: f_Xc(:,:)
+            real(rk), allocatable :: f_Xg(:)
+        end function
+    end interface
+
+    interface compute_d2Tgc
+        pure subroutine compute_d2Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable, intent(out) :: f_d2Tgc(:,:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:,:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:,:)
+        end subroutine
+
+        pure subroutine compute_d2Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), allocatable, intent(out) :: f_d2Tgc(:,:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:,:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:,:)
+        end subroutine
+
+        pure subroutine compute_d2Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable, intent(out) :: f_d2Tgc(:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:)
+        end subroutine
+
+        pure subroutine compute_d2Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), allocatable, intent(out) :: f_d2Tgc(:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:)
+        end subroutine
+    end interface
+
+    interface compute_dTgc
+        pure subroutine compute_dTgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:,:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:,:)
+        end subroutine
+
+        pure subroutine compute_dTgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), allocatable, intent(out) :: f_dTgc(:,:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:,:)
+        end subroutine
+
+        pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable, intent(out) :: f_dTgc(:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:)
+        end subroutine
+
+        pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), allocatable, intent(out) :: f_dTgc(:)
+            real(rk), allocatable, intent(out) :: f_Tgc(:)
+        end subroutine
+    end interface
+
+    interface compute_Tgc
+        pure function compute_Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable :: f_Tgc(:,:)
+        end function
+
+        pure function compute_Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_Tgc)
+            import :: rk
+            real(rk), intent(in), contiguous :: f_Xt(:)
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            integer, intent(in) :: f_ng
+            real(rk), allocatable :: f_Tgc(:,:)
+        end function
+
+        pure function compute_Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc) result(f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), intent(in), contiguous :: f_Wc(:)
+            real(rk), allocatable :: f_Tgc(:)
+        end function
+
+        pure function compute_Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc) result(f_Tgc)
+            import :: rk
+            real(rk), intent(in) :: f_Xt
+            real(rk), intent(in), contiguous :: f_knot(:)
+            integer, intent(in) :: f_degree
+            integer, intent(in) :: f_nc
+            real(rk), allocatable :: f_Tgc(:)
+        end function
+    end interface
+
+    interface
+        pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
+            import :: rk
+            integer, intent(in) :: f_ng
+            real(rk), intent(in), contiguous :: f_Xg(:,:)
+            real(rk), intent(in), contiguous :: f_point_Xg(:)
+            real(rk), allocatable :: f_distances(:)
+        end function
+    end interface
 
 contains
 
@@ -193,33 +397,6 @@ contains
         real(rk), intent(in), contiguous, optional :: Xt(:)
         integer :: i
 
-        interface
-            pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), intent(in), contiguous :: f_Xc(:,:)
-                real(rk), intent(in), contiguous :: f_Wc(:)
-                real(rk), allocatable :: f_Xg(:,:)
-            end function
-        end interface
-
-        interface
-            pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), intent(in), contiguous :: f_Xc(:,:)
-                real(rk), allocatable :: f_Xg(:,:)
-            end function
-        end interface
-
         ! check
         if (.not.allocated(this%Xc)) then
             error stop 'Control points are not set.'
@@ -248,13 +425,39 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
 
         if (this%is_rational()) then ! NURBS
-            this%Xg = compute_Xg_nurbs_1d(&
-            this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
+            this%Xg = compute_Xg(&
+                this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
         else ! B-Spline
-            this%Xg = compute_Xg_bspline_1d(&
-            this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
+            this%Xg = compute_Xg(&
+                this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
         end if
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_Xg(this, Xt) result(Xg)
+        class(nurbs_curve), intent(in) :: this
+        real(rk), intent(in) :: Xt
+        real(rk), allocatable :: Xg(:)
+
+        ! check
+        if (.not.allocated(this%Xc)) then
+            error stop 'Control points are not set.'
+        end if
+
+        if (.not.allocated(this%knot)) then
+            error stop 'Knot vector is not set.'
+        end if
+
+        if (this%is_rational()) then ! NURBS
+            Xg = compute_Xg(Xt, this%knot, this%degree, this%nc, this%Xc, this%Wc)
+        else ! B-Spline
+            Xg = compute_Xg(Xt, this%knot, this%degree, this%nc, this%Xc)
+        end if
+    end function
     !===============================================================================
 
 
@@ -883,37 +1086,13 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine derivative(this, res, Xt, dTgc)
+    pure subroutine derivative_vector(this, res, Xt, dTgc, Tgc)
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), optional :: res
         real(rk), intent(in), contiguous, optional :: Xt(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
+        real(rk), allocatable, intent(out), optional :: Tgc(:,:)
         integer :: i
-
-        interface
-            pure function compute_dTgc_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_dTgc)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), intent(in), contiguous :: f_Wc(:)
-                real(rk), allocatable :: f_dTgc(:,:)
-            end function
-        end interface
-
-        interface
-            pure function compute_dTgc_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_dTgc)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), allocatable :: f_dTgc(:,:)
-            end function
-        end interface
 
         ! Set parameter values
         if (present(Xt)) then
@@ -931,9 +1110,9 @@ contains
         this%ng = size(this%Xt,1)
 
         if (this%is_rational()) then ! NURBS
-            dTgc = compute_dTgc_nurbs_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc)
+            call compute_dTgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc, dTgc, Tgc)
         else ! B-Spline
-            dTgc = compute_dTgc_bspline_1d(this%Xt, this%knot, this%degree, this%nc, this%ng)
+            call compute_dTgc(this%Xt, this%knot, this%degree, this%nc, this%ng, dTgc, Tgc)
         end if
     end subroutine
     !===============================================================================
@@ -942,37 +1121,32 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine basis(this, res, Xt, Tgc)
+    pure subroutine derivative_scalar(this, Xt, dTgc, Tgc)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xt
+        real(rk), allocatable, intent(out) :: dTgc(:)
+        real(rk), allocatable, intent(out), optional :: Tgc(:)
+
+        if (this%is_rational()) then ! NURBS
+            call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc)
+        else ! B-Spline
+            call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc)
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine derivative2_vector(this, res, Xt, d2Tgc, dTgc, Tgc)
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), optional :: res
         real(rk), intent(in), contiguous, optional :: Xt(:)
-        real(rk), allocatable, intent(out) :: Tgc(:,:)
+        real(rk), allocatable, intent(out) :: d2Tgc(:,:)
+        real(rk), allocatable, intent(out), optional :: dTgc(:,:)
+        real(rk), allocatable, intent(out), optional :: Tgc(:,:)
         integer :: i
-
-        interface
-            pure function compute_Tgc_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), intent(in), contiguous :: f_Wc(:)
-                real(rk), allocatable :: f_Tgc(:,:)
-            end function
-        end interface
-
-        interface
-            pure function compute_Tgc_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_Tgc)
-                import :: rk
-                real(rk), intent(in), contiguous :: f_Xt(:)
-                real(rk), intent(in), contiguous :: f_knot(:)
-                integer, intent(in) :: f_degree
-                integer, intent(in) :: f_nc
-                integer, intent(in) :: f_ng
-                real(rk), allocatable :: f_Tgc(:,:)
-            end function
-        end interface
 
         ! Set parameter values
         if (present(Xt)) then
@@ -990,9 +1164,79 @@ contains
         this%ng = size(this%Xt,1)
 
         if (this%is_rational()) then ! NURBS
-            Tgc = compute_Tgc_nurbs_1d(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc)
+            call compute_d2Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc, d2Tgc, dTgc, Tgc)
         else ! B-Spline
-            Tgc = compute_Tgc_bspline_1d(this%Xt, this%knot, this%degree, this%nc, this%ng)
+            call compute_d2Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, d2Tgc, dTgc, Tgc)
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine derivative2_scalar(this, Xt, d2Tgc, dTgc, Tgc)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xt
+        real(rk), allocatable, intent(out) :: d2Tgc(:)
+        real(rk), allocatable, intent(out), optional :: dTgc(:)
+        real(rk), allocatable, intent(out), optional :: Tgc(:)
+
+        if (this%is_rational()) then ! NURBS
+            call compute_d2Tgc(Xt, this%knot, this%degree, this%nc, this%Wc, d2Tgc, dTgc, Tgc)
+        else ! B-Spline
+            call compute_d2Tgc(Xt, this%knot, this%degree, this%nc, d2Tgc, dTgc, Tgc)
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_vector(this, res, Xt, Tgc)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in), optional :: res
+        real(rk), intent(in), contiguous, optional :: Xt(:)
+        real(rk), allocatable, intent(out) :: Tgc(:,:)
+        integer :: i
+
+        ! Set parameter values
+        if (present(Xt)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            this%Xt = Xt
+        elseif (present(res)) then
+            if (allocated(this%Xt)) deallocate(this%Xt)
+            allocate(this%Xt(res))
+            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            ! else
+            ! this%Xt = this%Xt
+        end if
+
+        ! Set number of geometry points
+        this%ng = size(this%Xt,1)
+
+        if (this%is_rational()) then ! NURBS
+            Tgc = compute_Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc)
+        else ! B-Spline
+            Tgc = compute_Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng)
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_scalar(this, Xt, Tgc)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: Xt
+        real(rk), allocatable, intent(out) :: Tgc(:)
+
+        if (this%is_rational()) then ! NURBS
+            Tgc = compute_Tgc(Xt, this%knot, this%degree, this%nc, this%Wc)
+        else ! B-Spline
+            Tgc = compute_Tgc(Xt, this%knot, this%degree, this%nc)
         end if
     end subroutine
     !===============================================================================
@@ -1499,23 +1743,98 @@ contains
         integer :: id_
         real(rk), allocatable :: distances(:)
 
-        interface
-            pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
-                import :: rk
-                integer, intent(in) :: f_ng
-                real(rk), intent(in), contiguous :: f_Xg(:,:)
-                real(rk), intent(in), contiguous :: f_point_Xg(:)
-                real(rk), allocatable :: f_distances(:)
-            end function
-        end interface
-
         allocate(distances(this%ng))
         distances = nearest_point_help_1d(this%ng, this%Xg, point_Xg)
-        
+
         id_ = minloc(distances, dim=1)
         if (present(id)) id = id_
         if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
         if (present(nearest_Xt)) nearest_Xt = this%Xt(id_)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine nearest_point2(this, point_Xg, tol, maxit, nearest_Xt, nearest_Xg)
+
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in) :: tol
+        integer, intent(in) :: maxit
+        real(rk), intent(out) :: nearest_Xt
+        real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
+        real(rk):: xk, obj, grad, hess, dk, alphak, tau, beta, lower_bounds, upper_bounds
+        real(rk), allocatable :: Xg(:), Tgc(:), dTgc(:), d2Tgc(:), distances(:)
+        integer :: k, l
+        logical :: convergenz
+        type(nurbs_curve) :: copy_this
+
+        k = 0
+
+        ! lower and upper bounds
+        lower_bounds = minval(this%knot)
+        upper_bounds = maxval(this%knot)
+
+        ! guess initial point
+        copy_this = this
+        call this%create(10)
+        allocate(distances(copy_this%ng))
+        distances = nearest_point_help_1d(copy_this%ng, copy_this%Xg, point_Xg)
+        xk = copy_this%Xt(minloc(distances, dim=1))
+        call copy_this%finalize()
+
+        ! Check if xk is within the knot vector range
+        if (xk < minval(this%knot)) then
+            xk = minval(this%knot)
+        else if (xk > maxval(this%knot)) then
+            xk = maxval(this%knot)
+        end if
+
+        convergenz = .false.
+
+        allocate(Xg(size(this%Xc,2)))
+        ! allocate(dTgc(size(this%Xc,1)))
+        ! allocate(d2Tgc(size(this%Xc,1)))
+
+        do while (.not. convergenz .and. k < maxit)
+
+            ! objection, gradient and hessian
+            Xg = this%cmp_Xg(xk)
+            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc) ! Tgc is not needed
+
+            obj  = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
+            grad = dot_product((Xg-point_Xg)/obj, matmul(dTgc,this%Xc))
+            hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj + dot_product((Xg-point_Xg)/obj, matmul(d2Tgc,this%Xc))
+
+            ! debug
+            print '(i3,1x,e20.10,1x,e20.10)', k, xk, abs(grad)
+
+            if (abs(grad) <= tol) then
+                convergenz = .true.
+                nearest_Xt = xk
+                if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
+            else
+                dk = - grad / hess
+
+                ! Backtracking-Armijo Line Search
+                alphak = 1.0_rk
+                tau = 0.5_rk     ! 0 < tau  < 1
+                beta = 1.0e-4_rk ! 0 < beta < 1
+                l = 0
+                do while (.not. norm2(this%cmp_Xg(xk + alphak*dk) - point_Xg)  <= obj + alphak*beta*grad*dk .and. l<50)
+                    alphak = tau * alphak
+                    l = l + 1
+                end do
+
+                xk = xk + alphak*dk
+                ! Check if xk is within the knot vector range
+                xk = max(min(xk, upper_bounds), lower_bounds)
+                k = k + 1
+            end if
+        end do
+
     end subroutine
     !===============================================================================
 
@@ -1555,6 +1874,31 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
+impure function compute_Xg_nurbs_1d_1point(Xt, knot, degree, nc, Xc, Wc) result(Xg)
+    use forcad_utils, only: rk, basis_bspline
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), intent(in), contiguous :: Xc(:,:)
+    real(rk), intent(in), contiguous :: Wc(:)
+    real(rk), allocatable :: Xg(:)
+    real(rk), allocatable :: Tgc(:)
+
+    allocate(Xg(size(Xc)))
+    allocate(Tgc(nc))
+    Tgc = basis_bspline(Xt, knot, nc, degree)
+    Tgc = Tgc*(Wc/(dot_product(Tgc,Wc)))
+    Xg = matmul(Tgc, Xc)
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
 impure function compute_Xg_bspline_1d(Xt, knot, degree, nc, ng, Xc) result(Xg)
     use forcad_utils, only: rk, basis_bspline
 
@@ -1581,7 +1925,27 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_dTgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(dTgc)
+impure function compute_Xg_bspline_1d_1point(Xt, knot, degree, nc, Xc) result(Xg)
+    use forcad_utils, only: rk, basis_bspline
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), intent(in), contiguous :: Xc(:,:)
+    real(rk), allocatable :: Xg(:)
+
+    allocate(Xg(size(Xc)))
+    Xg = matmul(basis_bspline(Xt, knot, nc, degree), Xc)
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_dTgc_nurbs_1d_vector(Xt, knot, degree, nc, ng, Wc, dTgc, Tgc)
     use forcad_utils, only: rk, basis_bspline_der
 
     implicit none
@@ -1591,26 +1955,49 @@ impure function compute_dTgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(dTgc)
     integer, intent(in) :: nc
     integer, intent(in) :: ng
     real(rk), intent(in), contiguous :: Wc(:)
-    real(rk), allocatable :: dTgc(:,:)
-    real(rk), allocatable :: dBi(:), Tgci(:)
+    real(rk), allocatable, intent(out) :: dTgc(:,:)
+    real(rk), allocatable, intent(out) :: Tgc(:,:)
+    real(rk), allocatable :: dBi(:), Bi(:)
     integer :: i
 
-    allocate(dTgc(ng, nc))
-    !$OMP PARALLEL DO PRIVATE(Tgci, dBi)
+    allocate(dTgc(ng, nc), Tgc(ng, nc), dBi(nc), Bi(nc))
     do i = 1, size(Xt)
-        call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Tgci)
-        Tgci = Tgci*(Wc/(dot_product(Tgci,Wc)))
-        dTgc(i,:) = ( dBi*Wc - Tgci*dot_product(Tgci,Wc) ) / dot_product(dBi,Wc)
+        call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
+        Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
+        dTgc(i,:) = ( dBi*Wc - Tgc(i,:)*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
     end do
-    !$OMP END PARALLEL DO
-end function
+end subroutine
 !===============================================================================
 
 
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_dTgc_bspline_1d(Xt, knot, degree, nc, ng) result(dTgc)
+impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_der
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), intent(in), contiguous :: Wc(:)
+    real(rk), allocatable, intent(out) :: dTgc(:)
+    real(rk), allocatable, intent(out) :: Tgc(:)
+    real(rk), allocatable :: dBi(:), Bi(:)
+
+    allocate(dTgc(nc), Tgc(nc))
+    call basis_bspline_der(Xt, knot, nc, degree, dBi, Bi)
+    Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
+    dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_dTgc_bspline_1d_vector(Xt, knot, degree, nc, ng, dTgc, Tgc)
     use forcad_utils, only: rk, basis_bspline_der
 
     implicit none
@@ -1619,25 +2006,157 @@ impure function compute_dTgc_bspline_1d(Xt, knot, degree, nc, ng) result(dTgc)
     integer, intent(in) :: degree
     integer, intent(in) :: nc
     integer, intent(in) :: ng
-    real(rk), allocatable :: dTgc(:,:)
-    real(rk), allocatable :: dTgci(:)
+    real(rk), allocatable, intent(out) :: dTgc(:,:)
+    real(rk), allocatable, intent(out) :: Tgc(:,:)
+    real(rk), allocatable :: dBi(:), Bi(:)
     integer :: i
 
-    allocate(dTgc(ng, nc))
-    !$OMP PARALLEL DO PRIVATE(dTgci)
+    allocate(dTgc(ng, nc), Tgc(ng, nc), dBi(nc), Bi(nc))
     do i = 1, size(Xt)
-        call basis_bspline_der(Xt(i), knot, nc, degree, dTgci)
-        dTgc(i,:) = dTgci
+        call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
+        Tgc(i,:) = Bi
+        dTgc(i,:) = dBi
     end do
-    !$OMP END PARALLEL DO
-end function
+end subroutine
 !===============================================================================
 
 
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Tgc_nurbs_1d(Xt, knot, degree, nc, ng, Wc) result(Tgc)
+impure subroutine compute_dTgc_bspline_1d_scalar(Xt, knot, degree, nc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_der
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), allocatable, intent(out) :: dTgc(:)
+    real(rk), allocatable, intent(out) :: Tgc(:)
+
+    allocate(dTgc(nc), Tgc(nc))
+    call basis_bspline_der(Xt, knot, nc, degree, dTgc, Tgc)
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_d2Tgc_nurbs_1d_vector(Xt, knot, degree, nc, ng, Wc, d2Tgc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_2der
+
+    implicit none
+    real(rk), intent(in), contiguous :: Xt(:)
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    integer, intent(in) :: ng
+    real(rk), intent(in), contiguous :: Wc(:)
+    real(rk), allocatable, intent(out) :: d2Tgc(:,:)
+    real(rk), allocatable, intent(out) :: dTgc(:,:)
+    real(rk), allocatable, intent(out) :: Tgc(:,:)
+    real(rk), allocatable :: d2Bi(:), dBi(:), Tgci(:), dTgci(:), Bi(:)
+    integer :: i
+
+    allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
+
+    do i = 1, size(Xt)
+        call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
+        Tgci = Bi*(Wc/(dot_product(Bi,Wc)))
+        Tgc(i,:) = Tgci
+
+        dTgci = ( dBi*Wc - Tgci*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+        dTgc(i,:) = dTgci
+
+        d2Tgc(i,:) = (d2Bi*Wc - 2.0_rk*dTgci*dot_product(dBi,Wc) - Tgci*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
+    end do
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_d2Tgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, d2Tgc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_2der
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), intent(in), contiguous :: Wc(:)
+    real(rk), allocatable, intent(out) :: d2Tgc(:)
+    real(rk), allocatable, intent(out) :: dTgc(:)
+    real(rk), allocatable, intent(out) :: Tgc(:)
+    real(rk), allocatable :: d2Bi(:), dBi(:), Bi(:)
+
+    allocate(d2Tgc(nc), dTgc(nc), Tgc(nc), d2Bi(nc), dBi(nc), Bi(nc))
+
+    call basis_bspline_2der(Xt, knot, nc, degree, d2Bi, dBi, Bi)
+    Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
+    dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+    d2Tgc = (d2Bi*Wc - 2.0_rk*dTgc*dot_product(dBi,Wc) - Tgc*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_d2Tgc_bspline_1d_vector(Xt, knot, degree, nc, ng, d2Tgc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_2der
+
+    implicit none
+    real(rk), intent(in), contiguous :: Xt(:)
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    integer, intent(in) :: ng
+    real(rk), allocatable, intent(out) :: d2Tgc(:,:)
+    real(rk), allocatable, intent(out) :: dTgc(:,:)
+    real(rk), allocatable, intent(out) :: Tgc(:,:)
+    real(rk), allocatable :: d2Tgci(:), dTgci(:), Tgci(:)
+    integer :: i
+
+    allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), dTgci(nc), Tgci(nc), d2Tgci(nc))
+    do i = 1, size(Xt)
+        call basis_bspline_2der(Xt(i), knot, nc, degree, d2Tgci, dTgci, Tgci)
+        Tgc(i,:) = Tgci
+        dTgc(i,:) = dTgci
+        d2Tgc(i,:) = d2Tgci
+    end do
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure subroutine compute_d2Tgc_bspline_1d_scalar(Xt, knot, degree, nc, d2Tgc, dTgc, Tgc)
+    use forcad_utils, only: rk, basis_bspline_2der
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), allocatable, intent(out) :: d2Tgc(:)
+    real(rk), allocatable, intent(out) :: dTgc(:)
+    real(rk), allocatable, intent(out) :: Tgc(:)
+
+    allocate(d2Tgc(nc), dTgc(nc), Tgc(nc))
+    call basis_bspline_2der(Xt, knot, nc, degree, d2Tgc, dTgc, Tgc)
+end subroutine
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function compute_Tgc_nurbs_1d_vector(Xt, knot, degree, nc, ng, Wc) result(Tgc)
     use forcad_utils, only: rk, basis_bspline
 
     implicit none
@@ -1665,7 +2184,28 @@ end function
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure function compute_Tgc_bspline_1d(Xt, knot, degree, nc, ng) result(Tgc)
+impure function compute_Tgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc) result(Tgc)
+    use forcad_utils, only: rk, basis_bspline
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), intent(in), contiguous :: Wc(:)
+    real(rk), allocatable :: Tgc(:)
+
+    allocate(Tgc(nc))
+    Tgc = basis_bspline(Xt, knot, nc, degree)
+    Tgc = Tgc*(Wc/(dot_product(Tgc,Wc)))
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function compute_Tgc_bspline_1d_vector(Xt, knot, degree, nc, ng) result(Tgc)
     use forcad_utils, only: rk, basis_bspline
 
     implicit none
@@ -1683,6 +2223,25 @@ impure function compute_Tgc_bspline_1d(Xt, knot, degree, nc, ng) result(Tgc)
         Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
     end do
     !$OMP END PARALLEL DO
+end function
+!===============================================================================
+
+
+!===============================================================================
+!> author: Seyed Ali Ghasemi
+!> license: BSD 3-Clause
+impure function compute_Tgc_bspline_1d_scalar(Xt, knot, degree, nc) result(Tgc)
+    use forcad_utils, only: rk, basis_bspline
+
+    implicit none
+    real(rk), intent(in) :: Xt
+    real(rk), intent(in), contiguous :: knot(:)
+    integer, intent(in) :: degree
+    integer, intent(in) :: nc
+    real(rk), allocatable :: Tgc(:)
+
+    allocate(Tgc(nc))
+    Tgc = basis_bspline(Xt, knot, nc, degree)
 end function
 !===============================================================================
 

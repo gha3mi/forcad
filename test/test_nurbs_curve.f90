@@ -167,11 +167,11 @@ program test_nurbs_curve
     call nurbs%basis(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], Tgc=Tgc)
     call bsp%basis(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], Tgc=Tgc)
 
-    call nurbs%derivative(res=23, dTgc=dTgc)
-    call bsp%derivative(res=23, dTgc=dTgc)
+    call nurbs%derivative(res=23, dTgc=dTgc, Tgc=Tgc)
+    call bsp%derivative(res=23, dTgc=dTgc, Tgc=Tgc)
 
-    call nurbs%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc)
-    call bsp%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc)
+    call nurbs%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc, Tgc=Tgc)
+    call bsp%derivative(Xt=[(real(i-1, rk) / real(23-1, rk), i=1, 23)], dTgc=dTgc, Tgc=Tgc)
 
     call nurbs%rotate_Xc(45.0_rk, 0.0_rk, 0.0_rk)
     call nurbs%rotate_Xc(-45.0_rk, 0.0_rk, 0.0_rk)
