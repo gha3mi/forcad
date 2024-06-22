@@ -205,7 +205,8 @@ module forcad_nurbs_volume
     end interface
 
     interface compute_d2Tgc
-        pure subroutine compute_d2Tgc_nurbs_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
+        pure subroutine compute_d2Tgc_nurbs_3d_vector(&
+            f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
@@ -218,7 +219,8 @@ module forcad_nurbs_volume
             real(rk), allocatable, intent(out) :: f_Tgc(:,:)
         end subroutine
 
-        pure subroutine compute_d2Tgc_bspline_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
+        pure subroutine compute_d2Tgc_bspline_3d_vector(&
+            f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
@@ -2949,15 +2951,33 @@ contains
             grad(2) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,2),this%Xc))
             grad(3) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,3),this%Xc))
 
-            hess(1,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,1),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(1) ) / obj**2
-            hess(2,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,1),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(1) ) / obj**2
-            hess(3,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,1),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(1) ) / obj**2
-            hess(1,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,2),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(2) ) / obj**2
-            hess(2,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,2),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(2) ) / obj**2
-            hess(3,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,2),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(2) ) / obj**2
-            hess(1,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,3),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(3) ) / obj**2
-            hess(2,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,3),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(3) ) / obj**2
-            hess(3,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,3),this%Xc)) ) /obj - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(3) ) / obj**2
+            hess(1,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,1),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(1) ) / obj**2
+            hess(2,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,1),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(1) ) / obj**2
+            hess(3,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,1),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(1) ) / obj**2
+            hess(1,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,2),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(2) ) / obj**2
+            hess(2,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,2),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(2) ) / obj**2
+            hess(3,2) = ( dot_product(matmul(dTgc(:,2),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,2),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(2) ) / obj**2
+            hess(1,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,3),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,1), this%Xc))*grad(3) ) / obj**2
+            hess(2,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,2),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(this%nc(1)*this%nc(2)*this%nc(3)+1:2*this%nc(1)*this%nc(2)*this%nc(3)   ,3),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,2), this%Xc))*grad(3) ) / obj**2
+            hess(3,3) = ( dot_product(matmul(dTgc(:,3),this%Xc), matmul(dTgc(:,3),this%Xc)) + dot_product((Xg-point_Xg), &
+                matmul(d2Tgc(2*this%nc(1)*this%nc(2)*this%nc(3)+1:3*this%nc(1)*this%nc(2)*this%nc(3) ,3),this%Xc)) ) /obj &
+                - ( dot_product(Xg-point_Xg, matmul(dTgc(:,3), this%Xc))*grad(3) ) / obj**2
 
             ! debug
             print '(i3,1x,3e20.10,1x,e20.10)', k, xk, norm2(grad)
@@ -3518,15 +3538,33 @@ impure subroutine compute_d2Tgc_nurbs_3d_vector(Xt, knot1, knot2, knot3, degree,
         d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = kron(kron(dB3,dB2),B1)
         d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = kron(kron(d2B3,B2),B1)
 
-        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,1) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1)*Wc - 2.0_rk*dTgc(i, :,1)*dot_product(dBi(:,1),Wc)                                  - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1)*Wc - dTgc(i, :,1)*dot_product(dBi(:,2),Wc) - dTgc(i, :,2)*dot_product(dBi(:,1),Wc) - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1)*Wc - dTgc(i, :,1)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,1),Wc) - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,2) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2)*Wc - dTgc(i, :,1)*dot_product(dBi(:,2),Wc) - dTgc(i, :,2)*dot_product(dBi(:,1),Wc) - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2)*Wc - 2.0_rk*dTgc(i, :,2)*dot_product(dBi(:,2),Wc)                                  - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2)*Wc - dTgc(i, :,2)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,2),Wc) - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,3) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3)*Wc - dTgc(i, :,1)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,1),Wc) - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3)*Wc - dTgc(i, :,2)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,2),Wc) - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3),Wc)) / dot_product(Bi,Wc)
-        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3)*Wc - 2.0_rk*dTgc(i, :,3)*dot_product(dBi(:,3),Wc)                                  - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,1) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1)*Wc &
+            - 2.0_rk*dTgc(i, :,1)*dot_product(dBi(:,1),Wc)                                  &
+            - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1)*Wc &
+            - dTgc(i, :,1)*dot_product(dBi(:,2),Wc) - dTgc(i, :,2)*dot_product(dBi(:,1),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1)*Wc &
+            - dTgc(i, :,1)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,1),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,2) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2)*Wc &
+            - dTgc(i, :,1)*dot_product(dBi(:,2),Wc) - dTgc(i, :,2)*dot_product(dBi(:,1),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2)*Wc &
+            - 2.0_rk*dTgc(i, :,2)*dot_product(dBi(:,2),Wc)                                  &
+            - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2)*Wc &
+            - dTgc(i, :,2)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,2),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 1:nc(1)*nc(2)*nc(3)                       ,3) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3)*Wc &
+            - dTgc(i, :,1)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,1),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3)*Wc &
+            - dTgc(i, :,2)*dot_product(dBi(:,3),Wc) - dTgc(i, :,3)*dot_product(dBi(:,2),Wc) &
+            - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3),Wc)) / dot_product(Bi,Wc)
+        d2Tgc(i, 2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3)*Wc &
+            - 2.0_rk*dTgc(i, :,3)*dot_product(dBi(:,3),Wc)                                  &
+            - Tgc(i,:)*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3),Wc)) / dot_product(Bi,Wc)
     end do
 end subroutine
 !===============================================================================
@@ -3586,15 +3624,33 @@ impure subroutine compute_d2Tgc_nurbs_3d_scalar(Xt, knot1, knot2, knot3, degree,
     d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = kron(kron(dB3,dB2),B1)
     d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = kron(kron(d2B3,B2),B1)
 
-    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,1) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1)*Wc - 2.0_rk*dTgc(:,1)*dot_product(dBi(:,1),Wc)                               - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1)*Wc - dTgc(:,1)*dot_product(dBi(:,2),Wc) - dTgc(:,2)*dot_product(dBi(:,1),Wc) - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1)*Wc - dTgc(:,1)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,1),Wc) - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,2) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2)*Wc - dTgc(:,1)*dot_product(dBi(:,2),Wc) - dTgc(:,2)*dot_product(dBi(:,1),Wc) - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2)*Wc - 2.0_rk*dTgc(:,2)*dot_product(dBi(:,2),Wc)                               - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2)*Wc - dTgc(:,2)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,2),Wc) - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,3) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3)*Wc - dTgc(:,1)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,1),Wc) - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3)*Wc - dTgc(:,2)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,2),Wc) - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3),Wc)) / dot_product(Bi,Wc)
-    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3)*Wc - 2.0_rk*dTgc(:,3)*dot_product(dBi(:,3),Wc)                               - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,1) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1)*Wc &
+        - 2.0_rk*dTgc(:,1)*dot_product(dBi(:,1),Wc)                               &
+        - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,1),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1)*Wc &
+        - dTgc(:,1)*dot_product(dBi(:,2),Wc) - dTgc(:,2)*dot_product(dBi(:,1),Wc) &
+        - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,1),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1)*Wc &
+        - dTgc(:,1)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,1),Wc) &
+        - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,1),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,2) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2)*Wc &
+        - dTgc(:,1)*dot_product(dBi(:,2),Wc) - dTgc(:,2)*dot_product(dBi(:,1),Wc) &
+        - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,2),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2)*Wc &
+        - 2.0_rk*dTgc(:,2)*dot_product(dBi(:,2),Wc)                               &
+        - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,2),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2)*Wc &
+        - dTgc(:,2)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,2),Wc) &
+        - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,2),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(1:nc(1)*nc(2)*nc(3)                       ,3) = (d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3)*Wc &
+        - dTgc(:,1)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,1),Wc) &
+        - Tgc*dot_product(d2Bi(1:nc(1)*nc(2)*nc(3)                       ,3),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3) = (d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3)*Wc &
+        - dTgc(:,2)*dot_product(dBi(:,3),Wc) - dTgc(:,3)*dot_product(dBi(:,2),Wc) &
+        - Tgc*dot_product(d2Bi(nc(1)*nc(2)*nc(3)+1:2*nc(1)*nc(2)*nc(3)   ,3),Wc)) / dot_product(Bi,Wc)
+    d2Tgc(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3) = (d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3)*Wc &
+        - 2.0_rk*dTgc(:,3)*dot_product(dBi(:,3),Wc)                               &
+        - Tgc*dot_product(d2Bi(2*nc(1)*nc(2)*nc(3)+1:3*nc(1)*nc(2)*nc(3) ,3),Wc)) / dot_product(Bi,Wc)
 end subroutine
 !===============================================================================
 
