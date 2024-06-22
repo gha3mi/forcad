@@ -57,3 +57,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - Excluded macOS from CI due to a problem with fpm.
+- Removed `intel-classic` from CI (`ifort` is deprecated).
