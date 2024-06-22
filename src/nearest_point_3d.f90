@@ -27,7 +27,11 @@ program nearest_point_3d
     !> The weights of the control points (Wc) are optional.
     Wc = [1.0_rk, 1.1_rk, 1.11_rk, 1.0_rk, 0.5_rk, 0.5_rk, 1.2_rk, 1.0_rk]
 
-    call shape%set(knot1=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk], knot2=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk], knot3=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk], Xc=Xc, Wc=Wc)
+    call shape%set(&
+        knot1=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk],&
+        knot2=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk],&
+        knot3=[0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk],&
+        Xc=Xc, Wc=Wc)
 
     !-----------------------------------------------------------------------------
     ! Creating the NURBS volume
