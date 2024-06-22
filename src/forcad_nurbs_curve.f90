@@ -1806,7 +1806,8 @@ contains
 
             obj  = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
             grad = dot_product((Xg-point_Xg)/obj, matmul(dTgc,this%Xc))
-            hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj + dot_product((Xg-point_Xg)/obj, matmul(d2Tgc,this%Xc))
+            hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj&
+                + dot_product((Xg-point_Xg)/obj, matmul(d2Tgc,this%Xc))
 
             ! debug
             print '(i3,1x,e20.10,1x,e20.10)', k, xk, abs(grad)

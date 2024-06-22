@@ -45,7 +45,8 @@ program nearest_point_3d
     ! nearest_Xt: Corresponding parametric coordinates of the nearest point (optional)
     ! id: id of the nearest point (optional)
     call shape%nearest_point([1.5_rk, 3.5_rk, 1.1_rk], nearest_Xg, nearest_Xt, id)
-    print '(a,1x,g0,2x,g0,2x,g0,a,2x,g0,2x,g0,2x,g0,2x,a,1x,g0)','Nearest point on the volume:', nearest_Xg, ' with parametric coordinates:', nearest_Xt, ' and id:', id
+    print '(a,1x,g0,2x,g0,2x,g0,a,2x,g0,2x,g0,2x,g0,2x,a,1x,g0)',&
+        'Nearest point on the volume:', nearest_Xg, ' with parametric coordinates:', nearest_Xt, ' and id:', id
 
     !-----------------------------------------------------------------------------
     ! Nearest point on the volume (Optimization)
@@ -57,7 +58,8 @@ program nearest_point_3d
     ! nearest_Xt: Corresponding parametric coordinates of the nearest point
     ! nearest_Xg: Coordinates of the nearest point on the volume (optional)
     call shape%nearest_point2([1.5_rk, 3.5_rk, 1.1_rk], 1.0e-11_rk, 500, nearest_Xt, nearest_Xg)
-    print '(a,1x,g0,2x,g0,2x,g0,a,2x,g0,2x,g0,2x,g0)', 'Nearest point on the volume:', nearest_Xg, ' with parametric coordinates:', nearest_Xt
+    print '(a,1x,g0,2x,g0,2x,g0,a,2x,g0,2x,g0,2x,g0)',&
+        'Nearest point on the volume:', nearest_Xg, ' with parametric coordinates:', nearest_Xt
 
     !-----------------------------------------------------------------------------
     ! Finalizing
