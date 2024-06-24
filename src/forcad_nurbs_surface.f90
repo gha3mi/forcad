@@ -2381,8 +2381,8 @@ contains
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt(2)
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
-        real(rk):: xk(2), obj, grad(2), hess(2,2), dk(2), alphak, tau, beta, det_inv, Ainv(2,2), lower_bounds(2), upper_bounds(2)
-        real(rk), allocatable :: Xg(:), Tgc(:), dTgc(:,:), d2Tgc(:,:), distances(:)
+        real(rk):: obj, grad(2), hess(2,2), dk(2), alphak, tau, beta, det_inv, Ainv(2,2), lower_bounds(2), upper_bounds(2)
+        real(rk), allocatable :: Xg(:), xk(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
         integer :: k, l
         logical :: convergenz
         type(nurbs_surface) :: copy_this
@@ -2395,10 +2395,8 @@ contains
 
         ! guess initial point
         copy_this = this
-        call this%create(10,10)
-        allocate(distances(copy_this%ng(1)*copy_this%ng(2)))
-        distances = nearest_point_help_2d(copy_this%ng, copy_this%Xg, point_Xg)
-        xk = copy_this%Xt(minloc(distances, dim=1),:)
+        call copy_this%create(10,10)
+        call copy_this%nearest_point(point_Xg=point_Xg, nearest_Xt=xk)
         call copy_this%finalize()
 
         ! Check if xk is within the knot vector range
