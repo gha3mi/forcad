@@ -4,7 +4,13 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
-## [Unreleased]
+## [0.5.1]
+
+### Changed
+
+- Fixed initial guess in `nearest_point2()` procedures
+
+## [0.5.0]
 
 ### Added
 
@@ -53,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Converted the `basis_bspline_der` function to a subroutine.
 - Fixed NURBS derivative calculations.
 - Made `basis` and `derivative` generic methods.
+- Fixed initial guess in `nearest_point2()` procedures
 
 ### Removed
 
