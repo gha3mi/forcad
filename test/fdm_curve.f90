@@ -8,8 +8,7 @@ program fdm_test_curve
     real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
     real(rk) :: knot(6)                     !! Array for knot vector
     real(rk) :: Xtp, tol, Xt, Xtm
-    real(rk), allocatable :: Tgc(:), dTgc(:), Tgcp(:), dTgcp(:), Tgcm(:), dTgcm(:), &
-        CFD(:), BFD(:), FFD(:), d2Tgc(:), d2Tgcp(:), d2Tgcm(:)
+    real(rk), allocatable :: Tgc(:), dTgc(:), Tgcp(:), dTgcp(:), Tgcm(:), dTgcm(:), d2Tgc(:), d2Tgcp(:), d2Tgcm(:)
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS curve
