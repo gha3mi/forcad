@@ -55,6 +55,9 @@ module forcad_nurbs_volume
         procedure, private :: get_knoti     !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
+        procedure, private :: get_nc_dir             !!> Get number of control points in a specific direction
+        procedure, private :: get_nc_all             !!> Get number of control points in all directions
+        generic :: get_nc => get_nc_all, get_nc_dir !!> Get number of control points
         procedure :: cmp_degree             !!> Compute degree of the NURBS volume
         procedure, private :: get_degree_all!!> Get degree of the NURBS volume in all directions
         procedure, private :: get_degree_dir!!> Get degree of the NURBS volume in a specific direction
@@ -1232,7 +1235,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_nc(this, dir) result(nc)
+    pure function get_nc_all(this) result(nc)
+        class(nurbs_volume), intent(in) :: this
+        integer :: nc(3)
+
+        nc = this%nc
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_nc_dir(this, dir) result(nc)
         class(nurbs_volume), intent(in) :: this
         integer, intent(in) :: dir
         integer :: nc

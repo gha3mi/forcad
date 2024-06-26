@@ -53,6 +53,9 @@ module forcad_nurbs_surface
         procedure, private :: get_knoti     !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
+        procedure, private :: get_nc_dir             !!> Get number of control points in a specific direction
+        procedure, private :: get_nc_all             !!> Get number of control points in all directions
+        generic :: get_nc => get_nc_all, get_nc_dir !!> Get number of control points
         procedure :: cmp_degree             !!> Compute degree of the NURBS surface
         procedure, private :: get_degree_all!!> Get degree of the NURBS surface in both directions
         procedure, private :: get_degree_dir!!> Get degree of the NURBS surface in a specific direction
@@ -74,7 +77,6 @@ module forcad_nurbs_surface
         procedure :: get_multiplicity       !!> Compute and return the multiplicity of the knot vector
         procedure :: get_continuity         !!> Compute and return the continuity of the NURBS surface
         procedure :: cmp_nc                 !!> Compute number of required control points
-        procedure :: get_nc                 !!> Get number of control points
         procedure, private :: basis_vector  !!> Compute the basis functions of the NURBS surface
         procedure, private :: basis_scalar  !!> Compute the basis functions of the NURBS surface
         generic :: basis => basis_vector, basis_scalar    !!> Compute the basis functions of the NURBS surface
@@ -1129,7 +1131,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_nc(this, dir) result(nc)
+    pure function get_nc_all(this) result(nc)
+        class(nurbs_surface), intent(in) :: this
+        integer :: nc(2)
+
+        nc = this%nc
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_nc_dir(this, dir) result(nc)
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         integer :: nc
