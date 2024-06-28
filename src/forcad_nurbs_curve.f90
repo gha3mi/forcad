@@ -1927,8 +1927,8 @@ contains
         type(nurbs_curve) :: th, th_e
         real(rk), allocatable :: dTtth_dXksi(:), Ttth(:), dTgc_dXt(:), dXg_dXt(:)
         real(rk) :: Xt, dXt_dXksi
-        real(rk), allocatable :: dXg_dXksi(:) !> Jacobian matrix
-        real(rk) :: det_dXg_dXksi !> Determinant of the Jacobian matrix
+        real(rk), allocatable :: dXg_dXksi(:) !! Jacobian matrix
+        real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
 
         call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
 
