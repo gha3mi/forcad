@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added generic `get_nc()` method to `nurbs_surface` and `nurbs_volume` derived types.
 - Added `det`, `inv`, `dyad` and `gauss_leg` procedures in the `forcad_utils` module.
 - Added procedure `set1a` to the `nurbs_curve` derived type.
-- Added procedure `set4` to the `nurbs_curve` NURBS derived type.
+- Added procedure `set4` to `nurbs_curve`,  `nurbs_area` and `nurbs_volume` derived types.
 - Added optional input variable `elem` to `derivative_scalar` procedures.
 - Added `ansatz` procedures to compute shape functions, derivatives of shape functions and (dV, dA, dL).
 - Added `cmp_length()` to compute the length of a NURBS curve.
