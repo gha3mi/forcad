@@ -4,7 +4,7 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
-## [Unreleased]
+## [0.6.0]
 
 ### Added
 
