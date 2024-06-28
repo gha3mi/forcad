@@ -3,12 +3,14 @@
 !> This module contains parameters, functions and subroutines that are used in the library.
 module forcad_utils
 
+    use stdlib_quadrature, only: gauss_legendre
+
     implicit none
 
     private
     public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der
+        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg
 
     integer, parameter :: rk = kind(1.0d0)
 
@@ -50,6 +52,22 @@ module forcad_utils
     interface unique
         module procedure unique_integer
         module procedure unique_real
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface dyad
+        module procedure dyad_t1_t1
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface gauss_leg
+        module procedure gauss_legendre_1D
+        module procedure gauss_legendre_2D
+        module procedure gauss_legendre_3D
     end interface
     !===============================================================================
 
@@ -119,7 +137,7 @@ contains
                 end if
                 if ( Xth_ip /= Xth_i ) then
                     N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
-                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i) 
+                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i)
                 end if
                 if ( Xth_ip1 /= Xth_i1 ) then
                     N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
@@ -170,7 +188,7 @@ contains
                 if ( Xth_ip /= Xth_i) then
                     N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
                     ! dN_dXt(i,p) = p*(N(i,p-1)/(Xth_ip - Xth_i))
-                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i) 
+                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i)
                     d2N_dXt2(i,p) = (2*dN_dXt(i,p-1) + (Xt - Xth_i)*d2N_dXt2(i,p-1)) / (Xth_ip - Xth_i)
                 end if
                 if ( Xth_ip1 /= Xth_i1 ) then
@@ -1078,6 +1096,152 @@ contains
         R(2,3) = cosd(alpha)*sind(beta)*sind(theta) - sind(alpha)*cosd(theta)
         R(3,3) = cosd(alpha)*cosd(beta)
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function det(A) result(detA)
+        real(rk), intent(in) :: A(:,:)
+        real(rk) :: detA
+
+        if (size(A,1) == size(A,2)) then
+            select case(size(A,1))
+              case(2)
+                detA = A(1,1)*A(2,2) - A(1,2)*A(2,1)
+              case(3)
+                detA = &
+                    + A(1,1)*( A(2,2)*A(3,3) - A(2,3)*A(3,2) )&
+                    - A(1,2)*( A(2,1)*A(3,3) - A(2,3)*A(3,1) )&
+                    + A(1,3)*( A(2,1)*A(3,2) - A(2,2)*A(3,1) )
+            end select
+        elseif (size(A,1) == 3 .and. size(A,2) == 2) then
+            detA = &
+                + A(1,1) * ( A(2,2) * 1.0_rk - A(3,2) * 1.0_rk )&
+                - A(1,2) * ( A(2,1) * 1.0_rk - A(3,1) * 1.0_rk )&
+                + 1.0_rk * ( A(2,1) * A(3,2) - A(3,1) * A(2,2) )
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    recursive pure function inv(A) result(A_inv)
+        real(rk), intent(in) :: A(:,:)
+        real(rk), allocatable :: A_inv(:,:)
+
+        if (size(A,1) == size(A,2)) then
+            select case(size(A,1))
+              case(2)
+                allocate(A_inv(size(A,1),size(A,2)))
+                A_inv(1,1) =  A(2,2)
+                A_inv(1,2) = -A(1,2)
+                A_inv(2,1) = -A(2,1)
+                A_inv(2,2) =  A(1,1)
+                A_inv = A_inv/det(A)
+              case(3)
+                allocate(A_inv(size(A,1),size(A,2)))
+                A_inv(1,1) = A(2,2)*A(3,3) - A(2,3)*A(3,2)
+                A_inv(1,2) = A(1,3)*A(3,2) - A(1,2)*A(3,3)
+                A_inv(1,3) = A(1,2)*A(2,3) - A(1,3)*A(2,2)
+                A_inv(2,1) = A(2,3)*A(3,1) - A(2,1)*A(3,3)
+                A_inv(2,2) = A(1,1)*A(3,3) - A(1,3)*A(3,1)
+                A_inv(2,3) = A(1,3)*A(2,1) - A(1,1)*A(2,3)
+                A_inv(3,1) = A(2,1)*A(3,2) - A(2,2)*A(3,1)
+                A_inv(3,2) = A(1,2)*A(3,1) - A(1,1)*A(3,2)
+                A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
+                A_inv = A_inv/det(A)
+            end select
+        elseif (size(A,1)>size(A,2)) then
+            allocate(A_inv(size(A,2),size(A,1)))
+            A_inv = transpose(A)
+            A_inv = matmul(inv(matmul(A_inv, A)), A_inv)
+        elseif (size(A,1)<size(A,2)) then
+            allocate(A_inv(size(A,2),size(A,1)))
+            A_inv = transpose(A)
+            A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
+        end if
+
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function dyad_t1_t1(a, b) result(c)
+        real(rk), intent(in), contiguous :: a(:)
+        real(rk), intent(in), contiguous :: b(:)
+        real(rk), allocatable :: c(:,:)
+        integer :: i
+
+        allocate(c(size(a), size(b)))
+        do concurrent(i = 1:size(c,1))
+            c(i, :) = a(i) * b(:)
+        end do
+    end function
+    !===============================================================================
+
+    
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine gauss_legendre_1D(interval, degree, Xksi, Wksi)
+        real(rk), intent(in) :: interval(2)
+        integer, intent(in) :: degree
+        real(rk), allocatable, intent(out) :: Xksi(:), Wksi(:)
+
+        allocate(Xksi(degree+1), Wksi(degree+1))
+
+        call gauss_legendre(Xksi, Wksi, interval)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine gauss_legendre_2D(interval1, interval2, degree, Xksi, Wksi)
+        real(rk), intent(in) :: interval1(2), interval2(2)
+        integer, intent(in) :: degree(2)
+        real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
+        real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:)
+
+        allocate(Xksi1(degree(1)+1), Wksi1(degree(1)+1))
+        allocate(Xksi2(degree(2)+1), Wksi2(degree(2)+1))
+
+        call gauss_legendre(Xksi1, Wksi1, interval1)
+        call gauss_legendre(Xksi2, Wksi2, interval2)
+
+        call ndgrid(Xksi1, Xksi2, Xksi)
+        Wksi = kron(Wksi1, Wksi2)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine gauss_legendre_3D(interval1, interval2, interval3, degree, Xksi, Wksi)
+        real(rk), intent(in) :: interval1(2), interval2(2), interval3(2)
+        integer, intent(in) :: degree(3)
+        real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
+        real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:), Xksi3(:), Wksi3(:)
+
+        allocate(Xksi1(degree(1)+1), Wksi1(degree(1)+1))
+        allocate(Xksi2(degree(2)+1), Wksi2(degree(2)+1))
+        allocate(Xksi3(degree(3)+1), Wksi3(degree(3)+1))
+
+        call gauss_legendre(Xksi1, Wksi1, interval1)
+        call gauss_legendre(Xksi2, Wksi2, interval2)
+        call gauss_legendre(Xksi3, Wksi3, interval3)
+
+        call ndgrid(Xksi1, Xksi2, Xksi3, Xksi)
+        Wksi = kron(kron(Wksi3, Wksi2), Wksi1)
+    end subroutine
     !===============================================================================
 
 end module forcad_utils

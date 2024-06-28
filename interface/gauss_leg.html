@@ -1,0 +1,759 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>gauss_leg &ndash; ForCAD</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/local.css" rel="stylesheet">
+      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD <small>0.5.1</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>gauss_leg
+      <small>Interface</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title="<p> 0.5% of total for procedures.</p>Including implementation: 38 statements,  3.9% of total for procedures.">5 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/forcad_utils.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_utils.f90.html'>forcad_utils.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_utils.html'>forcad_utils</a></li>
+            <li class="breadcrumb-item active" aria-current="page">gauss_leg</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#modprocs-0"
+         aria-expanded="false" aria-controls="modprocs-0">
+         <h4 class="card-header bg-primary text-white">Module Procedures</h4>
+      </a>
+      <div id="modprocs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../interface/gauss_leg.html#moduleprocedure-gauss_legendre_1d">gauss_legendre_1D</a>
+            <a class="list-group-item" href="../interface/gauss_leg.html#moduleprocedure-gauss_legendre_2d">gauss_legendre_2D</a>
+            <a class="list-group-item" href="../interface/gauss_leg.html#moduleprocedure-gauss_legendre_3d">gauss_legendre_3D</a>
+        </div>
+      </div>
+    </div>
+
+  
+
+
+  </div>
+
+    </div>
+
+    <div class="col-md-9" id='text'>
+      <h2>public interface gauss_leg</h2>
+      
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Calls</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: interface~~gauss_leg~~CallsGraph Pages: 1 -->
+<svg id="interfacegauss_legCallsGraph" width="447pt" height="137pt"
+ viewBox="0.00 0.00 447.00 137.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="interface~~gauss_leg~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 133)">
+<title>interface~~gauss_leg~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-133 443,-133 443,4 -4,4"/>
+<!-- interface~gauss_leg -->
+<g id="interface~~gauss_leg~~CallsGraph_node1" class="node">
+<title>interface~gauss_leg</title>
+<polygon fill="none" stroke="black" points="65,-87 0,-87 0,-63 65,-63 65,-87"/>
+<text text-anchor="middle" x="32.5" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50">gauss_leg</text>
+</g>
+<!-- proc~gauss_legendre_1d -->
+<g id="interface~~gauss_leg~~CallsGraph_node2" class="node">
+<title>proc~gauss_legendre_1d</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node2"><a xlink:href="../proc/gauss_legendre_1d.html" xlink:title="gauss_legendre_1D">
+<polygon fill="#d9534f" stroke="#d9534f" points="217,-129 101,-129 101,-105 217,-105 217,-129"/>
+<text text-anchor="middle" x="159" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">gauss_legendre_1D</text>
+</a>
+</g>
+</g>
+<!-- interface~gauss_leg&#45;&gt;proc~gauss_legendre_1d -->
+<g id="interface~~gauss_leg~~CallsGraph_edge1" class="edge">
+<title>interface~gauss_leg&#45;&gt;proc~gauss_legendre_1d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M65.24,-85.71C79.68,-90.58 97.02,-96.43 112.79,-101.75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="111.77,-105.1 122.36,-104.98 114.01,-98.47 111.77,-105.1"/>
+</g>
+<!-- proc~gauss_legendre_2d -->
+<g id="interface~~gauss_leg~~CallsGraph_node3" class="node">
+<title>proc~gauss_legendre_2d</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node3"><a xlink:href="../proc/gauss_legendre_2d.html" xlink:title="gauss_legendre_2D">
+<polygon fill="#d9534f" stroke="#d9534f" points="217,-45 101,-45 101,-21 217,-21 217,-45"/>
+<text text-anchor="middle" x="159" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">gauss_legendre_2D</text>
+</a>
+</g>
+</g>
+<!-- interface~gauss_leg&#45;&gt;proc~gauss_legendre_2d -->
+<g id="interface~~gauss_leg~~CallsGraph_edge2" class="edge">
+<title>interface~gauss_leg&#45;&gt;proc~gauss_legendre_2d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M65.24,-64.29C79.68,-59.42 97.02,-53.57 112.79,-48.25"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="114.01,-51.53 122.36,-45.02 111.77,-44.9 114.01,-51.53"/>
+</g>
+<!-- proc~gauss_legendre_3d -->
+<g id="interface~~gauss_leg~~CallsGraph_node4" class="node">
+<title>proc~gauss_legendre_3d</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node4"><a xlink:href="../proc/gauss_legendre_3d.html" xlink:title="gauss_legendre_3D">
+<polygon fill="#d9534f" stroke="#d9534f" points="217,-87 101,-87 101,-63 217,-63 217,-87"/>
+<text text-anchor="middle" x="159" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">gauss_legendre_3D</text>
+</a>
+</g>
+</g>
+<!-- interface~gauss_leg&#45;&gt;proc~gauss_legendre_3d -->
+<g id="interface~~gauss_leg~~CallsGraph_edge3" class="edge">
+<title>interface~gauss_leg&#45;&gt;proc~gauss_legendre_3d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M65.24,-75C73.09,-75 81.8,-75 90.65,-75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="90.67,-78.5 100.67,-75 90.67,-71.5 90.67,-78.5"/>
+</g>
+<!-- gauss_legendre -->
+<g id="interface~~gauss_leg~~CallsGraph_node5" class="node">
+<title>gauss_legendre</title>
+<polygon fill="#777777" stroke="#777777" points="349,-129 253,-129 253,-105 349,-105 349,-129"/>
+<text text-anchor="middle" x="301" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">gauss_legendre</text>
+</g>
+<!-- proc~gauss_legendre_1d&#45;&gt;gauss_legendre -->
+<g id="interface~~gauss_leg~~CallsGraph_edge4" class="edge">
+<title>proc~gauss_legendre_1d&#45;&gt;gauss_legendre</title>
+<path fill="none" stroke="#ff0000" d="M217.35,-117C225.72,-117 234.35,-117 242.72,-117"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="242.78,-120.5 252.78,-117 242.78,-113.5 242.78,-120.5"/>
+</g>
+<!-- proc~gauss_legendre_2d&#45;&gt;gauss_legendre -->
+<g id="interface~~gauss_leg~~CallsGraph_edge5" class="edge">
+<title>proc~gauss_legendre_2d&#45;&gt;gauss_legendre</title>
+<path fill="none" stroke="#00ff00" d="M200.83,-45.12C206.5,-47.62 212.06,-50.57 217,-54 237.19,-68.04 233.3,-81.29 253,-96 254.8,-97.35 256.71,-98.63 258.67,-99.85"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="257.14,-103.01 267.59,-104.81 260.55,-96.89 257.14,-103.01"/>
+</g>
+<!-- interface~ndgrid -->
+<g id="interface~~gauss_leg~~CallsGraph_node6" class="node">
+<title>interface~ndgrid</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node6"><a xlink:href="../interface/ndgrid.html" xlink:title="ndgrid">
+<polygon fill="#a7506f" stroke="#a7506f" points="328,-45 274,-45 274,-21 328,-21 328,-45"/>
+<text text-anchor="middle" x="301" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid</text>
+</a>
+</g>
+</g>
+<!-- proc~gauss_legendre_2d&#45;&gt;interface~ndgrid -->
+<g id="interface~~gauss_leg~~CallsGraph_edge6" class="edge">
+<title>proc~gauss_legendre_2d&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#00ff00" d="M217.35,-33C232.99,-33 249.51,-33 263.63,-33"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="263.91,-36.5 273.91,-33 263.91,-29.5 263.91,-36.5"/>
+</g>
+<!-- proc~kron -->
+<g id="interface~~gauss_leg~~CallsGraph_node7" class="node">
+<title>proc~kron</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node7"><a xlink:href="../proc/kron.html" xlink:title="kron">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="328,-87 274,-87 274,-63 328,-63 328,-87"/>
+<text text-anchor="middle" x="301" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron</text>
+</a>
+</g>
+</g>
+<!-- proc~gauss_legendre_2d&#45;&gt;proc~kron -->
+<g id="interface~~gauss_leg~~CallsGraph_edge7" class="edge">
+<title>proc~gauss_legendre_2d&#45;&gt;proc~kron</title>
+<path fill="none" stroke="#00ff00" d="M200.12,-45.04C220.21,-51.06 244.34,-58.3 263.86,-64.16"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="263.01,-67.56 273.59,-67.08 265.02,-60.85 263.01,-67.56"/>
+</g>
+<!-- proc~gauss_legendre_3d&#45;&gt;gauss_legendre -->
+<g id="interface~~gauss_leg~~CallsGraph_edge8" class="edge">
+<title>proc~gauss_legendre_3d&#45;&gt;gauss_legendre</title>
+<path fill="none" stroke="#0000ff" d="M200.12,-87.04C215.64,-91.69 233.58,-97.07 249.93,-101.98"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="249.29,-105.44 259.88,-104.96 251.3,-98.74 249.29,-105.44"/>
+</g>
+<!-- proc~gauss_legendre_3d&#45;&gt;interface~ndgrid -->
+<g id="interface~~gauss_leg~~CallsGraph_edge9" class="edge">
+<title>proc~gauss_legendre_3d&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#0000ff" d="M200.12,-62.96C220.21,-56.94 244.34,-49.7 263.86,-43.84"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="265.02,-47.15 273.59,-40.92 263.01,-40.44 265.02,-47.15"/>
+</g>
+<!-- proc~gauss_legendre_3d&#45;&gt;proc~kron -->
+<g id="interface~~gauss_leg~~CallsGraph_edge10" class="edge">
+<title>proc~gauss_legendre_3d&#45;&gt;proc~kron</title>
+<path fill="none" stroke="#0000ff" d="M217.35,-75C232.99,-75 249.51,-75 263.63,-75"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="263.91,-78.5 273.91,-75 263.91,-71.5 263.91,-78.5"/>
+</g>
+<!-- proc~ndgrid2 -->
+<g id="interface~~gauss_leg~~CallsGraph_node8" class="node">
+<title>proc~ndgrid2</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node8"><a xlink:href="../proc/ndgrid2.html" xlink:title="ndgrid2">
+<polygon fill="#d9534f" stroke="#d9534f" points="439,-66 385,-66 385,-42 439,-42 439,-66"/>
+<text text-anchor="middle" x="412" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid2</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid2 -->
+<g id="interface~~gauss_leg~~CallsGraph_edge11" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid2</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M328.11,-38.03C342.03,-40.71 359.37,-44.05 374.6,-46.99"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="374.25,-50.48 384.73,-48.94 375.57,-43.61 374.25,-50.48"/>
+</g>
+<!-- proc~ndgrid3 -->
+<g id="interface~~gauss_leg~~CallsGraph_node9" class="node">
+<title>proc~ndgrid3</title>
+<g id="a_interface~~gauss_leg~~CallsGraph_node9"><a xlink:href="../proc/ndgrid3.html" xlink:title="ndgrid3">
+<polygon fill="#d9534f" stroke="#d9534f" points="439,-24 385,-24 385,0 439,0 439,-24"/>
+<text text-anchor="middle" x="412" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid3</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid3 -->
+<g id="interface~~gauss_leg~~CallsGraph_edge12" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid3</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M328.11,-27.97C342.03,-25.29 359.37,-21.95 374.6,-19.01"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="375.57,-22.39 384.73,-17.06 374.25,-15.52 375.57,-22.39"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+
+
+        <h2>Module Procedures</h2>
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-gauss_legendre_1d"></span> <h3>private pure subroutine <a href='../proc/gauss_legendre_1d.html'>gauss_legendre_1D</a>(interval, degree, Xksi, Wksi)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~8"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xksi"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xksi</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wksi"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Wksi</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-gauss_legendre_2d"></span> <h3>private pure subroutine <a href='../proc/gauss_legendre_2d.html'>gauss_legendre_2D</a>(interval1, interval2, degree, Xksi, Wksi)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval1"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval1</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval2</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~9"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xksi~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xksi</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wksi~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Wksi</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+            <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-gauss_legendre_3d"></span> <h3>private pure subroutine <a href='../proc/gauss_legendre_3d.html'>gauss_legendre_3D</a>(interval1, interval2, interval3, degree, Xksi, Wksi)  
+</h3></div>
+    <div class="card-body">
+              <dl class="dl-horizontal">
+        <dt>Author</dt><dd>Seyed Ali Ghasemi</dd>
+        <dt>License</dt><dd>BSD 3-Clause</dd>
+    </dl>
+
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval1~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval1</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval2~2"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval2</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-interval3"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>interval3</strong>(2)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-degree~10"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>degree</strong>(3)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xksi~3"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xksi</strong>(:,:)</td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wksi~3"></span>
+              real(kind=rk),
+            </td>
+<td>intent(out),</td>
+              <td></td>            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Wksi</strong>(:)</td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+    </div>
+  </div>
+
+</div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2024 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2024-06-28T14:37:13.150877             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+
+    <!-- MathJax JavaScript
+             ================================================== -->
+             <!-- Placed at the end of the document so the pages load faster -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({
+          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
+          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
+          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
+          });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+          <script src="../tipuesearch/tipuesearch_content.js"></script>
+          <script src="../tipuesearch/tipuesearch_set.js"></script>
+          <script src="../tipuesearch/tipuesearch.js"></script>
+
+  </body>
+</html>
