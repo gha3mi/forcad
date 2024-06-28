@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added generic `get_nc()` method to `nurbs_surface` and `nurbs_volume` derived types.
 - Added `det`, `inv`, `dyad` and `gauss_leg` procedures in the `forcad_utils` module.
 - Added procedure `set1a` to the `nurbs_curve` derived type.
 - Added procedure `set4` to the `nurbs_curve` NURBS derived type.
