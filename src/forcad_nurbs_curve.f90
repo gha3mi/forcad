@@ -5,7 +5,7 @@ module forcad_nurbs_curve
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
         insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation
+        elemConn_Cn, unique, rotation, dyad, gauss_leg
 
     implicit none
 
@@ -29,9 +29,11 @@ module forcad_nurbs_curve
         integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
         procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
+        procedure :: set1a
         procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
         procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
-        generic :: set => set1, set2, set3 !!> Set NURBS curve
+        procedure :: set4                  !!> Set NURBS curve using degree, number of control points, control points and weights
+        generic :: set => set1, set1a, set2, set3, set4 !!> Set NURBS curve
         procedure :: create                !!> Generate geometry points
         procedure :: cmp_Xg                !!> Compute geometry points
         procedure, private :: get_Xc_all   !!> Get all control points
@@ -90,6 +92,8 @@ module forcad_nurbs_curve
         procedure :: show                  !!> Show the NURBS object using PyVista
         procedure :: nearest_point         !!> Find the nearest point on the NURBS curve (Approximation)
         procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newton's method)
+        procedure :: ansatz                !!> Compute the shape functions, derivative of shape functions and dL
+        procedure :: cmp_length            !!> Compute the length of the NURBS curve
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -219,7 +223,7 @@ module forcad_nurbs_curve
             real(rk), allocatable, intent(out) :: f_Tgc(:,:)
         end subroutine
 
-        pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc)
+        pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
@@ -228,9 +232,10 @@ module forcad_nurbs_curve
             real(rk), intent(in), contiguous :: f_Wc(:)
             real(rk), allocatable, intent(out) :: f_dTgc(:)
             real(rk), allocatable, intent(out) :: f_Tgc(:)
+            integer, intent(in), optional :: f_elem(:)
         end subroutine
 
-        pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc)
+        pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
@@ -238,6 +243,7 @@ module forcad_nurbs_curve
             integer, intent(in) :: f_nc
             real(rk), allocatable, intent(out) :: f_dTgc(:)
             real(rk), allocatable, intent(out) :: f_Tgc(:)
+            integer, intent(in), optional :: f_elem(:)
         end subroutine
     end interface
 
@@ -327,6 +333,36 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Set knot vector, control points and weights for the NURBS curve object.
+    pure subroutine set1a(this, knot, Xc, Wc)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in), contiguous :: Xc(:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+
+        if (allocated(this%knot)) deallocate(this%knot)
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
+        this%knot = knot
+        call this%cmp_degree()
+        allocate(this%Xc(size(Xc), 3), source = 0.0_rk)
+        this%Xc(:,1) = Xc
+        this%nc = size(this%Xc, 1)
+        if (present(Wc)) then
+            if (size(Wc) /= this%nc) then
+                error stop 'Number of weights does not match the number of control points.'
+            else
+                if (allocated(this%Wc)) deallocate(this%Wc)
+                this%Wc = Wc
+            end if
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     !> Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.
     pure subroutine set2(this, Xth_dir, degree, continuity, Xc, Wc)
         class(nurbs_curve), intent(inout) :: this
@@ -378,6 +414,44 @@ contains
         call this%cmp_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
+                error stop 'Number of weights does not match the number of control points.'
+            else
+                if (allocated(this%Wc)) deallocate(this%Wc)
+                this%Wc = Wc
+            end if
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set4(this, degree, nc, Xc, Wc)
+        class(nurbs_curve), intent(inout) :: this
+        integer, intent(in) :: degree
+        integer, intent(in) :: nc
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+        integer :: m, i
+
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
+        this%Xc = Xc
+        this%nc = nc
+        this%degree = degree
+
+        ! Size of knot vectors
+        m = nc + degree + 1
+
+        if (allocated(this%knot)) deallocate(this%knot)
+        allocate(this%knot(m))
+        this%knot(1:degree+1) = 0.0_rk
+        this%knot(degree+2:m-degree-1) = [(real(i, rk)/(m-2*degree-1), i=1, m-2*degree-2)]
+        this%knot(m-degree:m) = 1.0_rk
+
+        if (present(Wc)) then
+            if (size(Wc) /= nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
                 if (allocated(this%Wc)) deallocate(this%Wc)
@@ -1121,16 +1195,17 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine derivative_scalar(this, Xt, dTgc, Tgc)
+    pure subroutine derivative_scalar(this, Xt, dTgc, Tgc, elem)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xt
+        integer, intent(in), optional :: elem(:)
         real(rk), allocatable, intent(out) :: dTgc(:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
-            call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc)
+            call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
         else ! B-Spline
-            call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc)
+            call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc, elem)
         end if
     end subroutine
     !===============================================================================
@@ -1837,6 +1912,78 @@ contains
     end subroutine
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dL)
+        class(nurbs_curve), intent(inout) :: this
+
+        integer, intent(in) :: ie, ig
+        real(rk), intent(out) :: dL
+        real(rk), allocatable, intent(out) :: Tgc(:), dTgc_dXg(:,:)
+        real(rk), allocatable :: Xth(:), Xth_e(:), Xc_eT(:,:), Xksi(:), Wksi(:)
+        integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
+        type(nurbs_curve) :: th, th_e
+        real(rk), allocatable :: dTtth_dXksi(:), Ttth(:), dTgc_dXt(:), dXg_dXt(:)
+        real(rk) :: Xt, dXt_dXksi
+        real(rk), allocatable :: dXg_dXksi(:) !> Jacobian matrix
+        real(rk) :: det_dXg_dXksi !> Determinant of the Jacobian matrix
+
+        call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+
+        Xth = unique(this%knot)
+
+        call th%set([0.0_rk,Xth,1.0_rk], Xth)
+        elem_th = th%cmp_elem()
+
+        elem_c = this%cmp_elem()
+
+        Xth_e = Xth(elem_th(ie,:))
+        call th_e%set([0.0_rk,0.0_rk,1.0_rk,1.0_rk], Xth_e)
+
+        elem_ce = elem_c(ie,:)
+        Xc_eT = transpose(this%Xc(elem_ce,:))
+
+        call th_e%derivative(Xksi(ig), dTtth_dXksi, Ttth)
+        Xt = dot_product(Xth_e, Ttth)
+        dXt_dXksi = dot_product(Xth_e, dTtth_dXksi)
+
+        call this%derivative(Xt, dTgc_dXt, Tgc, elem_ce)
+        dXg_dXt = matmul(Xc_eT, dTgc_dXt)
+
+        dTgc_dXg = dyad(dTgc_dXt, dXg_dXt)/norm2(dXg_dXt)
+
+        dXg_dXksi = dXg_dXt*dXt_dXksi
+        det_dXg_dXksi = norm2(dXg_dXksi)
+
+        dL = det_dXg_dXksi*Wksi(ig)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_length(this, length)
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(out) :: length
+        real(rk), allocatable :: Tgc(:), dTgc_dXg(:,:)
+        integer :: ie, ig
+        real(rk) :: dL, dL_ig
+
+        length = 0.0_rk
+        do ie = 1, size(this%cmp_elem(),1)
+            dL = 0.0_rk
+            do ig = 1, size(this%cmp_elem(),2)
+                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig)
+                dL = dL + dL_ig
+            end do
+            length = length + dL
+        end do
+    end subroutine
+    !===============================================================================
+
 end module forcad_nurbs_curve
 
 !===============================================================================
@@ -1972,7 +2119,7 @@ end subroutine
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, Tgc)
+impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, Tgc, elem)
     use forcad_utils, only: rk, basis_bspline_der
 
     implicit none
@@ -1981,14 +2128,22 @@ impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, T
     integer, intent(in) :: degree
     integer, intent(in) :: nc
     real(rk), intent(in), contiguous :: Wc(:)
+    integer, intent(in), optional :: elem(:)
     real(rk), allocatable, intent(out) :: dTgc(:)
     real(rk), allocatable, intent(out) :: Tgc(:)
     real(rk), allocatable :: dBi(:), Bi(:)
 
-    allocate(dTgc(nc), Tgc(nc))
     call basis_bspline_der(Xt, knot, nc, degree, dBi, Bi)
-    Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
-    dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+
+    if (.not. present(elem)) then
+        allocate(dTgc(nc), Tgc(nc))
+        Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
+        dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+    else
+        allocate(dTgc(size(elem)), Tgc(size(elem)))
+        Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
+        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))    
+    end if
 end subroutine
 !===============================================================================
 
@@ -2023,7 +2178,7 @@ end subroutine
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure subroutine compute_dTgc_bspline_1d_scalar(Xt, knot, degree, nc, dTgc, Tgc)
+impure subroutine compute_dTgc_bspline_1d_scalar(Xt, knot, degree, nc, dTgc, Tgc, elem)
     use forcad_utils, only: rk, basis_bspline_der
 
     implicit none
@@ -2031,11 +2186,20 @@ impure subroutine compute_dTgc_bspline_1d_scalar(Xt, knot, degree, nc, dTgc, Tgc
     real(rk), intent(in), contiguous :: knot(:)
     integer, intent(in) :: degree
     integer, intent(in) :: nc
+    integer, intent(in), optional :: elem(:)
     real(rk), allocatable, intent(out) :: dTgc(:)
     real(rk), allocatable, intent(out) :: Tgc(:)
+    real(rk), allocatable :: dB(:), B(:)
 
-    allocate(dTgc(nc), Tgc(nc))
-    call basis_bspline_der(Xt, knot, nc, degree, dTgc, Tgc)
+    if (.not. present(elem)) then
+        allocate(dTgc(nc), Tgc(nc))
+        call basis_bspline_der(Xt, knot, nc, degree, dTgc, Tgc)
+    else
+        allocate(dB(size(elem)), B(size(elem)))
+        call basis_bspline_der(Xt, knot, nc, degree, dB, B)
+        Tgc = B(elem)
+        dTgc = dB(elem)
+    end if
 end subroutine
 !===============================================================================
 

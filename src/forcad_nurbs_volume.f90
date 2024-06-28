@@ -5,7 +5,7 @@ module forcad_nurbs_volume
 
     use forcad_utils, only: rk, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation
+        elemConn_Cn, unique, rotation, det, inv, gauss_leg
 
     implicit none
 
@@ -36,7 +36,8 @@ module forcad_nurbs_volume
         procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS volume object
         procedure :: set2                   !!> Set NURBS volume using nodes of parameter space, degree, continuity, control points and weights
         procedure :: set3                   !!> Set Bezier or Rational Bezier volume using control points and weights
-        generic :: set => set1, set2, set3  !!> Set NURBS volume
+        procedure :: set4                   !!> Set NURBS volume using degree, number of control points, control points and weights
+        generic :: set => set1, set2, set3, set4  !!> Set NURBS volume
         procedure :: create                 !!> Generate geometry points
         procedure :: cmp_Xg                !!> Compute geometry points
         procedure, private :: get_Xc_all   !!> Get all control points
@@ -55,6 +56,9 @@ module forcad_nurbs_volume
         procedure, private :: get_knoti     !!> Get i-th knot value
         generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
+        procedure, private :: get_nc_dir             !!> Get number of control points in a specific direction
+        procedure, private :: get_nc_all             !!> Get number of control points in all directions
+        generic :: get_nc => get_nc_all, get_nc_dir !!> Get number of control points
         procedure :: cmp_degree             !!> Compute degree of the NURBS volume
         procedure, private :: get_degree_all!!> Get degree of the NURBS volume in all directions
         procedure, private :: get_degree_dir!!> Get degree of the NURBS volume in a specific direction
@@ -97,6 +101,9 @@ module forcad_nurbs_volume
         procedure :: show                   !!> Show the NURBS object using PyVista
         procedure :: nearest_point          !!> Find the nearest point on the NURBS volume (Approximation)
         procedure :: nearest_point2         !!> Find the nearest point on the NURBS volume (Minimization - Newton's method)
+        procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dV
+        procedure :: cmp_volume             !!> Compute the volume of the NURBS volume
+
 
         ! Faces
         procedure :: cmp_elemFace_Xc_vis   !!> Compute faces of the control points
@@ -182,7 +189,7 @@ module forcad_nurbs_volume
             real(rk), allocatable, intent(out) :: f_Tgc(:,:)
         end subroutine
 
-        pure subroutine compute_dTgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc)
+        pure subroutine compute_dTgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
@@ -191,9 +198,10 @@ module forcad_nurbs_volume
             real(rk), intent(in), contiguous :: f_Wc(:)
             real(rk), allocatable, intent(out) :: f_dTgc(:,:)
             real(rk), allocatable, intent(out) :: f_Tgc(:)
+            integer, intent(in), optional :: f_elem(:)
         end subroutine
 
-        pure subroutine compute_dTgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_dTgc, f_Tgc)
+        pure subroutine compute_dTgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
@@ -201,6 +209,7 @@ module forcad_nurbs_volume
             integer, intent(in) :: f_nc(3)
             real(rk), allocatable, intent(out) :: f_dTgc(:,:)
             real(rk), allocatable, intent(out) :: f_Tgc(:)
+            integer, intent(in), optional :: f_elem(:)
         end subroutine
     end interface
 
@@ -401,6 +410,56 @@ contains
         call this%cmp_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)*this%nc(3)) then
+                error stop 'Number of weights does not match the number of control points.'
+            else
+                if (allocated(this%Wc)) deallocate(this%Wc)
+                this%Wc = Wc
+            end if
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine set4(this, degree, nc, Xc, Wc)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in), contiguous :: degree(:)
+        integer, intent(in), contiguous :: nc(:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+        integer :: m(3), i
+
+        if (allocated(this%Xc)) deallocate(this%Xc)
+
+        this%Xc = Xc
+        this%nc = nc
+        this%degree = degree
+
+        ! Size of knot vectors
+        m = nc + degree + 1
+
+        if (allocated(this%knot1)) deallocate(this%knot1)
+        allocate(this%knot1(m(1)))
+        this%knot1(1:degree(1)+1) = 0.0_rk
+        this%knot1(degree(1)+2:m(1)-degree(1)-1) = [(real(i, rk)/(m(1)-2*degree(1)-1), i=1, m(1)-2*degree(1)-2)]
+        this%knot1(m(1)-degree(1):m(1)) = 1.0_rk
+
+        if (allocated(this%knot2)) deallocate(this%knot2)
+        allocate(this%knot2(m(2)))
+        this%knot2(1:degree(2)+1) = 0.0_rk
+        this%knot2(degree(2)+2:m(2)-degree(2)-1) = [(real(i, rk)/(m(2)-2*degree(2)-1), i=1, m(2)-2*degree(2)-2)]
+        this%knot2(m(2)-degree(2):m(2)) = 1.0_rk
+
+        if (allocated(this%knot3)) deallocate(this%knot3)
+        allocate(this%knot3(m(3)))
+        this%knot3(1:degree(3)+1) = 0.0_rk
+        this%knot3(degree(3)+2:m(3)-degree(3)-1) = [(real(i, rk)/(m(3)-2*degree(3)-1), i=1, m(3)-2*degree(3)-2)]
+        this%knot3(m(3)-degree(3):m(3)) = 1.0_rk
+
+        if (present(Wc)) then
+            if (size(Wc) /= nc(1)*nc(2)*nc(3)) then
                 error stop 'Number of weights does not match the number of control points.'
             else
                 if (allocated(this%Wc)) deallocate(this%Wc)
@@ -1232,7 +1291,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function get_nc(this, dir) result(nc)
+    pure function get_nc_all(this) result(nc)
+        class(nurbs_volume), intent(in) :: this
+        integer :: nc(3)
+
+        nc = this%nc
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function get_nc_dir(this, dir) result(nc)
         class(nurbs_volume), intent(in) :: this
         integer, intent(in) :: dir
         integer :: nc
@@ -1339,16 +1410,17 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine derivative_scalar(this, Xt, dTgc, Tgc)
+    pure subroutine derivative_scalar(this, Xt, dTgc, Tgc, elem)
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xt(:)
+        integer, intent(in), optional :: elem(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
-            call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, dTgc, Tgc)
+            call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
         else
-            call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, dTgc, Tgc)
+            call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, dTgc, Tgc, elem)
         end if
     end subroutine
     !===============================================================================
@@ -2894,7 +2966,7 @@ contains
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt(3)
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
-        real(rk):: obj, grad(3), hess(3,3), dk(3), alphak, tau, beta, det_inv, Ainv(3,3), lower_bounds(3), upper_bounds(3)
+        real(rk):: obj, grad(3), hess(3,3), dk(3), alphak, tau, beta, lower_bounds(3), upper_bounds(3)
         real(rk), allocatable :: Xg(:), xk(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
         integer :: k, l
         logical :: convergenz
@@ -2986,24 +3058,7 @@ contains
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
             else
 
-                ! Inverse of Hessian
-                det_inv = 1.0_rk/(&
-                    + hess(1,1)*hess(2,2)*hess(3,3) - hess(1,1)*hess(2,3)*hess(3,2)&
-                    - hess(1,2)*hess(2,1)*hess(3,3) + hess(1,2)*hess(2,3)*hess(3,1)&
-                    + hess(1,3)*hess(2,1)*hess(3,2) - hess(1,3)*hess(2,2)*hess(3,1))
-                Ainv(1,1) = +(hess(2,2)*hess(3,3) - hess(2,3)*hess(3,2))
-                Ainv(2,1) = -(hess(2,1)*hess(3,3) - hess(2,3)*hess(3,1))
-                Ainv(3,1) = +(hess(2,1)*hess(3,2) - hess(2,2)*hess(3,1))
-                Ainv(1,2) = -(hess(1,2)*hess(3,3) - hess(1,3)*hess(3,2))
-                Ainv(2,2) = +(hess(1,1)*hess(3,3) - hess(1,3)*hess(3,1))
-                Ainv(3,2) = -(hess(1,1)*hess(3,2) - hess(1,2)*hess(3,1))
-                Ainv(1,3) = +(hess(1,2)*hess(2,3) - hess(1,3)*hess(2,2))
-                Ainv(2,3) = -(hess(1,1)*hess(2,3) - hess(1,3)*hess(2,1))
-                Ainv(3,3) = +(hess(1,1)*hess(2,2) - hess(1,2)*hess(2,1))
-
-                Ainv = det_inv*Ainv
-
-                dk = - matmul(Ainv, grad)
+                dk = - matmul(inv(hess), grad)
 
                 ! Backtracking-Armijo Line Search
                 alphak = 1.0_rk
@@ -3212,6 +3267,79 @@ contains
     end function
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dV)
+        class(nurbs_volume), intent(inout) :: this
+        integer, intent(in) :: ie, ig
+        real(rk), intent(out) :: dV
+        real(rk), allocatable, intent(out) :: Tgc(:), dTgc_dXg(:,:)
+        real(rk), allocatable :: Xth(:,:), Xth_e(:,:), Xth_eT(:,:), Xc_eT(:,:), Xth1(:), Xth2(:), Xth3(:), Xksi(:,:), Wksi(:)
+        integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
+        type(nurbs_volume) :: th, th_e
+        real(rk), allocatable :: dTtth_dXksi(:,:), Ttth(:), dTgc_dXt(:,:), Xt(:), dXt_dXksi(:,:), dXg_dXt(:,:)
+        real(rk), allocatable :: dXg_dXksi(:,:) !> Jacobian matrix
+        real(rk) :: det_dXg_dXksi !> Determinant of the Jacobian matrix
+
+        call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+
+        Xth1 = unique(this%knot1)
+        Xth2 = unique(this%knot2)
+        Xth3 = unique(this%knot3)
+        call ndgrid(Xth1, Xth2, Xth3, Xth)
+        call th%set([0.0_rk,Xth1,1.0_rk], [0.0_rk,Xth2,1.0_rk], [0.0_rk,Xth3,1.0_rk], Xth)
+        elem_th = th%cmp_elem()
+
+        elem_c = this%cmp_elem()
+
+        Xth_e = Xth(elem_th(ie,:),:)
+        call th_e%set([0.0_rk,0.0_rk,1.0_rk,1.0_rk], [0.0_rk,0.0_rk,1.0_rk,1.0_rk], [0.0_rk,0.0_rk,1.0_rk,1.0_rk], Xth_e)
+
+        Xth_eT = transpose(Xth_e)
+        elem_ce = elem_c(ie,:)
+        Xc_eT = transpose(this%Xc(elem_ce,:))
+
+        call th_e%derivative(Xksi(ig,:), dTtth_dXksi, Ttth)
+        Xt = matmul(Xth_eT, Ttth)
+        dXt_dXksi = matmul(Xth_eT, dTtth_dXksi)
+
+        call this%derivative(Xt, dTgc_dXt, Tgc, elem_ce)
+        dXg_dXt = matmul(Xc_eT, dTgc_dXt)
+
+        dTgc_dXg = matmul(dTgc_dXt, inv(dXg_dXt))
+
+        dXg_dXksi = matmul(dXg_dXt, dXt_dXksi)
+        det_dXg_dXksi = det(dXg_dXksi)
+
+        dV = det_dXg_dXksi*Wksi(ig)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine cmp_volume(this, volume)
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(out) :: volume
+        real(rk), allocatable :: Tgc(:), dTgc_dXg(:,:)
+        integer :: ie, ig
+        real(rk) :: dV, dV_ig
+
+        volume = 0.0_rk
+        do ie = 1, size(this%cmp_elem(),1)
+            dV = 0.0_rk
+            do ig = 1, size(this%cmp_elem(),2)
+                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dV_ig)
+                dV = dV + dV_ig
+            end do
+            volume = volume + dV
+        end do
+    end subroutine
+    !===============================================================================
+
 end module forcad_nurbs_volume
 
 !===============================================================================
@@ -3375,7 +3503,7 @@ end subroutine
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure subroutine compute_dTgc_nurbs_3d_scalar(Xt, knot1, knot2, knot3, degree, nc, Wc, dTgc, Tgc)
+impure subroutine compute_dTgc_nurbs_3d_scalar(Xt, knot1, knot2, knot3, degree, nc, Wc, dTgc, Tgc, elem)
     use forcad_utils, only: rk, basis_bspline_der, kron
 
     implicit none
@@ -3384,29 +3512,51 @@ impure subroutine compute_dTgc_nurbs_3d_scalar(Xt, knot1, knot2, knot3, degree, 
     integer, intent(in) :: degree(3)
     integer, intent(in) :: nc(3)
     real(rk), intent(in), contiguous :: Wc(:)
+    integer, intent(in), optional :: elem(:)
     real(rk), allocatable, intent(out) :: dTgc(:,:)
     real(rk), allocatable, intent(out) :: Tgc(:)
     real(rk), allocatable :: dB1(:), dB2(:), dB3(:), dBi(:,:)
     real(rk), allocatable :: B1(:), B2(:), B3(:), Bi(:)
 
-    allocate(dTgc(nc(1)*nc(2)*nc(3), 3))
-    allocate(Tgc(nc(1)*nc(2)*nc(3)))
-    allocate(dBi(nc(1)*nc(2)*nc(3), 3), Bi(nc(1)*nc(2)*nc(3)))
-
     call basis_bspline_der(Xt(1), knot1, nc(1), degree(1), dB1, B1)
     call basis_bspline_der(Xt(2), knot2, nc(2), degree(2), dB2, B2)
     call basis_bspline_der(Xt(3), knot3, nc(3), degree(3), dB3, B3)
 
-    Bi = kron( B3, kron( B2,  B1))
-    Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
+    if (.not. present(elem)) then
+        allocate(dTgc(nc(1)*nc(2)*nc(3), 3))
+        allocate(Tgc(nc(1)*nc(2)*nc(3)))
+        allocate(dBi(nc(1)*nc(2)*nc(3), 3), Bi(nc(1)*nc(2)*nc(3)))
 
-    dBi(:,1) = kron(kron(B3,B2),dB1)
-    dBi(:,2) = kron(kron(B3,dB2),B1)
-    dBi(:,3) = kron(kron(dB3,B2),B1)
+        Bi = kron( B3, kron( B2,  B1))
+        Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
 
-    dTgc(:,1) = ( dBi(:,1)*Wc - Tgc*dot_product(dBi(:,1),Wc) ) / dot_product(Bi,Wc)
-    dTgc(:,2) = ( dBi(:,2)*Wc - Tgc*dot_product(dBi(:,2),Wc) ) / dot_product(Bi,Wc)
-    dTgc(:,3) = ( dBi(:,3)*Wc - Tgc*dot_product(dBi(:,3),Wc) ) / dot_product(Bi,Wc)
+        dBi(:,1) = kron(kron(B3,B2),dB1)
+        dBi(:,2) = kron(kron(B3,dB2),B1)
+        dBi(:,3) = kron(kron(dB3,B2),B1)
+
+        dTgc(:,1) = ( dBi(:,1)*Wc - Tgc*dot_product(dBi(:,1),Wc) ) / dot_product(Bi,Wc)
+        dTgc(:,2) = ( dBi(:,2)*Wc - Tgc*dot_product(dBi(:,2),Wc) ) / dot_product(Bi,Wc)
+        dTgc(:,3) = ( dBi(:,3)*Wc - Tgc*dot_product(dBi(:,3),Wc) ) / dot_product(Bi,Wc)
+    else
+        allocate(dTgc(size(elem), 3))
+        allocate(Tgc(size(elem)))
+        allocate(dBi(size(elem), 3), Bi(size(elem)))
+
+        associate(Biall => kron( B3, kron( B2,  B1)))
+            Bi = Biall(elem)
+            Tgc = Bi*(Wc(elem)/(dot_product(Bi,Wc(elem))))
+        end associate
+
+        associate(dB1all => kron(kron(B3,B2),dB1), dB2all => kron(kron(B3,dB2),B1), dB3all => kron(kron(dB3,B2),B1))
+            dBi(:,1) = dB1all(elem)
+            dBi(:,2) = dB2all(elem)
+            dBi(:,3) = dB3all(elem)
+        end associate
+
+        dTgc(:,1) = ( dBi(:,1)*Wc(elem) - Tgc*dot_product(dBi(:,1),Wc(elem)) ) / dot_product(Bi,Wc(elem))
+        dTgc(:,2) = ( dBi(:,2)*Wc(elem) - Tgc*dot_product(dBi(:,2),Wc(elem)) ) / dot_product(Bi,Wc(elem))
+        dTgc(:,3) = ( dBi(:,3)*Wc(elem) - Tgc*dot_product(dBi(:,3),Wc(elem)) ) / dot_product(Bi,Wc(elem))
+    end if
 end subroutine
 !===============================================================================
 
@@ -3451,7 +3601,7 @@ end subroutine
 !===============================================================================
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-impure subroutine compute_dTgc_bspline_3d_scalar(Xt, knot1, knot2, knot3, degree, nc, dTgc, Tgc)
+impure subroutine compute_dTgc_bspline_3d_scalar(Xt, knot1, knot2, knot3, degree, nc, dTgc, Tgc, elem)
     use forcad_utils, only: rk, basis_bspline_der, kron
 
     implicit none
@@ -3459,21 +3609,38 @@ impure subroutine compute_dTgc_bspline_3d_scalar(Xt, knot1, knot2, knot3, degree
     real(rk), intent(in), contiguous :: knot1(:), knot2(:), knot3(:)
     integer, intent(in) :: degree(3)
     integer, intent(in) :: nc(3)
+    integer, intent(in), optional :: elem(:)
     real(rk), allocatable, intent(out) :: dTgc(:,:)
     real(rk), allocatable, intent(out) :: Tgc(:)
     real(rk), allocatable :: dB1(:), dB2(:), dB3(:)
     real(rk), allocatable :: B1(:), B2(:), B3(:)
 
-    allocate(dTgc(nc(1)*nc(2)*nc(3), 3))
-    allocate(Tgc(nc(1)*nc(2)*nc(3)))
     call basis_bspline_der(Xt(1), knot1, nc(1), degree(1), dB1, B1)
     call basis_bspline_der(Xt(2), knot2, nc(2), degree(2), dB2, B2)
     call basis_bspline_der(Xt(3), knot3, nc(3), degree(3), dB3, B3)
 
-    Tgc = kron(B3, kron(B2, B1))
-    dTgc(:,1) = kron(kron(B3,B2),dB1)
-    dTgc(:,2) = kron(kron(B3,dB2),B1)
-    dTgc(:,3) = kron(kron(dB3,B2),B1)
+    if (.not. present(elem)) then
+        allocate(dTgc(nc(1)*nc(2)*nc(3), 3))
+        allocate(Tgc(nc(1)*nc(2)*nc(3)))
+
+        Tgc = kron(B3, kron(B2, B1))
+        dTgc(:,1) = kron(kron(B3,B2),dB1)
+        dTgc(:,2) = kron(kron(B3,dB2),B1)
+        dTgc(:,3) = kron(kron(dB3,B2),B1)
+    else
+        allocate(dTgc(size(elem), 3))
+        allocate(Tgc(size(elem)))
+
+        associate(B => kron(B3, kron(B2, B1)))
+            Tgc = B(elem)
+        end associate
+
+        associate(dB1 => kron(kron(B3,B2),dB1), dB2 => kron(kron(B3,dB2),B1), dB3 => kron(kron(dB3,B2),B1))
+            dTgc(:,1) = dB1(elem)
+            dTgc(:,2) = dB2(elem)
+            dTgc(:,3) = dB3(elem)
+        end associate
+    end if
 end subroutine
 !===============================================================================
 

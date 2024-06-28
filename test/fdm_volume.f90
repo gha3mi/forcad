@@ -5,7 +5,7 @@ program fdm_test_volume
     implicit none
 
     type(nurbs_volume) :: volume            !! Declare a NURBS volume object
-    real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
+    real(rk), allocatable :: Wc(:)          !! Weights for the control points
     real(rk) :: Xt(3), tol, Xtm(3), Xtp(3)
     real(rk), allocatable :: Tgc(:), dTgc(:,:), Tgcp(:), dTgcp(:,:), Tgcm(:), dTgcm(:,:), d2Tgc(:,:), d2Tgcp(:,:), d2Tgcm(:,:)
     real(rk), allocatable :: CFD(:,:), BFD(:,:), FFD(:,:), CFD2(:,:), BFD2(:,:), FFD2(:,:)

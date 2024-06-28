@@ -4,6 +4,21 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
+## [0.6.0]
+
+### Added
+
+- Added generic `get_nc()` method to `nurbs_surface` and `nurbs_volume` derived types.
+- Added `det`, `inv`, `dyad` and `gauss_leg` procedures in the `forcad_utils` module.
+- Added procedure `set1a` to the `nurbs_curve` derived type.
+- Added procedure `set4` to `nurbs_curve`,  `nurbs_area` and `nurbs_volume` derived types.
+- Added optional input variable `elem` to `derivative_scalar` procedures.
+- Added `ansatz` procedures to compute shape functions, derivatives of shape functions and (dV, dA, dL).
+- Added `cmp_length()` to compute the length of a NURBS curve.
+- Added `cmp_area()` to compute the area of a NURBS surface.
+- Added `cmp_volume()` to compute the volume of a NURBS volume.
+- Added examples for `cmp_length()`, `cmp_area()`, and `cmp_volume()`.
+
 ## [0.5.1]
 
 ### Changed

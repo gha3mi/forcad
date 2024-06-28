@@ -5,7 +5,7 @@ program fdm_test_surface
     implicit none
 
     type(nurbs_surface) :: surface              !! Declare a NURBS surface object
-    real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
+    real(rk), allocatable :: Wc(:)              !! Declare the control points weights
     real(rk) :: Xtp(2), tol, Xt(2), Xtm(2)
     real(rk), allocatable :: Tgc(:), dTgc(:,:), Tgcp(:), dTgcp(:,:), Tgcm(:), dTgcm(:,:), d2Tgc(:,:), d2Tgcp(:,:), d2Tgcm(:,:)
     real(rk), allocatable :: CFD(:,:), BFD(:,:), FFD(:,:), CFD2(:,:), BFD2(:,:), FFD2(:,:)

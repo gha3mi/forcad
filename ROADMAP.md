@@ -27,6 +27,7 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [x] Improvements and bug fixes.
 
 - Additional Ideas:
+    - [ ] Improve `ROADMAP.md`.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [ ] Add `morph()` method for morphing box.
     - [ ] Add support binary `vtk` files.
@@ -48,5 +49,5 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Improve documentation.
     - [ ] Add offset method.
     - [ ] Add curve, surface and volume fitting.
-    - [ ] Calculate length, area and volume.
+    - [x] Calculate length, area and volume.
     - [ ] Think about a GUI.
