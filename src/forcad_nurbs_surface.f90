@@ -411,7 +411,7 @@ contains
         integer, intent(in), contiguous :: nc(:)
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
-        integer :: m(3), i
+        integer :: m(2), i
 
         if (allocated(this%Xc)) deallocate(this%Xc)
 
@@ -2837,8 +2837,9 @@ impure subroutine compute_dTgc_bspline_2d_vector(Xt, knot1, knot2, degree, nc, n
     real(rk), allocatable :: B1(:), B2(:)
     integer :: i
 
-    allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2))
-    !$OMP PARALLEL DO PRIVATE(dB1, dB2)
+    allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2), Tgc(ng(1)*ng(2), nc(1)*nc(2)))
+    allocate(B1(nc(1)), B2(nc(2)), dB1(nc(1)), dB2(nc(2)))
+
     do i = 1, size(Xt, 1)
         call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
         call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
@@ -2847,7 +2848,6 @@ impure subroutine compute_dTgc_bspline_2d_vector(Xt, knot1, knot2, degree, nc, n
         dTgc(i,:,1) = kron(B2, dB1)
         dTgc(i,:,2) = kron(dB2, B1)
     end do
-    !$OMP END PARALLEL DO
 end subroutine
 !===============================================================================
 
