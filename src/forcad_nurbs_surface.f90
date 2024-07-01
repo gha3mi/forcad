@@ -2446,7 +2446,7 @@ contains
         real(rk), intent(out) :: nearest_Xt(2)
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
         real(rk):: obj, grad(2), hess(2,2), dk(2), alphak, tau, beta, lower_bounds(2), upper_bounds(2)
-        real(rk), allocatable :: Xg(:), xk(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
+        real(rk), allocatable :: Xg(:), xk(:), xkn(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
         integer :: k, l
         logical :: convergenz
         type(nurbs_surface) :: copy_this
@@ -2475,6 +2475,8 @@ contains
         else if (xk(2) > maxval(this%knot2)) then
             xk(2) = maxval(this%knot2)
         end if
+
+        xkn = xk
 
         convergenz = .false.
 
@@ -2509,7 +2511,7 @@ contains
             ! debug
             print '(i3,1x,2e20.10,1x,e20.10)', k, xk, norm2(grad)
 
-            if (norm2(grad) <= tol) then
+            if (norm2(grad) <= tol .or. (k>0 .and. norm2(xk-xkn) <= tol)) then
                 convergenz = .true.
                 nearest_Xt = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
@@ -2527,6 +2529,7 @@ contains
                     l = l + 1
                 end do
 
+                xkn = xk
                 xk = xk + alphak*dk
                 ! Check if xk is within the knot vector range
                 xk = max(min(xk, upper_bounds), lower_bounds)

@@ -2967,11 +2967,13 @@ contains
         real(rk), intent(out) :: nearest_Xt(3)
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
         real(rk):: obj, grad(3), hess(3,3), dk(3), alphak, tau, beta, lower_bounds(3), upper_bounds(3)
-        real(rk), allocatable :: Xg(:), xk(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
+        real(rk), allocatable :: Xg(:), xk(:), xkn(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
         integer :: k, l
         logical :: convergenz
         type(nurbs_volume) :: copy_this
 
+        alphak = 0.0_rk
+        dk = 0.0_rk
         k = 0
 
         ! lower and upper bounds
@@ -3002,6 +3004,8 @@ contains
         else if (xk(3) > maxval(this%knot3)) then
             xk(3) = maxval(this%knot3)
         end if
+
+        xkn = xk
 
         convergenz = .false.
 
@@ -3052,7 +3056,7 @@ contains
             ! debug
             print '(i3,1x,3e20.10,1x,e20.10)', k, xk, norm2(grad)
 
-            if (norm2(grad) <= tol) then
+            if (norm2(grad) <= tol .or. (k>0 .and. norm2(xk-xkn) <= tol)) then
                 convergenz = .true.
                 nearest_Xt = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
@@ -3070,6 +3074,7 @@ contains
                     l = l + 1
                 end do
 
+                xkn = xk
                 xk = xk + alphak*dk
                 ! Check if xk is within the knot vector range
                 xk = max(min(xk, upper_bounds), lower_bounds)
@@ -3581,7 +3586,7 @@ impure subroutine compute_dTgc_bspline_3d_vector(Xt, knot1, knot2, knot3, degree
 
     allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3), 3))
     allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-    !$OMP PARALLEL DO PRIVATE(dB1, dB2, dB3)
+
     do i = 1, size(Xt, 1)
         call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
         call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
@@ -3593,7 +3598,7 @@ impure subroutine compute_dTgc_bspline_3d_vector(Xt, knot1, knot2, knot3, degree
         dTgc(i,:,2) = kron(kron(B3,dB2),B1)
         dTgc(i,:,3) = kron(kron(dB3,B2),B1)
     end do
-    !$OMP END PARALLEL DO
+
 end subroutine
 !===============================================================================
 
