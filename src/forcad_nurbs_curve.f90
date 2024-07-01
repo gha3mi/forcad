@@ -1840,7 +1840,7 @@ contains
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
-        real(rk):: xk, obj, grad, hess, dk, alphak, tau, beta, lower_bounds, upper_bounds
+        real(rk):: xk, xkn, obj, grad, hess, dk, alphak, tau, beta, lower_bounds, upper_bounds
         real(rk), allocatable :: Xg(:), Tgc(:), dTgc(:), d2Tgc(:)
         integer :: k, l
         logical :: convergenz
@@ -1865,6 +1865,8 @@ contains
             xk = maxval(this%knot)
         end if
 
+        xkn = xk
+
         convergenz = .false.
 
         allocate(Xg(size(this%Xc,2)))
@@ -1885,7 +1887,7 @@ contains
             ! debug
             print '(i3,1x,e20.10,1x,e20.10)', k, xk, abs(grad)
 
-            if (abs(grad) <= tol) then
+            if (abs(grad) <= tol .or. (k>0 .and. abs(xk-xkn) <= tol)) then
                 convergenz = .true.
                 nearest_Xt = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
@@ -1902,6 +1904,7 @@ contains
                     l = l + 1
                 end do
 
+                xkn = xk
                 xk = xk + alphak*dk
                 ! Check if xk is within the knot vector range
                 xk = max(min(xk, upper_bounds), lower_bounds)
