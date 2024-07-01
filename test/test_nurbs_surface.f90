@@ -340,8 +340,8 @@ program test_nurbs_surface
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 82")
 
 
-    call nurbs%set_tetragon([0.0_rk, 2.0_rk], [2,2])
-    call bsp%set_tetragon([0.0_rk, 2.0_rk], [2,2], [1.0_rk,1.0_rk,0.9_rk,0.9_rk])
+    call nurbs%set_tetragon([2.0_rk, 2.0_rk], [2,2])
+    call bsp%set_tetragon([2.0_rk, 2.0_rk], [2,2], [1.0_rk,1.0_rk,0.9_rk,0.9_rk])
     call nurbs%set_ring([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk, 2.0_rk)
     call nurbs%set_half_ring([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk, 2.0_rk)
     call nurbs%set_C([0.0_rk, 0.0_rk, 0.0_rk], 1.0_rk, 2.0_rk)
