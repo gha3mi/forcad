@@ -4,6 +4,13 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
+## [0.6.1]
+
+### Changed
+- Improved `nearest_point2()` procedures.
+- Updated and improved unit tests.
+- Fixed bugs in `set4` and `compute_dTgc_bspline_2d_vector` in `nurbs_surface`.
+
 ## [0.6.0]
 
 ### Added
