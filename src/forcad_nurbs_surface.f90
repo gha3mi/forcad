@@ -411,7 +411,7 @@ contains
         integer, intent(in), contiguous :: nc(:)
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
-        integer :: m(3), i
+        integer :: m(2), i
 
         if (allocated(this%Xc)) deallocate(this%Xc)
 
@@ -2446,7 +2446,7 @@ contains
         real(rk), intent(out) :: nearest_Xt(2)
         real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
         real(rk):: obj, grad(2), hess(2,2), dk(2), alphak, tau, beta, lower_bounds(2), upper_bounds(2)
-        real(rk), allocatable :: Xg(:), xk(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
+        real(rk), allocatable :: Xg(:), xk(:), xkn(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
         integer :: k, l
         logical :: convergenz
         type(nurbs_surface) :: copy_this
@@ -2475,6 +2475,8 @@ contains
         else if (xk(2) > maxval(this%knot2)) then
             xk(2) = maxval(this%knot2)
         end if
+
+        xkn = xk
 
         convergenz = .false.
 
@@ -2509,7 +2511,7 @@ contains
             ! debug
             print '(i3,1x,2e20.10,1x,e20.10)', k, xk, norm2(grad)
 
-            if (norm2(grad) <= tol) then
+            if (norm2(grad) <= tol .or. (k>0 .and. norm2(xk-xkn) <= tol)) then
                 convergenz = .true.
                 nearest_Xt = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
@@ -2527,6 +2529,7 @@ contains
                     l = l + 1
                 end do
 
+                xkn = xk
                 xk = xk + alphak*dk
                 ! Check if xk is within the knot vector range
                 xk = max(min(xk, upper_bounds), lower_bounds)
@@ -2837,8 +2840,9 @@ impure subroutine compute_dTgc_bspline_2d_vector(Xt, knot1, knot2, degree, nc, n
     real(rk), allocatable :: B1(:), B2(:)
     integer :: i
 
-    allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2))
-    !$OMP PARALLEL DO PRIVATE(dB1, dB2)
+    allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2), Tgc(ng(1)*ng(2), nc(1)*nc(2)))
+    allocate(B1(nc(1)), B2(nc(2)), dB1(nc(1)), dB2(nc(2)))
+
     do i = 1, size(Xt, 1)
         call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
         call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
@@ -2847,7 +2851,6 @@ impure subroutine compute_dTgc_bspline_2d_vector(Xt, knot1, knot2, degree, nc, n
         dTgc(i,:,1) = kron(B2, dB1)
         dTgc(i,:,2) = kron(dB2, B1)
     end do
-    !$OMP END PARALLEL DO
 end subroutine
 !===============================================================================
 
