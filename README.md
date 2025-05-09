@@ -76,6 +76,25 @@ you can easily include it by adding the following line to your `fpm.toml` file:
 forcad = {git="https://github.com/gha3mi/forcad.git"}
 ```
 
+### Precision Configuration
+
+The library uses **double precision** (`real64`) by default for all real-valued computations. To change the precision, you can define one of the following preprocessor flags during compilation:
+
+| Preprocessor Flag    | Fortran Kind             | Description               |
+|----------------------|--------------------------|---------------------------|
+| `REAL32`             | `selected_real_kind(6)`  | Single precision          |   
+| `REAL64` *(default)* | `selected_real_kind(15)` | Double precision          |
+| `REALXDP`            | `selected_real_kind(18)` | Extended double precision |
+| `REAL128`            | `selected_real_kind(33)` | Quadruple precision       |
+
+**Note**: The examples `example_ppm1.f90`, `example_ppm2.f90`, and `example_ppm3.f90` use the `ForColormap` library, which only supports `REAL64` precision.
+
+#### Example: Building with double precision
+
+```bash
+fpm build --profile release --flag "-DREAL64"
+```
+
 ## API documentation
 
 The most up-to-date API documentation for the master branch is available
