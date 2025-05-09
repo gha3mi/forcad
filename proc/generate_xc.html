@@ -12,14 +12,29 @@
 
     <title>generate_Xc &ndash; ForCAD</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="../css/pygments.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
     <link href="../css/local.css" rel="stylesheet">
-      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="../css/pygments.css" rel="stylesheet">
     <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -77,20 +92,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.2% of total for procedures.">16 statements</a>
+                 title=" 0.3% of total for procedures.">19 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/demo_volume.f90"> Source File</a>
+              <a href="../src/example_surface_1.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/demo_volume.f90.html'>demo_volume.f90</a></li>
-                <li class="breadcrumb-item"><a href='../program/example_nurbs_volume.html'>example_nurbs_volume</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/example_surface_1.f90.html'>example_surface_1.f90</a></li>
+                <li class="breadcrumb-item"><a href='../program/example3_surface.html'>example3_surface</a></li>
             <li class="breadcrumb-item active" aria-current="page">generate_Xc</li>
           </ol>
         </nav>
@@ -98,9 +113,11 @@
     </div>
   </div>
   <script>
-    $(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
   </script>
 
   </div>
@@ -136,7 +153,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2> function generate_Xc(L) result(control_points)  
+    <h2> function generate_Xc(num_rows, num_cols, peak_height) result(control_points)  
 </h2>
     
 
@@ -155,7 +172,37 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-l"></span>
+              <span class="anchor" id="variable-num_rows"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>num_rows</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-num_cols"></span>
+              integer,
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>num_cols</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-peak_height"></span>
               real(kind=rk),
             </td>
 <td>intent(in)</td>
@@ -163,7 +210,7 @@
               
             </td>
             <td>::</td>
-            <td><strong>L</strong></td>
+            <td><strong>peak_height</strong></td>
             <td>
                 
             </td>
@@ -190,31 +237,31 @@
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~generate_xc~~CalledByGraph Pages: 1 -->
-<svg id="procgenerate_xcCalledByGraph" width="263pt" height="32pt"
- viewBox="0.00 0.00 263.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg id="procgenerate_xcCalledByGraph" width="234pt" height="32pt"
+ viewBox="0.00 0.00 234.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="proc~~generate_xc~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
 <title>proc~~generate_xc~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 259,-28 259,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 230,-28 230,4 -4,4"/>
 <!-- proc~generate_xc -->
 <g id="proc~~generate_xc~~CalledByGraph_node1" class="node">
 <title>proc~generate_xc</title>
-<polygon fill="none" stroke="black" points="255,-24 175,-24 175,0 255,0 255,-24"/>
-<text text-anchor="middle" x="215" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_Xc</text>
+<polygon fill="none" stroke="black" points="226,-24 146,-24 146,0 226,0 226,-24"/>
+<text text-anchor="middle" x="186" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">generate_Xc</text>
 </g>
-<!-- program~example_nurbs_volume -->
+<!-- program~example3_surface -->
 <g id="proc~~generate_xc~~CalledByGraph_node2" class="node">
-<title>program~example_nurbs_volume</title>
-<g id="a_proc~~generate_xc~~CalledByGraph_node2"><a xlink:href="../program/example_nurbs_volume.html" xlink:title="example_nurbs_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-24 0,-24 0,0 139,0 139,-24"/>
-<text text-anchor="middle" x="69.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_volume</text>
+<title>program~example3_surface</title>
+<g id="a_proc~~generate_xc~~CalledByGraph_node2"><a xlink:href="../program/example3_surface.html" xlink:title="example3_surface">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="110,-24 0,-24 0,0 110,0 110,-24"/>
+<text text-anchor="middle" x="55" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example3_surface</text>
 </a>
 </g>
 </g>
-<!-- program~example_nurbs_volume&#45;&gt;proc~generate_xc -->
+<!-- program~example3_surface&#45;&gt;proc~generate_xc -->
 <g id="proc~~generate_xc~~CalledByGraph_edge1" class="edge">
-<title>program~example_nurbs_volume&#45;&gt;proc~generate_xc</title>
-<path fill="none" stroke="#ff0000" d="M139.31,-12C147.91,-12 156.56,-12 164.78,-12"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="164.91,-15.5 174.91,-12 164.91,-8.5 164.91,-15.5"/>
+<title>program~example3_surface&#45;&gt;proc~generate_xc</title>
+<path fill="none" stroke="#ff0000" d="M110.33,-12C118.66,-12 127.22,-12 135.44,-12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="135.62,-15.5 145.62,-12 135.62,-8.5 135.62,-15.5"/>
 </g>
 </g>
 </svg>
@@ -238,7 +285,7 @@
 <!-- Title: Graph Key Pages: 1 -->
 <svg width="641pt" height="28pt"
  viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
@@ -323,40 +370,18 @@ large graphs.</div>
           <div class="col">
             <p>
               ForCAD
- was developed by Seyed Ali Ghasemi<br>              &copy; 2024 BSD 3-Clause
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2025 BSD 3-Clause
 </p>
           </div>
           <div class="col">
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-07-01T12:07:54.928544             </p>
+ on 2025-05-09T15:19:21.573392+0000             </p>
           </div>
         </div>
         <br>
       </div> <!-- /container -->
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
-
-    <!-- MathJax JavaScript
-             ================================================== -->
-             <!-- Placed at the end of the document so the pages load faster -->
-        <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-          });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-          <script src="../tipuesearch/tipuesearch_content.js"></script>
-          <script src="../tipuesearch/tipuesearch_set.js"></script>
-          <script src="../tipuesearch/tipuesearch.js"></script>
-
   </body>
 </html>

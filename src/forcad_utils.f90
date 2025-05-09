@@ -3,16 +3,14 @@
 !> This module contains parameters, functions and subroutines that are used in the library.
 module forcad_utils
 
-    use stdlib_quadrature, only: gauss_legendre
+    use forcad_kinds, only: rk
 
     implicit none
 
     private
-    public :: rk, basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
+    public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg
-
-    integer, parameter :: rk = kind(1.0d0)
+        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy
 
     !===============================================================================
     interface elemConn_C0
@@ -691,7 +689,7 @@ contains
         integer, intent(out) :: nc_new
         real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
-        real(rk) :: inv, alpha1, alpha2, Xth1, Xth2, numer, den
+        real(rk) :: iinv, alpha1, alpha2, Xth1, Xth2, numer, den
         integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, dim, nc
         integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
         integer, allocatable :: mlp(:)
@@ -714,10 +712,10 @@ contains
         bezalfs(1,1) = 1.0_rk
         bezalfs(degree+1,ph+1) = 1.0_rk
         do i = 1,ph2
-            inv = 1.0_rk/bincoeff(ph,i)
+            iinv = 1.0_rk/bincoeff(ph,i)
             mpi = min(degree,i)
             do j = max(0,i-t),mpi
-                bezalfs(j+1,i+1) = inv*bincoeff(degree,j)*bincoeff(t,i-j)
+                bezalfs(j+1,i+1) = iinv*bincoeff(degree,j)*bincoeff(t,i-j)
             end do
         end do
         do i = ph2+1,ph-1
@@ -1243,5 +1241,190 @@ contains
         Wksi = kron(kron(Wksi3, Wksi2), Wksi1)
     end subroutine
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine gauss_legendre(x, w, interval)
+        real(rk), intent(out) :: x(:), w(:)
+        real(rk), intent(in) :: interval(2)
+        real(rk) :: xi, delta, p_next, dp_next, p_prev, p_curr, dp_prev, dp_curr, midpoint, half_length
+        integer :: i, j, k, n
+        real(rk), parameter :: pi = acos(-1.0_rk)
+        real(rk), parameter :: tol = 4.0_rk*epsilon(1.0_rk)
+        integer, parameter :: maxit = 100
+        logical :: converged
+
+        if (interval(1) >= interval(2)) error stop "gauss_legendre: Invalid interval, interval(1) must be less than interval(2)"
+        n = size(x)
+        ! Gauss-Legendre points are symmetric, only compute half
+        do concurrent (i = 1:(n+1)/2)
+            ! Initial guess (Chebyshev approximation)
+            xi = -cos(pi * (i-0.25_rk)/(n+0.5_rk))
+            ! Newton iteration
+            j = 0
+            converged = .false.
+            do while (.not. converged .and. j < maxit)
+                j = j + 1
+                ! Compute Legendre polynomial and derivative via recurrence
+                p_prev = 1.0_rk        ! P_0(xi)
+                p_curr = xi            ! P_1(xi)
+                dp_prev = 0.0_rk       ! P_0'(xi)
+                dp_curr = 1.0_rk       ! P_1'(xi)
+                do k = 2, n
+                    p_next  = ((2*k-1)*xi*p_curr-(k-1)*p_prev)/k
+                    dp_next = ((2*k-1)*(xi*dp_curr+p_curr)-(k-1)*dp_prev)/k
+                    p_prev  = p_curr
+                    p_curr  = p_next
+                    dp_prev = dp_curr
+                    dp_curr = dp_next
+                end do
+                ! Newton correction
+                delta = -p_curr / dp_curr
+                xi = xi + delta
+                ! Check for convergence
+                converged = (abs(delta) <= tol*abs(xi))
+            end do
+            if (.not. converged) error stop "gauss_legendre: Newton iteration did not converge"
+            ! Store symmetric nodes and weights
+            x(i)     = xi
+            x(n+1-i) = -xi
+            w(i)     = 2.0_rk/((1.0_rk-xi**2)*dp_curr**2)
+            w(n+1-i) = w(i)
+        end do
+        ! Transform from [-1,1] to [interval(1), interval(2)]
+        midpoint    =0.5_rk*(interval(1)+interval(2))
+        half_length =0.5_rk*(interval(2)-interval(1))
+        x = midpoint+half_length*x
+        w = half_length*w
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, encoding)
+        character(len=*), intent(in) :: filename
+        real(rk), intent(in) :: points(:, :)
+        integer, intent(in) :: elemConn(:, :)
+        integer, intent(in) :: vtkCellType
+        character(len=*), intent(in), optional :: encoding
+
+        integer :: i, j, ne, np, nn, nunit
+        character(len=6) :: encoding_
+        integer, parameter :: dp = kind(1.0d0)
+
+        ne = size(elemConn, 1)
+        nn = size(elemConn, 2)
+        np = size(points, 1)
+
+        if (present(encoding)) then
+            select case (trim(encoding))
+                case ('ascii')
+                    encoding_ = 'ASCII'
+                case ('binary')
+                    encoding_ = 'BINARY'
+                case default
+                    error stop 'Invalid encoding type. Use "ASCII" or "BINARY".'
+            end select
+        else
+            encoding_ = 'BINARY'
+        end if
+
+
+        if (trim(encoding_) == 'ASCII') then
+            open(newunit=nunit, file=filename, action='write')
+            write(nunit,'(a)') '# vtk DataFile Version 2.0'
+            write(nunit,'(a)') 'Generated by ForCAD'
+            write(nunit,'(a)') 'ASCII'
+            write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+
+            write(nunit,'(a," ",g0," ",a)') 'POINTS', np, 'double'
+            if (size(points,2) == 2) then
+                write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), 0.0_rk , i = 1, np)
+            elseif (size(points,2) == 3) then
+                write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), points(i,3) , i = 1, np)
+            else
+                error stop 'Invalid dimension for points.'
+            end if
+
+            write(nunit,'(a," ",g0," ",g0)') 'CELLS', ne, ne*(nn+1)
+            select case (nn)
+            case (2)
+                write(nunit,'(g0," ",g0," ",g0)')&
+                    (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
+            case (4)
+                write(nunit,'(g0," ",g0," ",g0," ",g0)')&
+                    (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
+            case (8)
+                write(nunit,'(g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0)')&
+                    (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
+                    elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
+            case default
+                error stop 'Invalid number of nodes per element.'
+            end select
+
+            write(nunit,'(a," ",g0)') 'CELL_TYPES', ne
+            write(nunit,'(g0)') (vtkCellType , i = 1, ne)
+            close(nunit)
+        end if
+
+
+        if (trim(encoding_) == 'BINARY') then
+            open(newunit=nunit, file=filename, form='formatted', action='write')
+            write(nunit,'(a)') '# vtk DataFile Version 2.0'
+            write(nunit,'(a)') 'Generated by ForCAD'
+            write(nunit,'(a)') 'BINARY'
+            write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+            close(nunit)
+
+            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+            write(nunit,'(a," ",g0," ",a)') 'POINTS', np, 'double'
+            close(nunit)
+            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                action="write", convert="big_endian", status="unknown")
+            if (size(points,2) == 2) then
+                write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(0.0_rk,dp) , i = 1, np)
+            elseif (size(points,2) == 3) then
+                write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(points(i,3),dp) , i = 1, np)
+            else
+                error stop 'Invalid dimension for points.'
+            end if
+            close(nunit)
+
+            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+            write(nunit,'(a," ",g0," ",g0)') 'CELLS', ne, ne*(nn+1)
+            close(nunit)
+            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                action="write", convert="big_endian", status="unknown")
+            select case (nn)
+            case (2)
+                write(nunit)&
+                    (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
+            case (4)
+                write(nunit)&
+                    (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
+            case (8)
+                write(nunit)&
+                    (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
+                    elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
+            case default
+                error stop 'Invalid number of nodes per element.'
+            end select
+            close(nunit)
+
+            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+            write(nunit,'(a," ",g0)') 'CELL_TYPES', ne
+            close(nunit)
+            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                action="write", convert="big_endian", status="unknown")
+            write(nunit) (vtkCellType, i=1, ne)
+            close(nunit)
+        end if
+    end subroutine
+    !===============================================================================
+
 
 end module forcad_utils

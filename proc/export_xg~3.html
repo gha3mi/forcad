@@ -12,14 +12,29 @@
 
     <title>export_Xg &ndash; ForCAD</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="../css/pygments.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
     <link href="../css/local.css" rel="stylesheet">
-      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="../css/pygments.css" rel="stylesheet">
     <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -78,20 +93,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.5% of total for procedures.">33 statements</a>
+                 title=" 0.2% of total for procedures.">15 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/forcad_nurbs_surface.f90"> Source File</a>
+              <a href="../src/forcad_nurbs_curve.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_surface.f90.html'>forcad_nurbs_surface.f90</a></li>
-                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_surface.html'>forcad_nurbs_surface</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_curve.f90.html'>forcad_nurbs_curve.f90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li>
             <li class="breadcrumb-item active" aria-current="page">export_Xg</li>
           </ol>
         </nav>
@@ -99,9 +114,11 @@
     </div>
   </div>
   <script>
-    $(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
   </script>
 
   </div>
@@ -137,13 +154,13 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private impure subroutine export_Xg(this, filename)  
+    <h2>private impure subroutine export_Xg(this, filename, encoding)  
 </h2>
     
 
 
     <h3>Type Bound</h3>
-    <p><a href='../type/nurbs_surface.html'>nurbs_surface</a></p>
+    <p><a href='../type/nurbs_curve.html'>nurbs_curve</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -158,8 +175,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-this~155"></span>
-              class(<a href='../type/nurbs_surface.html'>nurbs_surface</a>),
+              <span class="anchor" id="variable-this~157"></span>
+              class(<a href='../type/nurbs_curve.html'>nurbs_curve</a>),
             </td>
 <td>intent(in)</td>
               <td></td>            <td>
@@ -186,6 +203,21 @@
                 
             </td>
         </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-encoding~6"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>encoding</strong></td>
+            <td>
+                
+            </td>
+        </tr>
     </tbody>
   </table>
 
@@ -201,91 +233,106 @@
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~export_xg~3~~CallsGraph Pages: 1 -->
-<svg id="procexport_xg3CallsGraph" width="641pt" height="110pt"
- viewBox="0.00 0.00 641.00 110.32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~export_xg~3~~CallsGraph" class="graph" transform="scale(1.05 1.05) rotate(0) translate(4 112)">
+<svg id="procexport_xg3CallsGraph" width="641pt" height="114pt"
+ viewBox="0.00 0.00 641.00 113.69" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~export_xg~3~~CallsGraph" class="graph" transform="scale(0.98 0.98) rotate(0) translate(4 112)">
 <title>proc~~export_xg~3~~CallsGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 670,-112 670,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 650,-112 650,4 -4,4"/>
 <!-- proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CallsGraph_node1" class="node">
 <title>proc~export_xg~3</title>
-<polygon fill="none" stroke="black" points="151,-66 0,-66 0,-42 151,-42 151,-66"/>
-<text text-anchor="middle" x="75.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_surface%export_Xg</text>
+<polygon fill="none" stroke="black" points="141,-45 0,-45 0,-21 141,-21 141,-45"/>
+<text text-anchor="middle" x="70.5" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_curve%export_Xg</text>
 </g>
 <!-- proc~cmp_elem_xg_vis~3 -->
 <g id="proc~~export_xg~3~~CallsGraph_node2" class="node">
 <title>proc~cmp_elem_xg_vis~3</title>
-<g id="a_proc~~export_xg~3~~CallsGraph_node2"><a xlink:href="../proc/cmp_elem_xg_vis~3.html" xlink:title="nurbs_surface%cmp_elem_Xg_vis">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="379,-66 187,-66 187,-42 379,-42 379,-66"/>
-<text text-anchor="middle" x="283" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_surface%cmp_elem_Xg_vis</text>
+<g id="a_proc~~export_xg~3~~CallsGraph_node2"><a xlink:href="../proc/cmp_elem_xg_vis~3.html" xlink:title="nurbs_curve%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="359,-66 177,-66 177,-42 359,-42 359,-66"/>
+<text text-anchor="middle" x="268" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xg_vis</text>
 </a>
 </g>
 </g>
 <!-- proc~export_xg~3&#45;&gt;proc~cmp_elem_xg_vis~3 -->
 <g id="proc~~export_xg~3~~CallsGraph_edge1" class="edge">
 <title>proc~export_xg~3&#45;&gt;proc~cmp_elem_xg_vis~3</title>
-<path fill="none" stroke="#ff0000" d="M151.27,-54C159.6,-54 168.2,-54 176.82,-54"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="176.93,-57.5 186.93,-54 176.93,-50.5 176.93,-57.5"/>
+<path fill="none" stroke="#ff0000" d="M141.25,-40.49C149.53,-41.38 158.1,-42.3 166.69,-43.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="166.46,-46.72 176.78,-44.31 167.21,-39.76 166.46,-46.72"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="proc~~export_xg~3~~CallsGraph_node3" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_proc~~export_xg~3~~CallsGraph_node3"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="322,-24 214,-24 214,0 322,0 322,-24"/>
+<text text-anchor="middle" x="268" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xg~3&#45;&gt;proc~export_vtk_legacy -->
+<g id="proc~~export_xg~3~~CallsGraph_edge2" class="edge">
+<title>proc~export_xg~3&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#ff0000" d="M141.25,-25.51C161.61,-23.32 183.74,-20.94 203.67,-18.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="204.31,-22.25 213.88,-17.71 203.56,-15.29 204.31,-22.25"/>
 </g>
 <!-- interface~elemconn_c0 -->
-<g id="proc~~export_xg~3~~CallsGraph_node3" class="node">
+<g id="proc~~export_xg~3~~CallsGraph_node4" class="node">
 <title>interface~elemconn_c0</title>
-<g id="a_proc~~export_xg~3~~CallsGraph_node3"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
-<polygon fill="#a7506f" stroke="#a7506f" points="502,-66 415,-66 415,-42 502,-42 502,-66"/>
-<text text-anchor="middle" x="458.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+<g id="a_proc~~export_xg~3~~CallsGraph_node4"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="482,-66 395,-66 395,-42 482,-42 482,-66"/>
+<text text-anchor="middle" x="438.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
 </a>
 </g>
 </g>
 <!-- proc~cmp_elem_xg_vis~3&#45;&gt;interface~elemconn_c0 -->
-<g id="proc~~export_xg~3~~CallsGraph_edge2" class="edge">
+<g id="proc~~export_xg~3~~CallsGraph_edge3" class="edge">
 <title>proc~cmp_elem_xg_vis~3&#45;&gt;interface~elemconn_c0</title>
-<path fill="none" stroke="#ff0000" d="M379.13,-54C387.89,-54 396.55,-54 404.72,-54"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="404.79,-57.5 414.79,-54 404.79,-50.5 404.79,-57.5"/>
+<path fill="none" stroke="#ff0000" d="M359.17,-54C367.86,-54 376.47,-54 384.62,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="384.67,-57.5 394.67,-54 384.67,-50.5 384.67,-57.5"/>
 </g>
 <!-- proc~cmp_elemconn_c0_l -->
-<g id="proc~~export_xg~3~~CallsGraph_node4" class="node">
+<g id="proc~~export_xg~3~~CallsGraph_node5" class="node">
 <title>proc~cmp_elemconn_c0_l</title>
-<g id="a_proc~~export_xg~3~~CallsGraph_node4"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="665.5,-108 538.5,-108 538.5,-84 665.5,-84 665.5,-108"/>
-<text text-anchor="middle" x="602" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+<g id="a_proc~~export_xg~3~~CallsGraph_node5"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="645.5,-108 518.5,-108 518.5,-84 645.5,-84 645.5,-108"/>
+<text text-anchor="middle" x="582" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
-<g id="proc~~export_xg~3~~CallsGraph_edge3" class="edge">
+<g id="proc~~export_xg~3~~CallsGraph_edge4" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M500.05,-66.04C515.74,-70.69 533.87,-76.07 550.4,-80.98"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="549.86,-84.47 560.45,-83.96 551.86,-77.76 549.86,-84.47"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M480.05,-66.04C495.74,-70.69 513.87,-76.07 530.4,-80.98"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="529.86,-84.47 540.45,-83.96 531.86,-77.76 529.86,-84.47"/>
 </g>
 <!-- proc~cmp_elemconn_c0_s -->
-<g id="proc~~export_xg~3~~CallsGraph_node5" class="node">
+<g id="proc~~export_xg~3~~CallsGraph_node6" class="node">
 <title>proc~cmp_elemconn_c0_s</title>
-<g id="a_proc~~export_xg~3~~CallsGraph_node5"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="665.5,-66 538.5,-66 538.5,-42 665.5,-42 665.5,-66"/>
-<text text-anchor="middle" x="602" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+<g id="a_proc~~export_xg~3~~CallsGraph_node6"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="645.5,-66 518.5,-66 518.5,-42 645.5,-42 645.5,-66"/>
+<text text-anchor="middle" x="582" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
-<g id="proc~~export_xg~3~~CallsGraph_edge4" class="edge">
+<g id="proc~~export_xg~3~~CallsGraph_edge5" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M502.34,-54C510.61,-54 519.49,-54 528.41,-54"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="528.47,-57.5 538.47,-54 528.47,-50.5 528.47,-57.5"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M482.34,-54C490.61,-54 499.49,-54 508.41,-54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="508.47,-57.5 518.47,-54 508.47,-50.5 508.47,-57.5"/>
 </g>
 <!-- proc~cmp_elemconn_c0_v -->
-<g id="proc~~export_xg~3~~CallsGraph_node6" class="node">
+<g id="proc~~export_xg~3~~CallsGraph_node7" class="node">
 <title>proc~cmp_elemconn_c0_v</title>
-<g id="a_proc~~export_xg~3~~CallsGraph_node6"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="666,-24 538,-24 538,0 666,0 666,-24"/>
-<text text-anchor="middle" x="602" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+<g id="a_proc~~export_xg~3~~CallsGraph_node7"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="646,-24 518,-24 518,0 646,0 646,-24"/>
+<text text-anchor="middle" x="582" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
-<g id="proc~~export_xg~3~~CallsGraph_edge5" class="edge">
+<g id="proc~~export_xg~3~~CallsGraph_edge6" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M500.05,-41.96C515.74,-37.31 533.87,-31.93 550.4,-27.02"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="551.86,-30.24 560.45,-24.04 549.86,-23.53 551.86,-30.24"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M480.05,-41.96C495.74,-37.31 513.87,-31.93 530.4,-27.02"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="531.86,-30.24 540.45,-24.04 529.86,-23.53 531.86,-30.24"/>
 </g>
 </g>
 </svg>
@@ -313,7 +360,7 @@
 <!-- Title: Graph Key Pages: 1 -->
 <svg width="641pt" height="28pt"
  viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
@@ -385,106 +432,91 @@ large graphs.</div>
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: proc~~export_xg~3~~CalledByGraph Pages: 1 -->
-<svg id="procexport_xg3CalledByGraph" width="334pt" height="242pt"
- viewBox="0.00 0.00 334.00 242.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~export_xg~3~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 238)">
+<svg id="procexport_xg3CalledByGraph" width="314pt" height="200pt"
+ viewBox="0.00 0.00 314.00 200.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~export_xg~3~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 196)">
 <title>proc~~export_xg~3~~CalledByGraph</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-238 330,-238 330,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-196 310,-196 310,4 -4,4"/>
 <!-- proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_node1" class="node">
 <title>proc~export_xg~3</title>
-<polygon fill="none" stroke="black" points="326,-129 175,-129 175,-105 326,-105 326,-129"/>
-<text text-anchor="middle" x="250.5" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_surface%export_Xg</text>
+<polygon fill="none" stroke="black" points="306,-108 165,-108 165,-84 306,-84 306,-108"/>
+<text text-anchor="middle" x="235.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_curve%export_Xg</text>
 </g>
-<!-- program~example3_surface -->
+<!-- program~example1_curve -->
 <g id="proc~~export_xg~3~~CalledByGraph_node2" class="node">
-<title>program~example3_surface</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node2"><a xlink:href="../program/example3_surface.html" xlink:title="example3_surface">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="124.5,-234 14.5,-234 14.5,-210 124.5,-210 124.5,-234"/>
-<text text-anchor="middle" x="69.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example3_surface</text>
+<title>program~example1_curve</title>
+<g id="a_proc~~export_xg~3~~CalledByGraph_node2"><a xlink:href="../program/example1_curve.html" xlink:title="example1_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="114.5,-192 14.5,-192 14.5,-168 114.5,-168 114.5,-192"/>
+<text text-anchor="middle" x="64.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example1_curve</text>
 </a>
 </g>
 </g>
-<!-- program~example3_surface&#45;&gt;proc~export_xg~3 -->
+<!-- program~example1_curve&#45;&gt;proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_edge1" class="edge">
-<title>program~example3_surface&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M117.8,-209.91C125.07,-207.37 132.36,-204.4 139,-201 173.27,-183.43 207.81,-155.07 228.93,-136.23"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="231.54,-138.59 236.6,-129.28 226.84,-133.4 231.54,-138.59"/>
+<title>program~example1_curve&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M106.32,-167.97C113.97,-165.3 121.82,-162.28 129,-159 157.22,-146.1 187.44,-127.51 208.27,-113.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="210.46,-116.62 216.86,-108.18 206.59,-110.79 210.46,-116.62"/>
 </g>
-<!-- program~example_nurbs_surface -->
+<!-- program~example_nurbs_curve -->
 <g id="proc~~export_xg~3~~CalledByGraph_node3" class="node">
-<title>program~example_nurbs_surface</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node3"><a xlink:href="../program/example_nurbs_surface.html" xlink:title="example_nurbs_surface">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="139,-192 0,-192 0,-168 139,-168 139,-192"/>
-<text text-anchor="middle" x="69.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_surface</text>
+<title>program~example_nurbs_curve</title>
+<g id="a_proc~~export_xg~3~~CalledByGraph_node3"><a xlink:href="../program/example_nurbs_curve.html" xlink:title="example_nurbs_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="129,-150 0,-150 0,-126 129,-126 129,-150"/>
+<text text-anchor="middle" x="64.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_curve</text>
 </a>
 </g>
 </g>
-<!-- program~example_nurbs_surface&#45;&gt;proc~export_xg~3 -->
+<!-- program~example_nurbs_curve&#45;&gt;proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_edge2" class="edge">
-<title>program~example_nurbs_surface&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M111.57,-167.89C120.64,-165.08 130.18,-162.03 139,-159 162.63,-150.9 188.77,-141 209.69,-132.86"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="211.17,-136.03 219.21,-129.13 208.62,-129.52 211.17,-136.03"/>
+<title>program~example_nurbs_curve&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M113.93,-125.96C133.38,-121.13 155.96,-115.52 176.29,-110.47"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="177.2,-113.85 186.06,-108.04 175.52,-107.05 177.2,-113.85"/>
 </g>
-<!-- program~shape_c_2d -->
+<!-- program~shape_c_1d -->
 <g id="proc~~export_xg~3~~CalledByGraph_node4" class="node">
-<title>program~shape_c_2d</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node4"><a xlink:href="../program/shape_c_2d.html" xlink:title="shape_C_2d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="107.5,-150 31.5,-150 31.5,-126 107.5,-126 107.5,-150"/>
-<text text-anchor="middle" x="69.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_C_2d</text>
+<title>program~shape_c_1d</title>
+<g id="a_proc~~export_xg~3~~CalledByGraph_node4"><a xlink:href="../program/shape_c_1d.html" xlink:title="shape_C_1d">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="102.5,-108 26.5,-108 26.5,-84 102.5,-84 102.5,-108"/>
+<text text-anchor="middle" x="64.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_C_1d</text>
 </a>
 </g>
 </g>
-<!-- program~shape_c_2d&#45;&gt;proc~export_xg~3 -->
+<!-- program~shape_c_1d&#45;&gt;proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_edge3" class="edge">
-<title>program~shape_c_2d&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M107.59,-133.65C124.23,-131.7 144.61,-129.31 164.68,-126.95"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="165.28,-130.41 174.8,-125.76 164.46,-123.45 165.28,-130.41"/>
+<title>program~shape_c_1d&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M102.59,-96C118,-96 136.52,-96 154.75,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="154.83,-99.5 164.83,-96 154.83,-92.5 154.83,-99.5"/>
 </g>
-<!-- program~shape_half_ring_2d -->
+<!-- program~shape_circle -->
 <g id="proc~~export_xg~3~~CalledByGraph_node5" class="node">
-<title>program~shape_half_ring_2d</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node5"><a xlink:href="../program/shape_half_ring_2d.html" xlink:title="shape_half_ring_2d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="127,-108 12,-108 12,-84 127,-84 127,-108"/>
-<text text-anchor="middle" x="69.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_half_ring_2d</text>
+<title>program~shape_circle</title>
+<g id="a_proc~~export_xg~3~~CalledByGraph_node5"><a xlink:href="../program/shape_circle.html" xlink:title="shape_circle">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="104,-66 25,-66 25,-42 104,-42 104,-66"/>
+<text text-anchor="middle" x="64.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_circle</text>
 </a>
 </g>
 </g>
-<!-- program~shape_half_ring_2d&#45;&gt;proc~export_xg~3 -->
+<!-- program~shape_circle&#45;&gt;proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_edge4" class="edge">
-<title>program~shape_half_ring_2d&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M127.14,-102.64C139.1,-104.05 151.97,-105.56 164.71,-107.05"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="164.54,-110.56 174.88,-108.25 165.36,-103.6 164.54,-110.56"/>
+<title>program~shape_circle&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M104.27,-63.64C125.5,-68.91 152.25,-75.56 175.97,-81.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="175.37,-84.91 185.92,-83.93 177.06,-78.12 175.37,-84.91"/>
 </g>
-<!-- program~shape_ring_2d -->
+<!-- program~shape_half_circle -->
 <g id="proc~~export_xg~3~~CalledByGraph_node6" class="node">
-<title>program~shape_ring_2d</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node6"><a xlink:href="../program/shape_ring_2d.html" xlink:title="shape_ring_2d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="114.5,-66 24.5,-66 24.5,-42 114.5,-42 114.5,-66"/>
-<text text-anchor="middle" x="69.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_ring_2d</text>
+<title>program~shape_half_circle</title>
+<g id="a_proc~~export_xg~3~~CalledByGraph_node6"><a xlink:href="../program/shape_half_circle.html" xlink:title="shape_half_circle">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="116.5,-24 12.5,-24 12.5,0 116.5,0 116.5,-24"/>
+<text text-anchor="middle" x="64.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_half_circle</text>
 </a>
 </g>
 </g>
-<!-- program~shape_ring_2d&#45;&gt;proc~export_xg~3 -->
+<!-- program~shape_half_circle&#45;&gt;proc~export_xg~3 -->
 <g id="proc~~export_xg~3~~CalledByGraph_edge5" class="edge">
-<title>program~shape_ring_2d&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M111.57,-66.11C120.64,-68.92 130.18,-71.97 139,-75 162.63,-83.1 188.77,-93 209.69,-101.14"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="208.62,-104.48 219.21,-104.87 211.17,-97.97 208.62,-104.48"/>
-</g>
-<!-- program~shape_tetragon -->
-<g id="proc~~export_xg~3~~CalledByGraph_node7" class="node">
-<title>program~shape_tetragon</title>
-<g id="a_proc~~export_xg~3~~CalledByGraph_node7"><a xlink:href="../program/shape_tetragon.html" xlink:title="shape_tetragon">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="117.5,-24 21.5,-24 21.5,0 117.5,0 117.5,-24"/>
-<text text-anchor="middle" x="69.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_tetragon</text>
-</a>
-</g>
-</g>
-<!-- program~shape_tetragon&#45;&gt;proc~export_xg~3 -->
-<g id="proc~~export_xg~3~~CalledByGraph_edge6" class="edge">
-<title>program~shape_tetragon&#45;&gt;proc~export_xg~3</title>
-<path fill="none" stroke="#ff0000" d="M117.8,-24.09C125.07,-26.63 132.36,-29.6 139,-33 173.27,-50.57 207.81,-78.93 228.93,-97.77"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="226.84,-100.6 236.6,-104.72 231.54,-95.41 226.84,-100.6"/>
+<title>program~shape_half_circle&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M106.32,-24.03C113.97,-26.7 121.82,-29.72 129,-33 157.22,-45.9 187.44,-64.49 208.27,-78.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="206.59,-81.21 216.86,-83.82 210.46,-75.38 206.59,-81.21"/>
 </g>
 </g>
 </svg>
@@ -508,7 +540,7 @@ large graphs.</div>
 <!-- Title: Graph Key Pages: 1 -->
 <svg width="641pt" height="28pt"
  viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
@@ -593,40 +625,18 @@ large graphs.</div>
           <div class="col">
             <p>
               ForCAD
- was developed by Seyed Ali Ghasemi<br>              &copy; 2024 BSD 3-Clause
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2025 BSD 3-Clause
 </p>
           </div>
           <div class="col">
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-07-01T12:07:54.928544             </p>
+ on 2025-05-09T15:19:21.573392+0000             </p>
           </div>
         </div>
         <br>
       </div> <!-- /container -->
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
-
-    <!-- MathJax JavaScript
-             ================================================== -->
-             <!-- Placed at the end of the document so the pages load faster -->
-        <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-          });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-          <script src="../tipuesearch/tipuesearch_content.js"></script>
-          <script src="../tipuesearch/tipuesearch_set.js"></script>
-          <script src="../tipuesearch/tipuesearch.js"></script>
-
   </body>
 </html>

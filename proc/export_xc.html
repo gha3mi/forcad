@@ -12,14 +12,29 @@
 
     <title>export_Xc &ndash; ForCAD</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href="../css/pygments.css" rel="stylesheet">
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
     <link href="../css/local.css" rel="stylesheet">
-      <link  href="../tipuesearch/tipuesearch.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="../css/pygments.css" rel="stylesheet">
     <script src="../js/svg-pan-zoom.min.js"></script>
   </head>
 
@@ -78,7 +93,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.5% of total for procedures.">33 statements</a>
+                 title=" 0.2% of total for procedures.">15 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -99,9 +114,11 @@
     </div>
   </div>
   <script>
-    $(function () {
-    $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
   </script>
 
   </div>
@@ -137,7 +154,7 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private impure subroutine export_Xc(this, filename)  
+    <h2>private impure subroutine export_Xc(this, filename, encoding)  
 </h2>
     
 
@@ -186,6 +203,21 @@
                 
             </td>
         </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-encoding"></span>
+              character(len=*),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>encoding</strong></td>
+            <td>
+                
+            </td>
+        </tr>
     </tbody>
   </table>
 
@@ -203,14 +235,14 @@
 <!-- Title: proc~~export_xc~~CallsGraph Pages: 1 -->
 <svg id="procexport_xcCallsGraph" width="641pt" height="111pt"
  viewBox="0.00 0.00 641.00 110.65" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~export_xc~~CallsGraph" class="graph" transform="scale(1.05 1.05) rotate(0) translate(4 112)">
+<g id="proc~~export_xc~~CallsGraph" class="graph" transform="scale(0.95 0.95) rotate(0) translate(4 112)">
 <title>proc~~export_xc~~CallsGraph</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-112 668,-112 668,4 -4,4"/>
 <!-- proc~export_xc -->
 <g id="proc~~export_xc~~CallsGraph_node1" class="node">
 <title>proc~export_xc</title>
-<polygon fill="none" stroke="black" points="150,-66 0,-66 0,-42 150,-42 150,-66"/>
-<text text-anchor="middle" x="75" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_volume%export_Xc</text>
+<polygon fill="none" stroke="black" points="150,-45 0,-45 0,-21 150,-21 150,-45"/>
+<text text-anchor="middle" x="75" y="-30.6" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_volume%export_Xc</text>
 </g>
 <!-- proc~cmp_elem_xc_vis -->
 <g id="proc~~export_xc~~CallsGraph_node2" class="node">
@@ -224,65 +256,80 @@
 <!-- proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis -->
 <g id="proc~~export_xc~~CallsGraph_edge1" class="edge">
 <title>proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis</title>
-<path fill="none" stroke="#ff0000" d="M150.12,-54C158.42,-54 166.98,-54 175.57,-54"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="175.66,-57.5 185.66,-54 175.66,-50.5 175.66,-57.5"/>
+<path fill="none" stroke="#ff0000" d="M150.12,-40.61C158.42,-41.46 166.98,-42.34 175.57,-43.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="175.35,-46.72 185.66,-44.26 176.07,-39.76 175.35,-46.72"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="proc~~export_xc~~CallsGraph_node3" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_proc~~export_xc~~CallsGraph_node3"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="335.5,-24 227.5,-24 227.5,0 335.5,0 335.5,-24"/>
+<text text-anchor="middle" x="281.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~export_vtk_legacy -->
+<g id="proc~~export_xc~~CallsGraph_edge2" class="edge">
+<title>proc~export_xc&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#ff0000" d="M150.12,-25.39C172.12,-23.13 196.01,-20.68 217.26,-18.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="217.86,-21.95 227.45,-17.45 217.15,-14.99 217.86,-21.95"/>
 </g>
 <!-- interface~elemconn_c0 -->
-<g id="proc~~export_xc~~CallsGraph_node3" class="node">
+<g id="proc~~export_xc~~CallsGraph_node4" class="node">
 <title>interface~elemconn_c0</title>
-<g id="a_proc~~export_xc~~CallsGraph_node3"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<g id="a_proc~~export_xc~~CallsGraph_node4"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
 <polygon fill="#a7506f" stroke="#a7506f" points="500,-66 413,-66 413,-42 500,-42 500,-66"/>
 <text text-anchor="middle" x="456.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
 </a>
 </g>
 </g>
 <!-- proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0 -->
-<g id="proc~~export_xc~~CallsGraph_edge2" class="edge">
+<g id="proc~~export_xc~~CallsGraph_edge3" class="edge">
 <title>proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0</title>
 <path fill="none" stroke="#ff0000" d="M377.1,-54C385.86,-54 394.51,-54 402.69,-54"/>
 <polygon fill="#ff0000" stroke="#ff0000" points="402.76,-57.5 412.76,-54 402.76,-50.5 402.76,-57.5"/>
 </g>
 <!-- proc~cmp_elemconn_c0_l -->
-<g id="proc~~export_xc~~CallsGraph_node4" class="node">
+<g id="proc~~export_xc~~CallsGraph_node5" class="node">
 <title>proc~cmp_elemconn_c0_l</title>
-<g id="a_proc~~export_xc~~CallsGraph_node4"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<g id="a_proc~~export_xc~~CallsGraph_node5"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="663.5,-108 536.5,-108 536.5,-84 663.5,-84 663.5,-108"/>
 <text text-anchor="middle" x="600" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
-<g id="proc~~export_xc~~CallsGraph_edge3" class="edge">
+<g id="proc~~export_xc~~CallsGraph_edge4" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
 <path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M498.05,-66.04C513.74,-70.69 531.87,-76.07 548.4,-80.98"/>
 <polygon fill="#ff0000" stroke="#ff0000" points="547.86,-84.47 558.45,-83.96 549.86,-77.76 547.86,-84.47"/>
 </g>
 <!-- proc~cmp_elemconn_c0_s -->
-<g id="proc~~export_xc~~CallsGraph_node5" class="node">
+<g id="proc~~export_xc~~CallsGraph_node6" class="node">
 <title>proc~cmp_elemconn_c0_s</title>
-<g id="a_proc~~export_xc~~CallsGraph_node5"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<g id="a_proc~~export_xc~~CallsGraph_node6"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="663.5,-66 536.5,-66 536.5,-42 663.5,-42 663.5,-66"/>
 <text text-anchor="middle" x="600" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
-<g id="proc~~export_xc~~CallsGraph_edge4" class="edge">
+<g id="proc~~export_xc~~CallsGraph_edge5" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
 <path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M500.34,-54C508.61,-54 517.49,-54 526.41,-54"/>
 <polygon fill="#ff0000" stroke="#ff0000" points="526.47,-57.5 536.47,-54 526.47,-50.5 526.47,-57.5"/>
 </g>
 <!-- proc~cmp_elemconn_c0_v -->
-<g id="proc~~export_xc~~CallsGraph_node6" class="node">
+<g id="proc~~export_xc~~CallsGraph_node7" class="node">
 <title>proc~cmp_elemconn_c0_v</title>
-<g id="a_proc~~export_xc~~CallsGraph_node6"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<g id="a_proc~~export_xc~~CallsGraph_node7"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
 <polygon fill="#d94e8f" stroke="#d94e8f" points="664,-24 536,-24 536,0 664,0 664,-24"/>
 <text text-anchor="middle" x="600" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
 </a>
 </g>
 </g>
 <!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
-<g id="proc~~export_xc~~CallsGraph_edge5" class="edge">
+<g id="proc~~export_xc~~CallsGraph_edge6" class="edge">
 <title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
 <path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M498.05,-41.96C513.74,-37.31 531.87,-31.93 548.4,-27.02"/>
 <polygon fill="#ff0000" stroke="#ff0000" points="549.86,-30.24 558.45,-24.04 547.86,-23.53 549.86,-30.24"/>
@@ -313,7 +360,7 @@
 <!-- Title: Graph Key Pages: 1 -->
 <svg width="641pt" height="28pt"
  viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
@@ -523,7 +570,7 @@ large graphs.</div>
 <!-- Title: Graph Key Pages: 1 -->
 <svg width="641pt" height="28pt"
  viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1.16 1.16) rotate(0) translate(4 28)">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
 <title>Graph Key</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
 <!-- Subroutine -->
@@ -608,40 +655,18 @@ large graphs.</div>
           <div class="col">
             <p>
               ForCAD
- was developed by Seyed Ali Ghasemi<br>              &copy; 2024 BSD 3-Clause
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2025 BSD 3-Clause
 </p>
           </div>
           <div class="col">
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2024-07-01T12:07:54.928544             </p>
+ on 2025-05-09T15:19:21.573392+0000             </p>
           </div>
         </div>
         <br>
       </div> <!-- /container -->
     </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
-
-    <!-- MathJax JavaScript
-             ================================================== -->
-             <!-- Placed at the end of the document so the pages load faster -->
-        <script type="text/x-mathjax-config">
-          MathJax.Hub.Config({
-          TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } },
-          jax: ['input/TeX','input/MathML','output/HTML-CSS'],
-          extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']
-          });
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-          <script src="../tipuesearch/tipuesearch_content.js"></script>
-          <script src="../tipuesearch/tipuesearch_set.js"></script>
-          <script src="../tipuesearch/tipuesearch.js"></script>
-
   </body>
 </html>
