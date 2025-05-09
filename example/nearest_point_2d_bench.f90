@@ -41,7 +41,7 @@ program nearest_point_2d_bench
         print*, j*1000
         call random_number(points)
         call t%timer_start()
-        do concurrent (i = 1: size(points,1))
+        do i = 1, size(points,1)
             call shape%nearest_point(points(i,:), nearest_Xg, nearest_Xt, id)
         end do
         call t%timer_stop()

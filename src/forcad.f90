@@ -2,6 +2,7 @@
 !> license: BSD 3-Clause
 module forcad
 
+    use forcad_kinds
     use forcad_utils
 
     use forcad_nurbs_curve
