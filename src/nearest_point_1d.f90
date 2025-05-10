@@ -4,12 +4,12 @@ program nearest_point_1d
 
     implicit none
 
-    type(nurbs_curve) :: shape               !! Declare a NURBS curve object
-    real(rk), allocatable :: Xc(:,:), Wc(:)  !! Arrays for control points and weights
-    real(rk) :: knot(6)                      !! Array for knot vector
-    real(rk), allocatable :: nearest_Xg(:)   !! Array for the nearest point on the curve
-    real(rk) :: nearest_Xt                   !! Array for the parametric coordinates of the nearest point
-    integer :: id                            !! Variable for the id of the nearest point
+    type(nurbs_curve) :: shape              !! Declare a NURBS curve object
+    real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
+    real(rk) :: knot(6)                     !! Array for knot vector
+    real(rk), allocatable :: nearest_Xg(:)  !! Array for the nearest point on the curve
+    real(rk) :: nearest_Xt                  !! Array for the parametric coordinates of the nearest point
+    integer :: id                           !! Variable for the id of the nearest point
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS curve

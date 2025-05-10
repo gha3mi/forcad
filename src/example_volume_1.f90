@@ -6,9 +6,9 @@ program example3_volume
     use forcad, only: rk, nurbs_volume
 
     implicit none
-    type(nurbs_volume) :: nurbs               !! Declare a NURBS volume object
-    real(rk), allocatable :: Xc(:,:), Wc(:)   !! Arrays for control points and weights
-    real(rk) :: knot1(4), knot2(4), knot3(4)  !! Arrays for knot vectors in all three dimensions
+    type(nurbs_volume) :: nurbs              !! Declare a NURBS volume object
+    real(rk), allocatable :: Xc(:,:), Wc(:)  !! Arrays for control points and weights
+    real(rk) :: knot1(4), knot2(4), knot3(4) !! Arrays for knot vectors in all three dimensions
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS volume
@@ -64,9 +64,9 @@ program example3_volume
     print*, size(nurbs%get_knot(3))
 
     !> Insert knots 0.25 and 0.75 in all three directions
-    call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [1,1])  ! direction 1
-    call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [1,1])  ! direction 2
-    call nurbs%insert_knots(3, [0.25_rk, 0.75_rk], [1,1])  ! direction 3
+    call nurbs%insert_knots(1, [0.25_rk, 0.75_rk], [1,1]) ! direction 1
+    call nurbs%insert_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
+    call nurbs%insert_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
 
     !> Print size of knot vectors after inserting knots
     print*, size(nurbs%get_knot(1))
@@ -77,9 +77,9 @@ program example3_volume
     print*, nurbs%get_degree()
 
     !> Elevate degree by 2 in all three directions
-    call nurbs%elevate_degree(1, 2)  ! direction 1
-    call nurbs%elevate_degree(2, 2)  ! direction 2
-    call nurbs%elevate_degree(3, 2)  ! direction 3
+    call nurbs%elevate_degree(1, 2) ! direction 1
+    call nurbs%elevate_degree(2, 2) ! direction 2
+    call nurbs%elevate_degree(3, 2) ! direction 3
 
     !> Print degrees after elevating
     print*, nurbs%get_degree()
@@ -89,9 +89,9 @@ program example3_volume
     print*, size(nurbs%get_knot(2))
     print*, size(nurbs%get_knot(3))
 
-    call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [1,1])  ! direction 1
-    call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [1,1])  ! direction 2
-    call nurbs%remove_knots(3, [0.25_rk, 0.75_rk], [1,1])  ! direction 3
+    call nurbs%remove_knots(1, [0.25_rk, 0.75_rk], [1,1]) ! direction 1
+    call nurbs%remove_knots(2, [0.25_rk, 0.75_rk], [1,1]) ! direction 2
+    call nurbs%remove_knots(3, [0.25_rk, 0.75_rk], [1,1]) ! direction 3
 
     !> Print size of knot vectors after removing knots
     print*, size(nurbs%get_knot(1))
@@ -167,7 +167,7 @@ program example3_volume
     print*, 'Degree of face 4:', nurbs%cmp_degreeFace(face=4)
     print*, 'Degree of face 5:', nurbs%cmp_degreeFace(face=5)
     print*, 'Degree of face 6:', nurbs%cmp_degreeFace(face=6)
-
+    
     !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
@@ -179,6 +179,7 @@ contains
 
     !-----------------------------------------------------------------------------
     function generate_Xc(L) result(control_points)
+        implicit none
         real(rk), intent(in) :: L
         real(rk), allocatable :: control_points(:,:)
         real(rk) :: L2

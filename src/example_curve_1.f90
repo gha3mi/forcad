@@ -6,9 +6,9 @@ program example1_curve
     use forcad, only: rk, nurbs_curve
 
     implicit none
-    type(nurbs_curve) :: nurbs               !! Declare a NURBS curve object
-    real(rk), allocatable :: Xc(:,:), Wc(:)  !! Arrays for control points and weights
-    real(rk) :: knot(6)                      !! Array for knot vector
+    type(nurbs_curve) :: nurbs              !! Declare a NURBS curve object
+    real(rk), allocatable :: Xc(:,:), Wc(:) !! Arrays for control points and weights
+    real(rk) :: knot(6)                     !! Array for knot vector
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS curve

@@ -58,6 +58,7 @@ contains
 
     !-----------------------------------------------------------------------------
     function generate_Xc(L) result(control_points)
+        implicit none
         real(rk), intent(in) :: L
         real(rk), allocatable :: control_points(:,:)
         real(rk) :: L2

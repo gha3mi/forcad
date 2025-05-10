@@ -1137,7 +1137,7 @@ contains
                     - A(1,2)*( A(2,1)*A(3,3) - A(2,3)*A(3,1) )&
                     + A(1,3)*( A(2,1)*A(3,2) - A(2,2)*A(3,1) )
             end select
-        else if (size(A,1) == 3 .and. size(A,2) == 2) then
+        elseif (size(A,1) == 3 .and. size(A,2) == 2) then
             detA = &
                 + A(1,1) * ( A(2,2) * 1.0_rk - A(3,2) * 1.0_rk )&
                 - A(1,2) * ( A(2,1) * 1.0_rk - A(3,1) * 1.0_rk )&
@@ -1176,11 +1176,11 @@ contains
                 A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
                 A_inv = A_inv/det(A)
             end select
-        else if (size(A,1)>size(A,2)) then
+        elseif (size(A,1)>size(A,2)) then
             allocate(A_inv(size(A,2),size(A,1)))
             A_inv = transpose(A)
             A_inv = matmul(inv(matmul(A_inv, A)), A_inv)
-        else if (size(A,1)<size(A,2)) then
+        elseif (size(A,1)<size(A,2)) then
             allocate(A_inv(size(A,2),size(A,1)))
             A_inv = transpose(A)
             A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
@@ -1206,7 +1206,7 @@ contains
     end function
     !===============================================================================
 
-
+    
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
@@ -1367,7 +1367,7 @@ contains
             write(nunit,'(a," ",g0," ",a)') 'POINTS', np, 'double'
             if (size(points,2) == 2) then
                 write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), 0.0_rk , i = 1, np)
-            else if (size(points,2) == 3) then
+            elseif (size(points,2) == 3) then
                 write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), points(i,3) , i = 1, np)
             else
                 error stop 'Invalid dimension for points.'
@@ -1410,7 +1410,7 @@ contains
                 action="write", convert="big_endian", status="unknown")
             if (size(points,2) == 2) then
                 write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(0.0_rk,dp) , i = 1, np)
-            else if (size(points,2) == 3) then
+            elseif (size(points,2) == 3) then
                 write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(points(i,3),dp) , i = 1, np)
             else
                 error stop 'Invalid dimension for points.'
