@@ -24,14 +24,14 @@ module forcad_nurbs_volume
         real(rk), allocatable, private :: Xt2(:)   !! Evaluation parameter values in the second direction (1D array: [ng(2)])
         real(rk), allocatable, private :: Xt3(:)   !! Evaluation parameter values in the third direction (1D array: [ng(3)])
         real(rk), allocatable, private :: Xt(:,:)  !! Evaluation parameter values (2D array: [ng(1)*ng(2)*ng(3), dim]
-        real(rk), allocatable, private :: knot1(:) !! Knot vector in the first direction (1D array)
-        real(rk), allocatable, private :: knot2(:) !! Knot vector in the second direction (1D array)
-        real(rk), allocatable, private :: knot3(:) !! Knot vector in the third direction (1D array)
+        real(rk), allocatable, private :: knot1(:)  !! Knot vector in the first direction (1D array)
+        real(rk), allocatable, private :: knot2(:)  !! Knot vector in the second direction (1D array)
+        real(rk), allocatable, private :: knot3(:)  !! Knot vector in the third direction (1D array)
         integer, private :: degree(3)              !! Degree (order) of the volume
         integer, private :: nc(3)                  !! Number of control points in each direction
         integer, private :: ng(3)                  !! Number of geometry points in each direction
-        integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
-        integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
+        integer, allocatable, private :: elemConn_Xc_vis(:,:)  !! Connectivity for visualization of control points
+        integer, allocatable, private :: elemConn_Xg_vis(:,:)  !! Connectivity for visualization of geometry points
         integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
         procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS volume object
@@ -44,26 +44,26 @@ module forcad_nurbs_volume
         procedure, private :: get_Xc_all   !!> Get all control points
         procedure, private :: get_Xci      !!> Get i-th control point
         procedure, private :: get_Xcid     !!> Get i-th control point in a specific direction
-        generic :: get_Xc => get_Xc_all, get_Xci, get_Xcid !!> Get control points
+        generic :: get_Xc => get_Xc_all, get_Xci, get_Xcid  !!> Get control points
         procedure, private :: get_Xg_all   !!> Get all geometry points
         procedure, private :: get_Xgi      !!> Get i-th geometry point
         procedure, private :: get_Xgid     !!> Get i-th geometry point in a specific direction
-        generic :: get_Xg => get_Xg_all, get_Xgi, get_Xgid !!> Get geometry points
+        generic :: get_Xg => get_Xg_all, get_Xgi, get_Xgid  !!> Get geometry points
         procedure, private :: get_Wc_all   !!> Get all weights
         procedure, private :: get_Wci      !!> Get i-th weight
-        generic :: get_Wc => get_Wc_all, get_Wci !!> Get weights
+        generic :: get_Wc => get_Wc_all, get_Wci  !!> Get weights
         procedure :: get_Xt                 !!> Get parameter values
         procedure, private :: get_knot_all  !!> Get all knot vectors
         procedure, private :: get_knoti     !!> Get i-th knot value
-        generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
+        generic :: get_knot => get_knoti, get_knot_all  !!> Get knot vector
         procedure :: get_ng                 !!> Get number of geometry points
         procedure, private :: get_nc_dir             !!> Get number of control points in a specific direction
         procedure, private :: get_nc_all             !!> Get number of control points in all directions
-        generic :: get_nc => get_nc_all, get_nc_dir !!> Get number of control points
+        generic :: get_nc => get_nc_all, get_nc_dir  !!> Get number of control points
         procedure :: cmp_degree             !!> Compute degree of the NURBS volume
-        procedure, private :: get_degree_all!!> Get degree of the NURBS volume in all directions
-        procedure, private :: get_degree_dir!!> Get degree of the NURBS volume in a specific direction
-        generic :: get_degree => get_degree_all, get_degree_dir !!> Get degree of the NURBS volume
+        procedure, private :: get_degree_all  !!> Get degree of the NURBS volume in all directions
+        procedure, private :: get_degree_dir  !!> Get degree of the NURBS volume in a specific direction
+        generic :: get_degree => get_degree_all, get_degree_dir  !!> Get degree of the NURBS volume
         procedure :: finalize               !!> Finalize the NURBS volume object
         procedure :: cmp_elem_Xc_vis        !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis        !!> Generate connectivity for geometry points
@@ -89,7 +89,7 @@ module forcad_nurbs_volume
         generic :: derivative => derivative_vector, derivative_scalar   !!> Compute the derivative of the NURBS volume
         procedure, private :: derivative2_vector     !!> Compute the second derivative of the NURBS volume
         procedure, private :: derivative2_scalar     !!> Compute the second derivative of the NURBS volume
-        generic :: derivative2 => derivative2_vector, derivative2_scalar !!> Compute the second derivative of the NURBS volume
+        generic :: derivative2 => derivative2_vector, derivative2_scalar  !!> Compute the second derivative of the NURBS volume
         procedure :: insert_knots           !!> Insert knots into the knot vector
         procedure :: elevate_degree         !!> Elevate the degree of the NURBS volume
         procedure :: is_rational            !!> Check if the NURBS volume is rational
@@ -123,6 +123,7 @@ module forcad_nurbs_volume
     interface compute_Xg
         pure function compute_Xg_nurbs_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -135,6 +136,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_bspline_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -146,6 +148,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_nurbs_3d_1point(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -157,6 +160,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_bspline_3d_1point(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -169,6 +173,7 @@ module forcad_nurbs_volume
     interface compute_dTgc
         pure subroutine compute_dTgc_nurbs_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -181,6 +186,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_bspline_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -192,6 +198,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -204,6 +211,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -218,6 +226,7 @@ module forcad_nurbs_volume
         pure subroutine compute_d2Tgc_nurbs_3d_vector(&
             f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -232,6 +241,7 @@ module forcad_nurbs_volume
         pure subroutine compute_d2Tgc_bspline_3d_vector(&
             f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -244,6 +254,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_d2Tgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -256,6 +267,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_d2Tgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -269,6 +281,7 @@ module forcad_nurbs_volume
     interface compute_Tgc
         pure function compute_Tgc_nurbs_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -280,6 +293,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_bspline_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -290,6 +304,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -300,6 +315,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -311,6 +327,7 @@ module forcad_nurbs_volume
     interface
         pure function nearest_point_help_3d(f_ng, f_Xg, f_point_Xg) result(f_distances)
             import :: rk
+            implicit none
             integer, intent(in) :: f_ng(3)
             real(rk), intent(in), contiguous :: f_Xg(:,:)
             real(rk), intent(in), contiguous :: f_point_Xg(:)
@@ -494,7 +511,7 @@ contains
         if (present(Xt1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             this%Xt1 = Xt1
-        elseif (present(res1)) then
+        else if (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
             this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
@@ -506,7 +523,7 @@ contains
         if (present(Xt2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             this%Xt2 = Xt2
-        elseif (present(res2)) then
+        else if (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
             this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
@@ -518,7 +535,7 @@ contains
         if (present(Xt3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             this%Xt3 = Xt3
-        elseif (present(res3)) then
+        else if (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
             this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
@@ -541,10 +558,10 @@ contains
         if (allocated(this%Xg)) deallocate(this%Xg)
         allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             this%Xg = compute_Xg(&
                 this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             this%Xg = compute_Xg(&
                 this%Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Xc)
         end if
@@ -569,9 +586,9 @@ contains
             error stop 'Knot vector(s) is/are not set.'
         end if
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Xg = compute_Xg(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Xc, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             Xg = compute_Xg(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Xc)
         end if
     end function
@@ -748,13 +765,13 @@ contains
             else
                 error stop 'Parameter values are not set.'
             end if
-        elseif (dir == 2) then
+        else if (dir == 2) then
             if (allocated(this%Xt2)) then
                 Xt = this%Xt2
             else
                 error stop 'Parameter values are not set.'
             end if
-        elseif (dir == 3) then
+        else if (dir == 3) then
             if (allocated(this%Xt3)) then
                 Xt = this%Xt3
             else
@@ -865,13 +882,13 @@ contains
             else
                 error stop 'Knot vector is not set.'
             end if
-        elseif (dir == 2) then
+        else if (dir == 2) then
             if (allocated(this%knot2)) then
                 knot = this%knot2
             else
                 error stop 'Knot vector is not set.'
             end if
-        elseif (dir == 3) then
+        else if (dir == 3) then
             if (allocated(this%knot3)) then
                 knot = this%knot3
             else
@@ -904,7 +921,7 @@ contains
             else
                 error stop 'Knot vector is not set.'
             end if
-        elseif (dir == 2) then
+        else if (dir == 2) then
             if (allocated(this%knot2)) then
                 if (i < 1 .or. i > size(this%knot2)) then
                     error stop 'Invalid index for knot vector.'
@@ -914,7 +931,7 @@ contains
             else
                 error stop 'Knot vector is not set.'
             end if
-        elseif (dir == 3) then
+        else if (dir == 3) then
             if (allocated(this%knot3)) then
                 if (i < 1 .or. i > size(this%knot3)) then
                     error stop 'Invalid index for knot vector.'
@@ -1103,7 +1120,7 @@ contains
                 m = compute_multiplicity(this%knot1)
             end if
 
-        elseif (dir == 2) then
+        else if (dir == 2) then
 
             ! check
             if (.not.allocated(this%knot2)) then
@@ -1112,7 +1129,7 @@ contains
                 m = compute_multiplicity(this%knot2)
             end if
 
-        elseif (dir == 3) then
+        else if (dir == 3) then
 
             ! check
             if (.not.allocated(this%knot3)) then
@@ -1146,7 +1163,7 @@ contains
                 c = this%degree(1) - compute_multiplicity(this%knot1)
             end if
 
-        elseif (dir == 2) then
+        else if (dir == 2) then
 
             ! check
             if (.not.allocated(this%knot2)) then
@@ -1155,7 +1172,7 @@ contains
                 c = this%degree(2) - compute_multiplicity(this%knot2)
             end if
 
-        elseif (dir == 3) then
+        else if (dir == 3) then
 
             ! check
             if (.not.allocated(this%knot3)) then
@@ -1190,7 +1207,7 @@ contains
                     this%nc(1) = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
                 end if
 
-            elseif (dir == 2) then
+            else if (dir == 2) then
 
                 ! check
                 if (.not.allocated(this%knot2)) then
@@ -1199,7 +1216,7 @@ contains
                     this%nc(2) = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
                 end if
 
-            elseif (dir == 3) then
+            else if (dir == 3) then
 
                 ! check
                 if (.not.allocated(this%knot3)) then
@@ -1270,7 +1287,7 @@ contains
                 nc = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
             end if
 
-        elseif (dir == 2) then
+        else if (dir == 2) then
 
             ! check
             if (.not.allocated(this%knot2)) then
@@ -1279,7 +1296,7 @@ contains
                 nc = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
             end if
 
-        elseif (dir == 3) then
+        else if (dir == 3) then
 
             ! check
             if (.not.allocated(this%knot3)) then
@@ -1312,7 +1329,7 @@ contains
         if (present(Xt1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             this%Xt1 = Xt1
-        elseif (present(res1)) then
+        else if (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
             this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
@@ -1324,7 +1341,7 @@ contains
         if (present(Xt2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             this%Xt2 = Xt2
-        elseif (present(res2)) then
+        else if (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
             this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
@@ -1336,7 +1353,7 @@ contains
         if (present(Xt3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             this%Xt3 = Xt3
-        elseif (present(res3)) then
+        else if (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
             this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
@@ -1351,7 +1368,7 @@ contains
 
         call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Wc, dTgc, Tgc)
         else
             call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, dTgc, Tgc)
@@ -1370,7 +1387,7 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
         else
             call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, dTgc, Tgc, elem)
@@ -1396,7 +1413,7 @@ contains
         if (present(Xt1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             this%Xt1 = Xt1
-        elseif (present(res1)) then
+        else if (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
             this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
@@ -1408,7 +1425,7 @@ contains
         if (present(Xt2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             this%Xt2 = Xt2
-        elseif (present(res2)) then
+        else if (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
             this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
@@ -1420,7 +1437,7 @@ contains
         if (present(Xt3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             this%Xt3 = Xt3
-        elseif (present(res3)) then
+        else if (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
             this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
@@ -1435,7 +1452,7 @@ contains
 
         call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_d2Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Wc, d2Tgc, dTgc, Tgc)
         else
             call compute_d2Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, d2Tgc, dTgc, Tgc)
@@ -1454,7 +1471,7 @@ contains
         real(rk), allocatable, intent(out), optional :: dTgc(:,:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_d2Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, d2Tgc, dTgc, Tgc)
         else
             call compute_d2Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, d2Tgc, dTgc, Tgc)
@@ -1479,7 +1496,7 @@ contains
         if (present(Xt1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             this%Xt1 = Xt1
-        elseif (present(res1)) then
+        else if (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
             this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
@@ -1491,7 +1508,7 @@ contains
         if (present(Xt2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             this%Xt2 = Xt2
-        elseif (present(res2)) then
+        else if (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
             this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
@@ -1503,7 +1520,7 @@ contains
         if (present(Xt3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             this%Xt3 = Xt3
-        elseif (present(res3)) then
+        else if (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
             this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
@@ -1518,7 +1535,7 @@ contains
 
         call ndgrid(this%Xt1, this%Xt2, this%Xt3, Xt)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Tgc = compute_Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng, this%Wc)
         else
             Tgc = compute_Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%ng)
@@ -1535,7 +1552,7 @@ contains
         real(rk), intent(in), contiguous :: Xt(:)
         real(rk), allocatable, intent(out) :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Tgc = compute_Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc)
         else
             Tgc = compute_Tgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc)
@@ -1557,9 +1574,9 @@ contains
         real(rk), allocatable :: Xc4(:,:,:,:)
 
 
-        if (dir == 1) then ! direction 1
+        if (dir == 1) then  ! direction 1
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -1604,7 +1621,7 @@ contains
                 end do
 
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -1637,9 +1654,9 @@ contains
 
             end if
 
-        elseif (dir == 2) then! direction 2
+        else if (dir == 2) then  ! direction 2
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -1687,7 +1704,7 @@ contains
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -1725,9 +1742,9 @@ contains
 
             end if
 
-        elseif (dir == 3) then! direction 3
+        else if (dir == 3) then  ! direction 3
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
@@ -1775,7 +1792,7 @@ contains
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
                 end do
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
@@ -1832,9 +1849,9 @@ contains
         real(rk), allocatable:: Xc4(:,:,:,:)
 
 
-        if (dir == 1) then ! direction 1
+        if (dir == 1) then  ! direction 1
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1859,7 +1876,7 @@ contains
                 call this%set(knot1=knot_new, knot2=this%get_knot(2), knot3=this%get_knot(3), Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 dim = size(this%Xc,2)
 
@@ -1873,9 +1890,9 @@ contains
 
             end if
 
-        elseif (dir == 2) then ! direction 2
+        else if (dir == 2) then  ! direction 2
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
 
                 dim = size(this%Xc,2)
@@ -1908,7 +1925,7 @@ contains
                 call this%set(knot1=this%get_knot(1), knot2=knot_new, knot3=this%get_knot(3), Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 dim = size(this%Xc,2)
 
@@ -1926,9 +1943,9 @@ contains
 
             end if
 
-        elseif (dir == 3) then ! direction 3
+        else if (dir == 3) then  ! direction 3
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 dim = size(this%Xc,2)
                 allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1959,7 +1976,7 @@ contains
                 call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=knot_new, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 dim = size(this%Xc,2)
 
@@ -2126,7 +2143,7 @@ contains
         allocate(this%Xg(size(Xt,1), size(this%Xc,2)))
         allocate(Tgc(this%nc(1)*this%nc(2)*this%nc(3)))
 
-        if (allocated(this%Wc)) then ! NURBS volume
+        if (allocated(this%Wc)) then  ! NURBS volume
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -2135,7 +2152,7 @@ contains
                 Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
                 this%Xg(i,:) = matmul(Tgc,this%Xc)
             end do
-        else ! B-Spline volume
+        else  ! B-Spline volume
             do i = 1, size(Xt, 1)
                 Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
                 Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
@@ -2164,9 +2181,9 @@ contains
         real(rk), allocatable :: Xc4(:,:,:,:)
 
 
-        if (dir == 1) then ! direction 1
+        if (dir == 1) then  ! direction 1
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -2219,7 +2236,7 @@ contains
                 end do
 
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
@@ -2260,9 +2277,9 @@ contains
 
             end if
 
-        elseif (dir == 2) then! direction 2
+        else if (dir == 2) then  ! direction 2
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -2321,7 +2338,7 @@ contains
                     end if
                 end do
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
@@ -2367,9 +2384,9 @@ contains
 
             end if
 
-        elseif (dir == 3) then! direction 3
+        else if (dir == 3) then  ! direction 3
 
-            if (allocated(this%Wc)) then ! NURBS
+            if (allocated(this%Wc)) then  ! NURBS
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
@@ -2426,7 +2443,7 @@ contains
                     end if
                 end do
 
-            else ! B-Spline
+            else  ! B-Spline
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(3)-1,this%degree(3),Xth(i),this%knot3)
@@ -2971,9 +2988,9 @@ contains
 
             ! objection, gradient and hessian
             Xg = this%cmp_Xg(xk)
-            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc) ! Tgc is not needed
+            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)  ! Tgc is not needed
 
-            obj = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
+            obj = norm2(Xg - point_Xg) + 0.001_rk  ! add a small number to avoid division by zero
 
             grad(1) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,1),this%Xc))
             grad(2) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,2),this%Xc))
@@ -3021,7 +3038,7 @@ contains
                 ! Backtracking-Armijo Line Search
                 alphak = 1.0_rk
                 tau = 0.5_rk     ! 0 < tau  < 1
-                beta = 1.0e-4_rk ! 0 < beta < 1
+                beta = 1.0e-4_rk  ! 0 < beta < 1
                 l = 0
                 do while (.not. norm2(this%cmp_Xg(xk + alphak*dk) - point_Xg) <= obj + alphak*beta*dot_product(grad,dk) .and. l<50)
                     alphak = tau * alphak
@@ -3239,8 +3256,8 @@ contains
         integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
         type(nurbs_volume) :: th, th_e
         real(rk), allocatable :: dTtth_dXksi(:,:), Ttth(:), dTgc_dXt(:,:), Xt(:), dXt_dXksi(:,:), dXg_dXt(:,:)
-        real(rk), allocatable :: dXg_dXksi(:,:) !! Jacobian matrix
-        real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
+        real(rk), allocatable :: dXg_dXksi(:,:)  !! Jacobian matrix
+        real(rk) :: det_dXg_dXksi  !! Determinant of the Jacobian matrix
 
         call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
 

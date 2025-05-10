@@ -5,10 +5,10 @@ program nearest_point_2d_bench
 
     implicit none
 
-    type(nurbs_surface) :: shape           !! Declare a NURBS surface object
-    real(rk), allocatable :: nearest_Xg(:) !! Coordinates of the nearest point on the surface
-    real(rk), allocatable :: nearest_Xt(:) !! Corresponding parametric coordinates of the nearest point
-    integer :: id                          !! id of the nearest point
+    type(nurbs_surface) :: shape            !! Declare a NURBS surface object
+    real(rk), allocatable :: nearest_Xg(:)  !! Coordinates of the nearest point on the surface
+    real(rk), allocatable :: nearest_Xt(:)  !! Corresponding parametric coordinates of the nearest point
+    integer :: id                           !! id of the nearest point
     real(rk), allocatable :: points(:,:)
     integer :: i, j
     type(timer) :: t

@@ -17,41 +17,41 @@ module forcad_nurbs_curve
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     type nurbs_curve
-        real(rk), allocatable, private :: Xc(:,:) !! Control points (2D array: [nc, dim])
-        real(rk), allocatable, private :: Xg(:,:) !! Geometry points (2D array: [ng, dim])
-        real(rk), allocatable, private :: Wc(:)   !! Weights for control points (1D array: [nc])
-        real(rk), allocatable, private :: Xt(:)   !! Evaluation points (1D array: [ng])
-        real(rk), allocatable, private :: knot(:) !! Knot vector (1D array)
-        integer, private :: degree                !! Degree (order) of the curve
-        integer, private :: nc                    !! Number of control points
-        integer, private :: ng                    !! Number of geometry points
-        integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
-        integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
-        integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
+        real(rk), allocatable, private :: Xc(:,:)  !! Control points (2D array: [nc, dim])
+        real(rk), allocatable, private :: Xg(:,:)  !! Geometry points (2D array: [ng, dim])
+        real(rk), allocatable, private :: Wc(:)    !! Weights for control points (1D array: [nc])
+        real(rk), allocatable, private :: Xt(:)    !! Evaluation points (1D array: [ng])
+        real(rk), allocatable, private :: knot(:)  !! Knot vector (1D array)
+        integer, private :: degree                 !! Degree (order) of the curve
+        integer, private :: nc                     !! Number of control points
+        integer, private :: ng                     !! Number of geometry points
+        integer, allocatable, private :: elemConn_Xc_vis(:,:)  !! Connectivity for visualization of control points
+        integer, allocatable, private :: elemConn_Xg_vis(:,:)  !! Connectivity for visualization of geometry points
+        integer, allocatable, private :: elemConn(:,:)         !! IGA element connectivity
     contains
         procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
         procedure :: set1a
         procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
         procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
         procedure :: set4                  !!> Set NURBS curve using degree, number of control points, control points and weights
-        generic :: set => set1, set1a, set2, set3, set4 !!> Set NURBS curve
+        generic :: set => set1, set1a, set2, set3, set4  !!> Set NURBS curve
         procedure :: create                !!> Generate geometry points
         procedure :: cmp_Xg                !!> Compute geometry points
         procedure, private :: get_Xc_all   !!> Get all control points
         procedure, private :: get_Xci      !!> Get i-th control point
         procedure, private :: get_Xcid     !!> Get i-th control point in a specific direction
-        generic :: get_Xc => get_Xc_all, get_Xci, get_Xcid !!> Get control points
+        generic :: get_Xc => get_Xc_all, get_Xci, get_Xcid  !!> Get control points
         procedure, private :: get_Xg_all   !!> Get all geometry points
         procedure, private :: get_Xgi      !!> Get i-th geometry point
         procedure, private :: get_Xgid     !!> Get i-th geometry point in a specific direction
-        generic :: get_Xg => get_Xg_all, get_Xgi, get_Xgid !!> Get geometry points
+        generic :: get_Xg => get_Xg_all, get_Xgi, get_Xgid  !!> Get geometry points
         procedure, private :: get_Wc_all   !!> Get all weights
         procedure, private :: get_Wci      !!> Get i-th weight
-        generic :: get_Wc => get_Wc_all, get_Wci !!> Get weights
+        generic :: get_Wc => get_Wc_all, get_Wci  !!> Get weights
         procedure :: get_Xt                !!> Get parameter values
-        procedure, private :: get_knot_all !!> Get all knot vectors
+        procedure, private :: get_knot_all  !!> Get all knot vectors
         procedure, private :: get_knoti    !!> Get i-th knot value
-        generic :: get_knot => get_knoti, get_knot_all !!> Get knot vector
+        generic :: get_knot => get_knoti, get_knot_all  !!> Get knot vector
         procedure :: get_ng                !!> Get number of geometry points
         procedure :: cmp_degree            !!> Compute degree of the NURBS curve
         procedure :: get_degree            !!> Get degree of the NURBS curve
@@ -75,15 +75,15 @@ module forcad_nurbs_curve
         procedure :: get_nc                !!> Get number of control points
         procedure :: insert_knots          !!> Insert knots into the knot vector
         procedure :: elevate_degree        !!> Elevate the degree of the curve
-        procedure, private :: basis_vector !!> Compute the basis functions of the NURBS curve
-        procedure, private :: basis_scalar !!> Compute the basis functions of the NURBS curve
+        procedure, private :: basis_vector  !!> Compute the basis functions of the NURBS curve
+        procedure, private :: basis_scalar  !!> Compute the basis functions of the NURBS curve
         generic :: basis => basis_vector, basis_scalar   !!> Compute the basis functions of the NURBS curve
         procedure, private :: derivative_vector      !!> Compute the derivative of the NURBS curve
         procedure, private :: derivative_scalar      !!> Compute the derivative of the NURBS curve
         generic :: derivative => derivative_vector, derivative_scalar   !!> Compute the derivative of the NURBS curve
         procedure, private :: derivative2_vector     !!> Compute the second derivative of the NURBS curve
         procedure, private :: derivative2_scalar     !!> Compute the second derivative of the NURBS curve
-        generic :: derivative2 => derivative2_vector, derivative2_scalar !!> Compute the second derivative of the NURBS curve
+        generic :: derivative2 => derivative2_vector, derivative2_scalar  !!> Compute the second derivative of the NURBS curve
         procedure :: is_rational           !!> Check if the NURBS curve is rational
         procedure :: remove_knots          !!> Remove knots from the knot vector
         procedure :: rotate_Xc             !!> Rotate control points
@@ -107,6 +107,7 @@ module forcad_nurbs_curve
     interface compute_Xg
         pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -119,6 +120,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -130,6 +132,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_nurbs_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -141,6 +144,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -153,6 +157,7 @@ module forcad_nurbs_curve
     interface compute_d2Tgc
         pure subroutine compute_d2Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -166,6 +171,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -178,6 +184,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -190,6 +197,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -203,6 +211,7 @@ module forcad_nurbs_curve
     interface compute_dTgc
         pure subroutine compute_dTgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -215,6 +224,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -226,6 +236,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -238,6 +249,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -251,6 +263,7 @@ module forcad_nurbs_curve
     interface compute_Tgc
         pure function compute_Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -262,6 +275,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -272,6 +286,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -282,6 +297,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -293,6 +309,7 @@ module forcad_nurbs_curve
     interface
         pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
             import :: rk
+            implicit none
             integer, intent(in) :: f_ng
             real(rk), intent(in), contiguous :: f_Xg(:,:)
             real(rk), intent(in), contiguous :: f_point_Xg(:)
@@ -485,7 +502,7 @@ contains
         if (present(Xt)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             this%Xt = Xt
-        elseif (present(res)) then
+        else if (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
             this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
@@ -499,10 +516,10 @@ contains
         ! Allocate memory for geometry points
         if (allocated(this%Xg)) deallocate(this%Xg)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             this%Xg = compute_Xg(&
                 this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             this%Xg = compute_Xg(&
                 this%Xt, this%knot, this%degree, this%nc, this%ng, this%Xc)
         end if
@@ -527,9 +544,9 @@ contains
             error stop 'Knot vector is not set.'
         end if
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Xg = compute_Xg(Xt, this%knot, this%degree, this%nc, this%Xc, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             Xg = compute_Xg(Xt, this%knot, this%degree, this%nc, this%Xc)
         end if
     end function
@@ -995,7 +1012,7 @@ contains
         integer :: k, i, s, dim, j, n_new
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
@@ -1036,7 +1053,7 @@ contains
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
             end do
 
-        else ! B-Spline
+        else  ! B-Spline
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
@@ -1076,7 +1093,7 @@ contains
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
         integer :: dim, j, nc_new
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
 
             dim = size(this%Xc,2)
             allocate(Xcw(size(this%Xc,1),dim+1))
@@ -1097,7 +1114,7 @@ contains
             call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
             deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
-        else ! B-Spline
+        else  ! B-Spline
 
             dim = size(this%Xc,2)
 
@@ -1127,7 +1144,7 @@ contains
         if (present(Xt)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             this%Xt = Xt
-        elseif (present(res)) then
+        else if (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
             this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
@@ -1138,9 +1155,9 @@ contains
         ! Set number of geometry points
         this%ng = size(this%Xt,1)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_dTgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc, dTgc, Tgc)
-        else ! B-Spline
+        else  ! B-Spline
             call compute_dTgc(this%Xt, this%knot, this%degree, this%nc, this%ng, dTgc, Tgc)
         end if
     end subroutine
@@ -1157,9 +1174,9 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
-        else ! B-Spline
+        else  ! B-Spline
             call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc, elem)
         end if
     end subroutine
@@ -1182,7 +1199,7 @@ contains
         if (present(Xt)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             this%Xt = Xt
-        elseif (present(res)) then
+        else if (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
             this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
@@ -1193,9 +1210,9 @@ contains
         ! Set number of geometry points
         this%ng = size(this%Xt,1)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_d2Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc, d2Tgc, dTgc, Tgc)
-        else ! B-Spline
+        else  ! B-Spline
             call compute_d2Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, d2Tgc, dTgc, Tgc)
         end if
     end subroutine
@@ -1212,9 +1229,9 @@ contains
         real(rk), allocatable, intent(out), optional :: dTgc(:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             call compute_d2Tgc(Xt, this%knot, this%degree, this%nc, this%Wc, d2Tgc, dTgc, Tgc)
-        else ! B-Spline
+        else  ! B-Spline
             call compute_d2Tgc(Xt, this%knot, this%degree, this%nc, d2Tgc, dTgc, Tgc)
         end if
     end subroutine
@@ -1235,7 +1252,7 @@ contains
         if (present(Xt)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             this%Xt = Xt
-        elseif (present(res)) then
+        else if (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
             this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
@@ -1246,9 +1263,9 @@ contains
         ! Set number of geometry points
         this%ng = size(this%Xt,1)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Tgc = compute_Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             Tgc = compute_Tgc(this%Xt, this%knot, this%degree, this%nc, this%ng)
         end if
     end subroutine
@@ -1263,9 +1280,9 @@ contains
         real(rk), intent(in) :: Xt
         real(rk), allocatable, intent(out) :: Tgc(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
             Tgc = compute_Tgc(Xt, this%knot, this%degree, this%nc, this%Wc)
-        else ! B-Spline
+        else  ! B-Spline
             Tgc = compute_Tgc(Xt, this%knot, this%degree, this%nc)
         end if
     end subroutine
@@ -1374,7 +1391,7 @@ contains
         integer :: k, i, s, dim, j, nc_new, t
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
-        if (this%is_rational()) then ! NURBS
+        if (this%is_rational()) then  ! NURBS
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
@@ -1424,7 +1441,7 @@ contains
                 end if
             end do
 
-        else ! B-Spline
+        else  ! B-Spline
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
@@ -1833,9 +1850,9 @@ contains
 
             ! objection, gradient and hessian
             Xg = this%cmp_Xg(xk)
-            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc) ! Tgc is not needed
+            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)  ! Tgc is not needed
 
-            obj  = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
+            obj  = norm2(Xg - point_Xg) + 0.001_rk  ! add a small number to avoid division by zero
             grad = dot_product((Xg-point_Xg)/obj, matmul(dTgc,this%Xc))
             hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj&
                 + dot_product((Xg-point_Xg)/obj, matmul(d2Tgc,this%Xc))
@@ -1853,7 +1870,7 @@ contains
                 ! Backtracking-Armijo Line Search
                 alphak = 1.0_rk
                 tau = 0.5_rk     ! 0 < tau  < 1
-                beta = 1.0e-4_rk ! 0 < beta < 1
+                beta = 1.0e-4_rk  ! 0 < beta < 1
                 l = 0
                 do while (.not. norm2(this%cmp_Xg(xk + alphak*dk) - point_Xg)  <= obj + alphak*beta*grad*dk .and. l<50)
                     alphak = tau * alphak
@@ -1886,8 +1903,8 @@ contains
         type(nurbs_curve) :: th, th_e
         real(rk), allocatable :: dTtth_dXksi(:), Ttth(:), dTgc_dXt(:), dXg_dXt(:)
         real(rk) :: Xt, dXt_dXksi
-        real(rk), allocatable :: dXg_dXksi(:) !! Jacobian matrix
-        real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
+        real(rk), allocatable :: dXg_dXksi(:)  !! Jacobian matrix
+        real(rk) :: det_dXg_dXksi  !! Determinant of the Jacobian matrix
 
         call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
 
@@ -2107,7 +2124,7 @@ impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, T
     else
         allocate(dTgc(size(elem)), Tgc(size(elem)))
         Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
-        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))    
+        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))
     end if
 end subroutine
 !===============================================================================

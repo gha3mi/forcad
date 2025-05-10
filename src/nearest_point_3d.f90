@@ -4,12 +4,12 @@ program nearest_point_3d
 
     implicit none
 
-    type(nurbs_volume) :: shape            !! Declare a NURBS volume object
-    real(rk), allocatable :: nearest_Xg(:) !! Coordinates of the nearest point on the volume
-    real(rk), allocatable :: nearest_Xt(:) !! Corresponding parametric coordinates of the nearest point
-    integer :: id                          !! id of the nearest point
-    real(rk) :: Xc(8,3)                    !! Control points
-    real(rk) :: Wc(8)                      !! Weights of the control points
+    type(nurbs_volume) :: shape             !! Declare a NURBS volume object
+    real(rk), allocatable :: nearest_Xg(:)  !! Coordinates of the nearest point on the volume
+    real(rk), allocatable :: nearest_Xt(:)  !! Corresponding parametric coordinates of the nearest point
+    integer :: id                           !! id of the nearest point
+    real(rk) :: Xc(8,3)                     !! Control points
+    real(rk) :: Wc(8)                       !! Weights of the control points
 
     !-----------------------------------------------------------------------------
     ! Setting up the NURBS hexahedron
