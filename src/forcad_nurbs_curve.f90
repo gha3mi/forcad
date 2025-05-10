@@ -488,7 +488,7 @@ contains
         elseif (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
-            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            this%Xt = [(this%knot(size(this%knot))*real(i-1, rk) / real(res-1, rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
         end if
