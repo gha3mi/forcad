@@ -497,7 +497,7 @@ contains
         elseif (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
-            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            this%Xt1 = [(this%knot1(size(this%knot1))*real(i-1, rk) / real(res1-1, rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
         end if
@@ -509,7 +509,7 @@ contains
         elseif (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
-            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            this%Xt2 = [(this%knot2(size(this%knot2))*real(i-1, rk) / real(res2-1, rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
         end if
@@ -521,7 +521,7 @@ contains
         elseif (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
-            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            this%Xt3 = [(this%knot3(size(this%knot3))*real(i-1, rk) / real(res3-1, rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
         end if
