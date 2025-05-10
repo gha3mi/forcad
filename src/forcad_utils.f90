@@ -79,41 +79,27 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk)              :: Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        real(rk), allocatable :: curr(:)
+        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
+        real(rk), allocatable :: Nt(:,:)
         integer               :: i, p
         real(rk), allocatable :: B(:)
 
-        allocate(B(nc), source=0.0_rk)
-        allocate(curr(nc), source=0.0_rk)
+        temp = abs(Xt - knot(size(knot)))
+        allocate(Nt(nc, 0:degree), source=0.0_rk)
 
-        do concurrent (i = 1:nc)
-            Xth_i   = knot(i)
-            Xth_i1  = knot(i+1)
-            if (Xth_i<= Xt .and. Xt < Xth_i1) then
-                B(i) = 1.0_rk
-            else
-                B(i) = 0.0_rk
-            end if
-        end do
-
-        if (Xt == knot(size(knot))) then
-            B(nc) = 1.0_rk
-        end if
-
-        do p = 1, degree
-            curr = 0.0_rk
+        do p = 0, degree
             do concurrent (i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if ( Xth_ip /= Xth_i ) curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i) * B(i)
-                if ( Xth_ip1 /= Xth_i1 .and. i < nc) curr(i) = curr(i) + (Xth_ip1 - Xt)/(Xth_ip1  - Xth_i1) * B(i+1)
+                if ( temp /= tiny(0.0_rk) .and. Xt >= Xth_i .and. Xt <= Xth_i1 ) Nt(i,0) = 1.0_rk
+                if ( Xth_ip /= Xth_i ) Nt(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * Nt(i,p-1)
+                if ( Xth_ip1 /= Xth_i1 ) Nt(i,p) = Nt(i,p) + (Xth_ip1 - Xt)/(Xth_ip1  - Xth_i1) * Nt(i+1,p-1)
             end do
-            B = curr
         end do
+        B = Nt(:,degree)
     end function
     !===============================================================================
 
@@ -128,58 +114,39 @@ contains
         real(rk), intent(in)  :: Xt
         real(rk), allocatable, intent(out) :: dB(:)
         real(rk), allocatable, intent(out), optional :: B(:)
-        real(rk), allocatable :: prevN(:), currN(:)
-        real(rk), allocatable :: prevdN(:), currdN(:)
-        real(rk)              :: Xth_i, Xth_i1, Xth_ip, Xth_ip1
+        real(rk), allocatable :: N(:,:), dN_dXt(:,:)
+        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
         integer               :: i, p
 
-        allocate(prevN(nc), source=0.0_rk)
-        allocate(currN(nc), source=0.0_rk)
-        allocate(prevdN(nc), source=0.0_rk)
-        allocate(currdN(nc), source=0.0_rk)
+        temp = abs(Xt - knot(size(knot)))
+        allocate(N(nc, 0:degree), source=0.0_rk)
+        allocate(dN_dXt(nc, 0:degree), source=0.0_rk)
 
-        do concurrent (i = 1:nc)
-            Xth_i   = knot(i)
-            Xth_i1  = knot(i+1)
-            if (Xth_i<= Xt .and. Xt < Xth_i1) then
-                prevN(i) = 1.0_rk
-                prevdN(i) = 0.0_rk
-            else
-                prevN(i) = 0.0_rk
-                prevdN(i) = 0.0_rk
-            end if
-        end do
-
-        if (Xt == knot(size(knot))) then
-            prevN(nc) = 1.0_rk
-            prevdN(nc) = 0.0_rk
-        end if
-
-        do p = 1, degree
-            currN = 0.0_rk
-            currdN = 0.0_rk
+        do p = 0, degree
             do concurrent (i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if ( Xth_ip /= Xth_i ) then
-                    currN(i) = (Xt - Xth_i)/(Xth_ip - Xth_i) * prevN(i)
-                    currdN(i) = ( prevN(i) + (Xt - Xth_i)*prevdN(i) ) / (Xth_ip - Xth_i)
+                if ( temp /= tiny(0.0_rk) .and. Xth_i <= Xt  .and. Xt <= Xth_i1 ) then
+                    N(i,0) = 1.0_rk
+                    dN_dXt(i,0) = 0.0_rk
                 end if
-                if ( Xth_ip1 /= Xth_i1  .and. i < nc) then
-                    currN(i) = currN(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * prevN(i+1)
-                    currdN(i) = currdN(i) - ( prevN(i+1) - (Xth_ip1 - Xt)*prevdN(i+1) ) / (Xth_ip1 - Xth_i1)
+                if ( Xth_ip /= Xth_i ) then
+                    N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
+                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i)
+                end if
+                if ( Xth_ip1 /= Xth_i1 ) then
+                    N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
+                    dN_dXt(i,p) = dN_dXt(i,p) - ( N(i+1,p-1) - (Xth_ip1 - Xt)*dN_dXt(i+1,p-1) ) / (Xth_ip1  - Xth_i1)
                 end if
 
             end do
-            prevN = currN
-            prevdN = currdN
         end do
 
-        dB = prevdN(1:nc)
-        if (present(B)) B = prevN(1:nc)
+        dB = dN_dXt(:,degree)
+        if (present(B)) B = N(:,degree)
     end subroutine
     !===============================================================================
 
@@ -395,26 +362,26 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function cmp_elemConn_C0_V(nnode1,nnode2,nnode3,p1,p2,p3) result(elemConn)
-        integer, intent(in) :: nnode1, nnode2, nnode3, p1, p2, p3
+        integer, intent(in) :: nnode1, nnode2, nnode3
+        integer, intent(in) :: p1, p2, p3
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j, k, idx, nnel, nelem1, nelem2, nelem3
+        integer :: i, j, k, l
         integer, allocatable :: nodes(:,:,:)
 
         if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_V: nnode1-1 must be divisible by p1'
         if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_V: nnode2-1 must be divisible by p2'
         if (mod(nnode3-1,p3) /= 0) error stop 'cmp_elemConn_C0_V: nnode3-1 must be divisible by p3'
 
-        nelem1 = (nnode1 - 1) / p1
-        nelem2 = (nnode2 - 1) / p2
-        nelem3 = (nnode3 - 1) / p3
-
-        nnel = (p1 + 1) * (p2 + 1) * (p3 + 1)
-        allocate(elemConn(nelem1 * nelem2 * nelem3, nnel))
-        nodes = reshape([(i, i=1, nnode1 * nnode2 * nnode3)], [nnode1, nnode2, nnode3])
-
-        do concurrent (k = 1:nnode3-p3:p3, j = 1:nnode2-p2:p2, i = 1:nnode1-p1:p1)
-            idx = ((k-1)/p3) * (nelem1 * nelem2) + ((j-1)/p2) * nelem1 + ((i-1)/p1) + 1
-            elemConn(idx, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
+        allocate(elemConn( ((nnode1-1) / p1) * ((nnode2-1) / p2) * ((nnode3-1) / p3) ,(p1+1)*(p2+1)*(p3+1)))
+        nodes = reshape([(i, i=1,nnode1*nnode2*nnode3)], [nnode1, nnode2, nnode3])
+        l = 0
+        do k = 1,nnode3-p3, p3
+            do j = 1,nnode2-p2, p2
+                do i = 1,nnode1-p1, p1
+                    l = l+1
+                    elemConn(l,:) = reshape(nodes(i:i+p1,j:j+p2,k:k+p3),[(p1 + 1)*(p2 + 1)*(p3 + 1)])
+                end do
+            end do
         end do
     end function
     !===============================================================================
@@ -499,7 +466,7 @@ contains
         real(rk), intent(in), contiguous :: Xth1(:), Xth2(:), Xth3(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:,:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, nnel, m, n, o, nelem1, nelem2, nelem3, nelem
+        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, m, n, o, nelem1, nelem2, nelem3, nelem
 
         nnel1 = p1 + 1
         nnel2 = p2 + 1
@@ -508,7 +475,7 @@ contains
         nnd_total = nnode1*nnode2*nnode3
         allocate(nodes_vec(nnd_total))
 
-        nodes_vec = [(i, i=1, nnd_total)]
+        Nodes_vec = [(i, i=1, nnd_total)]
         nodes = reshape(nodes_vec,[nnode1,nnode2,nnode3])
 
         nelem1 = size(Xth1) - 1
@@ -517,15 +484,25 @@ contains
 
         nelem = nelem1*nelem2*nelem3
 
-        nnel = nnel1*nnel2*nnel3
-        allocate(elemConn(nelem,nnel))
-        do concurrent (k = 1:nelem3, j = 1:nelem2, i = 1:nelem1)
-            o = -p3 + sum(vecKnot_mul3(1:k))
-            n = -p2 + sum(vecKnot_mul2(1:j))
-            m = -p1 + sum(vecKnot_mul1(1:i))
-            l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
-            elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
+        allocate(elemConn(nelem,nnel1*nnel2*nnel3))
+
+        l = 0
+
+        o = -p3
+        do k = 1, nelem3
+            o = o + vecKnot_mul3(k)
+            n = -p2
+            do j = 1, nelem2
+                n = n + vecKnot_mul2(j)
+                m = -p1
+                do i = 1, nelem1
+                    m = m + vecKnot_mul1(i)
+                    l = l + 1
+                    elemConn(l,:) = reshape(nodes(m:m+p1,n:n+p2,o:o+p3), [nnel1*nnel2*nnel3])
+                end do
+            end do
         end do
+
     end subroutine
     !===============================================================================
 
