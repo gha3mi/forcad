@@ -1,0 +1,1212 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>fdm_test_curve &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD <small>0.6.1</small></a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>fdm_test_curve      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.8% of total for programs.">57 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/fdm_curve.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/fdm_curve.f90.html'>fdm_curve.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">fdm_test_curve</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-tgc~51">Tgc</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-tgcm">Tgcm</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-tgcp">Tgcp</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-wc~48">Wc</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-xc~48">Xc</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-xt~62">Xt</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-xtm">Xtm</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-xtp">Xtp</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-curve">curve</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-d2tgc~18">d2Tgc</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-d2tgcm">d2Tgcm</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-d2tgcp">d2Tgcp</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-dtgc~30">dTgc</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-dtgcm">dTgcm</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-dtgcp">dTgcp</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-knot~39">knot</a>
+            <a class="list-group-item" href="../program/fdm_test_curve.html#variable-tol~5">tol</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~fdm_test_curve~~UsesGraph Pages: 1 -->
+<svg id="programfdm_test_curveUsesGraph" width="579pt" height="195pt"
+ viewBox="0.00 0.00 579.00 195.40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~fdm_test_curve~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 191.4)">
+<title>program~~fdm_test_curve~~UsesGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-191.4 575,-191.4 575,4 -4,4"/>
+<!-- program~fdm_test_curve -->
+<g id="program~~fdm_test_curve~~UsesGraph_node1" class="node">
+<title>program~fdm_test_curve</title>
+<polygon fill="none" stroke="black" points="571,-104 477,-104 477,-80 571,-80 571,-104"/>
+<text text-anchor="middle" x="524" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50">fdm_test_curve</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~fdm_test_curve~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="441,-104 387,-104 387,-80 441,-80 441,-104"/>
+<text text-anchor="middle" x="414" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~fdm_test_curve&#45;&gt;module~forcad -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge1" class="edge">
+<title>program~fdm_test_curve&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M476.89,-92C468.26,-92 459.36,-92 451.09,-92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="451.02,-88.5 441.02,-92 451.02,-95.5 451.02,-88.5"/>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_node3" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node3"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="79,-84 0,-84 0,-60 79,-60 79,-84"/>
+<text text-anchor="middle" x="39.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M405.05,-104.23C394.63,-119.11 374.83,-143.65 351,-155 270.98,-193.1 238.91,-193.69 152.5,-174"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~fdm_test_curve~~UsesGraph_node4" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node4"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="346,-146 229,-146 229,-122 346,-122 346,-146"/>
+<text text-anchor="middle" x="287.5" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M386.76,-100.9C375.72,-104.65 362.74,-109.04 351,-113 345.51,-114.85 339.75,-116.79 334.04,-118.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="332.89,-115.41 324.53,-121.91 335.12,-122.04 332.89,-115.41"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~fdm_test_curve~~UsesGraph_node5" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node5"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="351,-104 224,-104 224,-80 351,-80 351,-104"/>
+<text text-anchor="middle" x="287.5" y="-89.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M386.9,-92C379.29,-92 370.56,-92 361.53,-92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="361.24,-88.5 351.24,-92 361.24,-95.5 361.24,-88.5"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~fdm_test_curve~~UsesGraph_node6" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node6"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="351,-24 224,-24 224,0 351,0 351,-24"/>
+<text text-anchor="middle" x="287.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M401.57,-79.99C389.77,-68.13 370.41,-50.04 351,-38 345.23,-34.42 338.88,-31.13 332.51,-28.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.78,-24.92 323.22,-24.12 330.98,-31.33 333.78,-24.92"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~fdm_test_curve~~UsesGraph_node7" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~fdm_test_curve~~UsesGraph_node7"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="188,-84 115,-84 115,-60 188,-60 188,-84"/>
+<text text-anchor="middle" x="151.5" y="-69.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_utils -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge6" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M386.94,-81.06C376.04,-77.04 363.11,-73 351,-71 299.23,-62.47 238.83,-64.44 198.38,-67.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="197.98,-63.96 188.28,-68.24 198.53,-70.94 197.98,-63.96"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge7" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M258.11,-146.06C225.11,-159.44 172.62,-178.59 152.5,-174"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge8" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M246.71,-121.94C239.07,-119.26 231.2,-116.24 224,-113 208.84,-106.18 192.71,-97.11 179.62,-89.23"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="181.44,-86.25 171.09,-84.01 177.79,-92.22 181.44,-86.25"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge9" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M243.53,-104C236.81,-106.57 230.08,-109.56 224,-113 187.65,-133.58 193.23,-183.28 152.5,-174"/>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M150.5,-174C105.98,-163.85 70.84,-119.76 53.12,-92.98"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="55.92,-90.86 47.59,-84.31 50.02,-94.63 55.92,-90.86"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge10" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M223.82,-82.64C215.19,-81.36 206.48,-80.06 198.24,-78.83"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="198.51,-75.33 188.1,-77.31 197.48,-82.25 198.51,-75.33"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge11" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M230.33,-24.01C196.76,-31.38 153.32,-41.25 115,-51 106.48,-53.17 97.46,-55.6 88.74,-58.01"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="87.75,-54.66 79.07,-60.72 89.64,-61.4 87.75,-54.66"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge12" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M256.8,-24C246.38,-28.31 234.63,-33.27 224,-38 211.62,-43.52 198.16,-49.83 186.3,-55.51"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="184.67,-52.4 177.18,-59.89 187.71,-58.71 184.67,-52.4"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~fdm_test_curve~~UsesGraph_edge13" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M114.79,-72C106.58,-72 97.72,-72 89.07,-72"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="89.07,-68.5 79.07,-72 89.07,-75.5 89.07,-68.5"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="518pt" height="32pt"
+ viewBox="0.00 0.00 517.50 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 513.5,-28 513.5,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24 0,-24 0,0 54,0 54,-24"/>
+<text text-anchor="middle" x="27" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="145.5,-24 72.5,-24 72.5,0 145.5,0 145.5,-24"/>
+<text text-anchor="middle" x="109" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="234,-24 164,-24 164,0 234,0 234,-24"/>
+<text text-anchor="middle" x="199" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="310,-24 252,-24 252,0 310,0 310,-24"/>
+<text text-anchor="middle" x="281" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="386,-24 328,-24 328,0 386,0 386,-24"/>
+<text text-anchor="middle" x="357" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="509.5,-24 404.5,-24 404.5,0 509.5,0 509.5,-24"/>
+<text text-anchor="middle" x="457" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Define control points for the NURBS curve
+Define weights for the control points (optional)
+Define knot vector</p>
+<p>Set knot vector, control points, and weights for the NURBS curve object.
+Wc is optional</p>
+<p>Generate the NURBS curve with a resolution of 20</p>
+<p>Finalize the NURBS curve object
+Define control points for the NURBS curve
+Define knot vector</p>
+<p>Set knot vector, control points for the NURBS curve object.
+Wc is optional</p>
+<p>Generate the NURBS curve with a resolution of 20</p>
+<p>Finalize the NURBS curve object</p>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: program~~fdm_test_curve~~CallsGraph Pages: 1 -->
+<svg id="programfdm_test_curveCallsGraph" width="641pt" height="190pt"
+ viewBox="0.00 0.00 641.00 189.69" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~fdm_test_curve~~CallsGraph" class="graph" transform="scale(0.52 0.52) rotate(0) translate(4 360)">
+<title>program~~fdm_test_curve~~CallsGraph</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-360 1226,-360 1226,4 -4,4"/>
+<!-- program~fdm_test_curve -->
+<g id="program~~fdm_test_curve~~CallsGraph_node1" class="node">
+<title>program~fdm_test_curve</title>
+<polygon fill="none" stroke="black" points="94,-192 0,-192 0,-168 94,-168 94,-192"/>
+<text text-anchor="middle" x="47" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50">fdm_test_curve</text>
+</g>
+<!-- none~derivative2~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node2" class="node">
+<title>none~derivative2~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node2"><a xlink:href="../type/nurbs_curve.html#boundprocedure-derivative2~2" xlink:title="nurbs_curve%derivative2">
+<polygon fill="#a7506f" stroke="#a7506f" points="278,-234 130,-234 130,-210 278,-210 278,-234"/>
+<text text-anchor="middle" x="204" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%derivative2</text>
+</a>
+</g>
+</g>
+<!-- program~fdm_test_curve&#45;&gt;none~derivative2~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge1" class="edge">
+<title>program~fdm_test_curve&#45;&gt;none~derivative2~2</title>
+<path fill="none" stroke="#ff0000" d="M92.42,-192.04C110.01,-196.8 130.4,-202.33 148.85,-207.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="148.01,-210.73 158.58,-209.96 149.84,-203.97 148.01,-210.73"/>
+</g>
+<!-- none~set~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node3" class="node">
+<title>none~set~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node3"><a xlink:href="../type/nurbs_curve.html#boundprocedure-set~2" xlink:title="nurbs_curve%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="255.5,-150 152.5,-150 152.5,-126 255.5,-126 255.5,-150"/>
+<text text-anchor="middle" x="204" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set</text>
+</a>
+</g>
+</g>
+<!-- program~fdm_test_curve&#45;&gt;none~set~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge2" class="edge">
+<title>program~fdm_test_curve&#45;&gt;none~set~2</title>
+<path fill="none" stroke="#ff0000" d="M92.42,-167.96C110.01,-163.2 130.4,-157.67 148.85,-152.67"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="149.84,-156.03 158.58,-150.04 148.01,-149.27 149.84,-156.03"/>
+</g>
+<!-- proc~create~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node4" class="node">
+<title>proc~create~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node4"><a xlink:href="../proc/create~2.html" xlink:title="nurbs_curve%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="264.5,-316 143.5,-316 143.5,-292 264.5,-292 264.5,-316"/>
+<text text-anchor="middle" x="204" y="-301.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%create</text>
+</a>
+</g>
+</g>
+<!-- program~fdm_test_curve&#45;&gt;proc~create~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge3" class="edge">
+<title>program~fdm_test_curve&#45;&gt;proc~create~2</title>
+<path fill="none" stroke="#ff0000" d="M63.14,-192.12C90.28,-213.82 147.34,-259.47 179.56,-285.25"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="177.57,-288.14 187.56,-291.65 181.94,-282.67 177.57,-288.14"/>
+</g>
+<!-- proc~finalize~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node5" class="node">
+<title>proc~finalize~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node5"><a xlink:href="../proc/finalize~2.html" xlink:title="nurbs_curve%finalize">
+<polygon fill="#d9534f" stroke="#d9534f" points="267,-108 141,-108 141,-84 267,-84 267,-108"/>
+<text text-anchor="middle" x="204" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%finalize</text>
+</a>
+</g>
+</g>
+<!-- program~fdm_test_curve&#45;&gt;proc~finalize~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge4" class="edge">
+<title>program~fdm_test_curve&#45;&gt;proc~finalize~2</title>
+<path fill="none" stroke="#ff0000" d="M60.59,-167.86C75.86,-153.75 102.92,-130.68 130,-117 133.95,-115.01 138.11,-113.18 142.37,-111.5"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="143.6,-114.78 151.8,-108.07 141.2,-108.2 143.6,-114.78"/>
+</g>
+<!-- proc~derivative2_scalar~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node7" class="node">
+<title>proc~derivative2_scalar~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node7"><a xlink:href="../proc/derivative2_scalar~2.html" xlink:title="nurbs_curve%derivative2_scalar">
+<polygon fill="#d9534f" stroke="#d9534f" points="500,-276 315,-276 315,-252 500,-252 500,-276"/>
+<text text-anchor="middle" x="407.5" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%derivative2_scalar</text>
+</a>
+</g>
+</g>
+<!-- none~derivative2~2&#45;&gt;proc~derivative2_scalar~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge5" class="edge">
+<title>none~derivative2~2&#45;&gt;proc~derivative2_scalar~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M262.74,-234.04C286.46,-238.98 314.08,-244.74 338.74,-249.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="338.25,-253.35 348.75,-251.96 339.67,-246.5 338.25,-253.35"/>
+</g>
+<!-- proc~derivative2_vector~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node8" class="node">
+<title>proc~derivative2_vector~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node8"><a xlink:href="../proc/derivative2_vector~2.html" xlink:title="nurbs_curve%derivative2_vector">
+<polygon fill="#d9534f" stroke="#d9534f" points="501,-234 314,-234 314,-210 501,-210 501,-234"/>
+<text text-anchor="middle" x="407.5" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%derivative2_vector</text>
+</a>
+</g>
+</g>
+<!-- none~derivative2~2&#45;&gt;proc~derivative2_vector~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge6" class="edge">
+<title>none~derivative2~2&#45;&gt;proc~derivative2_vector~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M278.03,-222C286.37,-222 294.98,-222 303.62,-222"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="303.74,-225.5 313.74,-222 303.74,-218.5 303.74,-225.5"/>
+</g>
+<!-- proc~set1a -->
+<g id="program~~fdm_test_curve~~CallsGraph_node10" class="node">
+<title>proc~set1a</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node10"><a xlink:href="../proc/set1a.html" xlink:title="nurbs_curve%set1a">
+<polygon fill="#d9534f" stroke="#d9534f" points="466,-192 349,-192 349,-168 466,-168 466,-192"/>
+<text text-anchor="middle" x="407.5" y="-177.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1a</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1a -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge7" class="edge">
+<title>none~set~2&#45;&gt;proc~set1a</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.59,-148.54C280.82,-153.8 311.68,-160.24 338.91,-165.91"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="338.26,-169.35 348.76,-167.96 339.68,-162.5 338.26,-169.35"/>
+</g>
+<!-- proc~set1~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node11" class="node">
+<title>proc~set1~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node11"><a xlink:href="../proc/set1~2.html" xlink:title="nurbs_curve%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="462.5,-108 352.5,-108 352.5,-84 462.5,-84 462.5,-108"/>
+<text text-anchor="middle" x="407.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge8" class="edge">
+<title>none~set~2&#45;&gt;proc~set1~2</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.59,-127.46C281.86,-121.98 314.23,-115.23 342.25,-109.39"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="343.28,-112.75 352.36,-107.28 341.86,-105.9 343.28,-112.75"/>
+</g>
+<!-- proc~set2~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node12" class="node">
+<title>proc~set2~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node12"><a xlink:href="../proc/set2~2.html" xlink:title="nurbs_curve%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="462.5,-24 352.5,-24 352.5,0 462.5,0 462.5,-24"/>
+<text text-anchor="middle" x="407.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set2~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge9" class="edge">
+<title>none~set~2&#45;&gt;proc~set2~2</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.54,-129.85C263.7,-126.82 271.57,-122.67 278,-117 308.46,-90.13 282.79,-59 314,-33 322.15,-26.21 332.05,-21.51 342.32,-18.27"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="343.47,-21.59 352.22,-15.6 341.65,-14.83 343.47,-21.59"/>
+</g>
+<!-- proc~set3~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node13" class="node">
+<title>proc~set3~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node13"><a xlink:href="../proc/set3~2.html" xlink:title="nurbs_curve%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="462.5,-66 352.5,-66 352.5,-42 462.5,-42 462.5,-66"/>
+<text text-anchor="middle" x="407.5" y="-51.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set3~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge10" class="edge">
+<title>none~set~2&#45;&gt;proc~set3~2</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.76,-127.58C263.55,-124.82 271.23,-121.35 278,-117 298.68,-103.71 292.95,-87.7 314,-75 322.67,-69.77 332.52,-65.84 342.47,-62.89"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="343.65,-66.2 352.42,-60.25 341.85,-59.43 343.65,-66.2"/>
+</g>
+<!-- proc~set4~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node14" class="node">
+<title>proc~set4~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node14"><a xlink:href="../proc/set4~2.html" xlink:title="nurbs_curve%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="462.5,-150 352.5,-150 352.5,-126 462.5,-126 462.5,-150"/>
+<text text-anchor="middle" x="407.5" y="-135.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set4~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge11" class="edge">
+<title>none~set~2&#45;&gt;proc~set4~2</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.59,-138C281.86,-138 314.23,-138 342.25,-138"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="342.36,-141.5 352.36,-138 342.36,-134.5 342.36,-141.5"/>
+</g>
+<!-- interface~compute_xg~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node6" class="node">
+<title>interface~compute_xg~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node6"><a xlink:href="../interface/compute_xg~2.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="447,-356 368,-356 368,-332 447,-332 447,-356"/>
+<text text-anchor="middle" x="407.5" y="-341.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;interface~compute_xg~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge12" class="edge">
+<title>proc~create~2&#45;&gt;interface~compute_xg~2</title>
+<path fill="none" stroke="#00ffff" d="M264.64,-315.84C294.41,-321.75 329.95,-328.8 358.02,-334.38"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="357.5,-337.84 367.99,-336.36 358.86,-330.98 357.5,-337.84"/>
+</g>
+<!-- proc~is_rational~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node9" class="node">
+<title>proc~is_rational~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node9"><a xlink:href="../proc/is_rational~2.html" xlink:title="nurbs_curve%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="685,-276 543,-276 543,-252 685,-252 685,-276"/>
+<text text-anchor="middle" x="614" y="-261.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;proc~is_rational~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge13" class="edge">
+<title>proc~create~2&#45;&gt;proc~is_rational~2</title>
+<path fill="none" stroke="#00ffff" d="M264.73,-302.29C324.66,-300.08 419.5,-295.22 501,-285 515.67,-283.16 531.33,-280.6 546.14,-277.91"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="547.04,-281.3 556.23,-276.03 545.76,-274.42 547.04,-281.3"/>
+</g>
+<!-- proc~derivative2_scalar~2&#45;&gt;proc~is_rational~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge15" class="edge">
+<title>proc~derivative2_scalar~2&#45;&gt;proc~is_rational~2</title>
+<path fill="none" stroke="#ffaa00" d="M500.28,-264C511.14,-264 522.17,-264 532.85,-264"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="532.97,-267.5 542.97,-264 532.97,-260.5 532.97,-267.5"/>
+</g>
+<!-- interface~compute_d2tgc~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node15" class="node">
+<title>interface~compute_d2tgc~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node15"><a xlink:href="../interface/compute_d2tgc~2.html" xlink:title="compute_d2Tgc">
+<polygon fill="#a7506f" stroke="#a7506f" points="663,-234 565,-234 565,-210 663,-210 663,-234"/>
+<text text-anchor="middle" x="614" y="-219.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_d2Tgc</text>
+</a>
+</g>
+</g>
+<!-- proc~derivative2_scalar~2&#45;&gt;interface~compute_d2tgc~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge14" class="edge">
+<title>proc~derivative2_scalar~2&#45;&gt;interface~compute_d2tgc~2</title>
+<path fill="none" stroke="#ffaa00" d="M467.1,-251.96C494.64,-246.31 527.38,-239.58 554.87,-233.94"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="555.64,-237.35 564.73,-231.91 554.23,-230.5 555.64,-237.35"/>
+</g>
+<!-- proc~derivative2_vector~2&#45;&gt;proc~is_rational~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge17" class="edge">
+<title>proc~derivative2_vector~2&#45;&gt;proc~is_rational~2</title>
+<path fill="none" stroke="#aaff00" d="M467.1,-234.04C491.27,-239 519.45,-244.79 544.57,-249.95"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="543.89,-253.38 554.39,-251.96 545.3,-246.52 543.89,-253.38"/>
+</g>
+<!-- proc~derivative2_vector~2&#45;&gt;interface~compute_d2tgc~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge16" class="edge">
+<title>proc~derivative2_vector~2&#45;&gt;interface~compute_d2tgc~2</title>
+<path fill="none" stroke="#aaff00" d="M501.18,-222C519.38,-222 537.99,-222 554.68,-222"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="554.8,-225.5 564.8,-222 554.8,-218.5 554.8,-225.5"/>
+</g>
+<!-- proc~cmp_degree~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node16" class="node">
+<title>proc~cmp_degree~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node16"><a xlink:href="../proc/cmp_degree~2.html" xlink:title="nurbs_curve%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="691,-108 537,-108 537,-84 691,-84 691,-108"/>
+<text text-anchor="middle" x="614" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set1a&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge18" class="edge">
+<title>proc~set1a&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#00ffa9" d="M466.02,-169.66C477.78,-166.79 489.94,-163.26 501,-159 531.92,-147.08 564.67,-127.79 586.71,-113.69"/>
+<polygon fill="#00ffa9" stroke="#00ffa9" points="588.7,-116.57 595.18,-108.19 584.88,-110.7 588.7,-116.57"/>
+</g>
+<!-- proc~set1~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge19" class="edge">
+<title>proc~set1~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#00a9ff" d="M462.77,-96C482.38,-96 505.04,-96 526.71,-96"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="526.92,-99.5 536.92,-96 526.92,-92.5 526.92,-99.5"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~fdm_test_curve~~CallsGraph_node17" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node17"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="677.5,-24 550.5,-24 550.5,0 677.5,0 677.5,-24"/>
+<text text-anchor="middle" x="614" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~2&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge20" class="edge">
+<title>proc~set2~2&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#0000ff" d="M462.77,-12C486.37,-12 514.39,-12 539.81,-12"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="540.14,-15.5 550.14,-12 540.14,-8.5 540.14,-15.5"/>
+</g>
+<!-- proc~set3~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge21" class="edge">
+<title>proc~set3~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#aa00ff" d="M462.77,-65.14C487.84,-70.3 517.9,-76.47 544.52,-81.93"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="544.03,-85.41 554.53,-83.99 545.44,-78.55 544.03,-85.41"/>
+</g>
+<!-- proc~get_multiplicity~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node18" class="node">
+<title>proc~get_multiplicity~2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node18"><a xlink:href="../proc/get_multiplicity~2.html" xlink:title="nurbs_curve%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="896,-108 727,-108 727,-84 896,-84 896,-108"/>
+<text text-anchor="middle" x="811.5" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge22" class="edge">
+<title>proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2</title>
+<path fill="none" stroke="#00ff00" d="M691.15,-96C699.54,-96 708.17,-96 716.75,-96"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="716.79,-99.5 726.79,-96 716.79,-92.5 716.79,-99.5"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~fdm_test_curve~~CallsGraph_node19" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node19"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="840,-24 783,-24 783,0 840,0 840,-24"/>
+<text text-anchor="middle" x="811.5" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge23" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#0000ff" d="M677.66,-12C708.92,-12 745.69,-12 772.61,-12"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="772.78,-15.5 782.78,-12 772.78,-8.5 772.78,-15.5"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~fdm_test_curve~~CallsGraph_node20" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node20"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1056,-108 932,-108 932,-84 1056,-84 1056,-108"/>
+<text text-anchor="middle" x="994" y="-93.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge24" class="edge">
+<title>proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#ff0000" d="M896.15,-96C904.73,-96 913.4,-96 921.84,-96"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="921.99,-99.5 931.99,-96 921.99,-92.5 921.99,-99.5"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node21" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node21"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1222,-129 1092,-129 1092,-105 1222,-105 1222,-129"/>
+<text text-anchor="middle" x="1157" y="-114.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge25" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1056.33,-104C1064.69,-105.09 1073.35,-106.22 1081.92,-107.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1081.53,-110.82 1091.9,-108.64 1082.44,-103.88 1081.53,-110.82"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_node22" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~fdm_test_curve~~CallsGraph_node22"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1222,-87 1092,-87 1092,-63 1222,-63 1222,-87"/>
+<text text-anchor="middle" x="1157" y="-72.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~fdm_test_curve~~CallsGraph_edge26" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1056.33,-88C1064.69,-86.91 1073.35,-85.78 1081.92,-84.66"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1082.44,-88.12 1091.9,-83.36 1081.53,-81.18 1082.44,-88.12"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramfdm_test_curveCallsGraph = svgPanZoom('#programfdm_test_curveCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 27.51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.86 0.86) rotate(0) translate(4 28)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-28 741.5,-28 741.5,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="70,-24 0,-24 0,0 70,0 70,-24"/>
+<text text-anchor="middle" x="35" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="146,-24 88,-24 88,0 146,0 146,-24"/>
+<text text-anchor="middle" x="117" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="225.5,-24 164.5,-24 164.5,0 225.5,0 225.5,-24"/>
+<text text-anchor="middle" x="195" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="374,-24 244,-24 244,0 374,0 374,-24"/>
+<text text-anchor="middle" x="309" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="537.5,-24 392.5,-24 392.5,0 537.5,0 537.5,-24"/>
+<text text-anchor="middle" x="465" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="614,-24 556,-24 556,0 614,0 614,-24"/>
+<text text-anchor="middle" x="585" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="737.5,-24 632.5,-24 632.5,0 737.5,0 737.5,-24"/>
+<text text-anchor="middle" x="685" y="-9.6" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tgc~51"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Tgc</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tgcm"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Tgcm</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tgcp"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Tgcp</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-wc~48"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Wc</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Arrays for control points and weights</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xc~48"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xc</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Arrays for control points and weights</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt~62"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Xt</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xtm"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Xtm</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xtp"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>Xtp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-curve"></span>
+              type(<a href='../type/nurbs_curve.html'>nurbs_curve</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>curve</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Declare a NURBS curve object</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d2tgc~18"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>d2Tgc</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d2tgcm"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>d2Tgcm</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-d2tgcp"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>d2Tgcp</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dtgc~30"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>dTgc</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dtgcm"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>dTgcm</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-dtgcp"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>dTgcp</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-knot~39"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>knot</strong>(6)</td>
+                <td></td>
+                <td></td>
+            <td>
+                <p>Array for knot vector</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tol~5"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tol</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2025-05-28T18:00:24.923618+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
