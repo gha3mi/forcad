@@ -1,7 +1,7 @@
 program nearest_point_2d_bench
 
     use forcad, only: rk, nurbs_surface
-    use fortime
+    use fortime, only: timer
 
     implicit none
 
