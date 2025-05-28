@@ -104,7 +104,7 @@ To generate the API documentation for ForCAD using
 command:
 
 ```shell
-ford ford.yml
+ford README.md
 ```
 
 ## Roadmap
