@@ -74,6 +74,7 @@ module forcad_nurbs_surface
         procedure :: set_elem               !!> Set IGA element connectivity
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
+        procedure :: export_Xth             !!> Export parameter space to VTK file
         procedure :: modify_Xc              !!> Modify control points
         procedure :: modify_Wc              !!> Modify weights
         procedure :: get_multiplicity       !!> Compute and return the multiplicity of the knot vector
@@ -963,6 +964,29 @@ contains
         end if
 
         call export_vtk_legacy(filename, this%Xg, elemConn, 9, encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_Xth(this, filename, encoding)
+        class(nurbs_surface), intent(in) :: this
+        character(len=*), intent(in) :: filename
+        character(len=*), intent(in), optional :: encoding
+        integer, allocatable :: elemConn(:,:)
+        real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:)
+        type(nurbs_surface) :: th
+
+        Xth1 = unique(this%knot1)
+        Xth2 = unique(this%knot2)        
+        call ndgrid(Xth1, Xth2, Xth)
+        
+        call th%set([this%knot1(1),Xth1,this%knot1(size(this%knot1))], [this%knot2(1),Xth2,this%knot2(size(this%knot2))], Xth)
+        elemConn = th%cmp_elem()
+
+        call export_vtk_legacy(filename, Xth, elemConn, 9, encoding)
     end subroutine
     !===============================================================================
 
