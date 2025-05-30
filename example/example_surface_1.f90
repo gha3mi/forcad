@@ -49,6 +49,9 @@ program example3_surface
     !> Export the generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
 
+    !> Export the NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface.igs')
+
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
     ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
@@ -107,6 +110,9 @@ program example3_surface
     !> Export the refined generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
 
+    !> Export the NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface2.igs')
+
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
     ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
@@ -139,6 +145,9 @@ program example3_surface
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg3.vtk')
+
+    !> Export the transformed NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface3.igs')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista

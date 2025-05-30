@@ -68,6 +68,7 @@ module forcad_nurbs_curve
         procedure :: export_Xc             !!> Export control points to VTK file
         procedure :: export_Xg             !!> Export geometry points to VTK file
         procedure :: export_Xth            !!> Export parameter space to VTK file
+        procedure :: export_iges           !!> Export the NURBS curve to an IGES file
         procedure :: modify_Xc             !!> Modify control points
         procedure :: modify_Wc             !!> Modify weights
         procedure :: get_multiplicity      !!> Compute and return the multiplicity of the knots
@@ -906,6 +907,108 @@ contains
 
         call export_vtk_legacy(filename, Xth, elemConn, 3, encoding)
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_iges(this, filename)
+        use forIGES, only: Gsection_t, Dentry_t, entity126_t, DElist_t, PElist_t,&
+                           makeSsection, makeGsection, makeDPsections, writeIGESfile, wp
+
+        class(nurbs_curve), intent(inout) :: this
+        character(len=*), intent(in)      :: filename
+
+        type(Gsection_t)  :: G
+        type(Dentry_t)    :: D
+        type(entity126_t) :: curve126
+        type(DElist_t)    :: Dlist
+        type(PElist_t)    :: Plist
+        character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
+        real(rk), allocatable :: W(:), X(:), Y(:), Z(:), T(:)
+        integer :: i, M, K, N, prop3
+
+        ! Parameters for IGES knot vector
+        K = this%degree
+        M = this%degree
+        N = 1 + K - M
+    
+        ! Allocate IGES arrays explicitly with correct indexing
+        allocate(T(-M:N+K), X(0:K), Y(0:K), Z(0:K), W(0:K))
+
+        ! Copy your knot vector to IGES indexing
+        do i = -M, N + K
+            T(i) = this%knot(i + M + 1)
+        end do
+
+        ! Copy control points
+        if (this%is_rational()) then
+            do i = 0, K
+                X(i) = this%Xc(i+1, 1)
+                Y(i) = this%Xc(i+1, 2)
+                Z(i) = this%Xc(i+1, 3)
+                W(i) = this%Wc(i+1)
+            end do
+            prop3 = 1
+        else
+            do i = 0, K
+                X(i) = this%Xc(i+1, 1)
+                Y(i) = this%Xc(i+1, 2)
+                Z(i) = this%Xc(i+1, 3)
+                W(i) = 1.0_rk
+            end do
+            prop3 = 0
+        end if
+
+        ! Initialize IGES entity126 (Rational B-spline Curve)
+        call curve126%init(&
+            DEP   = 1,&
+            form  = 0,&
+            K     = K,&
+            M     = M,&
+            PROP1 = 0,&
+            PROP2 = 0,&
+            PROP3 = prop3,&
+            PROP4 = 0,&
+            T     = real(T, kind=wp),&
+            W     = real(W, kind=wp),&
+            X     = real(X, kind=wp),&
+            Y     = real(Y, kind=wp),&
+            Z     = real(Z, kind=wp),&
+            V     = real([minval(this%knot), maxval(this%knot)], kind=wp),&
+            XNORM = real(0.0_rk, kind=wp),&
+            YNORM = real(0.0_rk, kind=wp),&
+            ZNORM = real(0.0_rk, kind=wp))
+
+        ! Directory entry
+        call D%init(entity_type=126, param_data=1, transformation_matrix=0, form_number=0)
+
+        ! Entity and directory lists
+        call Dlist%init()
+        call Plist%init()
+        call Dlist%append(D)
+        call Plist%append(curve126)
+
+        ! Global section
+        call G%init(filename=filename)
+
+        ! S-section description
+        allocate(Ssection(1))
+        Ssection(1) = 'ForCAD'
+
+        ! Create IGES sections
+        call makeSsection(Ssection, Ssec_out)
+        call makeGsection(G, Gsection)
+        call makeDPsections(Dlist, Plist, Dsection, Psection)
+
+        ! Write IGES file
+        call writeIGESfile(filename, Ssec_out, Gsection, Dsection, Psection)
+
+        ! Cleanup
+        call Dlist%delete()
+        call Plist%delete()
+    end subroutine export_iges
     !===============================================================================
 
 

@@ -50,6 +50,8 @@ program example1_curve
     !> Export the generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
 
+    !> Export the NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve.igs')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -102,6 +104,9 @@ program example1_curve
     !> Export the refined generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
 
+    !> Export the refined NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve2.igs')
+
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
     ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
@@ -134,6 +139,9 @@ program example1_curve
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg3.vtk')
+
+    !> Export the transformed NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve3.igs')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista

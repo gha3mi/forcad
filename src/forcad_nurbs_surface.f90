@@ -75,6 +75,7 @@ module forcad_nurbs_surface
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: export_Xth             !!> Export parameter space to VTK file
+        procedure :: export_iges            !!> Export the NURBS surface to IGES format
         procedure :: modify_Xc              !!> Modify control points
         procedure :: modify_Wc              !!> Modify weights
         procedure :: get_multiplicity       !!> Compute and return the multiplicity of the knot vector
@@ -989,6 +990,129 @@ contains
         elemConn = th%cmp_elem()
 
         call export_vtk_legacy(filename, Xth, elemConn, 9, encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_iges(this, filename)
+        use forIGES, only: Gsection_t, Dentry_t, entity128_t, DElist_t, PElist_t,&
+                           makeSsection, makeGsection, makeDPsections, writeIGESfile, wp
+
+        class(nurbs_surface), intent(inout) :: this
+        character(len=*),     intent(in)    :: filename
+
+        type(Gsection_t)  :: G
+        type(Dentry_t)    :: D
+        type(entity128_t) :: surf128
+        type(DElist_t)    :: Dlist
+        type(PElist_t)    :: Plist
+        character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
+        real(rk), allocatable :: W(:,:), X(:,:), Y(:,:), Z(:,:), S(:), T(:)
+        integer :: i, j, idx
+        integer :: K1, K2, M1, M2, N1, N2, prop3
+
+        ! Parameters consistent with the IGES definition
+        K1 = this%degree(1)
+        K2 = this%degree(2)
+        M1 = this%degree(1)
+        M2 = this%degree(2)
+
+        ! Compute required N1 and N2 based on IGES standard
+        N1 = 1 + K1 - M1
+        N2 = 1 + K2 - M2
+
+        ! Allocate exactly as expected by your IGES library
+        allocate(S(-M1:N1+K1), T(-M2:N2+K2))
+
+        ! Copy knots explicitly, matching IGES indexing exactly
+        do i = -M1, N1 + K1
+            S(i) = this%knot1(i + M1 + 1)
+        end do
+
+        do i = -M2, N2 + K2
+            T(i) = this%knot2(i + M2 + 1)
+        end do
+
+        ! Allocate and fill control point arrays
+        allocate(X(0:K1, 0:K2), Y(0:K1, 0:K2), Z(0:K1, 0:K2), W(0:K1, 0:K2))
+
+        ! Correctly map control points and weights
+        if (this%is_rational()) then
+            do j = 0, K2
+                do i = 0, K1
+                    idx = j * this%nc(1) + i + 1
+                    X(i,j) = this%Xc(idx,1)
+                    Y(i,j) = this%Xc(idx,2)
+                    Z(i,j) = this%Xc(idx,3)
+                    W(i,j) = this%Wc(idx)
+                end do
+            end do
+            prop3 = 1  ! Rational surface
+        else
+            do j = 0, K2
+                do i = 0, K1
+                    idx = j * this%nc(1) + i + 1
+                    X(i,j) = this%Xc(idx,1)
+                    Y(i,j) = this%Xc(idx,2)
+                    Z(i,j) = this%Xc(idx,3)
+                    W(i,j) = 1.0_rk
+                end do
+            end do
+            prop3 = 0  ! b-Spline surface
+        end if
+
+        ! Initialize IGES entity 128 (Rational B-spline Surface)
+        call surf128%init(&
+            DEP   = 1,&
+            form  = 0,&
+            K1    = K1,&
+            K2    = K2,&
+            M1    = M1,&
+            M2    = M2,&
+            PROP1 = 0,&
+            PROP2 = 0,&
+            PROP3 = prop3,&
+            PROP4 = 0,&
+            PROP5 = 0,&
+            S     = real(S, kind=wp),&
+            T     = real(T, kind=wp),&
+            W     = real(W, kind=wp),&
+            X     = real(X, kind=wp),&
+            Y     = real(Y, kind=wp),&
+            Z     = real(Z, kind=wp),&
+            U     = real([minval(this%knot1), maxval(this%knot1)], kind=wp),&
+            V     = real([minval(this%knot2), maxval(this%knot2)], kind=wp))
+
+        ! Directory entry
+        call D%init(entity_type=128, param_data=1, transformation_matrix=0, form_number=0)
+
+        ! Create entity and directory lists
+        call Dlist%init()
+        call Plist%init()
+        call Dlist%append(D)
+        call Plist%append(surf128)
+
+        ! Global section initialization
+        call G%init(filename=filename)
+
+        ! S-section description
+        allocate(Ssection(1))
+        Ssection(1) = 'ForCAD'
+
+        ! Create IGES sections
+        call makeSsection(Ssection, Ssec_out)
+        call makeGsection(G, Gsection)
+        call makeDPsections(Dlist, Plist, Dsection, Psection)
+
+        ! Write IGES file
+        call writeIGESfile(filename, Ssec_out, Gsection, Dsection, Psection)
+
+        ! Cleanup
+        call Dlist%delete()
+        call Plist%delete()
     end subroutine
     !===============================================================================
 
