@@ -983,7 +983,9 @@ contains
         Xth2 = unique(this%knot2)        
         call ndgrid(Xth1, Xth2, Xth)
         
-        call th%set([this%knot1(1),Xth1,this%knot1(size(this%knot1))], [this%knot2(1),Xth2,this%knot2(size(this%knot2))], Xth)
+        call th%set(&
+            [this%knot1(1),Xth1,this%knot1(size(this%knot1))],&
+            [this%knot2(1),Xth2,this%knot2(size(this%knot2))], Xth)
         elemConn = th%cmp_elem()
 
         call export_vtk_legacy(filename, Xth, elemConn, 9, encoding)
