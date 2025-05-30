@@ -34,6 +34,9 @@ program example1_curve
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth.vtk')
+
     !> Export control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc.vtk')
 
@@ -90,6 +93,9 @@ program example1_curve
     !> Generate the refined curve with a resolution of 20
     call nurbs%create()
 
+    !> Export refined parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth2.vtk')
+
     !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc2.vtk')
 
@@ -119,6 +125,9 @@ program example1_curve
 
     !> Translate the generated curve
     call nurbs%translate_Xg([-1.0_rk, -2.0_rk, 3.0_rk])
+
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth3.vtk')
 
     !> Export the transformed control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc3.vtk')

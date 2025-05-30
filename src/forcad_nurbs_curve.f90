@@ -4,7 +4,7 @@
 module forcad_nurbs_curve
 
     use forcad_kinds, only: rk
-    use forcad_utils, only: basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
+    use forcad_utils, only: basis_bspline, elemConn_C0, ndgrid, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
         insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, &
         elemConn_Cn, unique, rotation, dyad, gauss_leg, export_vtk_legacy
 
@@ -67,6 +67,7 @@ module forcad_nurbs_curve
         procedure :: set_elem              !!> Set IGA element connectivity
         procedure :: export_Xc             !!> Export control points to VTK file
         procedure :: export_Xg             !!> Export geometry points to VTK file
+        procedure :: export_Xth            !!> Export parameter space to VTK file
         procedure :: modify_Xc             !!> Modify control points
         procedure :: modify_Wc             !!> Modify weights
         procedure :: get_multiplicity      !!> Compute and return the multiplicity of the knots
@@ -880,6 +881,30 @@ contains
         end if
 
         call export_vtk_legacy(filename, this%Xg, elemConn, 3, encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_Xth(this, filename, encoding)
+        class(nurbs_curve), intent(in) :: this
+        character(len=*), intent(in) :: filename
+        character(len=*), intent(in), optional :: encoding
+        integer, allocatable :: elemConn(:,:)
+        real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
+        type(nurbs_curve) :: th
+
+        Xth1 = unique(this%knot)
+        Xth2 = [0.0_rk]
+        Xth3 = [0.0_rk]
+        call ndgrid(Xth1, Xth2, Xth3, Xth)
+        
+        call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
+        elemConn = th%cmp_elem()
+
+        call export_vtk_legacy(filename, Xth, elemConn, 3, encoding)
     end subroutine
     !===============================================================================
 
