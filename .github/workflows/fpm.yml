@@ -13,16 +13,15 @@ jobs:
         toolchain:
           - {compiler: gcc}
           - {compiler: intel}
+          - {compiler: intel-classic}
           - {compiler: nvidia-hpc}
         exclude:
           - os: windows-latest
             toolchain: {compiler: nvidia-hpc}
-          - os: windows-latest
-            toolchain: {compiler: intel}
           - os: macos-latest
             toolchain: {compiler: nvidia-hpc}
-
           - os: macos-latest
+            toolchain: {compiler: intel}
 
     steps:
     - name: Checkout code
@@ -31,9 +30,16 @@ jobs:
         submodules: recursive
 
     - name: Setup Fortran Package Manager (fpm)
+      if: matrix.os != 'macos-latest'
       uses: fortran-lang/setup-fpm@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install fpm on macOS
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew tap fortran-lang/homebrew-fortran
+        brew install fpm
 
     - name: Setup Fortran Compiler
       uses: fortran-lang/setup-fortran@main
