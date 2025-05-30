@@ -1,0 +1,143 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "fpm: run example (gfortran)",
+      "type": "shell",
+      "command": "fpm",
+      "args": [
+        "run",
+        "--example",
+        "${fileBasenameNoExtension}",
+        "--profile",
+        "debug",
+        "--compiler",
+        "gfortran",
+        "--runner",
+        "cp",
+        "--",
+        "${workspaceFolder}/build/vscode/example/"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "bash",
+          "args": [
+            "-ci"
+          ]
+        }
+      },
+      "dependsOn": [
+        "Prepare Example Directories"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "fpm: run example (ifx)",
+      "type": "shell",
+      "command": "fpm",
+      "args": [
+        "run",
+        "--example",
+        "${fileBasenameNoExtension}",
+        "--profile",
+        "debug",
+        "--compiler",
+        "ifx",
+        "--runner",
+        "cp",
+        "--",
+        "${workspaceFolder}/build/vscode/example/"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "bash",
+          "args": [
+            "-ci"
+          ]
+        }
+      },
+      "dependsOn": [
+        "Prepare Example Directories"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "fpm: run example (nvfortran)",
+      "type": "shell",
+      "command": "fpm",
+      "args": [
+        "run",
+        "--example",
+        "${fileBasenameNoExtension}",
+        "--profile",
+        "debug",
+        "--compiler",
+        "nvfortran",
+        "--runner",
+        "cp",
+        "--",
+        "${workspaceFolder}/build/vscode/example/"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "bash",
+          "args": [
+            "-ci"
+          ]
+        }
+      },
+      "dependsOn": [
+        "Prepare Example Directories"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Prepare Example Directories",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/example"
+      },
+      "linux": {
+        "command": "find",
+        "args": [
+          ".",
+          "-type",
+          "d",
+          "-exec",
+          "mkdir",
+          "-p",
+          "--",
+          "${workspaceFolder}/build/vscode/example/{}",
+          "\\;"
+        ]
+      }
+    }
+  ]
+}
