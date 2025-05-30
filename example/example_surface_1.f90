@@ -50,7 +50,7 @@ program example3_surface
     call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
 
     !> Export the NURBS surface to an IGES file
-    call nurbs%export_iges('iges/nurbs_surface.igs')
+    call nurbs%export_iges('iges/nurbs_surface.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -111,7 +111,7 @@ program example3_surface
     call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
 
     !> Export the NURBS surface to an IGES file
-    call nurbs%export_iges('iges/nurbs_surface2.igs')
+    call nurbs%export_iges('iges/nurbs_surface2.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -147,7 +147,7 @@ program example3_surface
     call nurbs%export_Xg('vtk/nurbs_surface_Xg3.vtk')
 
     !> Export the transformed NURBS surface to an IGES file
-    call nurbs%export_iges('iges/nurbs_surface3.igs')
+    call nurbs%export_iges('iges/nurbs_surface3.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista

@@ -51,7 +51,7 @@ program example1_curve
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
 
     !> Export the NURBS curve to an IGES file
-    call nurbs%export_iges('iges/nurbs_curve.igs')
+    call nurbs%export_iges('iges/nurbs_curve.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -105,7 +105,7 @@ program example1_curve
     call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
 
     !> Export the refined NURBS curve to an IGES file
-    call nurbs%export_iges('iges/nurbs_curve2.igs')
+    call nurbs%export_iges('iges/nurbs_curve2.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -141,7 +141,7 @@ program example1_curve
     call nurbs%export_Xg('vtk/nurbs_curve_Xg3.vtk')
 
     !> Export the transformed NURBS curve to an IGES file
-    call nurbs%export_iges('iges/nurbs_curve3.igs')
+    call nurbs%export_iges('iges/nurbs_curve3.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
