@@ -109,6 +109,7 @@ module forcad_nurbs_curve
     interface compute_Xg
         pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -121,6 +122,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -132,6 +134,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_nurbs_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -143,6 +146,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -155,6 +159,7 @@ module forcad_nurbs_curve
     interface compute_d2Tgc
         pure subroutine compute_d2Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -168,6 +173,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -180,6 +186,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -192,6 +199,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -205,6 +213,7 @@ module forcad_nurbs_curve
     interface compute_dTgc
         pure subroutine compute_dTgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -217,6 +226,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -228,6 +238,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -240,6 +251,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -253,6 +265,7 @@ module forcad_nurbs_curve
     interface compute_Tgc
         pure function compute_Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -264,6 +277,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -274,6 +288,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -284,6 +299,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -295,6 +311,7 @@ module forcad_nurbs_curve
     interface
         pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
             import :: rk
+            implicit none
             integer, intent(in) :: f_ng
             real(rk), intent(in), contiguous :: f_Xg(:,:)
             real(rk), intent(in), contiguous :: f_point_Xg(:)
@@ -901,7 +918,7 @@ contains
         Xth2 = [0.0_rk]
         Xth3 = [0.0_rk]
         call ndgrid(Xth1, Xth2, Xth3, Xth)
-        
+
         call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
         elemConn = th%cmp_elem()
 
@@ -933,7 +950,7 @@ contains
         K = this%degree
         M = this%degree
         N = 1 + K - M
-    
+
         ! Allocate IGES arrays explicitly with correct indexing
         allocate(T(-M:N+K), X(0:K), Y(0:K), Z(0:K), W(0:K))
 
@@ -2235,7 +2252,7 @@ impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, T
     else
         allocate(dTgc(size(elem)), Tgc(size(elem)))
         Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
-        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))    
+        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))
     end if
 end subroutine
 !===============================================================================

@@ -37,7 +37,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
@@ -91,7 +91,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
@@ -206,7 +206,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
@@ -338,7 +338,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
@@ -359,7 +359,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
@@ -380,7 +380,7 @@ program test_nurbs_curve
 
     call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
 
