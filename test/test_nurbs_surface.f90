@@ -39,7 +39,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
@@ -94,7 +94,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
@@ -209,7 +209,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
@@ -350,7 +350,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
@@ -374,7 +374,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
@@ -398,7 +398,7 @@ program test_nurbs_surface
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
-    
+
     call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
     call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
 
