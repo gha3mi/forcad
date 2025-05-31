@@ -42,6 +42,15 @@ program test_nurbs_volume
     call nurbs%create(20, 20, 20)
     call bsp%create(20, 20, 20)
 
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
+
     call nurbs%cmp_volume(volume)
     call bsp%cmp_volume(volumeb)
 
@@ -84,6 +93,15 @@ program test_nurbs_volume
 
     call nurbs%create(Xt1 = nurbs%get_Xt(1), Xt2 = nurbs%get_Xt(2))
     call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = nurbs%get_Xt(2))
+
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 17")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 18")
@@ -187,6 +205,15 @@ program test_nurbs_volume
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 59")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 60")
@@ -333,6 +360,15 @@ program test_nurbs_volume
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 77")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 78")
 
@@ -347,6 +383,15 @@ program test_nurbs_volume
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 79")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 80")
 
@@ -360,6 +405,15 @@ program test_nurbs_volume
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_volume_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_volume_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_volume_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_volume_Xth.vtk")
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 81")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 82")

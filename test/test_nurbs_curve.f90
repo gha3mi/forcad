@@ -35,6 +35,18 @@ program test_nurbs_curve
     call nurbs%create(res = 23)
     call bsp%create(res = 23)
 
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
+
     call nurbs%cmp_length(length)
     call bsp%cmp_length(lengthb)
 
@@ -76,6 +88,18 @@ program test_nurbs_curve
 
     call nurbs%create(Xt = nurbs%get_Xt())
     call bsp%create(Xt = bsp%get_Xt())
+
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_curve: 17")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_curve: 18")
@@ -179,6 +203,18 @@ program test_nurbs_curve
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_curve: 59")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_curve: 60")
@@ -300,6 +336,18 @@ program test_nurbs_curve
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_curve: 77")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_curve: 78")
 
@@ -309,6 +357,18 @@ program test_nurbs_curve
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_curve: 79")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_curve: 80")
 
@@ -317,6 +377,18 @@ program test_nurbs_curve
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_curve_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_curve_Xc.vtk")
+    
+    call nurbs%export_Xg("vtk/test_nurbs_curve_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_curve_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_curve_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_curve_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_curve.iges')
+    call bsp%export_iges('iges/test_bsp_curve.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_curve: 81")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_curve: 82")
