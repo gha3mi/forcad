@@ -50,7 +50,7 @@ program logo
     call shape%modify_Xc(2.8_rk,16,1)
     call shape%modify_Xc(3.55_rk,13,3)
     call shape%modify_Xc(3.55_rk,15,3)
-    
+
     call shape%translate_Xc([8.0_rk, 0.0_rk, 0.0_rk])
     call shape%export_Xc('vtk/logo_Xc_6.vtk')
     call shape%create(3*3, 3*3, 6*3)

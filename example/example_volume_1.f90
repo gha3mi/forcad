@@ -185,7 +185,7 @@ program example3_volume
     print*, 'Degree of face 4:', nurbs%cmp_degreeFace(face=4)
     print*, 'Degree of face 5:', nurbs%cmp_degreeFace(face=5)
     print*, 'Degree of face 6:', nurbs%cmp_degreeFace(face=6)
-    
+
     !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------

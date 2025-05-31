@@ -9,6 +9,8 @@ module forcad
     use forcad_nurbs_surface
     use forcad_nurbs_volume
 
+    implicit none
+
     private
     public rk, nurbs_curve, nurbs_surface, nurbs_volume
 
