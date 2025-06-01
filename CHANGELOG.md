@@ -4,6 +4,48 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
+## [0.7.0]
+
+This PR includes feature enhancements, bug fixes, documentation improvements, CI automation, and dependency management.
+
+### Features
+
+* Add initial environment configuration in `environment.yml`
+* Add pre-commit configuration for Fortitude hooks
+* Add `extra.fortitude.check` section to `fpm.toml` for improved static checks
+* Add IGES export functionality for NURBS curves and surfaces
+* Add VSCode configuration for running example programs
+* Add type-bound procedure `export_Xth()`
+
+### Bug Fixes
+
+* Update ignore list in `extra.fortitude.check`
+* Explicitly add `implicit none` to prevent implicit typing
+* Correct filename of Dependabot configuration (`dependabot.yml`)
+* Remove redundant `isinf/isnan` calls from `forcad_utils`
+* Fix IGES file extensions
+* Match evaluation points (`Xt`) to knot vector domain
+* Resolve import conflict by importing only `timer` from `fortime`
+
+### Documentation
+
+* Update roadmap with GUI implementation suggestion using OpenGL
+* Refactor and update Ford documentation
+* Mark binary VTK support as completed in `ROADMAP.md`
+* Replace outdated references (`ifx/ifort`) with `ifx` in `README.md`
+
+### Chores (CI/CD & Dependency Improvements)
+
+* Add Dependabot configuration for automatic GitHub Actions updates
+* Update Codecov action to v5
+* Update example PPM files to consistently use `wp` kind real numbers
+* Improve the `export_vtk_legacy` function
+* Exclude Intel-classic compilers from CI tests on Windows/macOS
+* Include Intel compilers in GitHub Actions CI (`fpm.yml`)
+* Explicitly update fpm dependencies
+* Remove trailing whitespace from source files
+* Include export functionality in unit tests
+
 ## [0.6.1]
 
 ### Changed
