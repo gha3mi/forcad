@@ -1,37 +1,20 @@
-name: Release via PR
+name: semantic release
 on:
   push:
     branches:
-      - main
+      - master
+
 jobs:
-  release:
+  main:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
+    environment:
+      name: semantic-release
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - run: npm ci
-
-      # Semantic-release will now only prepare changes locally
-      - run: npx semantic-release
+          persist-credentials: false
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      # Explicitly create Pull Request from changes
-      - name: Create Release PR
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: release/${{ github.run_id }}
-          title: 'chore(release): automated release PR'
-          commit-message: 'chore(release): prepare release [skip ci]'
-          body: 'Automated release PR created by semantic-release.'
-          token: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
