@@ -22,6 +22,17 @@ jobs:
 
       - run: npm install
 
+      # Run semantic-release, preparing but not pushing
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # Create a Pull Request clearly after semantic-release prepares changes
+      - name: Create Release PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: release/${{ github.run_id }}
+          title: 'chore: Release ${{ env.RELEASE_VERSION }}'
+          commit-message: 'chore: prepare release ${{ env.RELEASE_VERSION }} [skip ci]'
+          body: 'Automated release PR created by semantic-release.'
+          token: ${{ secrets.GH_TOKEN }}
