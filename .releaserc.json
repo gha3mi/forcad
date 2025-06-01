@@ -1,9 +1,16 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main"
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
     [
       "@semantic-release/exec",
       {
@@ -13,11 +20,21 @@
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "VERSION", "fpm.toml"],
+        "assets": [
+          "CHANGELOG.md",
+          "VERSION",
+          "fpm.toml"
+        ],
         "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}",
         "push": false
       }
     ],
-    "@semantic-release/github"
+    [
+      "@semantic-release/github",
+      {
+        "successComment": false,
+        "addReleases": false
+      }
+    ]
   ]
 }
