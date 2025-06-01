@@ -34,6 +34,9 @@ program example1_curve
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth.vtk')
+
     !> Export control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc.vtk')
 
@@ -47,6 +50,8 @@ program example1_curve
     !> Export the generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg.vtk')
 
+    !> Export the NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -90,11 +95,17 @@ program example1_curve
     !> Generate the refined curve with a resolution of 20
     call nurbs%create()
 
+    !> Export refined parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth2.vtk')
+
     !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc2.vtk')
 
     !> Export the refined generated curve to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg2.vtk')
+
+    !> Export the refined NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve2.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -120,11 +131,17 @@ program example1_curve
     !> Translate the generated curve
     call nurbs%translate_Xg([-1.0_rk, -2.0_rk, 3.0_rk])
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_curve_Xth3.vtk')
+
     !> Export the transformed control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_curve_Xc3.vtk')
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_curve_Xg3.vtk')
+
+    !> Export the transformed NURBS curve to an IGES file
+    call nurbs%export_iges('iges/nurbs_curve3.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista

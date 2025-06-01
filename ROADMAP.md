@@ -30,8 +30,9 @@ This roadmap outlines upcoming features and enhancements for ForCAD. Contributio
     - [ ] Improve `ROADMAP.md`.
     - [ ] Add `reduce_degree()` method for curves, surfaces and volumes.
     - [ ] Add `morph()` method for morphing box.
-    - [ ] Add support binary `vtk` files.
-    - [ ] Add support `IGES` format.
+    - [x] Add support binary `vtk` files.
+    - [x] Add support `IGES` format (curves, surfaces).
+    - [ ] Add support `IGES` format (volumes).
     - [ ] Add support `STEP` format.
     - [ ] Implement `T-splines`.
     - [ ] Add support for multiple patches.

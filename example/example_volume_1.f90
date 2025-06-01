@@ -33,6 +33,9 @@ program example3_volume
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_volume_Xth.vtk')
+
     !> Export the control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc.vtk')
 
@@ -45,6 +48,9 @@ program example3_volume
 
     !> Export the generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_volume_Xg.vtk')
+
+    !> Export the NURBS volume to an IGES file
+    !> Not supported for volumes.
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -101,11 +107,17 @@ program example3_volume
     !> Generate the refined NURBS volume with resolutions of 40, 40, and 40 in the three dimensions
     call nurbs%create()
 
+    !> Export refined parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_volume_Xth2.vtk')
+
     !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc2.vtk')
 
     !> Export the refined generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_volume_Xg2.vtk')
+
+    !> Export the NURBS volume to an IGES file
+    !> Not supported for volumes.
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -131,11 +143,17 @@ program example3_volume
     !> Translate the generated curve
     call nurbs%translate_Xg([1.0_rk, 2.0_rk, -3.0_rk])
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_volume_Xth3.vtk')
+
     !> Export the transformed control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_volume_Xc3.vtk')
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_volume_Xg3.vtk')
+
+    !> Export the NURBS volume to an IGES file
+    !> Not supported for volumes.
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -167,7 +185,7 @@ program example3_volume
     print*, 'Degree of face 4:', nurbs%cmp_degreeFace(face=4)
     print*, 'Degree of face 5:', nurbs%cmp_degreeFace(face=5)
     print*, 'Degree of face 6:', nurbs%cmp_degreeFace(face=6)
-    
+
     !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------

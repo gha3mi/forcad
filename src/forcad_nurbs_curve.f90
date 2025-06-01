@@ -4,7 +4,7 @@
 module forcad_nurbs_curve
 
     use forcad_kinds, only: rk
-    use forcad_utils, only: basis_bspline, elemConn_C0, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
+    use forcad_utils, only: basis_bspline, elemConn_C0, ndgrid, compute_multiplicity, compute_knot_vector, basis_bspline_der,&
         insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, &
         elemConn_Cn, unique, rotation, dyad, gauss_leg, export_vtk_legacy
 
@@ -67,6 +67,8 @@ module forcad_nurbs_curve
         procedure :: set_elem              !!> Set IGA element connectivity
         procedure :: export_Xc             !!> Export control points to VTK file
         procedure :: export_Xg             !!> Export geometry points to VTK file
+        procedure :: export_Xth            !!> Export parameter space to VTK file
+        procedure :: export_iges           !!> Export the NURBS curve to an IGES file
         procedure :: modify_Xc             !!> Modify control points
         procedure :: modify_Wc             !!> Modify weights
         procedure :: get_multiplicity      !!> Compute and return the multiplicity of the knots
@@ -107,6 +109,7 @@ module forcad_nurbs_curve
     interface compute_Xg
         pure function compute_Xg_nurbs_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -119,6 +122,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -130,6 +134,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_nurbs_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -141,6 +146,7 @@ module forcad_nurbs_curve
 
         pure function compute_Xg_bspline_1d_1point(f_Xt, f_knot, f_degree, f_nc, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -153,6 +159,7 @@ module forcad_nurbs_curve
     interface compute_d2Tgc
         pure subroutine compute_d2Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -166,6 +173,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -178,6 +186,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -190,6 +199,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_d2Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -203,6 +213,7 @@ module forcad_nurbs_curve
     interface compute_dTgc
         pure subroutine compute_dTgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -215,6 +226,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -226,6 +238,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -238,6 +251,7 @@ module forcad_nurbs_curve
 
         pure subroutine compute_dTgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -251,6 +265,7 @@ module forcad_nurbs_curve
     interface compute_Tgc
         pure function compute_Tgc_nurbs_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -262,6 +277,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_vector(f_Xt, f_knot, f_degree, f_nc, f_ng) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -272,6 +288,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_nurbs_1d_scalar(f_Xt, f_knot, f_degree, f_nc, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -282,6 +299,7 @@ module forcad_nurbs_curve
 
         pure function compute_Tgc_bspline_1d_scalar(f_Xt, f_knot, f_degree, f_nc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in) :: f_Xt
             real(rk), intent(in), contiguous :: f_knot(:)
             integer, intent(in) :: f_degree
@@ -293,6 +311,7 @@ module forcad_nurbs_curve
     interface
         pure function nearest_point_help_1d(f_ng, f_Xg, f_point_Xg) result(f_distances)
             import :: rk
+            implicit none
             integer, intent(in) :: f_ng
             real(rk), intent(in), contiguous :: f_Xg(:,:)
             real(rk), intent(in), contiguous :: f_point_Xg(:)
@@ -488,7 +507,7 @@ contains
         elseif (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
-            this%Xt = [(this%knot(size(this%knot))*real(i-1, rk) / real(res-1, rk), i=1, res)]
+            this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
         end if
@@ -887,6 +906,132 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    impure subroutine export_Xth(this, filename, encoding)
+        class(nurbs_curve), intent(in) :: this
+        character(len=*), intent(in) :: filename
+        character(len=*), intent(in), optional :: encoding
+        integer, allocatable :: elemConn(:,:)
+        real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
+        type(nurbs_curve) :: th
+
+        Xth1 = unique(this%knot)
+        Xth2 = [0.0_rk]
+        Xth3 = [0.0_rk]
+        call ndgrid(Xth1, Xth2, Xth3, Xth)
+
+        call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
+        elemConn = th%cmp_elem()
+
+        call export_vtk_legacy(filename, Xth, elemConn, 3, encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_iges(this, filename)
+        use forIGES, only: Gsection_t, Dentry_t, entity126_t, DElist_t, PElist_t,&
+                           makeSsection, makeGsection, makeDPsections, writeIGESfile, wp
+
+        class(nurbs_curve), intent(inout) :: this
+        character(len=*), intent(in)      :: filename
+
+        type(Gsection_t)  :: G
+        type(Dentry_t)    :: D
+        type(entity126_t) :: curve126
+        type(DElist_t)    :: Dlist
+        type(PElist_t)    :: Plist
+        character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
+        real(rk), allocatable :: W(:), X(:), Y(:), Z(:), T(:)
+        integer :: i, M, K, N, prop3
+
+        ! Parameters for IGES knot vector
+        K = this%degree
+        M = this%degree
+        N = 1 + K - M
+
+        ! Allocate IGES arrays explicitly with correct indexing
+        allocate(T(-M:N+K), X(0:K), Y(0:K), Z(0:K), W(0:K))
+
+        ! Copy your knot vector to IGES indexing
+        do i = -M, N + K
+            T(i) = this%knot(i + M + 1)
+        end do
+
+        ! Copy control points
+        if (this%is_rational()) then
+            do i = 0, K
+                X(i) = this%Xc(i+1, 1)
+                Y(i) = this%Xc(i+1, 2)
+                Z(i) = this%Xc(i+1, 3)
+                W(i) = this%Wc(i+1)
+            end do
+            prop3 = 1
+        else
+            do i = 0, K
+                X(i) = this%Xc(i+1, 1)
+                Y(i) = this%Xc(i+1, 2)
+                Z(i) = this%Xc(i+1, 3)
+                W(i) = 1.0_rk
+            end do
+            prop3 = 0
+        end if
+
+        ! Initialize IGES entity126 (Rational B-spline Curve)
+        call curve126%init(&
+            DEP   = 1,&
+            form  = 0,&
+            K     = K,&
+            M     = M,&
+            PROP1 = 0,&
+            PROP2 = 0,&
+            PROP3 = prop3,&
+            PROP4 = 0,&
+            T     = real(T, kind=wp),&
+            W     = real(W, kind=wp),&
+            X     = real(X, kind=wp),&
+            Y     = real(Y, kind=wp),&
+            Z     = real(Z, kind=wp),&
+            V     = real([minval(this%knot), maxval(this%knot)], kind=wp),&
+            XNORM = real(0.0_rk, kind=wp),&
+            YNORM = real(0.0_rk, kind=wp),&
+            ZNORM = real(0.0_rk, kind=wp))
+
+        ! Directory entry
+        call D%init(entity_type=126, param_data=1, transformation_matrix=0, form_number=0)
+
+        ! Entity and directory lists
+        call Dlist%init()
+        call Plist%init()
+        call Dlist%append(D)
+        call Plist%append(curve126)
+
+        ! Global section
+        call G%init(filename=filename)
+
+        ! S-section description
+        allocate(Ssection(1))
+        Ssection(1) = 'ForCAD'
+
+        ! Create IGES sections
+        call makeSsection(Ssection, Ssec_out)
+        call makeGsection(G, Gsection)
+        call makeDPsections(Dlist, Plist, Dsection, Psection)
+
+        ! Write IGES file
+        call writeIGESfile(filename, Ssec_out, Gsection, Dsection, Psection)
+
+        ! Cleanup
+        call Dlist%delete()
+        call Plist%delete()
+    end subroutine export_iges
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure subroutine modify_Xc(this,X,num,dir)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: X
@@ -1130,7 +1275,7 @@ contains
         elseif (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
-            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
         end if
@@ -1185,7 +1330,7 @@ contains
         elseif (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
-            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
         end if
@@ -1238,7 +1383,7 @@ contains
         elseif (present(res)) then
             if (allocated(this%Xt)) deallocate(this%Xt)
             allocate(this%Xt(res))
-            this%Xt = [(real(i-1, rk) / real(res-1, rk), i=1, res)]
+            this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
         end if
@@ -2107,7 +2252,7 @@ impure subroutine compute_dTgc_nurbs_1d_scalar(Xt, knot, degree, nc, Wc, dTgc, T
     else
         allocate(dTgc(size(elem)), Tgc(size(elem)))
         Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
-        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))    
+        dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))
     end if
 end subroutine
 !===============================================================================

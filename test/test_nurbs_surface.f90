@@ -37,6 +37,18 @@ program test_nurbs_surface
     call nurbs%create(30, 30)
     call bsp%create(30, 30)
 
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
+
     call nurbs%cmp_area(area)
     call bsp%cmp_area(areab)
 
@@ -79,6 +91,18 @@ program test_nurbs_surface
 
     call nurbs%create(Xt1 = nurbs%get_Xt(1), Xt2 = nurbs%get_Xt(2))
     call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = nurbs%get_Xt(2))
+
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 17")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 18")
@@ -182,6 +206,18 @@ program test_nurbs_surface
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 59")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 60")
@@ -312,6 +348,18 @@ program test_nurbs_surface
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 77")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 78")
 
@@ -324,6 +372,18 @@ program test_nurbs_surface
     call nurbs%create()
     call bsp%create()
 
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 79")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 80")
 
@@ -335,6 +395,18 @@ program test_nurbs_surface
 
     call nurbs%create()
     call bsp%create()
+
+    call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
+    call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
+
+    call nurbs%export_Xg("vtk/test_nurbs_surface_Xg.vtk")
+    call bsp%export_Xg("vtk/test_bsp_surface_Xg.vtk")
+
+    call nurbs%export_Xth("vtk/test_nurbs_surface_Xth.vtk")
+    call bsp%export_Xth("vtk/test_bsp_surface_Xth.vtk")
+
+    call nurbs%export_iges('iges/test_nurbs_surface.iges')
+    call bsp%export_iges('iges/test_bsp_surface.iges')
 
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 81")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 82")

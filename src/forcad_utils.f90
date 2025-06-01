@@ -584,33 +584,6 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    elemental pure function isinf(x) result(output)
-        real(rk), intent(in) :: x
-        logical :: output
-
-        output=.false.
-        if (x >  huge(x)) output=.true.
-        if (x < -huge(x)) output=.true.
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    elemental pure function isnan(x) result(output)
-        real(rk), intent(in) :: x
-        logical :: output
-
-        output =.false.
-        if (x /= x) output = .true.
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
     pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw)
         integer, intent(in) :: p, k, s, r
         real(rk), intent(in), contiguous :: UP(0:), Pw(0:,:)
@@ -1183,7 +1156,7 @@ contains
     end function
     !===============================================================================
 
-    
+
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
@@ -1307,18 +1280,19 @@ contains
     !> license: BSD 3-Clause
     impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, encoding)
         character(len=*), intent(in) :: filename
-        real(rk), intent(in) :: points(:, :)
-        integer, intent(in) :: elemConn(:, :)
+        real(rk), intent(in) :: points(:,:)
+        integer, intent(in) :: elemConn(:,:)
         integer, intent(in) :: vtkCellType
         character(len=*), intent(in), optional :: encoding
 
-        integer :: i, j, ne, np, nn, nunit
+        integer :: i, j, ne, np, nn, n, nunit
         character(len=6) :: encoding_
         integer, parameter :: dp = kind(1.0d0)
 
         ne = size(elemConn, 1)
         nn = size(elemConn, 2)
         np = size(points, 1)
+        n = ne*(nn+1)
 
         if (present(encoding)) then
             select case (trim(encoding))
@@ -1341,32 +1315,32 @@ contains
             write(nunit,'(a)') 'ASCII'
             write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
 
-            write(nunit,'(a," ",g0," ",a)') 'POINTS', np, 'double'
+            write(nunit,'(a,1x,g0,1x,a)') 'POINTS', np, 'double'
             if (size(points,2) == 2) then
-                write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), 0.0_rk , i = 1, np)
+                write(nunit,'(g0,1x,g0,1x,g0)') (points(i,1), points(i,2), 0.0_rk , i = 1, np)
             elseif (size(points,2) == 3) then
-                write(nunit,'(g0," ",g0," ",g0)') (points(i,1), points(i,2), points(i,3) , i = 1, np)
+                write(nunit,'(g0,1x,g0,1x,g0)') (points(i,1), points(i,2), points(i,3) , i = 1, np)
             else
                 error stop 'Invalid dimension for points.'
             end if
 
-            write(nunit,'(a," ",g0," ",g0)') 'CELLS', ne, ne*(nn+1)
+            write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
             select case (nn)
             case (2)
-                write(nunit,'(g0," ",g0," ",g0)')&
+                write(nunit,'(g0,1x,g0,1x,g0)')&
                     (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
             case (4)
-                write(nunit,'(g0," ",g0," ",g0," ",g0)')&
+                write(nunit,'(g0,1x,g0,1x,g0,1x,g0)')&
                     (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
             case (8)
-                write(nunit,'(g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0," ",g0)')&
+                write(nunit,'(g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0)')&
                     (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
                     elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
             case default
                 error stop 'Invalid number of nodes per element.'
             end select
 
-            write(nunit,'(a," ",g0)') 'CELL_TYPES', ne
+            write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
             write(nunit,'(g0)') (vtkCellType , i = 1, ne)
             close(nunit)
         end if
@@ -1381,7 +1355,7 @@ contains
             close(nunit)
 
             open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a," ",g0," ",a)') 'POINTS', np, 'double'
+            write(nunit,'(a,1x,g0,1x,a)') 'POINTS', np, 'double'
             close(nunit)
             open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
                 action="write", convert="big_endian", status="unknown")
@@ -1395,7 +1369,7 @@ contains
             close(nunit)
 
             open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a," ",g0," ",g0)') 'CELLS', ne, ne*(nn+1)
+            write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
             close(nunit)
             open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
                 action="write", convert="big_endian", status="unknown")
@@ -1416,7 +1390,7 @@ contains
             close(nunit)
 
             open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a," ",g0)') 'CELL_TYPES', ne
+            write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
             close(nunit)
             open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
                 action="write", convert="big_endian", status="unknown")

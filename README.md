@@ -22,6 +22,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Obtain visualized elements connectivity and coordinates for geometry and control geometry.
 - Mesh insertion into a NURBS object.
 - Export NURBS objects to VTK files for visualization.
+- Export of NURBS curves and surfaces to IGES format (volumes currently not supported).
 - Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
 - Rotate and translate NURBS objects.
 - Visualization using provided python PyVista scripts.
@@ -38,7 +39,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ### Requirements
 
-- A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx/ifort`) or [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`).
+- A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx`) or [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`).
 - The Fortran Package Manager [fpm](https://fpm.fortran-lang.org/).
 - Optional: [PyVista](https://pyvista.org/) (Recommended) or [ParaView](https://www.paraview.org/) for visualization.
 

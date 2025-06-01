@@ -76,6 +76,7 @@ module forcad_nurbs_volume
         procedure :: set_elem               !!> Set IGA element connectivity
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
+        procedure :: export_Xth             !!> Export parameter space to VTK file
         procedure :: modify_Xc              !!> Modify control points
         procedure :: modify_Wc              !!> Modify weights
         procedure :: get_multiplicity       !!> Compute and return the multiplicity of the knots
@@ -123,6 +124,7 @@ module forcad_nurbs_volume
     interface compute_Xg
         pure function compute_Xg_nurbs_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -135,6 +137,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_bspline_3d(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -146,6 +149,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_nurbs_3d_1point(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc, f_Wc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -157,6 +161,7 @@ module forcad_nurbs_volume
 
         pure function compute_Xg_bspline_3d_1point(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Xc) result(f_Xg)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -169,6 +174,7 @@ module forcad_nurbs_volume
     interface compute_dTgc
         pure subroutine compute_dTgc_nurbs_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -181,6 +187,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_bspline_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -192,6 +199,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -204,6 +212,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_dTgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_dTgc, f_Tgc, f_elem)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -218,6 +227,7 @@ module forcad_nurbs_volume
         pure subroutine compute_d2Tgc_nurbs_3d_vector(&
             f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -232,6 +242,7 @@ module forcad_nurbs_volume
         pure subroutine compute_d2Tgc_bspline_3d_vector(&
             f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -244,6 +255,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_d2Tgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -256,6 +268,7 @@ module forcad_nurbs_volume
 
         pure subroutine compute_d2Tgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_d2Tgc, f_dTgc, f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -269,6 +282,7 @@ module forcad_nurbs_volume
     interface compute_Tgc
         pure function compute_Tgc_nurbs_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -280,6 +294,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_bspline_3d_vector(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_ng) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:,:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -290,6 +305,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_nurbs_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc, f_Wc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -300,6 +316,7 @@ module forcad_nurbs_volume
 
         pure function compute_Tgc_bspline_3d_scalar(f_Xt, f_knot1, f_knot2, f_knot3, f_degree, f_nc) result(f_Tgc)
             import :: rk
+            implicit none
             real(rk), intent(in), contiguous :: f_Xt(:)
             real(rk), intent(in), contiguous :: f_knot1(:), f_knot2(:), f_knot3(:)
             integer, intent(in) :: f_degree(3)
@@ -311,6 +328,7 @@ module forcad_nurbs_volume
     interface
         pure function nearest_point_help_3d(f_ng, f_Xg, f_point_Xg) result(f_distances)
             import :: rk
+            implicit none
             integer, intent(in) :: f_ng(3)
             real(rk), intent(in), contiguous :: f_Xg(:,:)
             real(rk), intent(in), contiguous :: f_point_Xg(:)
@@ -497,7 +515,7 @@ contains
         elseif (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
-            this%Xt1 = [(this%knot1(size(this%knot1))*real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
         end if
@@ -509,7 +527,7 @@ contains
         elseif (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
-            this%Xt2 = [(this%knot2(size(this%knot2))*real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
         end if
@@ -521,7 +539,7 @@ contains
         elseif (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
-            this%Xt3 = [(this%knot3(size(this%knot3))*real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
         end if
@@ -1041,6 +1059,33 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    impure subroutine export_Xth(this, filename, encoding)
+        class(nurbs_volume), intent(in) :: this
+        character(len=*), intent(in) :: filename
+        character(len=*), intent(in), optional :: encoding
+        integer, allocatable :: elemConn(:,:)
+        real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
+        type(nurbs_volume) :: th
+
+        Xth1 = unique(this%knot1)
+        Xth2 = unique(this%knot2)
+        Xth3 = unique(this%knot3)
+        call ndgrid(Xth1, Xth2, Xth3, Xth)
+
+        call th%set(&
+            [this%knot1(1),Xth1,this%knot1(size(this%knot1))],&
+            [this%knot2(1),Xth2,this%knot2(size(this%knot2))],&
+            [this%knot3(1),Xth3,this%knot3(size(this%knot3))], Xth)
+        elemConn = th%cmp_elem()
+
+        call export_vtk_legacy(filename, Xth, elemConn, 12, encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure subroutine modify_Xc(this,X,num,dir)
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in) :: X
@@ -1315,7 +1360,7 @@ contains
         elseif (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
-            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
         end if
@@ -1327,7 +1372,7 @@ contains
         elseif (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
-            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
         end if
@@ -1339,7 +1384,7 @@ contains
         elseif (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
-            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
         end if
@@ -1399,7 +1444,7 @@ contains
         elseif (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
-            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
         end if
@@ -1411,7 +1456,7 @@ contains
         elseif (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
-            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
         end if
@@ -1423,7 +1468,7 @@ contains
         elseif (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
-            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
         end if
@@ -1482,7 +1527,7 @@ contains
         elseif (present(res1)) then
             if (allocated(this%Xt1)) deallocate(this%Xt1)
             allocate(this%Xt1(res1))
-            this%Xt1 = [(real(i-1, rk) / real(res1-1, rk), i=1, res1)]
+            this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
         end if
@@ -1494,7 +1539,7 @@ contains
         elseif (present(res2)) then
             if (allocated(this%Xt2)) deallocate(this%Xt2)
             allocate(this%Xt2(res2))
-            this%Xt2 = [(real(i-1, rk) / real(res2-1, rk), i=1, res2)]
+            this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
         end if
@@ -1506,7 +1551,7 @@ contains
         elseif (present(res3)) then
             if (allocated(this%Xt3)) deallocate(this%Xt3)
             allocate(this%Xt3(res3))
-            this%Xt3 = [(real(i-1, rk) / real(res3-1, rk), i=1, res3)]
+            this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
         end if

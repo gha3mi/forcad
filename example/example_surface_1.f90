@@ -33,6 +33,9 @@ program example3_surface
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_surface_Xth.vtk')
+
     !> Export the control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_surface_Xc.vtk')
 
@@ -45,6 +48,9 @@ program example3_surface
 
     !> Export the generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg.vtk')
+
+    !> Export the NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -95,11 +101,17 @@ program example3_surface
     !> Generate the refined NURBS surface with resolutions of 30 in both dimensions
     call nurbs%create()
 
+    !> Export refined parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_surface_Xth2.vtk')
+
     !> Export updated control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_surface_Xc2.vtk')
 
     !> Export the refined generated surface to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg2.vtk')
+
+    !> Export the NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface2.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
@@ -125,11 +137,17 @@ program example3_surface
     !> Translate the generated curve
     call nurbs%translate_Xg([-1.0_rk, -2.0_rk, 3.0_rk])
 
+    !> Export parameter space to a VTK file
+    call nurbs%export_Xth('vtk/nurbs_surface_Xth3.vtk')
+
     !> Export the transformed control points to a VTK file
     call nurbs%export_Xc('vtk/nurbs_surface_Xc3.vtk')
 
     !> Export the transformed generated volume to a VTK file
     call nurbs%export_Xg('vtk/nurbs_surface_Xg3.vtk')
+
+    !> Export the transformed NURBS surface to an IGES file
+    call nurbs%export_iges('iges/nurbs_surface3.iges')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista

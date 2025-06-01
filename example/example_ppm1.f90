@@ -5,7 +5,7 @@ program example_ppm1
 
     use forcad, only: rk, nurbs_surface
     use forimage, only: ik, format_pnm, color
-    use forcolormap, only: colormap
+    use forcolormap, only: colormap, wp
     use fortime, only: timer
 
     implicit none
@@ -74,7 +74,7 @@ program example_ppm1
     !-----------------------------------------------------------------------------
     ! Set the colormap using ForColorMap library
     !-----------------------------------------------------------------------------
-    call cmap%set('buda',0.0_rk, 1.0_rk)
+    call cmap%set('buda',real(0.0_rk, kind=wp), real(1.0_rk, kind=wp))
 
     !-----------------------------------------------------------------------------
     ! Set colors to the shape
@@ -85,7 +85,7 @@ program example_ppm1
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
     do i = 1, ng(1)*ng(2)
-        call cmap%compute_RGB(z_values(i), red, green, blue)
+        call cmap%compute_RGB(real(z_values(i), kind=wp), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
         px(idx(i,2), 3*(idx(i,1)-1)+3) = blue
@@ -130,7 +130,7 @@ program example_ppm1
     !-----------------------------------------------------------------------------
     ! Set the colormap using ForColorMap library
     !-----------------------------------------------------------------------------
-    call cmap%set('managua',0.0_rk, 2.2_rk)
+    call cmap%set('managua',real(0.0_rk, kind=wp), real(2.2_rk, kind=wp))
 
     !-----------------------------------------------------------------------------
     ! Set colors to the shape
@@ -141,7 +141,7 @@ program example_ppm1
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
     do i = 1, ng(1)*ng(2)
-        call cmap%compute_RGB(z_values(i), red, green, blue)
+        call cmap%compute_RGB(real(z_values(i), kind=wp), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
         px(idx(i,2), 3*(idx(i,1)-1)+3) = blue
@@ -191,7 +191,7 @@ program example_ppm1
     !-----------------------------------------------------------------------------
     ! Set the colormap using ForColorMap library
     !-----------------------------------------------------------------------------
-    call cmap%set('lipari',0.0_rk, 1.0_rk)
+    call cmap%set('lipari',real(0.0_rk, kind=wp), real(1.0_rk, kind=wp))
 
     !-----------------------------------------------------------------------------
     ! Set colors to the shape
@@ -202,7 +202,7 @@ program example_ppm1
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
     do i = 1, ng(1)*ng(2)
-        call cmap%compute_RGB(z_values(i), red, green, blue)
+        call cmap%compute_RGB(real(z_values(i), kind=wp), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
         px(idx(i,2), 3*(idx(i,1)-1)+3) = blue
@@ -251,7 +251,7 @@ program example_ppm1
     !-----------------------------------------------------------------------------
     ! Set the colormap using ForColorMap library
     !-----------------------------------------------------------------------------
-    call cmap%set('oslo10',0.0_rk, 1.0_rk)
+    call cmap%set('oslo10',real(0.0_rk, kind=wp), real(1.0_rk, kind=wp))
 
     !-----------------------------------------------------------------------------
     ! Set colors to the shape
@@ -262,7 +262,7 @@ program example_ppm1
     idx(:,1) = min(max(1, int(Xg(:,1) * width ) + 1), width )
     idx(:,2) = min(max(1, int(Xg(:,2) * height) + 1), height)
     do i = 1, ng(1)*ng(2)
-        call cmap%compute_RGB(z_values(i), red, green, blue)
+        call cmap%compute_RGB(real(z_values(i), kind=wp), red, green, blue)
         px(idx(i,2), 3*(idx(i,1)-1)+1) = red
         px(idx(i,2), 3*(idx(i,1)-1)+2) = green
         px(idx(i,2), 3*(idx(i,1)-1)+3) = blue
