@@ -1,40 +1,21 @@
 {
-  "branches": [
-    "main"
-  ],
+  "branches": ["main"],
+  "tagFormat": false,
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    [
-      "@semantic-release/changelog",
-      {
-        "changelogFile": "CHANGELOG.md"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "sed -i 's/^version *= *.*/version = \"${nextRelease.version}\"/' fpm.toml && sed -i '/\\[extra.ford\\]/,/^\\[/{s/^version *= *.*/version = \"${nextRelease.version}\"/}' fpm.toml && echo ${nextRelease.version} > VERSION"
-      }
-    ],
-    [
-      "@semantic-release/git",
-      {
-        "assets": [
-          "CHANGELOG.md",
-          "VERSION",
-          "fpm.toml"
-        ],
-        "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}",
-        "push": false
-      }
-    ],
-    [
-      "@semantic-release/github",
-      {
-        "successComment": false,
-        "addReleases": false
-      }
-    ]
+    ["@semantic-release/changelog", {"changelogFile": "CHANGELOG.md"}],
+    ["@semantic-release/exec", {
+      "prepareCmd": "sed -i 's/^version *= *.*/version = \"${nextRelease.version}\"/' fpm.toml && sed -i '/\\[extra.ford\\]/,/^\\[/{s/^version *= *.*/version = \"${nextRelease.version}\"/}' fpm.toml && echo ${nextRelease.version} > VERSION"
+    }],
+    ["@semantic-release/git", {
+      "assets": ["CHANGELOG.md", "VERSION", "fpm.toml"],
+      "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}",
+      "push": false
+    }],
+    ["@semantic-release/github", {
+      "successComment": false,
+      "addReleases": false
+    }]
   ]
 }

@@ -1,4 +1,4 @@
-name: Release
+name: Release via PR
 on:
   push:
     branches:
@@ -11,12 +11,27 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
       - run: npm ci
-      - run: git config --global user.name "GitHub Actions"
-      - run: git config --global user.email "actions@github.com"
-      - run: DEBUG=semantic-release:* npx semantic-release
+
+      # Semantic-release will now only prepare changes locally
+      - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # Explicitly create Pull Request from changes
+      - name: Create Release PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: release/${{ github.run_id }}
+          title: 'chore(release): automated release PR'
+          commit-message: 'chore(release): prepare release [skip ci]'
+          body: 'Automated release PR created by semantic-release.'
+          token: ${{ secrets.GH_TOKEN }}
