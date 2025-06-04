@@ -2869,17 +2869,18 @@ contains
             d2Bi(1:nc(1)*nc(2)              ,2) = kron(dB2, dB1)
             d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),2) = kron(d2B2, B1)
 
-            d2Tgc(i,1:nc(1)*nc(2)              ,1) = &
-                (d2Bi(1:nc(1)*nc(2)              ,1)*Wc - 2.0_rk*dTgc(i,:,1)*dot_product(dBi(:,1),Wc)                                 &
-                - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)              ,1),Wc)) / dot_product(Bi,Wc)
+            d2Tgc(i,1:nc(1)*nc(2) ,1) = &
+                (d2Bi(1:nc(1)*nc(2) ,1)*Wc - 2.0_rk*dTgc(i,:,1)*dot_product(dBi(:,1),Wc) &
+                - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2) ,1),Wc)) / dot_product(Bi,Wc)
             d2Tgc(i,nc(1)*nc(2)+1:2*nc(1)*nc(2),1) = &
-                (d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),1)*Wc - dTgc(i,:,1)*dot_product(dBi(:,2),Wc) - dTgc(i,:,2)*dot_product(dBi(:,1),Wc) &
+                (d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),1)*Wc &
+                - dTgc(i,:,1)*dot_product(dBi(:,2),Wc) - dTgc(i,:,2)*dot_product(dBi(:,1),Wc) &
                 - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),1),Wc)) / dot_product(Bi,Wc)
-            d2Tgc(i,1:nc(1)*nc(2)              ,2) = &
-                (d2Bi(1:nc(1)*nc(2)              ,2)*Wc - dTgc(i,:,1)*dot_product(dBi(:,2),Wc) - dTgc(i,:,2)*dot_product(dBi(:,1),Wc) &
-                - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2)              ,2),Wc)) / dot_product(Bi,Wc)
+            d2Tgc(i,1:nc(1)*nc(2) ,2) = &
+                (d2Bi(1:nc(1)*nc(2) ,2)*Wc - dTgc(i,:,1)*dot_product(dBi(:,2),Wc) - dTgc(i,:,2)*dot_product(dBi(:,1),Wc) &
+                - Tgc(i,:)*dot_product(d2Bi(1:nc(1)*nc(2) ,2),Wc)) / dot_product(Bi,Wc)
             d2Tgc(i,nc(1)*nc(2)+1:2*nc(1)*nc(2),2) = &
-                (d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),2)*Wc - 2.0_rk*dTgc(i,:,2)*dot_product(dBi(:,2),Wc)                                 &
+                (d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),2)*Wc - 2.0_rk*dTgc(i,:,2)*dot_product(dBi(:,2),Wc) &
                 - Tgc(i,:)*dot_product(d2Bi(nc(1)*nc(2)+1:2*nc(1)*nc(2),2),Wc)) / dot_product(Bi,Wc)
         end do
     end subroutine
