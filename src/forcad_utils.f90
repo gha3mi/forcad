@@ -80,12 +80,12 @@ contains
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        real(rk), allocatable :: Nt(:,:)
+        real(rk)              :: Nt(nc, 0:degree)
         integer               :: i, p
-        real(rk), allocatable :: B(:)
+        real(rk)              :: B(nc)
 
         temp = abs(Xt - knot(size(knot)))
-        allocate(Nt(nc, 0:degree), source=0.0_rk)
+        Nt = 0.0_rk
 
         do p = 0, degree
             do concurrent (i = 1:nc)
@@ -112,8 +112,8 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk), allocatable, intent(out) :: dB(:)
-        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), intent(out) :: dB(nc)
+        real(rk), intent(out), optional :: B(nc)
         real(rk), allocatable :: N(:,:), dN_dXt(:,:)
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
         integer               :: i, p
@@ -159,9 +159,9 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk), allocatable, intent(out) :: d2B(:)
-        real(rk), allocatable, intent(out), optional :: dB(:)
-        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), intent(out) :: d2B(nc)
+        real(rk), intent(out), optional :: dB(nc)
+        real(rk), intent(out), optional :: B(nc)
         real(rk), allocatable :: N(:,:), dN_dXt(:,:), d2N_dXt2(:,:)
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
         integer               :: i, p
@@ -1399,6 +1399,5 @@ contains
         end if
     end subroutine
     !===============================================================================
-
 
 end module forcad_utils
