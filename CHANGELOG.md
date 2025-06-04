@@ -4,9 +4,29 @@ All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be docume
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
-## [0.7.0]
+## [0.8.0]
 
-This PR includes feature enhancements, bug fixes, documentation improvements, CI automation, and dependency management.
+### Added
+
+* New module procedure interfaces.
+
+### Changed
+
+* Replaced OpenMP loops with `do concurrent`.
+* Moved external procedures into their corresponding modules.
+* Replaced several allocatable arrays with fixed-size arrays.
+* Updated the Fortitude ignore list.
+* Renamed variable `dim` to `d`.
+
+### Fixed
+
+* Corrected variable usage in NURBS derivative calls.
+* Removed unused procedures from module imports.
+* Updated derivative calls in NURBS tests.
+* Removed unused variable.
+* Fixed line truncation issues.
+
+## [0.7.0]
 
 ### Features
 
