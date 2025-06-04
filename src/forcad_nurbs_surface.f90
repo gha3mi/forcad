@@ -1561,7 +1561,7 @@ contains
         integer, intent(in) :: dir
         real(rk), intent(in), contiguous :: Xth(:)
         integer, intent(in), contiguous :: r(:)
-        integer :: k, i, s, dim, j, n_new
+        integer :: k, i, s, d, j, n_new
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
 
@@ -1578,14 +1578,14 @@ contains
                         s = 0
                     end if
 
-                    dim = size(this%Xc,2)
-                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    d = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),d+1))
                     do j = 1, size(this%Xc,1)
-                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                     end do
-                    Xcw(:,dim+1) = this%Wc(:)
+                    Xcw(:,d+1) = this%Wc(:)
 
-                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)])
+                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(d+1)])
 
                     call insert_knot_A_5_1(&
                         this%degree(1),&
@@ -1599,14 +1599,14 @@ contains
                         knot_new,&
                         Xcw_new)
 
-                    Xcw_new = reshape(Xcw_new,[this%nc(2)*(n_new+1),dim+1])
+                    Xcw_new = reshape(Xcw_new,[this%nc(2)*(n_new+1),d+1])
 
-                    allocate(Xc_new(1:this%nc(2)*(n_new+1),1:dim))
+                    allocate(Xc_new(1:this%nc(2)*(n_new+1),1:d))
                     allocate(Wc_new(1:this%nc(2)*(n_new+1)))
                     do j = 1, this%nc(2)*(n_new+1)
-                        Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                        Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                     end do
-                    Wc_new(:) = Xcw_new(:,dim+1)
+                    Wc_new(:) = Xcw_new(:,d+1)
 
                     call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
@@ -1623,9 +1623,9 @@ contains
                         s = 0
                     end if
 
-                    dim = size(this%Xc,2)
+                    d = size(this%Xc,2)
 
-                    Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*dim])
+                    Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*d])
 
                     call insert_knot_A_5_1(&
                         this%degree(1),&
@@ -1639,7 +1639,7 @@ contains
                         knot_new,&
                         Xc_new)
 
-                    Xc_new = reshape(Xc_new,[(this%nc(2))*(n_new+1),dim])
+                    Xc_new = reshape(Xc_new,[(this%nc(2))*(n_new+1),d])
 
                     call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new)
                 end do
@@ -1659,16 +1659,16 @@ contains
                         s = 0
                     end if
 
-                    dim = size(this%Xc,2)
-                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    d = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),d+1))
                     do j = 1, size(this%Xc,1)
-                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                     end do
-                    Xcw(:,dim+1) = this%Wc(:)
+                    Xcw(:,d+1) = this%Wc(:)
 
-                    Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),dim+1])
-                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
-                    Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
+                    Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),d+1])
+                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d+1], order=[2,1,3])
+                    Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(d+1)])
 
                     call insert_knot_A_5_1(&
                         this%degree(2),&
@@ -1682,16 +1682,16 @@ contains
                         knot_new,&
                         Xcw_new)
 
-                    Xc3 = reshape(Xcw_new, [n_new+1,this%nc(1),dim+1])
-                    Xc3 = reshape(Xc3, [this%nc(1),n_new+1,dim+1], order=[2,1,3])
-                    Xcw_new = reshape(Xc3,[(this%nc(1))*(n_new+1),dim+1])
+                    Xc3 = reshape(Xcw_new, [n_new+1,this%nc(1),d+1])
+                    Xc3 = reshape(Xc3, [this%nc(1),n_new+1,d+1], order=[2,1,3])
+                    Xcw_new = reshape(Xc3,[(this%nc(1))*(n_new+1),d+1])
 
-                    allocate(Xc_new(1:(n_new+1)*this%nc(1),1:dim))
+                    allocate(Xc_new(1:(n_new+1)*this%nc(1),1:d))
                     allocate(Wc_new(1:(n_new+1)*this%nc(1)))
                     do j = 1, (n_new+1)*this%nc(1)
-                        Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                        Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                     end do
-                    Wc_new(:) = Xcw_new(:,dim+1)
+                    Wc_new(:) = Xcw_new(:,d+1)
 
                     call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new, Wc=Wc_new)
                     deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
@@ -1707,11 +1707,11 @@ contains
                         s = 0
                     end if
 
-                    dim = size(this%Xc,2)
+                    d = size(this%Xc,2)
 
-                    Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),dim])
-                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
-                    Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
+                    Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),d])
+                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d], order=[2,1,3])
+                    Xc = reshape(Xc3,[this%nc(2),this%nc(1)*d])
 
                     call insert_knot_A_5_1(&
                         this%degree(2),&
@@ -1725,9 +1725,9 @@ contains
                         knot_new,&
                         Xc_new)
 
-                    Xc3 = reshape(Xc_new, [n_new+1,this%nc(1),dim])
-                    Xc3 = reshape(Xc3, [this%nc(1),n_new+1,dim], order=[2,1,3])
-                    Xc_new = reshape(Xc3,[(this%nc(1))*(n_new+1),dim])
+                    Xc3 = reshape(Xc_new, [n_new+1,this%nc(1),d])
+                    Xc3 = reshape(Xc3, [this%nc(1),n_new+1,d], order=[2,1,3])
+                    Xc_new = reshape(Xc3,[(this%nc(1))*(n_new+1),d])
 
                     call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new)
                 end do
@@ -1751,7 +1751,7 @@ contains
         integer, intent(in) :: dir
         integer, intent(in) :: t
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
-        integer :: dim, j, nc_new
+        integer :: d, j, nc_new
         real(rk), allocatable:: Xc3(:,:,:)
 
 
@@ -1759,38 +1759,38 @@ contains
 
             if(this%is_rational()) then ! NURBS
 
-                dim = size(this%Xc,2)
-                allocate(Xcw(size(this%Xc,1),dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),d+1))
                 do j = 1, size(this%Xc,1)
-                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
-                Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)],order=[1,2])
+                Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(d+1)],order=[1,2])
 
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, nc_new, knot_new, Xcw_new)
 
-                Xcw_new = reshape(Xcw_new,[this%nc(2)*nc_new,dim+1],order=[1,2])
+                Xcw_new = reshape(Xcw_new,[this%nc(2)*nc_new,d+1],order=[1,2])
 
-                allocate(Xc_new(1:this%nc(2)*nc_new,1:dim))
+                allocate(Xc_new(1:this%nc(2)*nc_new,1:d))
                 allocate(Wc_new(1:this%nc(2)*nc_new))
                 do j = 1, this%nc(2)*nc_new
-                    Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                    Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                 end do
 
-                Wc_new(:) = Xcw_new(:,dim+1)
+                Wc_new(:) = Xcw_new(:,d+1)
 
                 call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
             else ! B-Spline
 
-                dim = size(this%Xc,2)
-                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(dim)],order=[1,2])
+                d = size(this%Xc,2)
+                Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*(d)],order=[1,2])
 
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, nc_new, knot_new, Xc_new)
 
-                Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,dim],order=[1,2])
+                Xc_new = reshape(Xc_new,[this%nc(2)*nc_new,d],order=[1,2])
 
                 call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new)
                 deallocate(Xc, Xc_new)
@@ -1801,48 +1801,48 @@ contains
 
             if(this%is_rational()) then ! NURBS
 
-                dim = size(this%Xc,2)
-                allocate(Xcw(size(this%Xc,1),dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),d+1))
                 do j = 1, size(this%Xc,1)
-                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                 end do
 
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
-                Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),dim+1])
-                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
-                Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(dim+1)])
+                Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),d+1])
+                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d+1], order=[2,1,3])
+                Xcw = reshape(Xc3,[this%nc(2),this%nc(1)*(d+1)])
 
                 call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, nc_new, knot_new, Xcw_new)
 
-                Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),dim+1])
-                Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim+1], order=[2,1,3])
-                Xcw_new = reshape(Xc3,[(this%nc(1))*nc_new,dim+1])
+                Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),d+1])
+                Xc3 = reshape(Xc3, [this%nc(1),nc_new,d+1], order=[2,1,3])
+                Xcw_new = reshape(Xc3,[(this%nc(1))*nc_new,d+1])
 
-                allocate(Xc_new(1:nc_new*this%nc(1),1:dim))
+                allocate(Xc_new(1:nc_new*this%nc(1),1:d))
                 allocate(Wc_new(1:nc_new*this%nc(1)))
                 do j = 1, nc_new*this%nc(1)
-                    Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                    Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                 end do
 
-                Wc_new(:) = Xcw_new(:,dim+1)
+                Wc_new(:) = Xcw_new(:,d+1)
 
                 call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new, Wc=Wc_new)
                 deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
             else ! B-Spline
 
-                dim = size(this%Xc,2)
+                d = size(this%Xc,2)
 
-                Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),dim])
-                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
-                Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
+                Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),d])
+                Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d], order=[2,1,3])
+                Xc = reshape(Xc3,[this%nc(2),this%nc(1)*d])
 
                 call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, nc_new, knot_new, Xc_new)
 
-                Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
-                Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
-                Xc_new = reshape(Xc3,[(this%nc(1))*nc_new,dim])
+                Xc3 = reshape(Xc_new, [nc_new,this%nc(1),d])
+                Xc3 = reshape(Xc3, [this%nc(1),nc_new,d], order=[2,1,3])
+                Xc_new = reshape(Xc3,[(this%nc(1))*nc_new,d])
 
                 call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new)
 
@@ -1956,7 +1956,7 @@ contains
         integer, intent(in) :: dir
         real(rk), intent(in), contiguous :: Xth(:)
         integer, intent(in), contiguous :: r(:)
-        integer :: k, i, s, dim, j, nc_new, t
+        integer :: k, i, s, d, j, nc_new, t
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
 
@@ -1974,14 +1974,14 @@ contains
                     end if
                     k = k + 1
 
-                    dim = size(this%Xc,2)
-                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    d = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),d+1))
                     do j = 1, size(this%Xc,1)
-                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                     end do
-                    Xcw(:,dim+1) = this%Wc(:)
+                    Xcw(:,d+1) = this%Wc(:)
 
-                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(dim+1)],order=[1,2])
+                    Xcw = reshape(Xcw,[this%nc(1),this%nc(2)*(d+1)],order=[1,2])
 
                     call remove_knots_A_5_8(&
                         this%degree(1),&
@@ -2001,15 +2001,15 @@ contains
                         ! no change
                     else
                         nc_new = size(Xcw_new,1)
-                        Xcw_new = reshape(Xcw_new,[this%nc(2)*(nc_new),dim+1],order=[1,2])
+                        Xcw_new = reshape(Xcw_new,[this%nc(2)*(nc_new),d+1],order=[1,2])
 
-                        allocate(Xc_new(1:this%nc(2)*(nc_new),1:dim))
+                        allocate(Xc_new(1:this%nc(2)*(nc_new),1:d))
                         allocate(Wc_new(1:this%nc(2)*(nc_new)))
                         do j = 1, this%nc(2)*(nc_new)
-                            Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                            Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                         end do
 
-                        Wc_new(:) = Xcw_new(:,dim+1)
+                        Wc_new(:) = Xcw_new(:,d+1)
 
                         call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
@@ -2028,9 +2028,9 @@ contains
                     end if
                     k = k + 1
 
-                    dim = size(this%Xc,2)
+                    d = size(this%Xc,2)
 
-                    Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*dim],order=[1,2])
+                    Xc = reshape(this%Xc,[this%nc(1),this%nc(2)*d],order=[1,2])
 
                     call remove_knots_A_5_8(&
                         this%degree(1),&
@@ -2050,7 +2050,7 @@ contains
                         ! no change
                     else
                         nc_new = size(Xc_new,1)
-                        Xc_new = reshape(Xc_new,[(this%nc(2))*(nc_new),dim],order=[1,2])
+                        Xc_new = reshape(Xc_new,[(this%nc(2))*(nc_new),d],order=[1,2])
 
                         call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=Xc_new)
                     end if
@@ -2072,17 +2072,17 @@ contains
                     end if
                     k = k + 1
 
-                    dim = size(this%Xc,2)
-                    allocate(Xcw(size(this%Xc,1),dim+1))
+                    d = size(this%Xc,2)
+                    allocate(Xcw(size(this%Xc,1),d+1))
                     do j = 1, size(this%Xc,1)
-                        Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                        Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                     end do
 
-                    Xcw(:,dim+1) = this%Wc(:)
+                    Xcw(:,d+1) = this%Wc(:)
 
-                    Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),dim+1])
-                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim+1], order=[2,1,3])
-                    Xcw = reshape(Xc3, [this%nc(2),this%nc(1)*(dim+1)])
+                    Xc3 = reshape(Xcw, [this%nc(1),this%nc(2),d+1])
+                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d+1], order=[2,1,3])
+                    Xcw = reshape(Xc3, [this%nc(2),this%nc(1)*(d+1)])
 
                     call remove_knots_A_5_8(&
                         this%degree(2),&
@@ -2103,17 +2103,17 @@ contains
                     else
 
                         nc_new = size(Xcw_new,1)
-                        Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),dim+1])
-                        Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim+1], order=[2,1,3])
-                        Xcw_new = reshape(Xc3,[(this%nc(1))*(nc_new),dim+1])
+                        Xc3 = reshape(Xcw_new, [nc_new,this%nc(1),d+1])
+                        Xc3 = reshape(Xc3, [this%nc(1),nc_new,d+1], order=[2,1,3])
+                        Xcw_new = reshape(Xc3,[(this%nc(1))*(nc_new),d+1])
 
-                        allocate(Xc_new(1:(nc_new)*this%nc(1),1:dim))
+                        allocate(Xc_new(1:(nc_new)*this%nc(1),1:d))
                         allocate(Wc_new(1:(nc_new)*this%nc(1)))
                         do j = 1, (nc_new)*this%nc(1)
-                            Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                            Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                         end do
 
-                        Wc_new(:) = Xcw_new(:,dim+1)
+                        Wc_new(:) = Xcw_new(:,d+1)
 
                         call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new, Wc=Wc_new)
                         deallocate(Xcw_new, Xc_new, Wc_new)
@@ -2132,11 +2132,11 @@ contains
                     end if
                     k = k + 1
 
-                    dim = size(this%Xc,2)
+                    d = size(this%Xc,2)
 
-                    Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),dim])
-                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),dim], order=[2,1,3])
-                    Xc = reshape(Xc3,[this%nc(2),this%nc(1)*dim])
+                    Xc3 = reshape(this%Xc, [this%nc(1),this%nc(2),d])
+                    Xc3 = reshape(Xc3, [this%nc(2),this%nc(1),d], order=[2,1,3])
+                    Xc = reshape(Xc3,[this%nc(2),this%nc(1)*d])
 
                     call remove_knots_A_5_8(&
                         this%degree(2),&
@@ -2157,9 +2157,9 @@ contains
                     else
                         nc_new = size(Xc_new,1)
 
-                        Xc3 = reshape(Xc_new, [nc_new,this%nc(1),dim])
-                        Xc3 = reshape(Xc3, [this%nc(1),nc_new,dim], order=[2,1,3])
-                        Xc_new = reshape(Xc3,[(this%nc(1))*(nc_new),dim])
+                        Xc3 = reshape(Xc_new, [nc_new,this%nc(1),d])
+                        Xc3 = reshape(Xc3, [this%nc(1),nc_new,d], order=[2,1,3])
+                        Xc_new = reshape(Xc3,[(this%nc(1))*(nc_new),d])
 
                         call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=Xc_new)
                     end if

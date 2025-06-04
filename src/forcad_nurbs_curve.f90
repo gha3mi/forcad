@@ -1137,7 +1137,7 @@ contains
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xth(:)
         integer, intent(in), contiguous :: r(:)
-        integer :: k, i, s, dim, j, n_new
+        integer :: k, i, s, d, j, n_new
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
         if (this%is_rational()) then ! NURBS
@@ -1150,13 +1150,13 @@ contains
                     s = 0
                 end if
 
-                dim = size(this%Xc,2)
-                allocate(Xcw(size(this%Xc,1),dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),d+1))
 
                 do j = 1, size(this%Xc,1)
-                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
                 call insert_knot_A_5_1(&
                     this%degree,&
@@ -1170,11 +1170,11 @@ contains
                     knot_new,&
                     Xcw_new)
 
-                allocate(Xc_new(1:n_new+1,1:dim))
+                allocate(Xc_new(1:n_new+1,1:d))
                 allocate(Wc_new(1:n_new+1))
                 do j = 1, n_new+1
-                    Xc_new(j,1:dim) = Xcw_new(j-1,1:dim)/Xcw_new(j-1,dim+1)
-                    Wc_new(j) = Xcw_new(j-1,dim+1)
+                    Xc_new(j,1:d) = Xcw_new(j-1,1:d)/Xcw_new(j-1,d+1)
+                    Wc_new(j) = Xcw_new(j-1,d+1)
                 end do
 
                 call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
@@ -1219,32 +1219,32 @@ contains
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in) :: t
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
-        integer :: dim, j, nc_new
+        integer :: d, j, nc_new
 
         if (this%is_rational()) then ! NURBS
 
-            dim = size(this%Xc,2)
-            allocate(Xcw(size(this%Xc,1),dim+1))
+            d = size(this%Xc,2)
+            allocate(Xcw(size(this%Xc,1),d+1))
             do j = 1, size(this%Xc,1)
-                Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
-                Xcw(j,dim+1) = this%Wc(j)
+                Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
+                Xcw(j,d+1) = this%Wc(j)
             end do
 
             call elevate_degree_A_5_9(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new)
 
-            allocate(Xc_new(1:nc_new,1:dim))
+            allocate(Xc_new(1:nc_new,1:d))
             allocate(Wc_new(1:nc_new))
             do j = 1, nc_new
-                Xc_new(j,1:dim) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
             end do
-            Wc_new(:) = Xcw_new(:,dim+1)
+            Wc_new(:) = Xcw_new(:,d+1)
 
             call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
             deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
 
         else ! B-Spline
 
-            dim = size(this%Xc,2)
+            d = size(this%Xc,2)
 
             call elevate_degree_A_5_9(t, this%knot, this%degree, this%Xc, nc_new, knot_new, Xc_new)
 
@@ -1516,7 +1516,7 @@ contains
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xth(:)
         integer, intent(in), contiguous :: r(:)
-        integer :: k, i, s, dim, j, nc_new, t
+        integer :: k, i, s, d, j, nc_new, t
         real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
 
         if (this%is_rational()) then ! NURBS
@@ -1530,12 +1530,12 @@ contains
                 end if
                 k = k + 1
 
-                dim = size(this%Xc,2)
-                allocate(Xcw(size(this%Xc,1),dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1),d+1))
                 do j = 1, size(this%Xc,1)
-                    Xcw(j,1:dim) = this%Xc(j,1:dim)*this%Wc(j)
+                    Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
                 call remove_knots_A_5_8(&
                     this%degree,&
@@ -1555,12 +1555,12 @@ contains
                     ! no change
                 else
                     nc_new = size(Xcw_new,1)
-                    allocate(Xc_new(nc_new,dim))
+                    allocate(Xc_new(nc_new,d))
                     allocate(Wc_new(nc_new))
                     do j = 1, nc_new
-                        Xc_new(j,:) = Xcw_new(j,1:dim)/Xcw_new(j,dim+1)
+                        Xc_new(j,:) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
                     end do
-                    Wc_new(:) = Xcw_new(:,dim+1)
+                    Wc_new(:) = Xcw_new(:,d+1)
 
                     call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
                     if (allocated(Xcw_new)) deallocate(Xcw_new)
