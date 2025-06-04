@@ -239,10 +239,10 @@ program test_nurbs_surface
     call bsp%derivative(&
         Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], dTgc=dTgcb, Tgc=Tgcb)
 
-    call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b)
+    call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1)
     call bsp%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b)
 
-    call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b, elem=[1,2,3])
+    call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1, elem=[1,2,3])
     call bsp%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b, elem=[1,2,3])
 
     call nurbs%derivative2(res1=30, res2=30, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)
@@ -255,10 +255,10 @@ program test_nurbs_surface
         Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)],&
         d2Tgc=d2Tgcb, dTgc=dTgcb, Tgc=Tgcb)
 
-    call nurbs%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1, dTgc=dTgc1b, Tgc=Tgc1b)
+    call nurbs%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1, dTgc=dTgc1, Tgc=Tgc1)
     call bsp%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1b, dTgc=dTgc1b, Tgc=Tgc1b)
 
-    call nurbs%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1, dTgc=dTgc1b, Tgc=Tgc1b)
+    call nurbs%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1, dTgc=dTgc1, Tgc=Tgc1)
     call bsp%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1b, dTgc=dTgc1b, Tgc=Tgc1b)
 
     call nurbs%rotate_Xc(45.0_rk, 0.0_rk, 0.0_rk)
