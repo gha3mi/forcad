@@ -1285,7 +1285,7 @@ contains
         integer, intent(in) :: vtkCellType
         character(len=*), intent(in), optional :: encoding
 
-        integer :: i, j, ne, np, nn, n, nunit
+        integer :: i, ne, np, nn, n, nunit
         character(len=6) :: encoding_
         integer, parameter :: dp = kind(1.0d0)
 
