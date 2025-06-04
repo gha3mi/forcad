@@ -6,7 +6,7 @@ module forcad_nurbs_volume
     use forcad_kinds, only: rk
     use forcad_utils, only: basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, det, inv, gauss_leg, export_vtk_legacy, cmp_Tgc_3d, basis_bspline_2der
+        elemConn_Cn, unique, rotation, det, inv, gauss_leg, export_vtk_legacy, basis_bspline_2der
 
     implicit none
 
