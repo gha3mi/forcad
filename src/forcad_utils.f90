@@ -80,12 +80,12 @@ contains
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        real(rk), allocatable :: Nt(:,:)
+        real(rk)              :: Nt(nc, 0:degree)
         integer               :: i, p
-        real(rk), allocatable :: B(:)
+        real(rk)              :: B(nc)
 
         temp = abs(Xt - knot(size(knot)))
-        allocate(Nt(nc, 0:degree), source=0.0_rk)
+        Nt = 0.0_rk
 
         do p = 0, degree
             do concurrent (i = 1:nc)
@@ -112,8 +112,8 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk), allocatable, intent(out) :: dB(:)
-        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), intent(out) :: dB(nc)
+        real(rk), intent(out), optional :: B(nc)
         real(rk), allocatable :: N(:,:), dN_dXt(:,:)
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
         integer               :: i, p
@@ -159,9 +159,9 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in)   :: nc
         real(rk), intent(in)  :: Xt
-        real(rk), allocatable, intent(out) :: d2B(:)
-        real(rk), allocatable, intent(out), optional :: dB(:)
-        real(rk), allocatable, intent(out), optional :: B(:)
+        real(rk), intent(out) :: d2B(nc)
+        real(rk), intent(out), optional :: dB(nc)
+        real(rk), intent(out), optional :: B(nc)
         real(rk), allocatable :: N(:,:), dN_dXt(:,:), d2N_dXt2(:,:)
         real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
         integer               :: i, p
@@ -590,18 +590,18 @@ contains
         real(rk), intent(in) :: u
         real(rk), allocatable, intent(out) :: UQ(:), Qw(:,:)
         integer, intent(out) :: nq
-        integer :: i, j, L, mp, dim, np
+        integer :: i, j, L, mp, d, np
         real(rk), allocatable :: Rw(:,:)
         real(rk) :: alpha
 
-        dim = size(Pw, 2)
+        d = size(Pw, 2)
         np  = size(Pw, 1) - 1
         mp  = np + p + 1
         nq  = np + r
 
         allocate(UQ(0:mp+r))
-        allocate(Qw(0:nq,1:dim))
-        allocate(Rw(0:p ,1:dim))
+        allocate(Qw(0:nq,1:d))
+        allocate(Rw(0:p ,1:d))
 
         UQ(0:k) = UP(0:k)
         UQ(k+1:k+r) = u
@@ -663,20 +663,20 @@ contains
         real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
         real(rk) :: iinv, alpha1, alpha2, Xth1, Xth2, numer, den
-        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, dim, nc
+        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, d, nc
         integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
         integer, allocatable :: mlp(:)
 
         nc = size(Xcw,1)
-        dim = size(Xcw,2)
+        d = size(Xcw,2)
         mlp = compute_multiplicity(knot)
         mlp = mlp + t
         nc_new = sum(mlp) - (mlp(1)-1) - 1
-        allocate(Xcw_new(nc_new,dim), source=0.0_rk)
+        allocate(Xcw_new(nc_new,d), source=0.0_rk)
         allocate(bezalfs(degree+1,degree+t+1), source=0.0_rk)
-        allocate(bpts(degree+1,dim), source=0.0_rk)
-        allocate(ebpts(degree+t+1,dim), source=0.0_rk)
-        allocate(Nextbpts(degree+1,dim), source=0.0_rk)
+        allocate(bpts(degree+1,d), source=0.0_rk)
+        allocate(ebpts(degree+t+1,d), source=0.0_rk)
+        allocate(Nextbpts(degree+1,d), source=0.0_rk)
         allocate(alfs(degree), source=0.0_rk)
         n = nc - 1
         m = n + degree + 1
@@ -913,9 +913,9 @@ contains
         integer, intent(out) :: t
         real(rk) :: tol, alfi, alfj
         real(rk), allocatable :: temp(:,:)
-        integer :: i, j, ii, jj, remflag, off, first, last, ord, fout, m, k, n, nc, dim, tt
+        integer :: i, j, ii, jj, remflag, off, first, last, ord, fout, m, k, n, nc, d, tt
 
-        dim = size(Pw,2)
+        d  = size(Pw,2)
         nc = size(Pw,1)
         n = nc
         m = n+p+1
@@ -928,9 +928,9 @@ contains
         knot_copy = knot
 
         ! TODO:
-        tol = 1.0e-6_rk * minval(Pw(:,dim))/(1.0_rk + maxval(sqrt(sum(Pw**2, 2))))
+        tol = 1.0e-6_rk * minval(Pw(:,d))/(1.0_rk + maxval(sqrt(sum(Pw**2, 2))))
 
-        allocate(temp(2*p+1,dim), source=0.0_rk)
+        allocate(temp(2*p+1,d), source=0.0_rk)
         t = 0
         do tt = 0, num-1
             off = first-1
@@ -1285,7 +1285,7 @@ contains
         integer, intent(in) :: vtkCellType
         character(len=*), intent(in), optional :: encoding
 
-        integer :: i, j, ne, np, nn, n, nunit
+        integer :: i, ne, np, nn, n, nunit
         character(len=6) :: encoding_
         integer, parameter :: dp = kind(1.0d0)
 
@@ -1399,6 +1399,5 @@ contains
         end if
     end subroutine
     !===============================================================================
-
 
 end module forcad_utils

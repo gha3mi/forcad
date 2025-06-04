@@ -93,7 +93,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.7% of total for procedures.">52 statements</a>
+                 title=" 0.8% of total for procedures.">52 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
@@ -147,12 +147,6 @@
   
   
   
-    <div class="card card-primary">
-      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
-      <div class="list-group">
-        <a class="list-group-item" href="../proc/export_iges.html#src">export_iges</a>
-      </div>
-    </div>
 
 
   </div>
@@ -681,108 +675,6 @@ large graphs.</div>
 
 
     
-    <section>
-    <h2><span class="anchor" id="src"></span>Source Code</h2>
-    <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">impure subroutine </span><span class="n">export_iges</span><span class="p">(</span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span>
-<span class="w">        </span><span class="k">use </span><span class="n">forIGES</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">Gsection_t</span><span class="p">,</span><span class="w"> </span><span class="n">Dentry_t</span><span class="p">,</span><span class="w"> </span><span class="n">entity126_t</span><span class="p">,</span><span class="w"> </span><span class="n">DElist_t</span><span class="p">,</span><span class="w"> </span><span class="n">PElist_t</span><span class="p">,&amp;</span>
-<span class="w">                           </span><span class="n">makeSsection</span><span class="p">,</span><span class="w"> </span><span class="n">makeGsection</span><span class="p">,</span><span class="w"> </span><span class="n">makeDPsections</span><span class="p">,</span><span class="w"> </span><span class="n">writeIGESfile</span><span class="p">,</span><span class="w"> </span><span class="n">wp</span>
-
-<span class="w">        </span><span class="k">class</span><span class="p">(</span><span class="n">nurbs_curve</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span>
-<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">      </span><span class="kd">::</span><span class="w"> </span><span class="n">filename</span>
-
-<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">Gsection_t</span><span class="p">)</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="n">G</span>
-<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">Dentry_t</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">D</span>
-<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">entity126_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">curve126</span>
-<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">DElist_t</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">Dlist</span>
-<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">PElist_t</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">Plist</span>
-<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Ssection</span><span class="p">(:),</span><span class="w"> </span><span class="n">Gsection</span><span class="p">(:),</span><span class="w"> </span><span class="n">Dsection</span><span class="p">(:),</span><span class="w"> </span><span class="n">Psection</span><span class="p">(:),</span><span class="w"> </span><span class="n">Ssec_out</span><span class="p">(:)</span>
-<span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">W</span><span class="p">(:),</span><span class="w"> </span><span class="n">X</span><span class="p">(:),</span><span class="w"> </span><span class="n">Y</span><span class="p">(:),</span><span class="w"> </span><span class="n">Z</span><span class="p">(:),</span><span class="w"> </span><span class="n">T</span><span class="p">(:)</span>
-<span class="w">        </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">prop3</span>
-
-<span class="w">        </span><span class="c">! Parameters for IGES knot vector</span>
-<span class="w">        </span><span class="n">K</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span>
-<span class="w">        </span><span class="n">M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">degree</span>
-<span class="w">        </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">M</span>
-
-<span class="w">        </span><span class="c">! Allocate IGES arrays explicitly with correct indexing</span>
-<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="p">:</span><span class="n">N</span><span class="o">+</span><span class="n">K</span><span class="p">),</span><span class="w"> </span><span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">K</span><span class="p">),</span><span class="w"> </span><span class="n">Y</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">K</span><span class="p">),</span><span class="w"> </span><span class="n">Z</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">K</span><span class="p">),</span><span class="w"> </span><span class="n">W</span><span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">K</span><span class="p">))</span>
-
-<span class="w">        </span><span class="c">! Copy your knot vector to IGES indexing</span>
-<span class="w">        </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">K</span>
-<span class="w">            </span><span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">M</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<span class="w">        </span><span class="k">end do</span>
-
-<span class="w">        </span><span class="c">! Copy control points</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">is_rational</span><span class="p">())</span><span class="w"> </span><span class="k">then</span>
-<span class="k">            do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">K</span>
-<span class="w">                </span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<span class="w">                </span><span class="n">Y</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
-<span class="w">                </span><span class="n">Z</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
-<span class="w">                </span><span class="n">W</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Wc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="w">            </span><span class="k">end do</span>
-<span class="k">            </span><span class="n">prop3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">        </span><span class="k">else</span>
-<span class="k">            do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">K</span>
-<span class="w">                </span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<span class="w">                </span><span class="n">Y</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
-<span class="w">                </span><span class="n">Z</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">this</span><span class="p">%</span><span class="n">Xc</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
-<span class="w">                </span><span class="n">W</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0_rk</span>
-<span class="w">            </span><span class="k">end do</span>
-<span class="k">            </span><span class="n">prop3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">        </span><span class="k">end if</span>
-
-<span class="w">        </span><span class="c">! Initialize IGES entity126 (Rational B-spline Curve)</span>
-<span class="w">        </span><span class="k">call </span><span class="n">curve126</span><span class="p">%</span><span class="n">init</span><span class="p">(&amp;</span>
-<span class="w">            </span><span class="n">DEP</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">form</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">K</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">K</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">M</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">M</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">PROP1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">PROP2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">PROP3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prop3</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">PROP4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,&amp;</span>
-<span class="w">            </span><span class="n">T</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">W</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">X</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">Y</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">Z</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">V</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">([</span><span class="nb">minval</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">),</span><span class="w"> </span><span class="nb">maxval</span><span class="p">(</span><span class="n">this</span><span class="p">%</span><span class="n">knot</span><span class="p">)],</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">XNORM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">YNORM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">),&amp;</span>
-<span class="w">            </span><span class="n">ZNORM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="nb">kind</span><span class="o">=</span><span class="n">wp</span><span class="p">))</span>
-
-<span class="w">        </span><span class="c">! Directory entry</span>
-<span class="w">        </span><span class="k">call </span><span class="n">D</span><span class="p">%</span><span class="n">init</span><span class="p">(</span><span class="n">entity_type</span><span class="o">=</span><span class="mi">126</span><span class="p">,</span><span class="w"> </span><span class="n">param_data</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">transformation_matrix</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">form_number</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="w">        </span><span class="c">! Entity and directory lists</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Dlist</span><span class="p">%</span><span class="n">init</span><span class="p">()</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Plist</span><span class="p">%</span><span class="n">init</span><span class="p">()</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Dlist</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Plist</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">curve126</span><span class="p">)</span>
-
-<span class="w">        </span><span class="c">! Global section</span>
-<span class="w">        </span><span class="k">call </span><span class="n">G</span><span class="p">%</span><span class="n">init</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-
-<span class="w">        </span><span class="c">! S-section description</span>
-<span class="w">        </span><span class="k">allocate</span><span class="p">(</span><span class="n">Ssection</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="w">        </span><span class="n">Ssection</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ForCAD&#39;</span>
-
-<span class="w">        </span><span class="c">! Create IGES sections</span>
-<span class="w">        </span><span class="k">call </span><span class="n">makeSsection</span><span class="p">(</span><span class="n">Ssection</span><span class="p">,</span><span class="w"> </span><span class="n">Ssec_out</span><span class="p">)</span>
-<span class="w">        </span><span class="k">call </span><span class="n">makeGsection</span><span class="p">(</span><span class="n">G</span><span class="p">,</span><span class="w"> </span><span class="n">Gsection</span><span class="p">)</span>
-<span class="w">        </span><span class="k">call </span><span class="n">makeDPsections</span><span class="p">(</span><span class="n">Dlist</span><span class="p">,</span><span class="w"> </span><span class="n">Plist</span><span class="p">,</span><span class="w"> </span><span class="n">Dsection</span><span class="p">,</span><span class="w"> </span><span class="n">Psection</span><span class="p">)</span>
-
-<span class="w">        </span><span class="c">! Write IGES file</span>
-<span class="w">        </span><span class="k">call </span><span class="n">writeIGESfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Ssec_out</span><span class="p">,</span><span class="w"> </span><span class="n">Gsection</span><span class="p">,</span><span class="w"> </span><span class="n">Dsection</span><span class="p">,</span><span class="w"> </span><span class="n">Psection</span><span class="p">)</span>
-
-<span class="w">        </span><span class="c">! Cleanup</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Dlist</span><span class="p">%</span><span class="n">delete</span><span class="p">()</span>
-<span class="w">        </span><span class="k">call </span><span class="n">Plist</span><span class="p">%</span><span class="n">delete</span><span class="p">()</span>
-<span class="w">    </span><span class="k">end subroutine </span><span class="n">export_iges</span>
-</pre></div>
-
-    </section>
-    <br>
     
     </div>
   </div>
@@ -802,7 +694,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-06-01T20:12:50.089572+0000             </p>
+ on 2025-06-04T18:55:47.445500+0000             </p>
           </div>
         </div>
         <br>

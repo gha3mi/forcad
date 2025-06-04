@@ -245,10 +245,10 @@ program test_nurbs_volume
         Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)],&
         Xt3=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], dTgc=dTgcb, Tgc=Tgcb)
 
-    call nurbs%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b)
+    call nurbs%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1)
     call bsp%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b)
 
-    call nurbs%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b, elem=[1,2,3])
+    call nurbs%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1, elem=[1,2,3])
     call bsp%derivative(Xt=[0.0_rk,0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b, elem=[1,2,3])
 
     call nurbs%derivative2(res1=20, res2=20, res3=20, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)
