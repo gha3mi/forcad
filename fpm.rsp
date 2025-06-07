@@ -3,21 +3,21 @@ options run
 options --target bench
 options --compiler gfortran
 options --profile release
-options --flag "-ftree-parallelize-loops=8"
+options --flag "-ftree-parallelize-loops=8 -flto"
 
 @if
 options run
 options --target bench
 options --compiler ifx
 options --profile release
-options --flag "-qopenmp"
+options --flag "-qopenmp -flto"
 
 @nv
 options run
 options --target bench
 options --compiler nvfortran
 options --profile release
-options --flag "-stdpar=multicore"
+options --flag "-O3 -stdpar=multicore -Mautoinline -Munroll -Mcache_align -Mvect=simd -fstrict-aliasing -Mdse -Mpropcond -tp=native"
 
 @fl
 options run

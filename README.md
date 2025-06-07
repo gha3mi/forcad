@@ -46,15 +46,11 @@ Benchmarks were performed on the following system:
 
 ## Elapsed Time Plots
 
-The following plots illustrate the elapsed computation time for polynomial degrees 1 through 5:
+The following plot illustrates the elapsed computation time for polynomial degrees 1 through 5:
 
 <div align="center">
 
-<img src="benchmark_degree_1.png" width="600">
-<img src="benchmark_degree_2.png" width="600">
-<img src="benchmark_degree_3.png" width="600">
-<img src="benchmark_degree_4.png" width="600">
-<img src="benchmark_degree_5.png" width="600">
+<img src="benchmark.png" width="600">
 
 </div>
 
