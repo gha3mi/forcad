@@ -90,6 +90,10 @@ fpm @fl
 
 Modify compiler flags by editing `fpm.rsp` located in the project's root directory.
 
+## Setting the Number of Threads
+
+To control parallel execution, set the `OMP_NUM_THREADS=n` environment variable. For nvfortran, which uses OpenACC, set `ACC_NUM_CORES=n`.
+
 ## Adding New Methods
 
 To add a new B-spline basis function implementation:
