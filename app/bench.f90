@@ -54,7 +54,6 @@ program benchmark_bspline
             allocate (B(nc))
             do method = 1, nmethods
                 B = 0.0_rk
-
                 ! Start the timer for the current method
                 call t((nc-nc_min)/nc_step+1, degree, method)%timer_start()
                 do i = 1, reps
