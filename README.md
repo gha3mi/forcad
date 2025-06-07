@@ -23,7 +23,7 @@ B_{i,d}(t) = \frac{t - k_i}{k_{i+d} - k_i} B_{i,d-1}(t)
 \frac{k_{i+d+1} - t}{k_{i+d+1} - k_{i+1}} B_{i+1,d-1}(t)
 $$
 
-Here, $t$ is the evaluation parameter, $k$ represents the knot vector, and $i$ indexes the control points associated with each basis function.
+Here, $t$ is the evaluation parameter, $k$ represents the knot vector and $i$ denotes the control point.
 
 ## Benchmark Parameters
 
