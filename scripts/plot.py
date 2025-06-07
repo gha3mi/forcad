@@ -23,7 +23,7 @@ csv_files = sorted(glob.glob("degree_*.csv"))
 
 for csv_file in csv_files:
     degree = csv_file.split('_')[1].split('.')[0]
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(csv_file, skipinitialspace=True)
 
     plt.figure(figsize=(8, 6))
 
