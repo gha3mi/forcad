@@ -2,7 +2,7 @@ program benchmark_bspline
 
     use bspline_kinds, only: rk
     use bspline_basis
-    use bspline_utils, only: print_results
+    use bspline_utils, only: print_results, write_results_csv
     use fortime, only: timer
     use iso_fortran_env, only: compiler_version, compiler_options
 
@@ -19,9 +19,9 @@ program benchmark_bspline
     ! Minimum number of control points
     integer, parameter :: nc_min = 0
     ! Maximum number of control points
-    integer, parameter :: nc_max = 1e7
+    integer, parameter :: nc_max = 1e6
     ! Step size for control points
-    integer, parameter :: nc_step = nc_max/1000
+    integer, parameter :: nc_step = nc_max/100
     ! Number of repetitions for benchmarking
     integer, parameter :: reps = 20
 
@@ -75,5 +75,5 @@ program benchmark_bspline
 
     ! Print the timing results
     call print_results(degree_min, degree_max, nc_min, nc_max, nc_step, reps, nmethods, method_names, t)
-
+    call write_results_csv(degree_min, degree_max, nc_min, nc_max, nc_step, reps, nmethods, method_names, t)
 end program
