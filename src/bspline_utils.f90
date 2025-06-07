@@ -47,16 +47,16 @@ contains
         integer :: unit
 
         do degree = degree_min, degree_max
-            write(filename, '("degree_", i0, ".csv")') degree
-            open(newunit=unit, file=filename, status='replace', action='write')
-            write(unit, '(a)') 'Control Points, Method, Time (s)'
+            write (filename, '("degree_", i0, ".csv")') degree
+            open (newunit=unit, file=filename, status='replace', action='write')
+            write (unit, '(a)') 'Control Points, Method, Time (s)'
             do nc = nc_min, nc_max, nc_step
                 do method = 1, nmethods
-                    write(unit, '(i0, ",", a, ",", f12.8)') &
+                    write (unit, '(i0, ",", a, ",", f12.8)') &
                         nc, trim(method_names(method)), t((nc-nc_min)/nc_step+1, degree-degree_min+1, method)%elapsed_time
                 end do
             end do
-            close(unit)
+            close (unit)
         end do
     end subroutine
     !===============================================================================
