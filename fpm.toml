@@ -1,0 +1,54 @@
+name        = "benchmark-bspline"
+description = "A Fortran package for benchmarking B-spline implementations."
+version     = "0.1.0"
+license     = "BSD-3-Clause"
+author      = "Seyed Ali Ghasemi"
+maintainer  = "info@gha3mi.com"
+copyright   = "Copyright 2025, Seyed Ali Ghasemi"
+
+[build]
+auto-executables = true
+auto-tests       = false
+auto-examples    = false
+module-naming    = false
+
+[install]
+library = false
+test    = false
+
+[fortran]
+implicit-typing   = false
+implicit-external = false
+source-form       = "free"
+
+[preprocess]
+[preprocess.cpp]
+macros = ["REAL64"]
+
+[dependencies]
+openmp  = "*"
+fortime = {git="https://github.com/gha3mi/fortime.git"}
+
+[extra.ford]
+project             = "benchmark-bspline"
+version             = "0.1.0"
+year                = "2025"
+project_github      = "https://github.com/gha3mi/forcad"
+author              = "Seyed Ali Ghasemi"
+email               = "info@gha3mi.com"
+github              = "https://github.com/gha3mi"
+license             = "BSD 3-Clause"
+src_dir             = ["src", "app"]
+output_dir          = "doc"
+source              = true
+incl_src            = true
+graph               = true
+coloured_edges      = true
+search              = true
+print_creation_date = true
+sort                = "permission-alpha"
+display             = ["public", "private", "protected"]
+
+
+[extra.fortitude.check]
+ignore = ["S001", "S061", "C003", "C121"]

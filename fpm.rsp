@@ -1,0 +1,27 @@
+@gf
+options run
+options --target bench
+options --compiler gfortran
+options --profile release
+options --flag "-ftree-parallelize-loops=8"
+
+@if
+options run
+options --target bench
+options --compiler ifx
+options --profile release
+options --flag "-qopenmp"
+
+@nv
+options run
+options --target bench
+options --compiler nvfortran
+options --profile release
+options --flag "-stdpar=multicore"
+
+@fl
+options run
+options --target bench
+options --compiler flang-new
+options --profile release
+options --flag "-cpp"
