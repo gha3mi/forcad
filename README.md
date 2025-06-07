@@ -11,7 +11,7 @@ B-spline basis functions of degree $d$ are recursively defined by the Cox–de B
 $$
 B_{i,0}(t) = 
 \begin{cases}
-1 & \text{if } k_i \leq t < k_{i+1}, \\[5pt]
+1 & \text{if } k_i \leq t < k_{i+1}, \\
 0 & \text{otherwise.}
 \end{cases}
 $$
