@@ -69,37 +69,64 @@ module forcad_utils
     end interface
     !===============================================================================
 
+
+    !===============================================================================
+    interface basis_bspline_der
+        module procedure basis_bspline_der_A
+        module procedure basis_bspline_der_B
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface basis_bspline_2der
+        module procedure basis_bspline_2der_A
+        module procedure basis_bspline_2der_B
+        module procedure basis_bspline_2der_C
+    end interface
+    !===============================================================================
+
 contains
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function basis_bspline(Xt, knot, nc, degree) result(B)
-        integer, intent(in)   :: degree
+        integer, intent(in) :: degree
         real(rk), intent(in), contiguous :: knot(:)
-        integer, intent(in)   :: nc
-        real(rk), intent(in)  :: Xt
-        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        real(rk)              :: Nt(nc, 0:degree)
-        integer               :: i, p
-        real(rk)              :: B(nc)
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: B(nc)
 
-        temp = abs(Xt - knot(size(knot)))
-        Nt = 0.0_rk
+        B = 0.0_rk
+        B_curr = 0.0_rk
 
-        do p = 0, degree
-            do concurrent (i = 1:nc)
+        ! Degree 0 initialization
+        do concurrent(i=1:nc)
+            Xth_i    = knot(i)
+            Xth_i1   = knot(i+1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) B(i) = 1.0_rk
+        end do
+
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            do concurrent(i=1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if ( temp /= tiny(0.0_rk) .and. Xt >= Xth_i .and. Xt <= Xth_i1 ) Nt(i,0) = 1.0_rk
-                if ( Xth_ip /= Xth_i ) Nt(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * Nt(i,p-1)
-                if ( Xth_ip1 /= Xth_i1 ) Nt(i,p) = Nt(i,p) + (Xth_ip1 - Xt)/(Xth_ip1  - Xth_i1) * Nt(i+1,p-1)
+                if (Xth_ip /= Xth_i) B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
+                if (i < nc .and. Xth_ip1 /= Xth_i1) B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
             end do
+            B = B_curr
         end do
-        B = Nt(:,degree)
     end function
     !===============================================================================
 
@@ -107,46 +134,56 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine basis_bspline_der(Xt, knot, nc, degree, dB, B)
-        integer, intent(in)   :: degree
+    pure subroutine basis_bspline_der_A(Xt, knot, nc, degree, dB, B)
+        integer, intent(in) :: degree
         real(rk), intent(in), contiguous :: knot(:)
-        integer, intent(in)   :: nc
-        real(rk), intent(in)  :: Xt
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
         real(rk), intent(out) :: dB(nc)
-        real(rk), intent(out), optional :: B(nc)
-        real(rk), allocatable :: N(:,:), dN_dXt(:,:)
-        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        integer               :: i, p
+        real(rk), intent(out) :: B(nc)
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: dB_curr(nc)
 
-        temp = abs(Xt - knot(size(knot)))
-        allocate(N(nc, 0:degree), source=0.0_rk)
-        allocate(dN_dXt(nc, 0:degree), source=0.0_rk)
+        B = 0.0_rk
+        dB = 0.0_rk
 
-        do p = 0, degree
-            do concurrent (i = 1:nc)
+        ! Degree 0 initialization
+        do concurrent(i = 1:nc)
+            Xth_i    = knot(i)
+            Xth_i1   = knot(i + 1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+                B(i) = 1.0_rk
+                dB(i) = 0.0_rk
+            end if
+        end do
+
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            dB_curr = 0.0_rk
+            do concurrent(i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if ( temp /= tiny(0.0_rk) .and. Xth_i <= Xt  .and. Xt <= Xth_i1 ) then
-                    N(i,0) = 1.0_rk
-                    dN_dXt(i,0) = 0.0_rk
+                if (Xth_ip /= Xth_i) then
+                    B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
+                    dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
                 end if
-                if ( Xth_ip /= Xth_i ) then
-                    N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
-                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i)
+                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                    B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
+                    dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
+                                (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
                 end if
-                if ( Xth_ip1 /= Xth_i1 ) then
-                    N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
-                    dN_dXt(i,p) = dN_dXt(i,p) - ( N(i+1,p-1) - (Xth_ip1 - Xt)*dN_dXt(i+1,p-1) ) / (Xth_ip1  - Xth_i1)
-                end if
-
             end do
+            B = B_curr
+            dB = dB_curr
         end do
-
-        dB = dN_dXt(:,degree)
-        if (present(B)) B = N(:,degree)
     end subroutine
     !===============================================================================
 
@@ -154,54 +191,251 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine basis_bspline_2der(Xt, knot, nc, degree, d2B, dB, B)
-        integer, intent(in)   :: degree
+    pure subroutine basis_bspline_der_B(Xt, knot, nc, degree, dB)
+        integer, intent(in) :: degree
         real(rk), intent(in), contiguous :: knot(:)
-        integer, intent(in)   :: nc
-        real(rk), intent(in)  :: Xt
-        real(rk), intent(out) :: d2B(nc)
-        real(rk), intent(out), optional :: dB(nc)
-        real(rk), intent(out), optional :: B(nc)
-        real(rk), allocatable :: N(:,:), dN_dXt(:,:), d2N_dXt2(:,:)
-        real(rk)              :: temp, Xth_i, Xth_i1, Xth_ip, Xth_ip1
-        integer               :: i, p
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out) :: dB(nc)
+        real(rk) :: B(nc)
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: dB_curr(nc)
 
-        temp = abs(Xt - knot(size(knot)))
-        allocate(N(nc, 0:degree), source=0.0_rk)
-        allocate(dN_dXt(nc, 0:degree), source=0.0_rk)
-        allocate(d2N_dXt2(nc, 0:degree), source=0.0_rk)
+        B = 0.0_rk
+        dB = 0.0_rk
 
-        do p = 0, degree
-            do concurrent (i = 1:nc)
+        ! Degree 0 initialization
+        do concurrent(i = 1:nc)
+            Xth_i    = knot(i)
+            Xth_i1   = knot(i + 1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+                B(i) = 1.0_rk
+                dB(i) = 0.0_rk
+            end if
+        end do
+
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            dB_curr = 0.0_rk
+            do concurrent(i = 1:nc)
                 Xth_i   = knot(i)
                 Xth_i1  = knot(i+1)
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if ( temp /= tiny(0.0_rk) .and. Xth_i <= Xt  .and. Xt <= Xth_i1 ) then
-                    N(i,0) = 1.0_rk
-                    dN_dXt(i,0) = 0.0_rk
-                    d2N_dXt2(i,0) = 0.0_rk
+                if (Xth_ip /= Xth_i) then
+                    B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
+                    dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
                 end if
-                if ( Xth_ip /= Xth_i) then
-                    N(i,p) = (Xt - Xth_i)/(Xth_ip - Xth_i) * N(i,p-1)
-                    ! dN_dXt(i,p) = p*(N(i,p-1)/(Xth_ip - Xth_i))
-                    dN_dXt(i,p) = ( N(i,p-1) + (Xt - Xth_i)*dN_dXt(i,p-1) ) / (Xth_ip - Xth_i)
-                    d2N_dXt2(i,p) = (2*dN_dXt(i,p-1) + (Xt - Xth_i)*d2N_dXt2(i,p-1)) / (Xth_ip - Xth_i)
+                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                    B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
+                    dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
+                                (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
                 end if
-                if ( Xth_ip1 /= Xth_i1 ) then
-                    N(i,p) = N(i,p) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1) * N(i+1,p-1)
-                    ! dN_dXt(i,p) = dN_dXt(i,p) - p*( N(i+1,p-1)/(Xth_ip1 - Xth_i1))
-                    dN_dXt(i,p) = dN_dXt(i,p) - ( N(i+1,p-1) - (Xth_ip1 - Xt)*dN_dXt(i+1,p-1) ) / (Xth_ip1  - Xth_i1)
-                    d2N_dXt2(i,p) = d2N_dXt2(i,p) - (2*dN_dXt(i+1,p-1) - (Xth_ip1 - Xt)*d2N_dXt2(i+1,p-1)) / (Xth_ip1 - Xth_i1)
-                end if
-
             end do
+            B = B_curr
+            dB = dB_curr
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_bspline_2der_A(Xt, knot, nc, degree, d2B, dB, B)
+        integer, intent(in) :: degree
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out) :: d2B(nc)
+        real(rk), intent(out) :: dB(nc)
+        real(rk), intent(out) :: B(nc)
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: dB_curr(nc)
+        real(rk) :: d2B_curr(nc)
+
+        B = 0.0_rk
+        dB = 0.0_rk
+        d2B = 0.0_rk
+
+        ! Degree 0 initialization
+        do concurrent(i = 1:nc)
+            Xth_i = knot(i)
+            Xth_i1 = knot(i + 1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+                B(i) = 1.0_rk
+                dB(i) = 0.0_rk
+                d2B(i) = 0.0_rk
+            end if
         end do
 
-        d2B = d2N_dXt2(:,degree)
-        if (present(dB)) dB = dN_dXt(:,degree)
-        if (present(B)) B = N(:,degree)
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            dB_curr = 0.0_rk
+            d2B_curr = 0.0_rk
+            do concurrent(i = 1:nc)
+                Xth_i = knot(i)
+                Xth_i1 = knot(i + 1)
+                Xth_ip = knot(i + p)
+                Xth_ip1 = knot(i + p + 1)
+
+                if (Xth_ip /= Xth_i) then
+                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
+                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
+                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
+                end if
+
+                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
+                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
+                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
+                end if
+            end do
+            B = B_curr
+            dB = dB_curr
+            d2B = d2B_curr
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_bspline_2der_B(Xt, knot, nc, degree, d2B, dB)
+        integer, intent(in) :: degree
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out) :: d2B(nc)
+        real(rk), intent(out) :: dB(nc)
+        real(rk) :: B(nc)
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: dB_curr(nc)
+        real(rk) :: d2B_curr(nc)
+
+        B = 0.0_rk
+        dB = 0.0_rk
+        d2B = 0.0_rk
+
+        ! Degree 0 initialization
+        do concurrent(i = 1:nc)
+            Xth_i = knot(i)
+            Xth_i1 = knot(i + 1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+                B(i) = 1.0_rk
+                dB(i) = 0.0_rk
+                d2B(i) = 0.0_rk
+            end if
+        end do
+
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            dB_curr = 0.0_rk
+            d2B_curr = 0.0_rk
+            do concurrent(i = 1:nc)
+                Xth_i = knot(i)
+                Xth_i1 = knot(i + 1)
+                Xth_ip = knot(i + p)
+                Xth_ip1 = knot(i + p + 1)
+
+                if (Xth_ip /= Xth_i) then
+                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
+                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
+                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
+                end if
+
+                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
+                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
+                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
+                end if
+            end do
+            B = B_curr
+            dB = dB_curr
+            d2B = d2B_curr
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine basis_bspline_2der_C(Xt, knot, nc, degree, d2B)
+        integer, intent(in) :: degree
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out) :: d2B(nc)
+        real(rk) :: dB(nc)
+        real(rk) :: B(nc)
+        integer :: i, p
+        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
+        real(rk) :: B_curr(nc)
+        real(rk) :: dB_curr(nc)
+        real(rk) :: d2B_curr(nc)
+
+        B = 0.0_rk
+        dB = 0.0_rk
+        d2B = 0.0_rk
+
+        ! Degree 0 initialization
+        do concurrent(i = 1:nc)
+            Xth_i = knot(i)
+            Xth_i1 = knot(i + 1)
+            Xth_last = knot(size(knot))
+
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+                B(i) = 1.0_rk
+                dB(i) = 0.0_rk
+                d2B(i) = 0.0_rk
+            end if
+        end do
+
+        ! Recursion for higher degrees
+        do p = 1, degree
+            B_curr = 0.0_rk
+            dB_curr = 0.0_rk
+            d2B_curr = 0.0_rk
+            do concurrent(i = 1:nc)
+                Xth_i = knot(i)
+                Xth_i1 = knot(i + 1)
+                Xth_ip = knot(i + p)
+                Xth_ip1 = knot(i + p + 1)
+
+                if (Xth_ip /= Xth_i) then
+                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
+                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
+                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
+                end if
+
+                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
+                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
+                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
+                end if
+            end do
+            B = B_curr
+            dB = dB_curr
+            d2B = d2B_curr
+        end do
     end subroutine
     !===============================================================================
 
