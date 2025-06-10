@@ -11,7 +11,7 @@ program benchmark_bspline
     !! Setup parameters for the benchmark
     !------------------------------------------------------------------
     ! Names of the methods being benchmarked
-    character(*), parameter :: method_names(*) = ["b1", "b2", "b3"]
+    character(*), parameter :: method_names(*) = ["b1", "b2", "b3", "b4"]
     ! Minimum degree of B-spline basis functions
     integer, parameter :: degree_min = 1
     ! Maximum degree of B-spline basis functions
@@ -26,7 +26,7 @@ program benchmark_bspline
     integer, parameter :: reps = 20
 
     integer, parameter :: nmethods = size(method_names)
-    integer :: num_knots, i, method, nc, degree
+    integer :: num_knots, i, method, nc, degree, id
     real(rk), allocatable :: knot(:), B(:)
     type(timer) :: t((nc_max-nc_min)/nc_step+1, degree_max-degree_min+1, nmethods)
     real(rk) :: Xt
@@ -46,7 +46,9 @@ program benchmark_bspline
     print '(a)', trim(compiler_options())
     print '(a)', '============================================='
 
+    id = 0
     do degree = degree_min, degree_max
+        id = id+1
         do nc = nc_min, nc_max, nc_step
             print'(a,g0, ",",1x ,a,g0)', "degree=", degree, "nc=", nc
             num_knots = nc+degree+1
@@ -55,18 +57,19 @@ program benchmark_bspline
             do method = 1, nmethods
                 B = 0.0_rk
                 ! Start the timer for the current method
-                call t((nc-nc_min)/nc_step+1, degree, method)%timer_start()
+                call t((nc-nc_min)/nc_step+1, id, method)%timer_start()
                 do i = 1, reps
                     select case (method)
                     case (1); B = bspline_basis1(Xt, knot, nc, degree)
                     case (2); B = bspline_basis2(Xt, knot, nc, degree)
                     case (3); B = bspline_basis3(Xt, knot, nc, degree)
+                    case (4); B = bspline_basis4(Xt, knot, nc, degree)
                     end select
                     ! to prevent loop invariant optimization
                     write (*, '(a)', advance='no') "."
                 end do
                 ! Stop the timer for the current method
-                call t((nc-nc_min)/nc_step+1, degree, method)%timer_stop(nloops=reps, message=method_names(method), print=.true.)
+                call t((nc-nc_min)/nc_step+1, id, method)%timer_stop(nloops=reps, message=method_names(method), print=.true.)
             end do
             deallocate (knot, B)
         end do

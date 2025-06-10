@@ -8,7 +8,8 @@ module bspline_basis
     public :: &
         bspline_basis1, &
         bspline_basis2, &
-        bspline_basis3
+        bspline_basis3, &
+        bspline_basis4
 
 contains
 
@@ -121,6 +122,86 @@ contains
             end do
         end do
         B = N(:, degree)
+    end function
+    !===============================================================================
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function bspline_basis4(Xt, knot, nc, degree) result(B)
+        integer, intent(in) :: degree
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc
+        real(rk), intent(in) :: Xt
+        real(rk) :: B(nc)
+        integer :: span, j, r, low, mid, high, nk
+        real(rk) :: left(degree), right(degree)
+        real(rk) :: N(0:degree)
+        real(rk) :: saved, temp1, temp2, l1, r1
+        integer :: i
+
+        if (nc == 0) then
+            B = 0.0_rk
+            return
+        end if
+
+        nk = size(knot)
+        B = 0.0_rk
+
+        ! Check if Xt is outside the domain
+        if (Xt < knot(1) .or. Xt > knot(nk)) error stop "Xt is outside the knot range"
+
+        ! Find knot span
+        if (Xt == knot(nk)) then
+            span = nk-1
+        else
+            low = 1
+            high = nk
+            do while (low < high)
+                mid = (low+high)/2
+                if (Xt < knot(mid)) then
+                    high = mid
+                else
+                    low = mid+1
+                end if
+            end do
+            span = low-1
+        end if
+
+        ! Degree 0 case (TODO: check this)
+        if (degree == 0) then
+            if (span >= 1 .and. span <= nc) B(span) = 1.0_rk
+            return
+        end if
+
+        ! Precompute differences for recurrence
+        do concurrent(j=1:degree)
+            left(j) = Xt-knot(span-j+1)
+            right(j) = knot(span+j)-Xt
+        end do
+
+        ! Recurrence for higher degrees
+        N(0) = 1.0_rk
+        do j = 1, degree
+            saved = 0.0_rk
+            do r = 0, j-1
+                l1 = left(j-r)
+                r1 = right(r+1)
+                temp2 = r1+l1
+                if (abs(temp2) <= tiny(1.0_rk)) then
+                    temp1 = 0.0_rk
+                else
+                    temp1 = N(r)/temp2
+                end if
+                N(r) = saved+r1*temp1
+                saved = l1*temp1
+            end do
+            N(j) = saved
+        end do
+
+        do concurrent(i=max(1, span-degree):min(nc, span))
+            B(i) = N(i-(span-degree))
+        end do
     end function
     !===============================================================================
 
