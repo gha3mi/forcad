@@ -96,36 +96,65 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: nc
         real(rk), intent(in) :: Xt
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
         real(rk) :: B(nc)
+        integer :: span, j, r, low, mid, high, nk
+        real(rk) :: left(degree), right(degree)
+        real(rk) :: N(0:degree)
+        real(rk) :: saved, temp
+        integer :: i, index_start
+
+        if (nc == 0) then
+            B = 0.0_rk
+            return
+        end if
 
         B = 0.0_rk
-        B_curr = 0.0_rk
+        nk = size(knot)
 
-        ! Degree 0 initialization
-        do concurrent(i=1:nc)
-            Xth_i    = knot(i)
-            Xth_i1   = knot(i+1)
-            Xth_last = knot(size(knot))
+        if (Xt < knot(1) .or. Xt > knot(nk)) then
+            B = 0.0_rk
+            return
+        end if
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) B(i) = 1.0_rk
+        ! Find span
+        if (Xt == knot(nk)) then
+            span = nk-degree-1
+        else
+            low = degree+1
+            high = nk-degree
+            do while (low <= high)
+                mid = (low+high)/2
+                if (Xt >= knot(mid) .and. Xt < knot(mid+1)) then
+                    span = mid
+                    exit
+                else if (Xt < knot(mid)) then
+                    high = mid-1
+                else
+                    low = mid+1
+                end if
+            end do
+        end if
+
+        ! Cox-de Boor recursion
+        N = 0.0_rk
+        N(0) = 1.0_rk
+        do j = 1, degree
+            left(j) = Xt-knot(span+1-j)
+            right(j) = knot(span+j)-Xt
+            saved = 0.0_rk
+            do r = 0, j-1
+                temp = N(r)/(right(r+1)+left(j-r))
+                N(r) = saved+right(r+1)*temp
+                saved = left(j-r)*temp
+            end do
+            N(j) = saved
         end do
 
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            do concurrent(i=1:nc)
-                Xth_i   = knot(i)
-                Xth_i1  = knot(i+1)
-                Xth_ip  = knot(i+p)
-                Xth_ip1 = knot(i+p+1)
-
-                if (Xth_ip /= Xth_i) B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
-                if (i < nc .and. Xth_ip1 /= Xth_i1) B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
-            end do
-            B = B_curr
+        index_start = span-degree
+        do i = 0, degree
+            if (index_start+i >= 1 .and. index_start+i <= nc) then
+                B(index_start+i) = N(i)
+            end if
         end do
     end function
     !===============================================================================
