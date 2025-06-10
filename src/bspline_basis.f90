@@ -137,70 +137,61 @@ contains
         integer :: span, j, r, low, mid, high, nk
         real(rk) :: left(degree), right(degree)
         real(rk) :: N(0:degree)
-        real(rk) :: saved, temp1, temp2, l1, r1
-        integer :: i
+        real(rk) :: saved, temp
+        integer :: i, index_start
 
         if (nc == 0) then
             B = 0.0_rk
             return
         end if
 
-        nk = size(knot)
         B = 0.0_rk
+        nk = size(knot)
 
-        ! Check if Xt is outside the domain
-        if (Xt < knot(1) .or. Xt > knot(nk)) error stop "Xt is outside the knot range"
+        if (Xt < knot(1) .or. Xt > knot(nk)) then
+            B = 0.0_rk
+            return
+        end if
 
-        ! Find knot span
+        ! Find span
         if (Xt == knot(nk)) then
-            span = nk-1
+            span = nk-degree-1
         else
-            low = 1
-            high = nk
-            do while (low < high)
+            low = degree+1
+            high = nk-degree
+            do while (low <= high)
                 mid = (low+high)/2
-                if (Xt < knot(mid)) then
-                    high = mid
+                if (Xt >= knot(mid) .and. Xt < knot(mid+1)) then
+                    span = mid
+                    exit
+                else if (Xt < knot(mid)) then
+                    high = mid-1
                 else
                     low = mid+1
                 end if
             end do
-            span = low-1
         end if
 
-        ! Degree 0 case (TODO: check this)
-        if (degree == 0) then
-            if (span >= 1 .and. span <= nc) B(span) = 1.0_rk
-            return
-        end if
-
-        ! Precompute differences for recurrence
-        do concurrent(j=1:degree)
-            left(j) = Xt-knot(span-j+1)
-            right(j) = knot(span+j)-Xt
-        end do
-
-        ! Recurrence for higher degrees
+        ! Cox-de Boor recursion
+        N = 0.0_rk
         N(0) = 1.0_rk
         do j = 1, degree
+            left(j) = Xt-knot(span+1-j)
+            right(j) = knot(span+j)-Xt
             saved = 0.0_rk
             do r = 0, j-1
-                l1 = left(j-r)
-                r1 = right(r+1)
-                temp2 = r1+l1
-                if (abs(temp2) <= tiny(1.0_rk)) then
-                    temp1 = 0.0_rk
-                else
-                    temp1 = N(r)/temp2
-                end if
-                N(r) = saved+r1*temp1
-                saved = l1*temp1
+                temp = N(r)/(right(r+1)+left(j-r))
+                N(r) = saved+right(r+1)*temp
+                saved = left(j-r)*temp
             end do
             N(j) = saved
         end do
 
-        do concurrent(i=max(1, span-degree):min(nc, span))
-            B(i) = N(i-(span-degree))
+        index_start = span-degree
+        do i = 0, degree
+            if (index_start+i >= 1 .and. index_start+i <= nc) then
+                B(index_start+i) = N(i)
+            end if
         end do
     end function
     !===============================================================================
