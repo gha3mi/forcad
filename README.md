@@ -55,16 +55,16 @@ The following plots illustrate elapsed computation times for polynomial degrees 
     <th align="center">Intel Fortran<br>(ifx 2025.1.0)</th>
   </tr>
   <tr>
-    <td align="center"><img src="benchmark_gfortran.png" width="300"></td>
-    <td align="center"><img src="benchmark_ifx.png" width="300"></td>
+    <td align="center"><img src="benchmark_gfortran.png" width="400"></td>
+    <td align="center"><img src="benchmark_ifx.png" width="400"></td>
   </tr>
   <tr>
     <th align="center">NVIDIA Fortran<br>(nvfortran 25.5-0)</th>
     <th align="center">LLVM Flang<br>(flang 20.1.6)</th>
   </tr>
   <tr>
-    <td align="center"><img src="benchmark_nvfortran.png" width="300"></td>
-    <td align="center"><img src="benchmark_flang.png" width="300"></td>
+    <td align="center"><img src="benchmark_nvfortran.png" width="400"></td>
+    <td align="center"><img src="benchmark_flang.png" width="400"></td>
   </tr>
 </table>
 
