@@ -1,62 +1,129 @@
-name: fpm
-on: [push]
-jobs:
+name: CI_fpm
 
-  Build:
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: ${{ matrix.os }}_${{ matrix.compiler }}_fpm
     runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        toolchain:
-          - {compiler: gcc}
-          - {compiler: intel}
-          - {compiler: nvidia-hpc}
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
+        include:
+        - os: ubuntu-latest
+          extra-packages: ""
+        - os: windows-latest
+          extra-packages: ""
+        - os: macos-latest
+          extra-packages: ""
         exclude:
-          - os: windows-latest
-            toolchain: {compiler: nvidia-hpc}
-          - os: windows-latest
-            toolchain: {compiler: intel}
           - os: macos-latest
-            toolchain: {compiler: nvidia-hpc}
+            compiler: flang-new
           - os: macos-latest
-            toolchain: {compiler: intel}
+            compiler: ifx
+          - os: macos-latest
+            compiler: nvfortran
+          - os: windows-latest
+            compiler: nvfortran
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Fortran Package Manager (fpm)
-      if: matrix.os != 'macos-latest'
-      uses: fortran-lang/setup-fpm@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          activate-environment: fortran
+          channels: conda-forge, defaults
 
-    - name: Install fpm on macOS
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew tap fortran-lang/homebrew-fortran
-        brew install fpm
+      - name: Setup Fortran
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          compiler: ${{ matrix.compiler }}
+          platform: ${{ matrix.os }}
+          extra-packages: ${{ matrix.extra-packages }}
 
-    - name: Setup Fortran Compiler
-      uses: fortran-lang/setup-fortran@main
-      id: setup-fortran
-      with:
-        compiler: ${{ matrix.toolchain.compiler }}
-        version: ${{ matrix.toolchain.version }}
+      - name: fpm test (debug)
+        run: fpm test --compiler ${{ matrix.compiler }} --profile debug --verbose
 
-    - name: Run Tests (Debug)
-      run: |
-        fpm test --profile debug --compiler ${{ env.FC}}
-      env:
-        FC: ${{ steps.setup-fortran.outputs.fc }}
+      - name: fpm test (release)
+        run: fpm test --compiler ${{ matrix.compiler }} --profile release --verbose
 
-    - name: Run Tests (Release)
-      run: |
-        fpm test --profile release --compiler ${{ env.FC}}
-      env:
-        FC: ${{ steps.setup-fortran.outputs.fc }}
+  summary:
+    permissions:
+      contents: write
+    name: Generate STATUS.md
+    if: always()
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate summary from GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          badge_line=""
+
+          mapfile -t job_lines < <(
+            curl -s -H "Authorization: token $GH_TOKEN" \
+              https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/jobs \
+              | jq -r '.jobs[] | select(.name | test(".*_.*_fpm$")) | [.name, .conclusion] | @tsv'
+          )
+
+          for line in "${job_lines[@]}"; do
+            name="${line%%$'\t'*}"
+            conclusion="${line#*$'\t'}"
+
+            os="${name%%_*}"
+            remainder="${name#*_}"
+            compiler="${remainder%_fpm}"
+
+            os="${os%-latest}"
+
+            key="${os}_${compiler}_fpm"
+
+            # shields.io escaping
+            safe_key="${key//-/'--'}"
+
+            if [[ "$conclusion" == "success" ]]; then
+              color="brightgreen"
+              label="passing"
+            elif [[ "$conclusion" == "failure" ]]; then
+              color="red"
+              label="failing"
+            elif [[ "$conclusion" == "cancelled" ]]; then
+              color="lightgrey"
+              label="cancelled"
+            else
+              color="lightgrey"
+              label="pending"
+            fi
+
+            badge="![${key}](https://img.shields.io/badge/${safe_key}-${label}-${color})"
+            badge_line="$badge_line $badge"
+          done
+
+          echo "$badge_line" > STATUS.md
+
+          mkdir -p status-fpm
+          mv STATUS.md status-fpm/STATUS.md
+          cat status-fpm/STATUS.md
+
+      - name: Deploy STATUS.md to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
+        with:
+          branch: status-fpm
+          folder: status-fpm
+          clean: true
+          commit-message: "Deploy status"
