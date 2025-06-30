@@ -96,6 +96,11 @@ The library uses **double precision** (`real64`) by default for all real-valued 
 fpm build --profile release --flag "-DREAL64"
 ```
 
+## Status
+
+<!-- STATUS:setup-fortran-conda:START -->
+<!-- STATUS:setup-fortran-conda:END -->
+
 ## API documentation
 
 The most up-to-date API documentation for the master branch is available

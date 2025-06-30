@@ -1,0 +1,92 @@
+name: Setup Fortran Conda CI/CD
+
+on:
+  push:
+    branches: [main, master, dev]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test_fpm:
+    name: ${{ matrix.os }}_${{ matrix.compiler }}_fpm
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
+        include:
+          - os: ubuntu-latest
+            extra-packages: ""
+          - os: windows-latest
+            extra-packages: ""
+          - os: macos-latest
+            extra-packages: ""
+        exclude:
+          - os: macos-latest
+            compiler: flang-new
+          - os: macos-latest
+            compiler: ifx
+          - os: macos-latest
+            compiler: nvfortran
+          - os: windows-latest
+            compiler: nvfortran
+
+    steps:
+      - name: Setup Fortran
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          compiler: ${{ matrix.compiler }}
+          platform: ${{ matrix.os }}
+          extra-packages: ${{ matrix.extra-packages }}
+
+      - name: fpm test (debug)
+        run: fpm test --compiler ${{ matrix.compiler }} --profile debug --verbose
+
+      - name: fpm test (release)
+        run: fpm test --compiler ${{ matrix.compiler }} --profile release --verbose
+
+  doc_ford:
+    name: Generate FORD Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup and Generate FORD Documentation
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          compiler: gfortran
+          platform: ubuntu-latest
+          generate-doc-ford: true
+          ford-working-directory: .
+          ford-config: README.md
+          ford-output-directory: doc
+          ford-branch: gh-pages
+          ford-target-folder: .
+  
+  status_fpm:
+    name: Generate STATUS.md
+    if: always()
+    needs: test_fpm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate summary
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          generate-status-fpm: true
+
+  update_readme_table:
+    name: Update README.md status table
+    if: always()
+    needs: [status_fpm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update README status
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          update-readme-table: true
+          update-readme-token: ${{ secrets.GH_PAT }}   # Update with your GitHub personal access token
+          update-readme-user-name: "Seyed Ali Ghasemi" # Update with your name
+          update-readme-user-email: "info@gha3mi.com"  # Update with your email
