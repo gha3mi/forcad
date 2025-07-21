@@ -3,15 +3,25 @@ name: Setup Fortran Conda CI/CD
 on:
   push:
     branches: [main, master, dev]
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'VERSION'
+      - 'LICENSE'
   pull_request:
     branches: [main, master]
-
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'VERSION'
+      - 'LICENSE'
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
   test_fpm:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: ${{ matrix.os }}_${{ matrix.compiler }}_fpm
     runs-on: ${{ matrix.os }}
     strategy:
@@ -21,11 +31,11 @@ jobs:
         compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
         include:
           - os: ubuntu-latest
-            extra-packages: ""
+            extra-packages: "blas blas-devel libblas"
           - os: windows-latest
-            extra-packages: ""
+            extra-packages: "blas blas-devel libblas mkl"
           - os: macos-latest
-            extra-packages: ""
+            extra-packages: "blas blas-devel libblas"
         exclude:
           - os: macos-latest
             compiler: flang-new
@@ -45,12 +55,13 @@ jobs:
           extra-packages: ${{ matrix.extra-packages }}
 
       - name: fpm test (debug)
-        run: fpm test --compiler ${{ matrix.compiler }} --profile debug --verbose
+        run: fpm test @${{ matrix.os }}_${{ matrix.compiler }}_debug --verbose
 
       - name: fpm test (release)
-        run: fpm test --compiler ${{ matrix.compiler }} --profile release --verbose
+        run: fpm test @${{ matrix.os }}_${{ matrix.compiler }}_release --verbose
 
   doc_ford:
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Generate FORD Documentation
     runs-on: ubuntu-latest
     steps:
@@ -65,11 +76,11 @@ jobs:
           ford-output-directory: doc
           ford-branch: gh-pages
           ford-target-folder: .
-  
+
   status_fpm:
+    if: ${{ always() && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Generate STATUS.md
-    if: always()
-    needs: test_fpm
+    needs: [test_fpm]
     runs-on: ubuntu-latest
     steps:
       - name: Generate summary
@@ -78,10 +89,8 @@ jobs:
           generate-status-fpm: true
 
   update_readme_table:
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Update README.md status table
-    if: |
-      always() &&
-      github.ref != 'refs/heads/update-readme-table'
     needs: [status_fpm]
     runs-on: ubuntu-latest
     steps:
@@ -92,3 +101,14 @@ jobs:
           update-readme-token: ${{ secrets.GH_PAT }}   # Update with your GitHub personal access token
           update-readme-user-name: "Seyed Ali Ghasemi" # Update with your name
           update-readme-user-email: "info@gha3mi.com"  # Update with your email
+
+  linter_fortitude:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    name: Run Fortitude Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Fortitude Linter
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          fortitude-check: true
+          fortitude-settings: "--output-format github"
