@@ -27,24 +27,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
         include:
           - os: ubuntu-latest
+            compiler: gfortran
             extra-packages: ""
-          - os: windows-latest
-            extra-packages: ""
-          - os: macos-latest
-            extra-packages: ""
-        exclude:
-          - os: macos-latest
-            compiler: flang-new
-          - os: macos-latest
+          - os: ubuntu-latest
             compiler: ifx
+            extra-packages: ""
+          - os: ubuntu-latest
+            compiler: flang-new
+            extra-packages: "llvm-openmp"
+          - os: ubuntu-latest
+            compiler: lfortran
+            extra-packages: ""
+          - os: ubuntu-latest
+            compiler: nvfortran
+            extra-packages: ""
           - os: macos-latest
-            compiler: nvfortran
+            compiler: gfortran
+            extra-packages: ""
+          - os: macos-latest
+            compiler: lfortran
+            extra-packages: ""
           - os: windows-latest
-            compiler: nvfortran
+            compiler: gfortran
+            extra-packages: ""
+          - os: windows-latest
+            compiler: ifx
+            extra-packages: ""
+          - os: windows-latest
+            compiler: flang-new
+            extra-packages: "llvm-openmp"
+          - os: windows-latest
+            compiler: lfortran
+            extra-packages: ""
 
     steps:
       - name: Setup Fortran
