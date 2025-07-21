@@ -134,10 +134,10 @@ If you use ForCAD in your research, please cite it as follows:
 
 
 ```bibtex
-@software{seyed_ali_ghasemi_2024_10904447,
+@software{seyed_ali_ghasemi_2025_10904447,
   author       = {Ghasemi, S. A.},
   title        = {gha3mi/ForCAD},
-  year         = 2024,
+  year         = {2025},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.10904447},
   url          = {https://doi.org/10.5281/zenodo.10904447}
