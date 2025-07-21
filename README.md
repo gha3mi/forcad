@@ -101,8 +101,8 @@ fpm build --profile release --flag "-DREAL64"
 <!-- STATUS:setup-fortran-conda:START -->
 | Compiler   | macos | ubuntu | windows |
 |------------|----------------------|----------------------|----------------------|
-| `flang-new` | - | fpm ❌ | fpm ✅ |
-| `gfortran` | fpm ✅ | fpm ✅ | fpm ✅ |
+| `flang-new` | - | fpm ✅ | fpm ✅ |
+| `gfortran` | fpm ✅ | fpm 🚫 | fpm ✅ |
 | `ifx` | - | fpm ✅ | fpm ✅ |
 | `lfortran` | fpm ❌ | fpm ❌ | fpm ❌ |
 | `nvfortran` | - | fpm ✅ | - |
