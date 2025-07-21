@@ -10,32 +10,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        toolchain:
-          - {compiler: gcc}
+        compiler: [gfortran]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Setup Fortran
+      uses: gha3mi/setup-fortran-conda@latest
       with:
-        submodules: recursive
-
-    - name: Setup Fortran Package Manager (fpm)
-      uses: fortran-lang/setup-fpm@v7
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup Fortran Compiler
-      uses: fortran-lang/setup-fortran@main
-      id: setup-fortran
-      with:
-        compiler: ${{ matrix.toolchain.compiler }}
-        version: ${{ matrix.toolchain.version }}
+        compiler: ${{ matrix.compiler }}
+        platform: ${{ matrix.os }}
+        extra-packages: ""
 
     - name: Run Tests
       run: |
-        fpm test --profile debug --compiler ${{ env.FC}} --flag "--coverage -g -O0"
-      env:
-        FC: ${{ steps.setup-fortran.outputs.fc }}
+        fpm test --profile debug --compiler ${{ matrix.compiler }} --flag "--coverage -g -O0" --verbose
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
