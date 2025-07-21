@@ -1,3 +1,38 @@
+## [v0.9.0](https://github.com/gha3mi/forcad/compare/v0.8.0...v0.9.0) - 2025-07-21
+
+
+### Features
+
+* feat: implement new CI/CD workflow using setup-fortran-conda ([c97459817](https://github.com/gha3mi/forcad/commit/c97459817a647d5294cbb759de46d56362718ac8)) by [@gha3mi](https://github.com/gha3mi)
+* feat: update CI/CD workflow and add fpm.rsp configuration for multiple platforms ([03c80752f](https://github.com/gha3mi/forcad/commit/03c80752f3603abb9e832201a6d8be57259c6fef)) by [@gha3mi](https://github.com/gha3mi)
+* feat: add release.sh automation script ([9158e6f9b](https://github.com/gha3mi/forcad/commit/9158e6f9bc80157a7d93323cc880b5332f059fa5)) by [@gha3mi](https://github.com/gha3mi)
+* feat: optimize B-spline basis and derivatives ([7c749cbd2](https://github.com/gha3mi/forcad/commit/7c749cbd29833ca2606ed7ffa9d09657ef12d091)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* fix: update condition for README.md status table update job ([ebd39f89c](https://github.com/gha3mi/forcad/commit/ebd39f89cec6df1d0dab781557614d0fa8791b1b)) by [@gha3mi](https://github.com/gha3mi)
+* fix: remove extra-packages from CI/CD workflow for all platforms ([c153fe1f2](https://github.com/gha3mi/forcad/commit/c153fe1f236cb0026bdc88d03808d5d99d18c626)) by [@gha3mi](https://github.com/gha3mi)
+* fix(CI): install llvm-openmp for flang compiler ([82db44e36](https://github.com/gha3mi/forcad/commit/82db44e36fd89e2ec7f066c422bd9df58bafcc36)) by [@gha3mi](https://github.com/gha3mi)
+* fix: add optimization flags for gfortran ([14a6c7cbd](https://github.com/gha3mi/forcad/commit/14a6c7cbd7c00135d48e17fb554f406f0ae041ad)) by [@gha3mi](https://github.com/gha3mi)
+* fix: use setup-fortran-conda for codecov workflow ([d12299fbb](https://github.com/gha3mi/forcad/commit/d12299fbbf5d68c01fe392fee386452aaeac9d46)) by [@gha3mi](https://github.com/gha3mi)
+* fix: update citation year in README.md to 2025 ([8392b81f2](https://github.com/gha3mi/forcad/commit/8392b81f2c6a5e4bd57cb19510903ae27af13928)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* update README.md status table ([#36](https://github.com/gha3mi/forcad/pull/36)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: use setup-fortran-conda ([#34](https://github.com/gha3mi/forcad/pull/34)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: move dependencies to example sections in fpm.toml ([#33](https://github.com/gha3mi/forcad/pull/33)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#37) ([60eef8c54](https://github.com/gha3mi/forcad/commit/60eef8c544838b9d97b8c133fd6267fe92549917)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#38) ([f76e6d2dd](https://github.com/gha3mi/forcad/commit/f76e6d2ddefeaaf83846ba0e5e33ed48522f4a4b)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.8.0...v0.9.0](https://github.com/gha3mi/forcad/compare/v0.8.0...v0.9.0)
+
 # Changelog
 
 All notable changes to [ForCAD](https://github.com/gha3mi/forcad) will be documented in this file.
