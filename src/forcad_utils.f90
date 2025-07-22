@@ -1506,8 +1506,8 @@ contains
                 ! Compute Legendre polynomial and derivative via recurrence
                 p_prev = 1.0_rk        ! P_0(xi)
                 p_curr = xi            ! P_1(xi)
-                dp_prev = 0.0_rk       ! P_0'(xi)
-                dp_curr = 1.0_rk       ! P_1'(xi)
+                dp_prev = 0.0_rk       ! P_0d(xi)
+                dp_curr = 1.0_rk       ! P_1d(xi)
                 do k = 2, n
                     p_next  = ((2*k-1)*xi*p_curr-(k-1)*p_prev)/k
                     dp_next = ((2*k-1)*(xi*dp_curr+p_curr)-(k-1)*dp_prev)/k
