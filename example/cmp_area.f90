@@ -1,6 +1,6 @@
 program compute_area
 
-    use forcad
+    use forcad, only: rk, nurbs_surface
 
     implicit none
 

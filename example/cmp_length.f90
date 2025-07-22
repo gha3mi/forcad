@@ -1,6 +1,6 @@
 program compute_length
 
-    use forcad
+    use forcad, only: rk, nurbs_curve
 
     implicit none
 

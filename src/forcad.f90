@@ -2,12 +2,11 @@
 !> license: BSD 3-Clause
 module forcad
 
-    use forcad_kinds
-    use forcad_utils
+    use forcad_kinds, only: rk
 
-    use forcad_nurbs_curve
-    use forcad_nurbs_surface
-    use forcad_nurbs_volume
+    use forcad_nurbs_curve, only: nurbs_curve
+    use forcad_nurbs_surface, only: nurbs_surface
+    use forcad_nurbs_volume, only: nurbs_volume
 
     implicit none
 
