@@ -1385,7 +1385,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
-                    if (this%knot1(k+1) == Xth(i)) then
+                    ! if (this%knot1(k+1) == Xth(i)) then
+                    if (abs(this%knot1(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
@@ -1430,7 +1431,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
-                    if (this%knot1(k+1) == Xth(i)) then
+                    ! if (this%knot1(k+1) == Xth(i)) then
+                    if (abs(this%knot1(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
@@ -1466,7 +1468,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
-                    if (this%knot2(k+1) == Xth(i)) then
+                    ! if (this%knot2(k+1) == Xth(i)) then
+                    if (abs(this%knot2(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0
@@ -1514,7 +1517,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
-                    if (this%knot2(k+1) == Xth(i)) then
+                    ! if (this%knot2(k+1) == Xth(i)) then
+                    if (abs(this%knot2(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0
@@ -1678,7 +1682,8 @@ contains
 
         r = .false.
         if(allocated(this%Wc)) then
-            if (any(this%Wc /= this%Wc(1))) then
+            ! if (any(this%Wc /= this%Wc(1))) then
+            if (any(abs(this%Wc - this%Wc(1)) > 2.0_rk*epsilon(0.0_rk))) then
                 r = .true.
             end if
         end if
@@ -1780,7 +1785,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
-                    if (this%knot1(k+1) == Xth(i)) then
+                    ! if (this%knot1(k+1) == Xth(i)) then
+                    if (abs(this%knot1(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
@@ -1834,7 +1840,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(1)-1,this%degree(1),Xth(i),this%knot1)
-                    if (this%knot1(k+1) == Xth(i)) then
+                    ! if (this%knot1(k+1) == Xth(i)) then
+                    if (abs(this%knot1(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot1, Xth(i))
                     else
                         s = 0
@@ -1878,7 +1885,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
-                    if (this%knot2(k+1) == Xth(i)) then
+                    ! if (this%knot2(k+1) == Xth(i)) then
+                    if (abs(this%knot2(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0
@@ -1938,7 +1946,8 @@ contains
 
                 do i = 1, size(Xth)
                     k = findspan(this%nc(2)-1,this%degree(2),Xth(i),this%knot2)
-                    if (this%knot2(k+1) == Xth(i)) then
+                    ! if (this%knot2(k+1) == Xth(i)) then
+                    if (abs(this%knot2(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                         s = compute_multiplicity(this%knot2, Xth(i))
                     else
                         s = 0

@@ -959,7 +959,8 @@ contains
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                if (this%knot(k+1) == Xth(i)) then
+                ! if (this%knot(k+1) == Xth(i)) then
+                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0
@@ -1000,7 +1001,8 @@ contains
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                if (this%knot(k+1) == Xth(i)) then
+                ! if (this%knot(k+1) == Xth(i)) then
+                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0
@@ -1241,7 +1243,8 @@ contains
 
         r = .false.
         if (allocated(this%Wc)) then
-            if (any(this%Wc /= this%Wc(1))) then
+            ! if (any(this%Wc /= this%Wc(1))) then
+            if (any(abs(this%Wc - this%Wc(1)) > 2.0_rk*epsilon(0.0_rk))) then
                 r = .true.
             end if
         end if
@@ -1338,7 +1341,8 @@ contains
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                if (this%knot(k+1) == Xth(i)) then
+                ! if (this%knot(k+1) == Xth(i)) then
+                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0
@@ -1388,7 +1392,8 @@ contains
 
             do i = 1, size(Xth)
                 k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                if (this%knot(k+1) == Xth(i)) then
+                ! if (this%knot(k+1) == Xth(i)) then
+                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
                     s = compute_multiplicity(this%knot,Xth(i))
                 else
                     s = 0

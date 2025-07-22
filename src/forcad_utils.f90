@@ -117,7 +117,8 @@ contains
         end if
 
         ! Find span
-        if (Xt == knot(nk)) then
+        ! if (Xt == knot(nk)) then
+        if (abs(Xt - knot(nk)) < 2.0_rk*epsilon(0.0_rk)) then
             span = nk-degree-1
         else
             low = degree+1
@@ -184,7 +185,8 @@ contains
             Xth_i1   = knot(i + 1)
             Xth_last = knot(size(knot))
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
                 B(i) = 1.0_rk
                 dB(i) = 0.0_rk
             end if
@@ -200,11 +202,13 @@ contains
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if (Xth_ip /= Xth_i) then
+                ! if (Xth_ip /= Xth_i) then
+                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
                     dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
                 end if
-                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
                     dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
                                 (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
@@ -241,7 +245,8 @@ contains
             Xth_i1   = knot(i + 1)
             Xth_last = knot(size(knot))
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
                 B(i) = 1.0_rk
                 dB(i) = 0.0_rk
             end if
@@ -257,11 +262,13 @@ contains
                 Xth_ip  = knot(i+p)
                 Xth_ip1 = knot(i+p+1)
 
-                if (Xth_ip /= Xth_i) then
+                ! if (Xth_ip /= Xth_i) then
+                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
                     dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
                 end if
-                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
                     dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
                                 (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
@@ -301,7 +308,8 @@ contains
             Xth_i1 = knot(i + 1)
             Xth_last = knot(size(knot))
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
                 B(i) = 1.0_rk
                 dB(i) = 0.0_rk
                 d2B(i) = 0.0_rk
@@ -319,13 +327,15 @@ contains
                 Xth_ip = knot(i + p)
                 Xth_ip1 = knot(i + p + 1)
 
-                if (Xth_ip /= Xth_i) then
+                ! if (Xth_ip /= Xth_i) then
+                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
                     dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
                     d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
                 end if
 
-                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
                     dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
                     d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
@@ -366,7 +376,8 @@ contains
             Xth_i1 = knot(i + 1)
             Xth_last = knot(size(knot))
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
                 B(i) = 1.0_rk
                 dB(i) = 0.0_rk
                 d2B(i) = 0.0_rk
@@ -384,13 +395,15 @@ contains
                 Xth_ip = knot(i + p)
                 Xth_ip1 = knot(i + p + 1)
 
-                if (Xth_ip /= Xth_i) then
+                ! if (Xth_ip /= Xth_i) then
+                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
                     dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
                     d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
                 end if
 
-                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
                     dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
                     d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
@@ -431,8 +444,9 @@ contains
             Xth_i1 = knot(i + 1)
             Xth_last = knot(size(knot))
 
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-                B(i) = 1.0_rk
+            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
+            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
+            B(i) = 1.0_rk
                 dB(i) = 0.0_rk
                 d2B(i) = 0.0_rk
             end if
@@ -449,13 +463,15 @@ contains
                 Xth_ip = knot(i + p)
                 Xth_ip1 = knot(i + p + 1)
 
-                if (Xth_ip /= Xth_i) then
+                ! if (Xth_ip /= Xth_i) then
+                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
                     dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
                     d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
                 end if
 
-                if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
+                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
                     B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
                     dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
                     d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
@@ -484,9 +500,11 @@ contains
 
         do concurrent (p = 0:degree)
             B(p+1) = gamma(real(nc, kind=rk))/(gamma(real(p+1, kind=rk))*gamma(real(nc-p, kind=rk)))
-            if (Xt == 0.0_rk .and. p == 0) then
+            ! if (Xt == 0.0_rk .and. p == 0) then
+            if (abs(Xt) < 2.0_rk*epsilon(0.0_rk) .and. p == 0) then
                 B(p+1) = B(p+1)*(1.0_rk-Xt)**(degree-p)
-            else if (Xt == 0.0_rk .and. degree-p == 0) then
+            ! else if (Xt == 0.0_rk .and. degree-p == 0) then
+            else if (abs(Xt) < 2.0_rk*epsilon(0.0_rk) .and. degree-p == 0) then
                 B(p+1) = B(p+1)*(Xt**p)
             else
                 B(p+1) = B(p+1)*(Xt**p)*(1.0_rk-Xt)**(degree-p)
@@ -780,7 +798,8 @@ contains
 
         count = 1
         do i = 2, size(knot)
-            if (knot(i) /= knot(i-1)) count = count + 1
+            ! if (knot(i) /= knot(i-1)) count = count + 1
+            if (abs(knot(i) - knot(i-1)) > 2.0_rk*epsilon(0.0_rk)) count = count + 1
         end do
 
         allocate(multiplicity(count))
@@ -789,7 +808,8 @@ contains
         count = 1
 
         do i = 2, size(knot)
-            if (knot(i) /= knot(i-1)) then
+            ! if (knot(i) /= knot(i-1)) then
+            if (abs(knot(i) - knot(i-1)) > 2.0_rk*epsilon(0.0_rk)) then
                 count = count + 1
                 multiplicity(count) = 1
             else
@@ -813,9 +833,11 @@ contains
         multiplicity = 0
         i = 1
         do while (i <= size_knot)
-            if (knot(i) == Xth) then
+            ! if (knot(i) == Xth) then
+            if (abs(knot(i) - Xth) < 2.0_rk*epsilon(0.0_rk)) then
                 count = 1
-                do while (i + count <= size_knot .and. knot(i + count) == Xth)
+                ! do while (i + count <= size_knot .and. knot(i + count) == Xth)
+                do while (i + count <= size_knot .and. abs(knot(i + count) - Xth) < 2.0_rk*epsilon(0.0_rk))
                     count = count + 1
                 end do
                 if (count > multiplicity) then
@@ -895,7 +917,8 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer :: s
         integer :: low, high, mid
-        if (Xth == knot(n+2)) then
+        ! if (Xth == knot(n+2)) then
+        if (abs(Xth - knot(n+2)) < 2.0_rk*epsilon(0.0_rk)) then
             s = n
             return
         end if
@@ -975,7 +998,8 @@ contains
         end do
         do while (b<m)
             i = b
-            do while (b<m .and. knot(b+1) == knot(b+2))
+            ! do while (b<m .and. knot(b+1) == knot(b+2))
+            do while (b<m .and. abs(knot(b+1)-knot(b+2)) < 2.0_rk*epsilon(0.0_rk))
                 b = b + 1
                 if (b+2 > size(knot)) then
                     exit
@@ -1300,7 +1324,8 @@ contains
         do i = 1, size(vec)
             k = 0
             do j = 1, size(output)
-                if (vec(i) == output(j)) then
+                ! if (vec(i) == output(j)) then
+                if (abs(vec(i) - output(j)) < 2.0_rk*epsilon(0.0_rk)) then
                     k = k + 1
                     exit
                 end if
