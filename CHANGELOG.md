@@ -1,3 +1,23 @@
+## [v0.10.1](https://github.com/gha3mi/forcad/compare/v0.10.0...v0.10.1) - 2025-07-22
+
+
+### Fixes
+
+* fix: avoid real equality/inequality comparison (gfortran warning) ([60348eb43](https://github.com/gha3mi/forcad/commit/60348eb43a8c8faed58c8025f85b1d86de90e65a)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* refactor: restrict module usage to only necessary components ([33967129b](https://github.com/gha3mi/forcad/commit/33967129b50aa200f6e329185f461952321c96ae)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: add gfortran flag -Wno-maybe-uninitialized to fpm.rsp file ([4437f005f](https://github.com/gha3mi/forcad/commit/4437f005faa6e40c3d6f27e47124e1f3f9956f94)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.10.0...v0.10.1](https://github.com/gha3mi/forcad/compare/v0.10.0...v0.10.1)
+
 ## [v0.10.0](https://github.com/gha3mi/forcad/compare/v0.9.0...v0.10.0) - 2025-07-22
 
 
