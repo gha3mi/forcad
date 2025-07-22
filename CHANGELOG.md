@@ -1,3 +1,27 @@
+## [v0.10.0](https://github.com/gha3mi/forcad/compare/v0.9.0...v0.10.0) - 2025-07-22
+
+
+### Features
+
+* feat: add CMake ([e38acd0b7](https://github.com/gha3mi/forcad/commit/e38acd0b7371897a2fdbd1e96d5702e8c9b25f4f)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* fix: use VERSION file and add description ([8bc700155](https://github.com/gha3mi/forcad/commit/8bc700155af83d8b8fde8657b6a9f64d15f36678)) by [@gha3mi](https://github.com/gha3mi)
+* fix: update comments ([357d6b14f](https://github.com/gha3mi/forcad/commit/357d6b14fd351af2f91ae70bd594c2648382b6dc)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* Update README.md status table [ci skip] (#40) ([19349cccb](https://github.com/gha3mi/forcad/commit/19349cccb4002fc7e455c6a33d32be38d8a0b78c)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/gha3mi/forcad/compare/v0.9.0...v0.10.0)
+
 ## [v0.9.0](https://github.com/gha3mi/forcad/compare/v0.8.0...v0.9.0) - 2025-07-21
 
 
