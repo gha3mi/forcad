@@ -101,11 +101,11 @@ fpm build --profile release --flag "-DREAL64"
 <!-- STATUS:setup-fortran-conda:START -->
 | Compiler   | macos | ubuntu | windows |
 |------------|----------------------|----------------------|----------------------|
-| `flang-new` | - | fpm ✅ | fpm ✅ |
-| `gfortran` | fpm ✅ | fpm ✅ | fpm ✅ |
-| `ifx` | - | fpm ✅ | fpm ✅ |
-| `lfortran` | fpm ❌ | fpm ❌ | fpm ❌ |
-| `nvfortran` | - | fpm ✅ | - |
+| `flang-new` | - | fpm ✅  cmake ❌ | fpm ✅  cmake ✅ |
+| `gfortran` | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ |
+| `ifx` | - | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ |
+| `lfortran` | fpm ❌  cmake ❌ | fpm ❌  cmake ❌ | fpm ❌  cmake ✅ |
+| `nvfortran` | - | fpm ✅  cmake ✅ | - |
 <!-- STATUS:setup-fortran-conda:END -->
 
 ## API documentation
