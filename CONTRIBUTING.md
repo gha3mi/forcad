@@ -1,6 +1,6 @@
 # Contributing to ForCAD
 
-Contributions to ForCAD are welcome and thankds for taking the time to contribute to ForCAD!
+Contributions to ForCAD are welcome and thanks for taking the time to help improve the project!
 
 ## Table of Contents
 - [Contributing to ForCAD](#contributing-to-forcad)
@@ -23,7 +23,7 @@ If you encounter any problems, please [open an issue](https://github.com/gha3mi/
 
 ### Suggesting Enhancements
 
-Do you have ideas for improving ForCAD? please [open an issue](https://github.com/gha3mi/forcad/issues) on GitHub and describe your proposed enhancements in detail.
+Do you have ideas for improving ForCAD? Please [open an issue](https://github.com/gha3mi/forcad/issues) on GitHub and describe your proposed enhancements in detail.
 
 ### Implementing Changes and Adding Features
 
@@ -53,7 +53,26 @@ Contribute to ForCAD by submitting a pull request (PR) with examples. Ensure tha
 
 ### Git Commit Messages
 
-- Limit the first line to 72 characters or fewer.
-- Include references to issues and pull requests in the first line.
-- Use the present tense ("Fix bug" not "Fixed bug")
-- Use the imperative mood ("Add feautre to..." not "Adds feautre to...")
+Use the [Conventional Commits](https://www.conventionalcommits.org/) specification to format your commit messages. This helps keep the project history readable and enables automatic changelog generation and versioning.
+
+**Format:**
+
+```
+<type>(optional-scope): <description>
+
+[optional body]
+```
+**Guidelines:**
+
+* Keep the subject line **under 72 characters**.
+* Use lowercase for `<type>` and `<scope>`.
+
+**Common `<type>` values:**
+
+  * **feat**: a new feature
+  * **fix**: a bug fix
+  * **refactor**: code change that neither fixes a bug nor adds a feature
+  * **docs**: documentation only changes
+  * **style**: changes that do not affect the meaning of the code (white-space, formatting, etc.)
+  * **perf**: a code change that improves performance
+  * **chore**: other changes that don't modify `src`, `example` or `test` files
