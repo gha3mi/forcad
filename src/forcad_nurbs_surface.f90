@@ -100,7 +100,7 @@ module forcad_nurbs_surface
         procedure :: translate_Xg           !!> Translate geometry points
         procedure :: show                   !!> Show the NURBS object using PyVista
         procedure :: nearest_point          !!> Find the nearest point on the NURBS surface (Approximation)
-        procedure :: nearest_point2         !!> Find the nearest point on the NURBS surface (Minimization - Newton's method)
+        procedure :: nearest_point2         !!> Find the nearest point on the NURBS surface (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dA
         procedure :: cmp_area               !!> Compute the area of the NURBS surface
 

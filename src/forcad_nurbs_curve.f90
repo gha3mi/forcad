@@ -94,7 +94,7 @@ module forcad_nurbs_curve
         procedure :: translate_Xg          !!> Translate geometry points
         procedure :: show                  !!> Show the NURBS object using PyVista
         procedure :: nearest_point         !!> Find the nearest point on the NURBS curve (Approximation)
-        procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newton's method)
+        procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newtons method)
         procedure :: ansatz                !!> Compute the shape functions, derivative of shape functions and dL
         procedure :: cmp_length            !!> Compute the length of the NURBS curve
 

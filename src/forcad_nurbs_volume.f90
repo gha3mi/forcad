@@ -102,7 +102,7 @@ module forcad_nurbs_volume
         procedure :: translate_Xg           !!> Translate geometry points
         procedure :: show                   !!> Show the NURBS object using PyVista
         procedure :: nearest_point          !!> Find the nearest point on the NURBS volume (Approximation)
-        procedure :: nearest_point2         !!> Find the nearest point on the NURBS volume (Minimization - Newton's method)
+        procedure :: nearest_point2         !!> Find the nearest point on the NURBS volume (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dV
         procedure :: cmp_volume             !!> Compute the volume of the NURBS volume
 
