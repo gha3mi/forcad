@@ -1,6 +1,6 @@
 program compute_volume
 
-    use forcad
+    use forcad, only: rk, nurbs_volume
 
     implicit none
 

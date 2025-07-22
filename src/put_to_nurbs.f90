@@ -1,6 +1,6 @@
 program example_put_to_nurbs
 
-    use forcad
+    use forcad, only: rk, nurbs_volume
     use forcad_utils, only: hexahedron_Xc
 
     implicit none

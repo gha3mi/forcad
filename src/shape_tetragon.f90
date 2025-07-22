@@ -1,6 +1,6 @@
 program shape_tetragon
 
-    use forcad
+    use forcad, only: rk, nurbs_surface
 
     implicit none
 
