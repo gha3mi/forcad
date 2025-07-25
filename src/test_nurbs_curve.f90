@@ -408,4 +408,47 @@ program test_nurbs_curve
     call nurbs%finalize()
     call bsp%finalize()
 
+    !============================================================================
+    ! Test: Least-squares B-spline curve fitting
+    !============================================================================
+    block
+       use forcad, only: rk, nurbs_curve
+       use forunittest, only: unit_test
+
+       type(nurbs_curve) :: bsp
+       integer :: n, i
+       real(rk), parameter :: pi = acos(-1.0_rk)
+       real(rk), allocatable :: Xt(:), Xdata(:,:), Xg_eval(:,:)
+       real(rk) :: err1, err2, err3, rms
+       type(unit_test) :: ut
+
+       n = 42
+       allocate(Xt(n), Xdata(n, 3))
+
+       do i = 1, n
+          Xt(i) = real(i - 1, rk) / real(n - 1, rk)
+          Xdata(i,1) = Xt(i)
+          Xdata(i,2) = 0.3_rk * sin(4.0_rk * pi * Xt(i))
+          Xdata(i,3) = 0.3_rk * cos(4.0_rk * pi * Xt(i))
+       end do
+
+       call bsp%set(&
+          degree     = 5,&
+          Xth_dir    = [ (real(i - 1, rk)/10.0_rk, i=1,11) ],&
+          continuity = [ -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1 ])
+
+       call bsp%lsq_fit_bspline(Xt, Xdata, n)
+       call bsp%create(res = n)
+       Xg_eval = bsp%get_Xg()
+
+       err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / norm2(Xdata(:,1))
+       err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / norm2(Xdata(:,2))
+       err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / norm2(Xdata(:,3))
+       rms  = sqrt((err1**2 + err2**2 + err3**2) / 3.0_rk)
+
+       call ut%check(res=rms, expected=0.0_rk, tol=1e-6_rk, msg="test_nurbs_curve: 83")
+       call bsp%finalize()
+       deallocate(Xt, Xdata, Xg_eval)
+    end block
+
 end program

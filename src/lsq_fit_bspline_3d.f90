@@ -68,7 +68,7 @@ program lsq_fit_bspline_3d
    print'(a)', "========================================"
 
    print'(a)', "Fitting least squares volume..."
-   call bsp%lsq_fit_bspline(n, Xdata, Xt)
+   call bsp%lsq_fit_bspline(Xt, Xdata, n)
    print'(a)', "Fitting complete."
 
    ! create B-Spline volume

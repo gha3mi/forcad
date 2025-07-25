@@ -422,4 +422,59 @@ program test_nurbs_surface
     call bsp%finalize()
     deallocate(Xc, Wc, Xg, Xgb)
 
+    !============================================================================
+    ! Least-squares B-spline surface fitting
+    !============================================================================
+    block
+       use forcad, only: rk, nurbs_surface
+       use forcad_utils, only: ndgrid
+       use forunittest, only: unit_test
+
+       type(nurbs_surface) :: bsp
+       integer :: i, n(2), ndata
+       real(rk), parameter :: pi = acos(-1.0_rk)
+       real(rk), allocatable :: Xt1(:), Xt2(:), Xt(:,:), Xdata(:,:), Xg_eval(:,:)
+       real(rk) :: err1, err2, err3, rms
+       type(unit_test) :: ut
+
+       n = [14,14]
+       allocate(Xt1(n(1)), Xt2(n(2)))
+       do concurrent (i = 1: n(1))
+          Xt1(i) = real(i-1, rk)/real(n(1)-1, rk)
+       end do
+       do concurrent (i = 1: n(2))
+          Xt2(i) = real(i-1, rk)/real(n(2)-1, rk)
+       end do
+       call ndgrid(Xt1, Xt2, Xt)
+
+       ndata = n(1)*n(2)
+       allocate(Xdata(ndata, 3))
+       do i = 1, ndata
+          Xdata(i,1) = Xt(i,1)
+          Xdata(i,2) = Xt(i,2)
+          Xdata(i,3) = 0.1_rk * sin(2.0_rk*pi*Xt(i,1)) * cos(2.0_rk*pi*Xt(i,2))
+       end do
+
+       call bsp%set(&
+          degree      = [4, 4],&
+          Xth_dir1    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
+          Xth_dir2    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
+          continuity1 = [ -1   ,   1    ,   1   ,   1    ,  -1   ],&
+          continuity2 = [ -1   ,   1    ,   1   ,   1    ,  -1   ])
+
+       call bsp%lsq_fit_bspline(Xt, Xdata, n)
+       call bsp%create(n(1), n(2))
+       Xg_eval = bsp%get_Xg()
+
+       err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / norm2(Xdata(:,1))
+       err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / norm2(Xdata(:,2))
+       err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / norm2(Xdata(:,3))
+       rms  = sqrt((err1**2 + err2**2 + err3**2)/3.0_rk)
+
+       call ut%check(res=rms, expected=0.0_rk, tol=1e-6_rk, msg="test_nurbs_surface: 83")
+
+       call bsp%finalize()
+       deallocate(Xt1, Xt2, Xt, Xdata, Xg_eval)
+    end block
+
 end program

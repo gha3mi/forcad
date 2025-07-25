@@ -3866,7 +3866,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine lsq_fit_bspline(this, ndata, Xdata, Xt)
+    pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
         use forcad_interface, only: solve
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xt(:,:), Xdata(:,:)
