@@ -1891,7 +1891,11 @@ contains
         real(rk) :: dL, dL_ig
 
         length = 0.0_rk
+#if defined(__NVCOMPILER)
         do ie = 1, size(this%cmp_elem(),1)
+#else
+        do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:length)
+#endif
             dL = 0.0_rk
             do ig = 1, size(this%cmp_elem(),2)
                 call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig)
@@ -1939,7 +1943,11 @@ contains
         integer :: i
 
         allocate(Xg(ng, size(Xc,2)), source = 0.0_rk)
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             Xg(i,:) = matmul(cmp_Tgc_1d(Xt(i), knot, nc, degree, Wc), Xc)
         end do
     end function
@@ -1982,7 +1990,11 @@ contains
         integer :: i
 
         allocate(Xg(ng, size(Xc,2)))
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             Xg(i,:) = matmul(basis_bspline(Xt(i), knot, nc, degree), Xc)
         end do
     end function
@@ -2024,7 +2036,11 @@ contains
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
 
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
             Tgci = Bi*(Wc/(dot_product(Bi,Wc)))
             Tgc(i,:) = Tgci
@@ -2077,7 +2093,11 @@ contains
         integer :: i
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Tgc(i,:) , dTgc(i,:), Tgc(i,:))
         end do
     end subroutine
@@ -2118,7 +2138,11 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
             dTgc(i,:) = ( dBi*Wc - Tgc(i,:)*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
@@ -2170,7 +2194,11 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dTgc(i,:), Tgc(i,:))
         end do
     end subroutine
@@ -2218,7 +2246,11 @@ contains
         integer :: i
 
         allocate(Tgc(ng, nc), Tgci(nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt,1)
+#else
         do concurrent (i = 1: size(Xt,1))
+#endif
             Tgci = basis_bspline(Xt(i), knot, nc, degree)
             Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
         end do
@@ -2257,7 +2289,11 @@ contains
         integer :: i
 
         allocate(Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt,1)
+#else
         do concurrent (i = 1: size(Xt,1))
+#endif
             Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
         end do
     end function
@@ -2291,10 +2327,16 @@ contains
         integer :: i
 
         allocate(distances(ng))
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
+    !===============================================================================
+
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
@@ -2310,7 +2352,11 @@ contains
         if (this%nc > ndata) error stop "Error: in the first direction, number of control points exceeds number of data points."
 
         allocate(T(ndata, this%nc))
+#if defined(__NVCOMPILER)
+        do i = 1, ndata
+#else
         do concurrent (i = 1: ndata)
+#endif
             T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
         end do
         Tt = transpose(T)

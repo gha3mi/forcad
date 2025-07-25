@@ -1547,7 +1547,11 @@ contains
                 ! Check for convergence
                 converged = (abs(delta) <= tol*abs(xi))
             end do
+#if defined(__NVCOMPILER)
+            ! if (.not. converged) error stop "gauss_legendre: Newton iteration did not converge"
+#else
             if (.not. converged) error stop "gauss_legendre: Newton iteration did not converge"
+#endif
             ! Store symmetric nodes and weights
             x(i)     = xi
             x(n+1-i) = -xi
