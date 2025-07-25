@@ -1,0 +1,1439 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>lsq_fit_bspline_1d &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>lsq_fit_bspline_1d      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 2.5% of total for programs.">59 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/lsq_fit_bspline_1d.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/lsq_fit_bspline_1d.f90.html'>lsq_fit_bspline_1d.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">lsq_fit_bspline_1d</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-xdata~6">Xdata</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-xg_eval~3">Xg_eval</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-xt~100">Xt</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-bsp~6">bsp</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-err1~3">err1</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-err2~3">err2</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-err3~3">err3</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-i~125">i</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-n~35">n</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-ndata~6">ndata</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-pi~4">pi</a>
+            <a class="list-group-item" href="../program/lsq_fit_bspline_1d.html#variable-rms~3">rms</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad_kinds.html'>forcad_kinds</a></li>
+                  <li class="list-inline-item"><a href='../module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li>
+                  <li class="list-inline-item"><a href='../module/forcad_utils.html'>forcad_utils</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.1 (20250720.1534)
+ -->
+<!-- Title: program~~lsq_fit_bspline_1d~~UsesGraph Pages: 1 -->
+<svg id="programlsq_fit_bspline_1dUsesGraph" width="487pt" height="74pt"
+ viewBox="0.00 0.00 487.00 74.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 70.46)">
+<title>program~~lsq_fit_bspline_1d~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-70.46 482.83,-70.46 482.83,4 -4,4"/>
+<!-- program~lsq_fit_bspline_1d -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_node1" class="node">
+<title>program~lsq_fit_bspline_1d</title>
+<polygon fill="none" stroke="black" points="478.83,-38.33 374.31,-38.33 374.31,-14.06 478.83,-14.06 478.83,-38.33"/>
+<text xml:space="preserve" text-anchor="middle" x="426.57" y="-22.6" font-family="Helvetica,sans-Serif" font-size="10.50">lsq_fit_bspline_1d</text>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_node2" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~lsq_fit_bspline_1d~~UsesGraph_node2"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="78.27,-58.33 0,-58.33 0,-34.06 78.27,-34.06 78.27,-58.33"/>
+<text xml:space="preserve" text-anchor="middle" x="39.13" y="-42.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge1" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M378.26,-38.81C365.37,-41.91 351.37,-44.97 338.31,-47.2 256,-61.22 234.9,-67.25 151.4,-66.2"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_node3" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~lsq_fit_bspline_1d~~UsesGraph_node3"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="338.31,-38.33 222.54,-38.33 222.54,-14.06 338.31,-14.06 338.31,-38.33"/>
+<text xml:space="preserve" text-anchor="middle" x="280.42" y="-22.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge2" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M373.94,-26.2C366.14,-26.2 358,-26.2 349.91,-26.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="350.08,-22.7 340.08,-26.2 350.08,-29.7 350.08,-22.7"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_node4" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~lsq_fit_bspline_1d~~UsesGraph_node4"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="186.54,-38.33 114.27,-38.33 114.27,-14.06 186.54,-14.06 186.54,-38.33"/>
+<text xml:space="preserve" text-anchor="middle" x="150.4" y="-22.6" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;module~forcad_utils -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge3" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M381.99,-13.57C368.15,-10.14 352.7,-6.9 338.31,-5.2 287.21,0.87 273.46,2.16 222.54,-5.2 214.39,-6.37 205.88,-8.27 197.69,-10.46"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="196.89,-7.05 188.24,-13.16 198.81,-13.78 196.89,-7.05"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge4" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M247.36,-38.73C215.95,-50.55 170.15,-66.43 151.4,-66.2"/>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M149.4,-66.2C129.76,-65.95 108.45,-62.73 89.91,-58.95"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="90.76,-55.55 80.24,-56.86 89.28,-62.39 90.76,-55.55"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge5" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ff00" stroke-dasharray="5,2" d="M222.15,-26.2C214.2,-26.2 206.1,-26.2 198.36,-26.2"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="198.47,-22.7 188.47,-26.2 198.47,-29.7 198.47,-22.7"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_bspline_1d~~UsesGraph_edge6" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#0000ff" stroke-dasharray="5,2" d="M113.93,-32.69C106.13,-34.12 97.74,-35.65 89.5,-37.16"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="89.14,-33.67 79.94,-38.91 90.41,-40.55 89.14,-33.67"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.1 (20250720.1534)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.1 (20250720.1534)
+ -->
+<!-- Title: program~~lsq_fit_bspline_1d~~CallsGraph Pages: 1 -->
+<svg id="programlsq_fit_bspline_1dCallsGraph" width="641pt" height="385pt"
+ viewBox="0.00 0.00 641.00 385.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph" class="graph" transform="scale(0.505066 0.505066) rotate(0) translate(4 758.27)">
+<title>program~~lsq_fit_bspline_1d~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-758.27 1265.14,-758.27 1265.14,4 -4,4"/>
+<!-- program~lsq_fit_bspline_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node1" class="node">
+<title>program~lsq_fit_bspline_1d</title>
+<polygon fill="none" stroke="black" points="104.52,-234.27 0,-234.27 0,-210 104.52,-210 104.52,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="52.26" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50">lsq_fit_bspline_1d</text>
+</g>
+<!-- none~get_knot~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node2" class="node">
+<title>none~get_knot~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node2"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_knot~2" xlink:title="nurbs_curve%get_knot">
+<polygon fill="#a7506f" stroke="#a7506f" points="287.04,-712.27 154.77,-712.27 154.77,-688 287.04,-688 287.04,-712.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-696.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;none~get_knot~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge1" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;none~get_knot~2</title>
+<path fill="none" stroke="#ff0000" d="M53.64,-234.54C55.66,-285.1 67.99,-479.34 140.52,-616.13 153.97,-641.5 177.18,-664.75 195.04,-680.32"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="192.76,-682.98 202.66,-686.76 197.28,-677.63 192.76,-682.98"/>
+</g>
+<!-- none~get_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node3" class="node">
+<title>none~get_xg~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node3"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_xg~2" xlink:title="nurbs_curve%get_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="282.54,-607.27 159.27,-607.27 159.27,-583 282.54,-583 282.54,-607.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-591.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;none~get_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge2" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;none~get_xg~2</title>
+<path fill="none" stroke="#ff0000" d="M57.45,-234.61C69.18,-269.14 103.91,-368.68 140.52,-448.13 161.51,-493.68 190.36,-544.76 206.88,-573.12"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="203.72,-574.66 211.8,-581.52 209.76,-571.12 203.72,-574.66"/>
+</g>
+<!-- none~set~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node4" class="node">
+<title>none~set~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node4"><a xlink:href="../type/nurbs_curve.html#boundprocedure-set~2" xlink:title="nurbs_curve%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="272.04,-439.27 169.77,-439.27 169.77,-415 272.04,-415 272.04,-439.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-423.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;none~set~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge3" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;none~set~2</title>
+<path fill="none" stroke="#ff0000" d="M62.1,-234.58C77.5,-256.11 110.49,-301.49 140.52,-338.13 160.37,-362.35 184.48,-389.02 200.88,-406.79"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="197.87,-408.69 207.23,-413.64 203,-403.93 197.87,-408.69"/>
+</g>
+<!-- proc~create~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node5" class="node">
+<title>proc~create~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node5"><a xlink:href="../proc/create~2.html" xlink:title="nurbs_curve%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="281.04,-276.27 160.77,-276.27 160.77,-252 281.04,-252 281.04,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%create</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~create~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge4" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~create~2</title>
+<path fill="none" stroke="#ff0000" d="M103.26,-234.74C120.73,-239.14 140.53,-244.13 158.8,-248.73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="157.92,-252.12 168.47,-251.17 159.63,-245.33 157.92,-252.12"/>
+</g>
+<!-- proc~export_xc~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node6" class="node">
+<title>proc~export_xc~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node6"><a xlink:href="../proc/export_xc~2.html" xlink:title="nurbs_curve%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="290.41,-66.27 151.39,-66.27 151.39,-42 290.41,-42 290.41,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~export_xc~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge5" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~export_xc~2</title>
+<path fill="none" stroke="#ff0000" d="M57.02,-209.67C66.27,-181.2 92.92,-111.09 140.52,-75.13 142.05,-73.98 143.63,-72.89 145.26,-71.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="146.57,-75.14 153.72,-67.32 143.25,-68.97 146.57,-75.14"/>
+</g>
+<!-- proc~export_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node7" class="node">
+<title>proc~export_xg~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node7"><a xlink:href="../proc/export_xg~2.html" xlink:title="nurbs_curve%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="290.79,-192.27 151.02,-192.27 151.02,-168 290.79,-168 290.79,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~export_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge6" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~export_xg~2</title>
+<path fill="none" stroke="#ff0000" d="M103.26,-209.53C120.73,-205.13 140.53,-200.14 158.8,-195.54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159.63,-198.94 168.47,-193.1 157.92,-192.15 159.63,-198.94"/>
+</g>
+<!-- proc~get_continuity~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node8" class="node">
+<title>proc~get_continuity~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node8"><a xlink:href="../proc/get_continuity~2.html" xlink:title="nurbs_curve%get_continuity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="934.35,-377.27 772.83,-377.27 772.83,-353 934.35,-353 934.35,-377.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-361.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_continuity</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~get_continuity~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge7" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~get_continuity~2</title>
+<path fill="none" stroke="#ff0000" d="M66.22,-234.64C82.27,-249.32 111.09,-273.18 140.52,-285.13 312.75,-355.09 369.44,-326.65 554.31,-346.13 623.51,-353.43 702.07,-358.29 761.18,-361.27"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="760.69,-364.75 770.85,-361.75 761.04,-357.76 760.69,-364.75"/>
+</g>
+<!-- proc~get_degree -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node9" class="node">
+<title>proc~get_degree</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node9"><a xlink:href="../proc/get_degree.html" xlink:title="nurbs_curve%get_degree">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="294.16,-150.27 147.64,-150.27 147.64,-126 294.16,-126 294.16,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_degree</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~get_degree -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge8" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~get_degree</title>
+<path fill="none" stroke="#ff0000" d="M67.05,-209.68C83.43,-195.5 112.15,-172.56 140.52,-159.13 144.04,-157.47 147.72,-155.92 151.47,-154.48"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="152.5,-157.83 160.77,-151.21 150.18,-151.22 152.5,-157.83"/>
+</g>
+<!-- proc~get_nc -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node10" class="node">
+<title>proc~get_nc</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node10"><a xlink:href="../proc/get_nc.html" xlink:title="nurbs_curve%get_nc">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="281.79,-108.27 160.02,-108.27 160.02,-84 281.79,-84 281.79,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-92.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_nc</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~get_nc -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge9" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~get_nc</title>
+<path fill="none" stroke="#ff0000" d="M60.1,-209.63C72.88,-187.47 102.56,-141.36 140.52,-117.13 143.28,-115.37 146.18,-113.76 149.18,-112.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="150.5,-115.52 158.29,-108.35 147.72,-109.1 150.5,-115.52"/>
+</g>
+<!-- proc~lsq_fit_bspline~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node11" class="node">
+<title>proc~lsq_fit_bspline~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node11"><a xlink:href="../proc/lsq_fit_bspline~2.html" xlink:title="nurbs_curve%lsq_fit_bspline">
+<polygon fill="#d9534f" stroke="#d9534f" points="301.29,-234.27 140.52,-234.27 140.52,-210 301.29,-210 301.29,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%lsq_fit_bspline</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~lsq_fit_bspline~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge10" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~lsq_fit_bspline~2</title>
+<path fill="none" stroke="#ff0000" d="M104.62,-222.13C112.38,-222.13 120.57,-222.13 128.87,-222.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="128.7,-225.64 138.7,-222.14 128.7,-218.64 128.7,-225.64"/>
+</g>
+<!-- proc~show~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node12" class="node">
+<title>proc~show~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node12"><a xlink:href="../proc/show~2.html" xlink:title="nurbs_curve%show">
+<polygon fill="#d9534f" stroke="#d9534f" points="277.66,-24.27 164.14,-24.27 164.14,0 277.66,0 277.66,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="220.9" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%show</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_bspline_1d&#45;&gt;proc~show~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge11" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;proc~show~2</title>
+<path fill="none" stroke="#ff0000" d="M55.24,-209.79C61.33,-176.03 82.95,-81.47 140.52,-33.13 144.43,-29.85 148.81,-27.07 153.44,-24.72"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="154.69,-28 162.5,-20.84 151.93,-21.56 154.69,-28"/>
+</g>
+<!-- proc~get_knot_all~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node19" class="node">
+<title>proc~get_knot_all~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node19"><a xlink:href="../proc/get_knot_all~2.html" xlink:title="nurbs_curve%get_knot_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="502.94,-754.27 352.67,-754.27 352.67,-730 502.94,-730 502.94,-754.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-738.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~2&#45;&gt;proc~get_knot_all~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge12" class="edge">
+<title>none~get_knot~2&#45;&gt;proc~get_knot_all~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M283.38,-712.74C305.67,-717.3 331.05,-722.51 354.2,-727.25"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="353.39,-730.66 363.89,-729.24 354.79,-723.8 353.39,-730.66"/>
+</g>
+<!-- proc~get_knoti~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node20" class="node">
+<title>proc~get_knoti~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node20"><a xlink:href="../proc/get_knoti~2.html" xlink:title="nurbs_curve%get_knoti">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="495.44,-712.27 360.17,-712.27 360.17,-688 495.44,-688 495.44,-712.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-696.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knoti</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~2&#45;&gt;proc~get_knoti~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge13" class="edge">
+<title>none~get_knot~2&#45;&gt;proc~get_knoti~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M287.3,-700.13C306.77,-700.13 328.31,-700.13 348.52,-700.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.4,-703.64 358.4,-700.14 348.4,-696.64 348.4,-703.64"/>
+</g>
+<!-- proc~get_xg_all~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node21" class="node">
+<title>proc~get_xg_all~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node21"><a xlink:href="../proc/get_xg_all~2.html" xlink:title="nurbs_curve%get_Xg_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="498.44,-670.27 357.17,-670.27 357.17,-646 498.44,-646 498.44,-670.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-654.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xg_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xg_all~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge14" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xg_all~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M253.4,-607.75C276.41,-616.68 308.48,-628.55 337.29,-637.13 343.92,-639.11 350.86,-641.02 357.83,-642.83"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="356.73,-646.16 367.29,-645.21 358.44,-639.37 356.73,-646.16"/>
+</g>
+<!-- proc~get_xgid~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node22" class="node">
+<title>proc~get_xgid~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node22"><a xlink:href="../proc/get_xgid~2.html" xlink:title="nurbs_curve%get_Xgid">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="494.31,-628.27 361.29,-628.27 361.29,-604 494.31,-604 494.31,-628.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-612.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xgid</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xgid~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge15" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xgid~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M282.83,-601.38C303.82,-603.53 327.62,-605.97 349.73,-608.24"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="349.3,-611.71 359.61,-609.25 350.02,-604.75 349.3,-611.71"/>
+</g>
+<!-- proc~get_xgi~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node23" class="node">
+<title>proc~get_xgi~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node23"><a xlink:href="../proc/get_xgi~2.html" xlink:title="nurbs_curve%get_Xgi">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="490.94,-586.27 364.67,-586.27 364.67,-562 490.94,-562 490.94,-586.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-570.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xgi</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xgi~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge16" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xgi~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M282.83,-588.89C304.82,-586.64 329.9,-584.07 352.89,-581.71"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="353.24,-585.19 362.83,-580.69 352.53,-578.23 353.24,-585.19"/>
+</g>
+<!-- proc~set1a -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node25" class="node">
+<title>proc~set1a</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node25"><a xlink:href="../proc/set1a.html" xlink:title="nurbs_curve%set1a">
+<polygon fill="#d9534f" stroke="#d9534f" points="485.69,-418.27 369.92,-418.27 369.92,-394 485.69,-394 485.69,-418.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-402.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1a</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1a -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge17" class="edge">
+<title>none~set~2&#45;&gt;proc~set1a</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M272.29,-421.97C298.22,-419.31 330.21,-416.03 358.35,-413.15"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="358.64,-416.64 368.23,-412.14 357.92,-409.68 358.64,-416.64"/>
+</g>
+<!-- proc~set1~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node26" class="node">
+<title>proc~set1~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node26"><a xlink:href="../proc/set1~2.html" xlink:title="nurbs_curve%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="482.31,-376.27 373.29,-376.27 373.29,-352 482.31,-352 482.31,-376.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-360.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge18" class="edge">
+<title>none~set~2&#45;&gt;proc~set1~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M253.4,-414.52C276.41,-405.59 308.48,-393.72 337.29,-385.13 345.27,-382.76 353.71,-380.48 362.09,-378.35"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="362.7,-381.81 371.57,-376.02 361.02,-375.01 362.7,-381.81"/>
+</g>
+<!-- proc~set2~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node27" class="node">
+<title>proc~set2~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node27"><a xlink:href="../proc/set2~2.html" xlink:title="nurbs_curve%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="482.31,-544.27 373.29,-544.27 373.29,-520 482.31,-520 482.31,-544.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-528.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set2~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge19" class="edge">
+<title>none~set~2&#45;&gt;proc~set2~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M235.32,-439.73C255.72,-458.19 296.52,-492.44 337.29,-511.13 345.15,-514.74 353.68,-517.75 362.26,-520.27"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="361.07,-523.58 371.64,-522.81 362.9,-516.82 361.07,-523.58"/>
+</g>
+<!-- proc~set3~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node28" class="node">
+<title>proc~set3~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node28"><a xlink:href="../proc/set3~2.html" xlink:title="nurbs_curve%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="482.31,-502.27 373.29,-502.27 373.29,-478 482.31,-478 482.31,-502.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-486.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set3~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge20" class="edge">
+<title>none~set~2&#45;&gt;proc~set3~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M253.4,-439.75C276.41,-448.68 308.48,-460.55 337.29,-469.13 345.27,-471.51 353.71,-473.79 362.09,-475.92"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="361.02,-479.26 371.57,-478.25 362.7,-472.46 361.02,-479.26"/>
+</g>
+<!-- proc~set4~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node29" class="node">
+<title>proc~set4~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node29"><a xlink:href="../proc/set4~2.html" xlink:title="nurbs_curve%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="482.31,-460.27 373.29,-460.27 373.29,-436 482.31,-436 482.31,-460.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-444.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set4~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge21" class="edge">
+<title>none~set~2&#45;&gt;proc~set4~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M272.29,-432.3C299.28,-435.07 332.83,-438.5 361.77,-441.47"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="361.21,-444.93 371.52,-442.47 361.93,-437.97 361.21,-444.93"/>
+</g>
+<!-- interface~compute_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node14" class="node">
+<title>interface~compute_xg~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node14"><a xlink:href="../interface/compute_xg~2.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="466.94,-254.27 388.67,-254.27 388.67,-230 466.94,-230 466.94,-254.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-238.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;interface~compute_xg~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge22" class="edge">
+<title>proc~create~2&#45;&gt;interface~compute_xg~2</title>
+<path fill="none" stroke="#5cff00" d="M281.44,-257.74C311.77,-254.49 348.21,-250.57 377.02,-247.48"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="377.39,-250.96 386.96,-246.41 376.64,-244 377.39,-250.96"/>
+</g>
+<!-- proc~is_rational~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node24" class="node">
+<title>proc~is_rational~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node24"><a xlink:href="../proc/is_rational~2.html" xlink:title="nurbs_curve%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="498.44,-296.27 357.17,-296.27 357.17,-272 498.44,-272 498.44,-296.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-280.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;proc~is_rational~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge23" class="edge">
+<title>proc~create~2&#45;&gt;proc~is_rational~2</title>
+<path fill="none" stroke="#5cff00" d="M281.44,-269.95C301.48,-271.9 324.18,-274.12 345.59,-276.21"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="345.18,-279.68 355.47,-277.17 345.86,-272.72 345.18,-279.68"/>
+</g>
+<!-- proc~cmp_elem_xc_vis~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node16" class="node">
+<title>proc~cmp_elem_xc_vis~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node16"><a xlink:href="../proc/cmp_elem_xc_vis~2.html" xlink:title="nurbs_curve%cmp_elem_Xc_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="517.94,-46.27 337.67,-46.27 337.67,-22 517.94,-22 517.94,-46.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-30.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xc_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc~2&#45;&gt;proc~cmp_elem_xc_vis~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge24" class="edge">
+<title>proc~export_xc~2&#45;&gt;proc~cmp_elem_xc_vis~2</title>
+<path fill="none" stroke="#00ff2e" d="M290.7,-47.42C302.07,-46.31 314.05,-45.14 326.01,-43.97"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="326.32,-47.46 335.94,-43 325.64,-40.49 326.32,-47.46"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node18" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node18"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="481.19,-88.27 374.42,-88.27 374.42,-64 481.19,-64 481.19,-88.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-72.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc~2&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge25" class="edge">
+<title>proc~export_xc~2&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ff2e" d="M290.7,-61.52C313.97,-64.02 339.85,-66.8 362.74,-69.26"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="362.24,-72.72 372.56,-70.31 362.99,-65.76 362.24,-72.72"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node17" class="node">
+<title>proc~cmp_elem_xg_vis~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node17"><a xlink:href="../proc/cmp_elem_xg_vis~2.html" xlink:title="nurbs_curve%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="518.31,-130.27 337.29,-130.27 337.29,-106 518.31,-106 518.31,-130.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-114.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xg_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xg~2&#45;&gt;proc~cmp_elem_xg_vis~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge26" class="edge">
+<title>proc~export_xg~2&#45;&gt;proc~cmp_elem_xg_vis~2</title>
+<path fill="none" stroke="#00ffb9" d="M276.72,-167.55C285.07,-165.09 293.49,-162.28 301.29,-159.13 318.27,-152.3 320.22,-145.73 337.29,-139.13 342.24,-137.22 347.42,-135.45 352.67,-133.82"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="353.45,-137.24 362.08,-131.08 351.5,-130.51 353.45,-137.24"/>
+</g>
+<!-- proc~export_xg~2&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge27" class="edge">
+<title>proc~export_xg~2&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ffb9" d="M287.19,-167.53C292.21,-165.19 296.98,-162.42 301.29,-159.13 326.62,-139.81 311.69,-116.1 337.29,-97.13 344.94,-91.47 353.89,-87.3 363.11,-84.24"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="363.89,-87.66 372.55,-81.55 361.97,-80.93 363.89,-87.66"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node13" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node13"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1095.87,-419.27 973.35,-419.27 973.35,-395 1095.87,-395 1095.87,-419.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1034.61" y="-403.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~get_continuity~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge28" class="edge">
+<title>proc~get_continuity~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#00b9ff" d="M908.3,-377.74C927.33,-382.2 948.94,-387.27 968.8,-391.93"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="967.93,-395.32 978.46,-394.2 969.53,-388.51 967.93,-395.32"/>
+</g>
+<!-- proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node15" class="node">
+<title>proc~basis_bspline</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node15"><a xlink:href="../proc/basis_bspline.html" xlink:title="basis_bspline">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1075.62,-253.27 993.6,-253.27 993.6,-229 1075.62,-229 1075.62,-253.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1034.61" y="-237.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_bspline~2&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge29" class="edge">
+<title>proc~lsq_fit_bspline~2&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#e700ff" d="M301.76,-210.33C384.03,-198.4 506.75,-181.27 554.31,-178.13 633.92,-172.89 654.27,-172.11 733.83,-178.13 825.07,-185.04 848.39,-187.74 937.35,-209.13 954.74,-213.32 973.48,-219.22 989.77,-224.82"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="988.58,-228.11 999.17,-228.12 990.9,-221.5 988.58,-228.11"/>
+</g>
+<!-- proc~solve -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node30" class="node">
+<title>proc~solve</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node30"><a xlink:href="../proc/solve.html" xlink:title="solve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="454.8,-172.27 400.8,-172.27 400.8,-148 454.8,-148 454.8,-172.27"/>
+<text xml:space="preserve" text-anchor="middle" x="427.8" y="-156.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_bspline~2&#45;&gt;proc~solve -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge30" class="edge">
+<title>proc~lsq_fit_bspline~2&#45;&gt;proc~solve</title>
+<path fill="none" stroke="#e700ff" d="M273.45,-209.59C282.79,-207.01 292.38,-204.15 301.29,-201.13 317.71,-195.57 320.94,-191.89 337.29,-186.13 354.28,-180.15 373.42,-174.45 389.62,-169.93"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="390.14,-173.42 398.85,-167.39 388.28,-166.67 390.14,-173.42"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node35" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node35"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1261.14,-440.27 1131.87,-440.27 1131.87,-416 1261.14,-416 1261.14,-440.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1196.51" y="-424.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge31" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1096.06,-415.07C1103.93,-416.11 1112.08,-417.18 1120.16,-418.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1119.63,-421.7 1130,-419.53 1120.54,-414.76 1119.63,-421.7"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node36" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node36"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1261.14,-398.27 1131.87,-398.27 1131.87,-374 1261.14,-374 1261.14,-398.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1196.51" y="-382.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge32" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1096.06,-399.2C1103.93,-398.16 1112.08,-397.09 1120.16,-396.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1120.54,-399.51 1130,-394.74 1119.63,-392.57 1120.54,-399.51"/>
+</g>
+<!-- proc~compute_xg_bspline_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node37" class="node">
+<title>proc~compute_xg_bspline_1d</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node37"><a xlink:href="../proc/compute_xg_bspline_1d.html" xlink:title="compute_Xg_bspline_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="714.33,-253.27 573.81,-253.27 573.81,-229 714.33,-229 714.33,-253.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-237.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge33" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M467.11,-241.96C493.49,-241.83 529.53,-241.66 562.12,-241.51"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="561.98,-245.01 571.97,-241.47 561.95,-238.01 561.98,-245.01"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node38" class="node">
+<title>proc~compute_xg_bspline_1d_1point</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node38"><a xlink:href="../proc/compute_xg_bspline_1d_1point.html" xlink:title="compute_Xg_bspline_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="733.83,-211.27 554.31,-211.27 554.31,-187 733.83,-187 733.83,-211.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-195.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d_1point -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge34" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d_1point</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M467.11,-234.45C495.46,-228.76 534.96,-220.83 569.35,-213.93"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="569.72,-217.43 578.83,-212.03 568.34,-210.56 569.72,-217.43"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node39" class="node">
+<title>proc~compute_xg_nurbs_1d</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node39"><a xlink:href="../proc/compute_xg_nurbs_1d.html" xlink:title="compute_Xg_nurbs_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="710.21,-337.27 577.94,-337.27 577.94,-313 710.21,-313 710.21,-337.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-321.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge35" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M467.35,-245.86C483.93,-248.77 502.98,-253.94 518.31,-263.13 539.1,-275.61 533.53,-291.64 554.31,-304.13 558.36,-306.57 562.66,-308.72 567.12,-310.62"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="565.71,-313.83 576.3,-314.09 568.18,-307.28 565.71,-313.83"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node40" class="node">
+<title>proc~compute_xg_nurbs_1d_1point</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node40"><a xlink:href="../proc/compute_xg_nurbs_1d_1point.html" xlink:title="compute_Xg_nurbs_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="729.71,-295.27 558.44,-295.27 558.44,-271 729.71,-271 729.71,-295.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-279.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge36" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d_1point</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M467.11,-249.46C494.58,-254.72 532.52,-261.98 566.13,-268.41"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="565.38,-271.83 575.86,-270.27 566.7,-264.96 565.38,-271.83"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node31" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node31"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="686.96,-68.27 601.19,-68.27 601.19,-44 686.96,-44 686.96,-68.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-52.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xc_vis~2&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge37" class="edge">
+<title>proc~cmp_elem_xc_vis~2&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#ffff00" d="M518.43,-43.34C542.63,-45.82 568.06,-48.43 589.6,-50.64"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="588.99,-54.1 599.29,-51.64 589.7,-47.14 588.99,-54.1"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~2&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge38" class="edge">
+<title>proc~cmp_elem_xg_vis~2&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#aaff00" d="M485.81,-105.54C496.65,-102.93 507.86,-100.07 518.31,-97.13 544.55,-89.76 573.5,-80.33 596.89,-72.37"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="597.8,-75.76 606.13,-69.21 595.53,-69.14 597.8,-75.76"/>
+</g>
+<!-- proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node32" class="node">
+<title>proc~cmp_degree~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node32"><a xlink:href="../proc/cmp_degree~2.html" xlink:title="nurbs_curve%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="720.33,-418.27 567.81,-418.27 567.81,-394 720.33,-394 720.33,-418.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-402.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set1a&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge39" class="edge">
+<title>proc~set1a&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#0000ff" d="M485.94,-406.13C507.46,-406.13 532.45,-406.13 556.08,-406.13"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="556.04,-409.64 566.04,-406.14 556.04,-402.64 556.04,-409.64"/>
+</g>
+<!-- proc~set1~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge40" class="edge">
+<title>proc~set1~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#5400ff" d="M482.59,-374.68C508.42,-379.74 539.8,-385.89 567.94,-391.41"/>
+<polygon fill="#5400ff" stroke="#5400ff" points="566.98,-394.79 577.47,-393.28 568.33,-387.92 566.98,-394.79"/>
+</g>
+<!-- proc~cmp_nc~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node33" class="node">
+<title>proc~cmp_nc~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node33"><a xlink:href="../proc/cmp_nc~2.html" xlink:title="nurbs_curve%cmp_nc">
+<polygon fill="#d9534f" stroke="#d9534f" points="917.48,-544.27 789.71,-544.27 789.71,-520 917.48,-520 917.48,-544.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-528.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_nc</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~2&#45;&gt;proc~cmp_nc~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge41" class="edge">
+<title>proc~set2~2&#45;&gt;proc~cmp_nc~2</title>
+<path fill="none" stroke="#aa00ff" d="M482.47,-532.13C557.32,-532.13 693.36,-532.13 778.02,-532.13"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="777.85,-535.64 787.85,-532.14 777.85,-528.64 777.85,-535.64"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node34" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node34"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="707.21,-503.27 580.94,-503.27 580.94,-479 707.21,-479 707.21,-503.27"/>
+<text xml:space="preserve" text-anchor="middle" x="644.07" y="-487.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~2&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge42" class="edge">
+<title>proc~set2~2&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#aa00ff" d="M482.59,-521.84C508.86,-516.82 540.87,-510.69 569.37,-505.24"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="569.86,-508.71 579.02,-503.39 568.54,-501.83 569.86,-508.71"/>
+</g>
+<!-- proc~set3~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge43" class="edge">
+<title>proc~set3~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#ff00ff" d="M482.42,-479.74C494.39,-476.82 506.91,-473.28 518.31,-469.13 551.63,-457.01 587.56,-438.2 612.26,-424.29"/>
+<polygon fill="#ff00ff" stroke="#ff00ff" points="613.86,-427.41 620.81,-419.41 610.39,-421.33 613.86,-427.41"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node41" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node41"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="916.35,-110.27 790.83,-110.27 790.83,-86 916.35,-86 916.35,-110.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-94.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge44" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M687.31,-64.68C713.81,-70.05 748.67,-77.1 779.55,-83.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="778.74,-86.76 789.24,-85.31 780.13,-79.9 778.74,-86.76"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node42" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node42"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="916.73,-68.27 790.46,-68.27 790.46,-44 916.73,-44 916.73,-68.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-52.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge45" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M687.31,-56.13C713.7,-56.13 748.39,-56.13 779.18,-56.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="778.81,-59.64 788.81,-56.14 778.81,-52.64 778.81,-59.64"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node43" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node43"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="917.1,-26.27 790.08,-26.27 790.08,-2 917.1,-2 917.1,-26.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-10.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge46" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M687.31,-47.59C713.7,-42.24 748.39,-35.22 779.18,-28.99"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="779.73,-32.45 788.84,-27.04 778.34,-25.59 779.73,-32.45"/>
+</g>
+<!-- proc~get_multiplicity~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node45" class="node">
+<title>proc~get_multiplicity~2</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node45"><a xlink:href="../proc/get_multiplicity~2.html" xlink:title="nurbs_curve%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="937.35,-419.27 769.83,-419.27 769.83,-395 937.35,-395 937.35,-419.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-403.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2 -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge47" class="edge">
+<title>proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2</title>
+<path fill="none" stroke="#ff9900" d="M720.58,-406.5C732.73,-406.56 745.45,-406.62 757.98,-406.68"/>
+<polygon fill="#ff9900" stroke="#ff9900" points="757.89,-410.18 767.91,-406.73 757.93,-403.18 757.89,-410.18"/>
+</g>
+<!-- proc~cmp_nc~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge48" class="edge">
+<title>proc~cmp_nc~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#cbff00" d="M917.6,-520.27C924.5,-517.78 931.23,-514.77 937.35,-511.13 972.51,-490.24 1002.6,-452.62 1019.38,-428.81"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="1022.11,-431.02 1024.87,-420.79 1016.33,-427.07 1022.11,-431.02"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node46" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node46"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="881.48,-502.27 825.71,-502.27 825.71,-478 881.48,-478 881.48,-502.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-486.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge49" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#33ff00" d="M707.61,-490.83C742.28,-490.67 784.27,-490.46 814.12,-490.32"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="813.82,-493.82 823.8,-490.27 813.78,-486.82 813.82,-493.82"/>
+</g>
+<!-- proc~compute_xg_bspline_1d&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge50" class="edge">
+<title>proc~compute_xg_bspline_1d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#0066ff" d="M714.53,-241.13C791.29,-241.13 913.13,-241.13 981.91,-241.13"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="981.79,-244.64 991.79,-241.14 981.79,-237.64 981.79,-244.64"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge51" class="edge">
+<title>proc~compute_xg_bspline_1d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#3200ff" d="M734.21,-208.77C810.88,-217.06 918.81,-228.72 981.96,-235.55"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="981.39,-239.01 991.71,-236.61 982.14,-232.05 981.39,-239.01"/>
+</g>
+<!-- proc~cmp_tgc_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_node44" class="node">
+<title>proc~cmp_tgc_1d</title>
+<g id="a_program~~lsq_fit_bspline_1d~~CallsGraph_node44"><a xlink:href="../proc/cmp_tgc_1d.html" xlink:title="cmp_Tgc_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="892.73,-335.27 814.46,-335.27 814.46,-311 892.73,-311 892.73,-335.27"/>
+<text xml:space="preserve" text-anchor="middle" x="853.59" y="-319.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_Tgc_1d</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_nurbs_1d&#45;&gt;proc~cmp_tgc_1d -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge52" class="edge">
+<title>proc~compute_xg_nurbs_1d&#45;&gt;proc~cmp_tgc_1d</title>
+<path fill="none" stroke="#cc00ff" d="M710.45,-324.5C740.28,-324.22 775.04,-323.88 802.72,-323.62"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="802.64,-327.12 812.61,-323.52 802.57,-320.12 802.64,-327.12"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge53" class="edge">
+<title>proc~compute_xg_nurbs_1d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#ff0098" d="M729.92,-276.11C788.32,-271.01 867.64,-263.54 937.35,-255.13 951.9,-253.38 967.65,-251.21 982.12,-249.1"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="982.51,-252.58 991.89,-247.65 981.49,-245.65 982.51,-252.58"/>
+</g>
+<!-- proc~cmp_tgc_1d&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge54" class="edge">
+<title>proc~cmp_tgc_1d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#00ffff" d="M893.06,-311.76C907.21,-307.15 923.22,-301.43 937.35,-295.13 960.54,-284.81 985.51,-270.72 1004.2,-259.51"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="1005.86,-262.6 1012.59,-254.41 1002.23,-256.61 1005.86,-262.6"/>
+</g>
+<!-- proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_bspline_1d~~CallsGraph_edge55" class="edge">
+<title>proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#0000ff" d="M937.81,-407.13C945.79,-407.13 953.83,-407.13 961.68,-407.13"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="961.51,-410.64 971.51,-407.14 961.51,-403.64 961.51,-410.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramlsq_fit_bspline_1dCallsGraph = svgPanZoom('#programlsq_fit_bspline_1dCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.1 (20250720.1534)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xdata~6"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xdata</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xg_eval~3"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xg_eval</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt~100"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bsp~6"></span>
+              type(<a href='../type/nurbs_curve.html'>nurbs_curve</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bsp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err1~3"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err2~3"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err3~3"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~125"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~35"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ndata~6"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ndata</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi~4"></span>
+              real(kind=rk),
+            </td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+<td> =</td>
+                <td>acos(-1.0_rk)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rms~3"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rms</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2025-07-25T11:50:58.564311+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

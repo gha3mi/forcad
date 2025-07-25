@@ -105,7 +105,7 @@ module forcad_nurbs_volume
         procedure :: nearest_point2         !!> Find the nearest point on the NURBS volume (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dV
         procedure :: cmp_volume             !!> Compute the volume of the NURBS volume
-
+        procedure :: lsq_fit_bspline        !!> Fit B-spline volume to structured data points using least squares
 
         ! Faces
         procedure :: cmp_elemFace_Xc_vis   !!> Compute faces of the control points
@@ -193,7 +193,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir1(:), Xth_dir2(:), Xth_dir3(:)
         integer, intent(in), contiguous :: degree(:)
         integer, intent(in), contiguous :: continuity1(:), continuity2(:), continuity3(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
@@ -203,7 +203,7 @@ contains
         this%degree(2) = degree(2)
         this%degree(3) = degree(3)
         call this%cmp_nc()
-        this%Xc = Xc
+        if (present(Xc)) this%Xc = Xc
         if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
@@ -3820,6 +3820,37 @@ contains
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_bspline(this, ndata, Xdata, Xt)
+        use forcad_interface, only: solve
+        class(nurbs_volume), intent(inout) :: this
+        real(rk), intent(in), contiguous :: Xt(:,:), Xdata(:,:)
+        integer, intent(in) :: ndata(3)
+        real(rk), allocatable :: T(:,:), Tt(:,:)
+        integer :: i, n
+
+        if (this%nc(1) > ndata(1)) error stop "Error: in the first direction, number of control points exceeds number of data points."
+        if (this%nc(2) > ndata(2)) error stop "Error: in the second direction, number of control points exceeds number of data points."
+        if (this%nc(3) > ndata(3)) error stop "Error: in the third direction, number of control points exceeds number of data points."
+
+        n = ndata(1)*ndata(2)*ndata(3)
+
+        allocate(T(n, this%nc(1)*this%nc(2)*this%nc(3)))
+        do concurrent (i = 1: n)
+#endif
+            T(i,:) = kron(&
+            basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3)), kron(&
+            basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2)),&
+            basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))))
+        end do
+        Tt = transpose(T)
+        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_volume

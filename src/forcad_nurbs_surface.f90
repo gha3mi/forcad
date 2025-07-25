@@ -103,6 +103,7 @@ module forcad_nurbs_surface
         procedure :: nearest_point2         !!> Find the nearest point on the NURBS surface (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dA
         procedure :: cmp_area               !!> Compute the area of the NURBS surface
+        procedure :: lsq_fit_bspline        !!> Fit B-spline volume to structured data points using least squares
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -183,7 +184,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir1(:), Xth_dir2(:)
         integer, intent(in), contiguous :: degree(:)
         integer, intent(in), contiguous :: continuity1(:), continuity2(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
@@ -191,7 +192,7 @@ contains
         this%degree(1) = degree(1)
         this%degree(2) = degree(2)
         call this%cmp_nc()
-        this%Xc = Xc
+        if (present(Xc)) this%Xc = Xc
         if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
@@ -3123,6 +3124,35 @@ contains
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
+        use forcad_interface, only: solve
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in), contiguous :: Xt(:,:), Xdata(:,:)
+        integer, intent(in) :: ndata(2)
+        real(rk), allocatable :: T(:,:), Tt(:,:)
+        integer :: i, n
+
+        if (this%nc(1) > ndata(1)) error stop "Error: in the first direction, number of control points exceeds number of data points."
+        if (this%nc(2) > ndata(2)) error stop "Error: in the second direction, number of control points exceeds number of data points."
+
+        n = ndata(1)*ndata(2)
+
+        allocate(T(n, this%nc(1)*this%nc(2)))
+        do concurrent (i = 1: n)
+#endif
+            T(i,:) = kron(&
+            basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2)),&
+            basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1)))
+        end do
+        Tt = transpose(T)
+        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_surface

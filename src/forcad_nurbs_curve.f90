@@ -97,6 +97,7 @@ module forcad_nurbs_curve
         procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newtons method)
         procedure :: ansatz                !!> Compute the shape functions, derivative of shape functions and dL
         procedure :: cmp_length            !!> Compute the length of the NURBS curve
+        procedure :: lsq_fit_bspline       !!> Fit B-spline curve to structured data points using least squares
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -204,7 +205,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
         integer, intent(in), contiguous :: continuity(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
@@ -212,16 +213,9 @@ contains
 
         this%knot = compute_knot_vector(Xth_dir, degree, continuity)
         this%degree = degree
-        this%Xc = Xc
-        this%nc = size(this%Xc, 1)
-        if (present(Wc)) then
-            if (size(Wc) /= this%nc) then
-                error stop 'Number of weights does not match the number of control points.'
-            else
-                if (allocated(this%Wc)) deallocate(this%Wc)
-                this%Wc = Wc
-            end if
-        end if
+        call this%cmp_nc()
+        if (present(Xc)) this%Xc = Xc
+        if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
 
@@ -2301,6 +2295,29 @@ contains
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
+
+
     !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
+        use forcad_interface, only: solve
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: Xt(:), Xdata(:,:)
+        integer, intent(in) :: ndata
+        real(rk), allocatable :: T(:,:), Tt(:,:)
+        integer :: i
+
+        if (this%nc > ndata) error stop "Error: in the first direction, number of control points exceeds number of data points."
+
+        allocate(T(ndata, this%nc))
+        do concurrent (i = 1: ndata)
+#endif
+            T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
+        end do
+        Tt = transpose(T)
+        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+    end subroutine
+   !===============================================================================
 
 end module forcad_nurbs_curve

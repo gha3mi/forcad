@@ -10,7 +10,7 @@ module forcad_utils
     private
     public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy
+        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve
 
     !===============================================================================
     interface elemConn_C0
@@ -1686,6 +1686,66 @@ contains
             close(nunit)
         end if
     end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function solve(A, B) result(X)
+        real(rk), intent(in), contiguous :: A(:,:), B(:,:)
+        real(rk), allocatable :: X(:,:)
+
+        integer :: n, m, i, j, k, p
+        real(rk), allocatable :: L(:,:), Y(:,:)
+        real(rk) :: sum
+        real(rk) :: aki
+
+        p = size(A,1)
+        n = size(A,2)
+        m = size(B,2)
+
+        if (p /= size(B,1)) error stop "solve: A and B row mismatch"
+
+        allocate(L(n,n), Y(n,m), X(n,m), source=0.0_rk)
+
+        do i = 1, n
+            do j = 1, i
+                sum = A(i,j)
+                do k = 1, j-1
+                    sum = sum - L(i,k) * L(j,k)
+                end do
+                if (i == j) then
+                    if (sum <= 0.0_rk) error stop "solve: Matrix not positive definite"
+                    L(i,j) = sqrt(sum)
+                else
+                    L(i,j) = sum / L(j,j)
+                end if
+            end do
+        end do
+
+        ! Forward substitution: L·Y = AtB
+        do j = 1,m
+            do i = 1, n
+                sum = B(i,j)
+                do k = 1, i-1
+                    sum = sum - L(i,k) * Y(k,j)
+                end do
+                Y(i,j) = sum / L(i,i)
+            end do
+        end do
+
+        ! Backward substitution: Lᵗ·X = Y
+        do j = 1,m
+            do i = n, 1, -1
+                sum = Y(i,j)
+                do k = i+1, n
+                    sum = sum - L(k,i) * X(k,j)
+                end do
+                X(i,j) = sum / L(i,i)
+            end do
+        end do
+    end function
     !===============================================================================
 
 end module forcad_utils
