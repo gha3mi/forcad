@@ -3145,7 +3145,6 @@ contains
 
         allocate(T(n, this%nc(1)*this%nc(2)))
         do concurrent (i = 1: n)
-#endif
             T(i,:) = kron(&
             basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2)),&
             basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1)))

@@ -205,7 +205,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
         integer, intent(in), contiguous :: continuity(:)
-        real(rk), intent(in), contiguous, optional :: Xc(:,:)
+        real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
@@ -2296,7 +2296,6 @@ contains
         end do
     end function
 
-
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
@@ -2312,7 +2311,6 @@ contains
 
         allocate(T(ndata, this%nc))
         do concurrent (i = 1: ndata)
-#endif
             T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
         end do
         Tt = transpose(T)
