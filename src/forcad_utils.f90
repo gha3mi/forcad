@@ -1703,7 +1703,6 @@ contains
         integer :: n, m, i, j, k, p
         real(rk), allocatable :: L(:,:), Y(:,:)
         real(rk) :: sum
-        real(rk) :: aki
 
         p = size(A,1)
         n = size(A,2)
