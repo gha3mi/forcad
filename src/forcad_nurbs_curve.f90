@@ -205,7 +205,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
         integer, intent(in), contiguous :: continuity(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
