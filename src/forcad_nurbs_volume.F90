@@ -3881,7 +3881,7 @@ contains
         n = ndata(1)*ndata(2)*ndata(3)
 
         allocate(T(n, this%nc(1)*this%nc(2)*this%nc(3)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
         do i = 1, n
 #else
         do concurrent (i = 1: n)

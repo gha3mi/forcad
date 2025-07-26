@@ -1891,8 +1891,7 @@ contains
         real(rk) :: dL, dL_ig
 
         length = 0.0_rk
-#if defined(__NVCOMPILER)
-        do ie = 1, size(this%cmp_elem(),1)
+#if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))        do ie = 1, size(this%cmp_elem(),1)
 #else
         do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:length)
 #endif
