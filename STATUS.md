@@ -1,1 +1,1 @@
- ![macos-latest_lfortran_cmake](https://img.shields.io/badge/macos--latest_lfortran_cmake-failing-red) ![macos-latest_gfortran_cmake](https://img.shields.io/badge/macos--latest_gfortran_cmake-failing-red)
+ ![macos-latest_gfortran_cmake](https://img.shields.io/badge/macos--latest_gfortran_cmake-failing-red) ![macos-latest_lfortran_cmake](https://img.shields.io/badge/macos--latest_lfortran_cmake-failing-red)
