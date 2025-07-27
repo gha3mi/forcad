@@ -27,57 +27,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
         include:
           - os: ubuntu-latest
-            compiler: gfortran
             extra-packages: ""
-          - os: ubuntu-latest
-            compiler: ifx
+          - os: windows-latest
             extra-packages: ""
-          - os: ubuntu-latest
+          - os: macos-latest
+            extra-packages: ""
+        exclude:
+          - os: macos-latest
             compiler: flang-new
-            extra-packages: "llvm-openmp"
-          - os: ubuntu-latest
-            compiler: lfortran
-            extra-packages: ""
-          - os: ubuntu-latest
+          - os: macos-latest
+            compiler: ifx
+          - os: macos-latest
             compiler: nvfortran
-            extra-packages: ""
-          - os: macos-latest
-            compiler: gfortran
-            extra-packages: ""
-          - os: macos-latest
-            compiler: lfortran
-            extra-packages: ""
           - os: windows-latest
-            compiler: gfortran
-            extra-packages: ""
-          - os: windows-latest
-            compiler: ifx
-            extra-packages: ""
-          - os: windows-latest
-            compiler: flang-new
-            extra-packages: "llvm-openmp"
-          - os: windows-latest
-            compiler: lfortran
-            extra-packages: ""
-
+            compiler: nvfortran
+  
     steps:
       - name: Setup Fortran
         uses: gha3mi/setup-fortran-conda@latest
         with:
           compiler: ${{ matrix.compiler }}
           platform: ${{ matrix.os }}
-          extra-packages: ${{ matrix.extra-packages }}
 
       - name: fpm test (debug)
-        run: fpm test @${{ matrix.os }}_${{ matrix.compiler }}_debug --verbose
+        run: fpm @${{ matrix.os }}_${{ matrix.compiler }}_debug --verbose
 
       - name: fpm test (release)
-        run: fpm test @${{ matrix.os }}_${{ matrix.compiler }}_release --verbose
+        run: fpm @${{ matrix.os }}_${{ matrix.compiler }}_release --verbose
 
   doc_ford:
-    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Generate FORD Documentation
     runs-on: ubuntu-latest
     steps:
@@ -104,11 +87,11 @@ jobs:
         compiler: [gfortran, ifx, lfortran, flang-new, nvfortran]
         include:
           - os: ubuntu-latest
-            extra-packages: "cmake, ninja"
+            extra-packages: ""
           - os: windows-latest
-            extra-packages: "cmake, ninja"
+            extra-packages: ""
           - os: macos-latest
-            extra-packages: "cmake, ninja"
+            extra-packages: ""
         exclude:
           - os: macos-latest
             compiler: flang-new
@@ -118,26 +101,25 @@ jobs:
             compiler: nvfortran
           - os: windows-latest
             compiler: nvfortran
-
+  
     steps:
       - name: Setup Fortran
         uses: gha3mi/setup-fortran-conda@latest
         with:
           compiler: ${{ matrix.compiler }}
           platform: ${{ matrix.os }}
-          extra-packages: ${{ matrix.extra-packages }}
 
       - name: cmake test (debug)
         run: |
-          cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_Fortran_COMPILER=${{ matrix.compiler }} -G Ninja -DFORCAD_BUILD_TESTS=ON
-          cmake --build build/debug --config Debug
-          ctest --test-dir build/debug --output-on-failure
+          cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake --build build/debug --config Debug --verbose
+          ctest --test-dir build/debug --output-on-failure -VV
 
       - name: cmake test (release)
         run: |
-          cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_Fortran_COMPILER=${{ matrix.compiler }} -G Ninja -DFORCAD_BUILD_TESTS=ON
-          cmake --build build/release --config Release
-          ctest --test-dir build/release --output-on-failure
+          cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake --build build/release --config Release --verbose
+          ctest --test-dir build/release --output-on-failure -VV
 
   status_fpm:
     if: ${{ always() && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}

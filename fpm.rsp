@@ -4,33 +4,37 @@
 options test
 options --compiler gfortran
 options --profile debug
-options --flag "-Wno-maybe-uninitialized"
+options --flag "-Wno-maybe-uninitialized -ftree-parallelize-loops=8"
 
 @ubuntu-latest_gfortran_release
 options test
 options --compiler gfortran
 options --profile release
-options --flag "-ftree-parallelize-loops=8"
+options --flag "-ftree-parallelize-loops=8 -march=native"
 
 @ubuntu-latest_ifx_debug
 options test
 options --compiler ifx
 options --profile debug
+options --flag "-fopenmp-target-do-concurrent"
 
 @ubuntu-latest_ifx_release
 options test
 options --compiler ifx
 options --profile release
+options --flag "-fopenmp-target-do-concurrent"
 
 @ubuntu-latest_nvfortran_debug
 options test
 options --compiler nvfortran
 options --profile debug
+options --flag "-stdpar=multicore,gpu -Minfo=stdpar,accel"
 
 @ubuntu-latest_nvfortran_release
 options test
 options --compiler nvfortran
 options --profile release
+options --flag "-stdpar=multicore,gpu"
 
 @ubuntu-latest_flang-new_debug
 options test
@@ -62,13 +66,13 @@ options --flag "--cpp"
 options test
 options --compiler gfortran
 options --profile debug
-options --flag "-Wno-maybe-uninitialized"
+options --flag "-Wno-maybe-uninitialized -ftree-parallelize-loops=8"
 
 @macos-latest_gfortran_release
 options test
 options --compiler gfortran
 options --profile release
-options --flag "-ftree-parallelize-loops=8"
+options --flag "-ftree-parallelize-loops=8 -march=native"
 
 @macos-latest_lfortran_debug
 options test
@@ -88,23 +92,25 @@ options --flag "--cpp"
 options test
 options --compiler gfortran
 options --profile debug
-options --flag "-Wno-maybe-uninitialized"
+options --flag "-Wno-maybe-uninitialized -ftree-parallelize-loops=8"
 
 @windows-latest_gfortran_release
 options test
 options --compiler gfortran
 options --profile release
-options --flag "-ftree-parallelize-loops=8"
+options --flag "-ftree-parallelize-loops=8 -march=native"
 
 @windows-latest_ifx_debug
 options test
 options --compiler ifx
 options --profile debug
+options --flag "/Qopenmp-target-do-concurrent"
 
 @windows-latest_ifx_release
 options test
 options --compiler ifx
 options --profile release
+options --flag "/Qopenmp-target-do-concurrent"
 
 @windows-latest_flang-new_debug
 options test

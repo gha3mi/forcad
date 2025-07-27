@@ -103,6 +103,7 @@ module forcad_nurbs_surface
         procedure :: nearest_point2         !!> Find the nearest point on the NURBS surface (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dA
         procedure :: cmp_area               !!> Compute the area of the NURBS surface
+        procedure :: lsq_fit_bspline        !!> Fit B-spline volume to structured data points using least squares
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -183,7 +184,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir1(:), Xth_dir2(:)
         integer, intent(in), contiguous :: degree(:)
         integer, intent(in), contiguous :: continuity1(:), continuity2(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
@@ -191,7 +192,7 @@ contains
         this%degree(1) = degree(1)
         this%degree(2) = degree(2)
         call this%cmp_nc()
-        this%Xc = Xc
+        if (present(Xc)) this%Xc = Xc
         if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
@@ -2547,7 +2548,11 @@ contains
         real(rk) :: dA, dA_ig
 
         area = 0.0_rk
+#if defined(__NVCOMPILER)
         do ie = 1, size(this%cmp_elem(),1)
+#else
+        do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:area)
+#endif
             dA = 0.0_rk
             do ig = 1, size(this%cmp_elem(),2)
                 call this%ansatz(ie, ig, Tgc, dTgc_dXg, dA_ig)
@@ -2598,7 +2603,11 @@ contains
         integer :: i
 
         allocate(Xg(ng(1)*ng(2), size(Xc,2)))
+#if defined(__NVCOMPILER)
+        do i = 1, ng(1)*ng(2)
+#else
         do concurrent (i = 1: ng(1)*ng(2))
+#endif
             Xg(i,:) = matmul(cmp_Tgc_2d(Xt(i,:), knot1, knot2, nc, degree, Wc), Xc)
         end do
     end function
@@ -2644,7 +2653,11 @@ contains
         integer :: i
 
         allocate(Xg(ng(1)*ng(2), size(Xc,2)))
+#if defined(__NVCOMPILER)
+        do i = 1, ng(1)*ng(2)
+#else
         do concurrent (i = 1: ng(1)*ng(2))
+#endif
             Xg(i,:) = matmul(kron(&
                 basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
                 basis_bspline(Xt(i,1), knot1, nc(1), degree(1))),&
@@ -2693,7 +2706,11 @@ contains
 
         allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2), Tgc(ng(1)*ng(2), nc(1)*nc(2)))
         allocate(Bi(nc(1)*nc(2)), dBi(nc(1)*nc(2), 2))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
             call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
 
@@ -2781,7 +2798,11 @@ contains
 
         allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2), Tgc(ng(1)*ng(2), nc(1)*nc(2)))
 
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
             call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
             Tgc(i,:) = kron(B2, B1)
@@ -2859,7 +2880,11 @@ contains
 
         allocate(Tgci(nc(1)*nc(2)), dTgci(nc(1)*nc(2)))
         allocate(Tgc(ng(1)*ng(2), nc(1)*nc(2)), dTgc(ng(1)*ng(2), nc(1)*nc(2), 2))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             call basis_bspline_2der(Xt(i,1), knot1, nc(1), degree(1), d2B1, dB1, B1)
             call basis_bspline_2der(Xt(i,2), knot2, nc(2), degree(2), d2B2, dB2, B2)
 
@@ -2971,7 +2996,11 @@ contains
         allocate(d2Tgc(ng(1)*ng(2), 2*nc(1)*nc(2), 2))
         allocate(dTgc(ng(1)*ng(2), nc(1)*nc(2), 2))
         allocate(Tgc(ng(1)*ng(2), nc(1)*nc(2)))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             call basis_bspline_2der(Xt(i,1), knot1, nc(1), degree(1), d2B1, dB1, B1)
             call basis_bspline_2der(Xt(i,2), knot2, nc(2), degree(2), d2B2, dB2, B2)
 
@@ -3038,7 +3067,11 @@ contains
 
         allocate(Tgc(ng(1)*ng(2), nc(1)*nc(2)))
         allocate(Tgci(nc(1)*nc(2)))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             Tgci = kron(&
                 basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
                 basis_bspline(Xt(i,1), knot1, nc(1), degree(1)))
@@ -3081,7 +3114,11 @@ contains
         integer :: i
 
         allocate(Tgc(ng(1)*ng(2), nc(1)*nc(2)))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt, 1)
+#else
         do concurrent (i = 1: size(Xt, 1))
+#endif
             Tgc(i,:) = kron(&
                 basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
                 basis_bspline(Xt(i,1), knot1, nc(1), degree(1)))
@@ -3119,10 +3156,46 @@ contains
         integer :: i
 
         allocate(distances(ng(1)*ng(2)))
+#if defined(__NVCOMPILER)
+        do i = 1, ng(1)*ng(2)
+#else
         do concurrent (i = 1: ng(1)*ng(2))
+#endif
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
+        use forcad_interface, only: solve
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in), contiguous :: Xt(:,:), Xdata(:,:)
+        integer, intent(in) :: ndata(2)
+        real(rk), allocatable :: T(:,:), Tt(:,:)
+        integer :: i, n
+
+        if (this%nc(1) > ndata(1)) error stop "Error: in the first direction, number of control points exceeds number of data points."
+        if (this%nc(2) > ndata(2)) error stop "Error: in the second direction, number of control points exceeds number of data points."
+
+        n = ndata(1)*ndata(2)
+
+        allocate(T(n, this%nc(1)*this%nc(2)))
+#if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
+        do i = 1, n
+#else
+        do concurrent (i = 1: n)
+#endif
+            T(i,:) = kron(&
+            basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2)),&
+            basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1)))
+        end do
+        Tt = transpose(T)
+        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+    end subroutine
     !===============================================================================
 
 end module forcad_nurbs_surface

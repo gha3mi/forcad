@@ -22,9 +22,14 @@ implicit-typing   = false
 implicit-external = false
 source-form       = "free"
 
+[preprocess]
+[preprocess.cpp]
+
 [dependencies]
 openmp = "*"
 forIGES = {git="https://github.com/rweed/forIGES.git"}
+# stdlib = { git="https://github.com/fortran-lang/stdlib", branch="stdlib-fpm", preprocess.cpp.macros=["STDLIB_EXTERNAL_BLAS", "STDLIB_EXTERNAL_LAPACK"] }
+# stdlib = { git="https://github.com/fortran-lang/stdlib", branch="stdlib-fpm" }
 
 [dev-dependencies]
 forunittest = {git="https://github.com/gha3mi/forunittest"}
@@ -188,6 +193,21 @@ name       = "cmp_volume"
 source-dir = "example"
 main       = "cmp_volume.f90"
 
+[[example]]
+name       = "lsq_fit_bspline_1d"
+source-dir = "example"
+main       = "lsq_fit_bspline_1d.f90"
+
+[[example]]
+name       = "lsq_fit_bspline_2d"
+source-dir = "example"
+main       = "lsq_fit_bspline_2d.f90"
+
+[[example]]
+name       = "lsq_fit_bspline_3d"
+source-dir = "example"
+main       = "lsq_fit_bspline_3d.f90"
+
 
 [extra.ford]
 project             = "ForCAD"
@@ -212,4 +232,4 @@ favicon             = "logo/logo.png"
 
 
 [extra.fortitude.check]
-ignore = ["S001", "S061", "C003"]
+ignore = ["S001", "S061", "C003", "E001"]

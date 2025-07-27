@@ -97,6 +97,7 @@ module forcad_nurbs_curve
         procedure :: nearest_point2        !!> Find the nearest point on the NURBS curve (Minimization - Newtons method)
         procedure :: ansatz                !!> Compute the shape functions, derivative of shape functions and dL
         procedure :: cmp_length            !!> Compute the length of the NURBS curve
+        procedure :: lsq_fit_bspline       !!> Fit B-spline curve to structured data points using least squares
 
         ! Shapes
         procedure :: set_circle            !!> Set a circle
@@ -204,7 +205,7 @@ contains
         real(rk), intent(in), contiguous :: Xth_dir(:)
         integer, intent(in) :: degree
         integer, intent(in), contiguous :: continuity(:)
-        real(rk), intent(in), contiguous :: Xc(:,:)
+        real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
@@ -212,16 +213,9 @@ contains
 
         this%knot = compute_knot_vector(Xth_dir, degree, continuity)
         this%degree = degree
-        this%Xc = Xc
-        this%nc = size(this%Xc, 1)
-        if (present(Wc)) then
-            if (size(Wc) /= this%nc) then
-                error stop 'Number of weights does not match the number of control points.'
-            else
-                if (allocated(this%Wc)) deallocate(this%Wc)
-                this%Wc = Wc
-            end if
-        end if
+        call this%cmp_nc()
+        if (present(Xc)) this%Xc = Xc
+        if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
 
@@ -1897,7 +1891,11 @@ contains
         real(rk) :: dL, dL_ig
 
         length = 0.0_rk
+#if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
         do ie = 1, size(this%cmp_elem(),1)
+#else
+        do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:length)
+#endif
             dL = 0.0_rk
             do ig = 1, size(this%cmp_elem(),2)
                 call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig)
@@ -1945,7 +1943,11 @@ contains
         integer :: i
 
         allocate(Xg(ng, size(Xc,2)), source = 0.0_rk)
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             Xg(i,:) = matmul(cmp_Tgc_1d(Xt(i), knot, nc, degree, Wc), Xc)
         end do
     end function
@@ -1988,7 +1990,11 @@ contains
         integer :: i
 
         allocate(Xg(ng, size(Xc,2)))
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             Xg(i,:) = matmul(basis_bspline(Xt(i), knot, nc, degree), Xc)
         end do
     end function
@@ -2030,7 +2036,11 @@ contains
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
 
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
             Tgci = Bi*(Wc/(dot_product(Bi,Wc)))
             Tgc(i,:) = Tgci
@@ -2083,7 +2093,11 @@ contains
         integer :: i
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Tgc(i,:) , dTgc(i,:), Tgc(i,:))
         end do
     end subroutine
@@ -2124,7 +2138,11 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
             dTgc(i,:) = ( dBi*Wc - Tgc(i,:)*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
@@ -2176,7 +2194,11 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt)
+#else
         do concurrent (i = 1: size(Xt))
+#endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dTgc(i,:), Tgc(i,:))
         end do
     end subroutine
@@ -2224,7 +2246,11 @@ contains
         integer :: i
 
         allocate(Tgc(ng, nc), Tgci(nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt,1)
+#else
         do concurrent (i = 1: size(Xt,1))
+#endif
             Tgci = basis_bspline(Xt(i), knot, nc, degree)
             Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
         end do
@@ -2263,7 +2289,11 @@ contains
         integer :: i
 
         allocate(Tgc(ng, nc))
+#if defined(__NVCOMPILER)
+        do i = 1, size(Xt,1)
+#else
         do concurrent (i = 1: size(Xt,1))
+#endif
             Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
         end do
     end function
@@ -2297,10 +2327,41 @@ contains
         integer :: i
 
         allocate(distances(ng))
+#if defined(__NVCOMPILER)
+        do i = 1, ng
+#else
         do concurrent (i = 1: ng)
+#endif
             distances(i) = norm2(Xg(i,:) - point_Xg)
         end do
     end function
     !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
+        use forcad_interface, only: solve
+        class(nurbs_curve), intent(inout) :: this
+        real(rk), intent(in), contiguous :: Xt(:), Xdata(:,:)
+        integer, intent(in) :: ndata
+        real(rk), allocatable :: T(:,:), Tt(:,:)
+        integer :: i
+
+        if (this%nc > ndata) error stop "Error: in the first direction, number of control points exceeds number of data points."
+
+        allocate(T(ndata, this%nc))
+#if defined(__NVCOMPILER)
+        do i = 1, ndata
+#else
+        do concurrent (i = 1: ndata)
+#endif
+            T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
+        end do
+        Tt = transpose(T)
+        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+    end subroutine
+   !===============================================================================
 
 end module forcad_nurbs_curve
