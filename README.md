@@ -9,15 +9,15 @@
 
 **ForCAD**: A parallel Fortran library for geometric modeling using NURBS (Non-Uniform Rational B-Splines).
 
-ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** curves, surfaces, and volumes.
+ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curves, surfaces and volumes.
 
 ## Main Features
 
-- Parallelized using `OpenMP` and `do concurrent`.
+- Parallelized using `do concurrent`.
 - Create NURBS objects by specifying control points, weights and knots.
 - Refine NURBS objects by inserting or removing knots and elevating degree.
-- Compute basis functions and derivatives of NURBS objects.
-- Obtain IGA elements connectivity.
+- Compute analytical basis functions and their first and second derivatives for NURBS and B-Spline objects.
+- Generation of IGA-compatible element connectivity and shape functions.
 - Obtain visualized elements connectivity and coordinates for geometry and control geometry.
 - Mesh insertion into a NURBS object.
 - Export NURBS objects to VTK files for visualization.
@@ -25,6 +25,8 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 - Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
 - Rotate and translate NURBS objects.
 - Visualization using provided python PyVista scripts.
+- Least squares fitting for B-Spline curves, surfaces and volumes.
+- Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.
 
 ## Examples
 
@@ -38,9 +40,22 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier**, and **Rational Bezier** cur
 
 ### Requirements
 
-- A Fortran compiler, such as [GNU Fortran](https://gcc.gnu.org/fortran/) (`gfortran`), [Intel Fortran Compiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html) (`ifx`), [NVIDIA HPC SDK Fortran compiler](https://developer.nvidia.com/hpc-sdk) (`nvfortran`) or [LLVM Flang](https://flang.llvm.org/) (`flang`).
-- The Fortran Package Manager [fpm](https://fpm.fortran-lang.org/).
-- Optional: [PyVista](https://pyvista.org/) (Recommended) or [ParaView](https://www.paraview.org/) for visualization.
+* A Fortran compiler, such as:
+
+  * [GNU Fortran (`gfortran`)](https://gcc.gnu.org/fortran/)
+  * [Intel Fortran Compiler (`ifx`)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html)
+  * [NVIDIA HPC SDK Fortran Compiler (`nvfortran`)](https://developer.nvidia.com/hpc-sdk)
+  * [LLVM Flang (`flang`)](https://flang.llvm.org/)
+
+  **Note:** Latest compiler versions are required to ensure compatibility.
+
+* [Fortran Package Manager (`fpm`)](https://fpm.fortran-lang.org/)
+
+* Optional visualization tools:
+
+  * [PyVista](https://pyvista.org/) (recommended)
+  * [ParaView](https://www.paraview.org/)
+
 
 ### Clone the repository
 
@@ -62,7 +77,7 @@ pip install pyvista
 ### Running Examples with fpm
 
 ```shell
-fpm run --example <file name excluding the .f90 extension>
+fpm run --example <file name excluding the .f90 extension> --compiler gfortran --profile release --flag "-ftree-parallelize-loops=8 -march=native"
 ```
 After executing the examples, `.vtk` files will be generated in the `vtk` directory. To visualize these files, a `show()` method is provided which utilizes PyVista. Alternatively, other visualization tools like ParaView can also be used.
 
@@ -76,6 +91,26 @@ you can easily include it by adding the following line to your `fpm.toml` file:
 forcad = {git="https://github.com/gha3mi/forcad.git"}
 ```
 
+### Do Concurrent Support
+
+Compiler flags for enabling `do concurrent` parallelism:
+
+| Compiler    | Flag(s)                                     |
+| ----------- | ------------------------------------------- |
+| `gfortran`  | `-fopenmp -ftree-parallelize-loops=n`       |
+| `ifx`       | `-qopenmp -fopenmp-target-do-concurrent`    |
+| `nvfortran` | `-stdpar=multicore,gpu -Minfo=stdpar,accel` |
+| `flang-new` | ?                                           |
+| `lfortran`  | ?                                           |
+
+Compiler flags can be passed to fpm using the `--flag` option, for example:
+
+```shell
+fpm build --flag "-stdpar=multicore,gpu -Minfo=stdpar,accel"
+```
+
+Alternatively, flags can be added to a `fpm.rsp` file in the root directory of the project.
+
 ### Precision Configuration
 
 The library uses **double precision** (`real64`) by default for all real-valued computations. To change the precision, you can define one of the following preprocessor flags during compilation:
@@ -87,7 +122,7 @@ The library uses **double precision** (`real64`) by default for all real-valued 
 | `REALXDP`            | `selected_real_kind(18)` | Extended double precision |
 | `REAL128`            | `selected_real_kind(33)` | Quadruple precision       |
 
-**Note**: The examples `example_ppm1.f90`, `example_ppm2.f90`, and `example_ppm3.f90` use the `ForColormap` library, which only supports `REAL64` precision.
+**Note**: The examples `example_ppm1.f90`, `example_ppm2.f90` and `example_ppm3.f90` use the `ForColormap` library, which only supports `REAL64` precision.
 
 #### Example: Building with double precision
 
@@ -95,7 +130,7 @@ The library uses **double precision** (`real64`) by default for all real-valued 
 fpm build --profile release --flag "-DREAL64"
 ```
 
-## Status
+## CI Status
 
 <!-- STATUS:setup-fortran-conda:START -->
 | Compiler   | macos | ubuntu | windows |
@@ -106,6 +141,8 @@ fpm build --profile release --flag "-DREAL64"
 | `lfortran` | fpm ❌  cmake ❌ | fpm ❌  cmake ❌ | fpm ❌  cmake ✅ |
 | `nvfortran` | - | fpm ✅  cmake ✅ | - |
 <!-- STATUS:setup-fortran-conda:END -->
+
+This table is automatically generated by the CI workflow using [setup-fortran-conda](https://github.com/gha3mi/setup-fortran-conda).
 
 ## API documentation
 
