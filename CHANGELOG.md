@@ -1,3 +1,26 @@
+## [v0.11.0](https://github.com/gha3mi/forcad/compare/v0.10.1...v0.11.0) - 2025-07-28
+
+
+### Features
+
+* feat: B-spline fitting; ensure nvfortran multicore/gpu compat (#42) ([336b1d484](https://github.com/gha3mi/forcad/commit/336b1d4843d69b21f06d84af2afcdff010422340)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* chore: exclude examples and logo dirs, update README badges (#41) ([3e9bd91a3](https://github.com/gha3mi/forcad/commit/3e9bd91a3bd407e6855657e8310ead2c07184deb)) by [@gha3mi](https://github.com/gha3mi)
+* docs: update README to include LLVM Flang as a supported Fortran compiler ([2f0a536c6](https://github.com/gha3mi/forcad/commit/2f0a536c6d34d668323e6fcc09a132a8eec96a7b)) by [@gha3mi](https://github.com/gha3mi)
+* docs: correct typos and enhance clarity in CONTRIBUTING.md ([5ffb8b4c2](https://github.com/gha3mi/forcad/commit/5ffb8b4c22139110a4cea60b5bb77f71d460bd28)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#43) ([289a72798](https://github.com/gha3mi/forcad/commit/289a727989489e7158655043dd6d62a261378a27)) by [@gha3mi](https://github.com/gha3mi)
+* chore: add homepage field to fpm.toml [skip ci] ([2f8aec3e8](https://github.com/gha3mi/forcad/commit/2f8aec3e88c757a181d34722bf6888ad2db9a983)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.10.1...v0.11.0](https://github.com/gha3mi/forcad/compare/v0.10.1...v0.11.0)
+
 ## [v0.10.1](https://github.com/gha3mi/forcad/compare/v0.10.0...v0.10.1) - 2025-07-22
 
 
