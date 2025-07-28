@@ -445,7 +445,7 @@ program test_nurbs_volume
        real(rk), allocatable :: Xg_eval(:,:)
        real(rk) :: err1, err2, err3, rms
 
-       n = [10,10,10]
+       n = [6,6,6]
 
        allocate(Xt1(n(1)), Xt2(n(2)), Xt3(n(3)))
        do concurrent (i = 1:n(1))
@@ -468,7 +468,7 @@ program test_nurbs_volume
        end do
 
        call bsp%set(&
-          degree      = [3, 3, 3],&
+          degree      = [2, 2, 2],&
           Xth_dir1    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
           Xth_dir2    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
           Xth_dir3    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
