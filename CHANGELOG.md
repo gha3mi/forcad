@@ -1,3 +1,23 @@
+## [v0.12.0](https://github.com/gha3mi/forcad/compare/v0.11.0...v0.12.0) - 2025-07-29
+
+
+### Features
+
+* feat: enhance CMake configuration with install and uninstall targets ([391e2d03a](https://github.com/gha3mi/forcad/commit/391e2d03ab53743ae54f9009f00135b182828a88)) by [@gha3mi](https://github.com/gha3mi)
+* feat: change functions to pure elemental in forcad_utils module ([cbd80377a](https://github.com/gha3mi/forcad/commit/cbd80377a43d6f3b07d1ef73ed3ab17a498f263f)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* docs: update README [skip ci] ([6c94b0b3c](https://github.com/gha3mi/forcad/commit/6c94b0b3c89d5dbacec6d0eec4f2c94682ad672f)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.11.0...v0.12.0](https://github.com/gha3mi/forcad/compare/v0.11.0...v0.12.0)
+
 ## [v0.11.0](https://github.com/gha3mi/forcad/compare/v0.10.1...v0.11.0) - 2025-07-28
 
 
