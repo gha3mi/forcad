@@ -111,15 +111,33 @@ jobs:
 
       - name: cmake test (debug)
         run: |
-          cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON
-          cmake --build build/debug --config Debug --verbose
-          ctest --test-dir build/debug --output-on-failure -VV
+          cmake -S . -B build/cmake/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake --build build/cmake/debug --config Debug --verbose
+          ctest --test-dir build/cmake/debug --output-on-failure -VV
 
       - name: cmake test (release)
         run: |
-          cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON
-          cmake --build build/release --config Release --verbose
-          ctest --test-dir build/release --output-on-failure -VV
+          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake --build build/cmake/release --config Release --verbose
+          ctest --test-dir build/cmake/release --output-on-failure -VV
+
+      - name: cmake install (static)
+        run: |
+          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -G Ninja
+          cmake --build build/cmake/release --config Release
+          cmake --install build/cmake/release --config Release --verbose
+
+      - name: cmake uninstall
+        run: cmake --build build/cmake/release --target uninstall
+
+      - name: cmake install (shared)
+        run: |
+          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=. -G Ninja
+          cmake --build build/cmake/release --config Release
+          cmake --install build/cmake/release --config Release --verbose
+
+      - name: cmake uninstall
+        run: cmake --build build/cmake/release --target uninstall
 
   status_fpm:
     if: ${{ always() && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
