@@ -21,52 +21,52 @@ set(Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/mod)
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fPIC -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -fpp -diag-error 10006 -check all,nouninit -error-limit 1 -O0 -g -assume byterecl -traceback -fPIC -free")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fpp -diag-error 10006 -check all,nouninit -error-limit 1 -O0 -g -assume byterecl -traceback -fPIC -free")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fpp -O3 -fp-model precise -pc64 -align all -error-limit 1 -reentrancy threaded -nogen-interfaces -assume byterecl -fPIC -free")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} /fpp /Qdiag-error:10006 /check:all /check:nouninit /error-limit:1 /Od /Z7 /debug:full /assume:byterecl /traceback /free /heap-arrays")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} /fpp /Qdiag-error:10006 /check:all /check:nouninit /error-limit:1 /Od /Z7 /debug:full /assume:byterecl /traceback /free /heap-arrays")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} /fpp /O3 /fp:precise /align:all /error-limit:1 /reentrancy:threaded /nogen-interfaces /assume:byterecl")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "NVHPC")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Minform=inform -Mbackslash -Mbounds -Mchkptr -Mchkstk -traceback -fPIC -mp -Mfree -stdpar=multicore,gpu -Minfo=stdpar,accel")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -Minform=inform -Mbackslash -Mbounds -Mchkptr -Mchkstk -traceback -fPIC -mp -Mfree -stdpar=multicore,gpu -Minfo=stdpar,accel")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O3 -fPIC -stdpar=multicore,gpu -Mbackslash -mp -Mfree")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -fPIC -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -fPIC -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LFortran")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} --cpp -fPIC --verbose -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC --verbose -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} --cpp -fPIC --verbose -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC --verbose -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} --cpp -fPIC --verbose -g")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC --verbose -g")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} --cpp -fPIC")
     endif()
 endif()
 
@@ -163,38 +163,38 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME_LOWER}-config.cmake"
 
 # tests
 if(${PROJECT_NAME_UPPER}_BUILD_TESTS)
-enable_testing()
+    enable_testing()
 
-# --- forunittest: Only needed for tests
-FetchContent_Declare(
-    forunittest
-    GIT_REPOSITORY https://github.com/gha3mi/forunittest.git
-    GIT_TAG main
-)
-FetchContent_MakeAvailable(forunittest)
-set_target_properties(forunittest PROPERTIES
-    Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
-)
-
-file(GLOB TESTS CONFIGURE_DEPENDS test/*.f90 test/*.F90)
-foreach(test_file ${TESTS})
-    get_filename_component(test_name ${test_file} NAME_WE)
-    add_executable(${test_name} ${test_file})
-    target_link_libraries(${test_name} PRIVATE ${PROJECT_NAME_LOWER} forunittest)
-
-    add_test(NAME ${test_name}
-        COMMAND ${test_name}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    # --- forunittest: Only needed for tests
+    FetchContent_Declare(
+        forunittest
+        GIT_REPOSITORY https://github.com/gha3mi/forunittest.git
+        GIT_TAG main
+    )
+    FetchContent_MakeAvailable(forunittest)
+    set_target_properties(forunittest PROPERTIES
+        Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
     )
 
-    target_include_directories(${test_name} PRIVATE
-        ${Fortran_MODULE_DIRECTORY}
-    )
+    file(GLOB TESTS CONFIGURE_DEPENDS test/*.f90 test/*.F90)
+    foreach(test_file ${TESTS})
+        get_filename_component(test_name ${test_file} NAME_WE)
+        add_executable(${test_name} ${test_file})
+        target_link_libraries(${test_name} PRIVATE ${PROJECT_NAME_LOWER} forunittest)
 
-    if(OpenMP_Fortran_FOUND)
-        target_link_libraries(${test_name} PRIVATE OpenMP::OpenMP_Fortran)
-    endif()
-endforeach()
+        add_test(NAME ${test_name}
+            COMMAND ${test_name}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        )
+
+        target_include_directories(${test_name} PRIVATE
+            ${Fortran_MODULE_DIRECTORY}
+        )
+
+        if(OpenMP_Fortran_FOUND)
+            target_link_libraries(${test_name} PRIVATE OpenMP::OpenMP_Fortran)
+        endif()
+    endforeach()
 endif()
 
 
@@ -252,4 +252,3 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/uninstall.cmake
 )
-
