@@ -96,6 +96,7 @@
         <div class=col-md-8>
           <h1>ForCAD</h1>
           <p><a href="https://github.com/gha3mi/forcad"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-ForCAD-blue.svg?style=social&amp;logo=github"></a>
+<a href="https://github.com/gha3mi/forcad/releases"><img alt="Version" src="https://img.shields.io/github/v/tag/gha3mi/forcad?label=version&amp;sort=semver"></a>
 <a href="https://gha3mi.github.io/forcad/"><img alt="Documentation" src="https://img.shields.io/badge/ford-Documentation%20-blueviolet.svg"></a>
 <a href="https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml"><img alt="Setup Fortran Conda CI/CD" src="https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml/badge.svg?branch=main"></a>
 <a href="https://codecov.io/gh/gha3mi/forcad"><img alt="codecov" src="https://codecov.io/gh/gha3mi/forcad/branch/main/graph/badge.svg?token=N69NG6C86I"></a>
@@ -104,6 +105,36 @@
 <p><img alt="" src="logo/logo.png"></p>
 <p><strong>ForCAD</strong>: A parallel Fortran library for geometric modeling using NURBS (Non-Uniform Rational B-Splines).</p>
 <p>ForCAD supports <strong>B-Spline</strong>, <strong>NURBS</strong>, <strong>Bezier</strong> and <strong>Rational Bezier</strong> curves, surfaces and volumes.</p>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#main-features">Main Features</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#clone-the-repository">Clone the repository</a></li>
+<li><a href="#install-pyvista-optional">Install PyVista (Optional)</a></li>
+<li><a href="#using-fpm">Using fpm</a><ul>
+<li><a href="#running-examples-with-fpm">Running Examples with fpm</a></li>
+<li><a href="#using-forcad-as-a-fpm-dependency">Using ForCAD as a fpm Dependency</a></li>
+</ul>
+</li>
+<li><a href="#using-cmake">Using CMake</a><ul>
+<li><a href="#install">Install</a></li>
+<li><a href="#uninstall">Uninstall</a></li>
+<li><a href="#using-forcad-with-cmake">Using ForCAD with CMake</a></li>
+</ul>
+</li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#do-concurrent-support">Do Concurrent Support</a></li>
+<li><a href="#precision-configuration">Precision Configuration</a></li>
+<li><a href="#ci-status">CI Status</a></li>
+<li><a href="#api-documentation">API documentation</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#citation">Citation</a></li>
+<li><a href="#references">References</a></li>
+</ul>
 <h2>Main Features</h2>
 <ul>
 <li>Parallelized using <code>do concurrent</code>.</li>
@@ -122,6 +153,7 @@
 <li>Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.</li>
 </ul>
 <h2>Examples</h2>
+<p>Below are some sample outputs from the <code>examples</code> directory:</p>
 <p><img src="https://github.com/gha3mi/forcad/raw/main/vtk/1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/3.png" width="30%"></p>
 <p><img src="https://github.com/gha3mi/forcad/raw/main/vtk/4.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/5.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/6.png" width="30%"></p>
 <p><img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="30%"></p>
@@ -129,7 +161,7 @@
 <h3>Requirements</h3>
 <ul>
 <li>
-<p>A Fortran compiler, such as:</p>
+<p>Fortran compiler:</p>
 </li>
 <li>
 <p><a href="https://gcc.gnu.org/fortran/">GNU Fortran (<code>gfortran</code>)</a></p>
@@ -141,7 +173,13 @@
 <p><strong>Note:</strong> Latest compiler versions are required to ensure compatibility.</p>
 <ul>
 <li>
-<p><a href="https://fpm.fortran-lang.org/">Fortran Package Manager (<code>fpm</code>)</a></p>
+<p>Build system:</p>
+</li>
+<li>
+<p><a href="https://fpm.fortran-lang.org/">Fortran Package Manager (<code>fpm</code>)</a> </p>
+</li>
+<li>
+<p><a href="https://cmake.org/">CMake</a></p>
 </li>
 <li>
 <p>Optional visualization tools:</p>
@@ -162,18 +200,37 @@
 <div class="codehilite"><pre><span></span><code>pip install pyvista
 </code></pre></div>
 
-<h3>Running Examples with fpm</h3>
+<h3>Using fpm</h3>
+<h4>Running Examples with fpm</h4>
 <div class="codehilite"><pre><span></span><code>fpm run --example &lt;file name excluding the .f90 extension&gt; --compiler gfortran --profile release --flag <span class="s2">&quot;-ftree-parallelize-loops=8 -march=native&quot;</span>
 </code></pre></div>
 
 <p>After executing the examples, <code>.vtk</code> files will be generated in the <code>vtk</code> directory. To visualize these files, a <code>show()</code> method is provided which utilizes PyVista. Alternatively, other visualization tools like ParaView can also be used.</p>
-<h3>Using ForCAD as a fpm Dependency</h3>
+<h4>Using ForCAD as a fpm Dependency</h4>
 <p>If you want to use ForCAD as a dependency in your own fpm project,
 you can easily include it by adding the following line to your <code>fpm.toml</code> file:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">[dependencies]</span><span class="w"></span>
 <span class="n">forcad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">git</span><span class="o">=</span><span class="s">&quot;https://github.com/gha3mi/forcad.git&quot;</span><span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
+<h3>Using CMake</h3>
+<h4>Install</h4>
+<div class="codehilite"><pre><span></span><code>cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DBUILD_SHARED_LIBS<span class="o">=</span>ON -DCMAKE_INSTALL_PREFIX<span class="o">=</span>. -G Ninja
+cmake --build build/cmake --config Release
+cmake --install build/cmake --config Release --verbose
+</code></pre></div>
+
+<h4>Uninstall</h4>
+<div class="codehilite"><pre><span></span><code>cmake --build build/cmake --target uninstall
+</code></pre></div>
+
+<h4>Using ForCAD with CMake</h4>
+<div class="codehilite"><pre><span></span><code><span class="nb">find_package</span><span class="p">(</span><span class="s">forcad</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">app</span><span class="w"> </span><span class="s">main.f90</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">app</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">forcad::forcad</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>Configuration</h2>
 <h3>Do Concurrent Support</h3>
 <p>Compiler flags for enabling <code>do concurrent</code> parallelism:</p>
 <table>
@@ -245,7 +302,7 @@ you can easily include it by adding the following line to your <code>fpm.toml</c
 </tbody>
 </table>
 <p><strong>Note</strong>: The examples <code>example_ppm1.f90</code>, <code>example_ppm2.f90</code> and <code>example_ppm3.f90</code> use the <code>ForColormap</code> library, which only supports <code>REAL64</code> precision.</p>
-<h4>Example: Building with double precision</h4>
+<p>Example: Building with double precision</p>
 <div class="codehilite"><pre><span></span><code>fpm build --profile release --flag <span class="s2">&quot;-DREAL64&quot;</span>
 </code></pre></div>
 
@@ -264,7 +321,7 @@ you can easily include it by adding the following line to your <code>fpm.toml</c
 <tr>
 <td><code>flang-new</code></td>
 <td>-</td>
-<td>fpm ✅  cmake ❌</td>
+<td>fpm ✅  cmake ✅</td>
 <td>fpm ✅  cmake ✅</td>
 </tr>
 <tr>
@@ -277,13 +334,13 @@ you can easily include it by adding the following line to your <code>fpm.toml</c
 <td><code>ifx</code></td>
 <td>-</td>
 <td>fpm ✅  cmake ✅</td>
-<td>fpm ✅  cmake ✅</td>
+<td>fpm ✅  cmake ❌</td>
 </tr>
 <tr>
 <td><code>lfortran</code></td>
 <td>fpm ❌  cmake ❌</td>
 <td>fpm ❌  cmake ❌</td>
-<td>fpm ❌  cmake ✅</td>
+<td>fpm ❌  cmake ❌</td>
 </tr>
 <tr>
 <td><code>nvfortran</code></td>
@@ -418,7 +475,7 @@ command:</p>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-07-28T00:08:41.180901+0000             </p>
+ on 2025-07-29T11:52:59.313447+0000             </p>
           </div>
         </div>
         <br>

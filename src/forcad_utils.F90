@@ -1104,7 +1104,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function bincoeff(n,k) result(b)
+    pure elemental function bincoeff(n,k) result(b)
         integer, intent(in) :: n, k
         real(rk) :: b
         b = floor(0.5_rk+exp(factln(n)-factln(k)-factln(n-k)))
@@ -1115,7 +1115,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function factln(n) result(f)
+    pure elemental function factln(n) result(f)
         integer, intent(in) :: n
         real(rk) :: f
         if (n <= 1) then
