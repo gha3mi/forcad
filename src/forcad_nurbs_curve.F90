@@ -147,8 +147,13 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        if (allocated(this%knot)) deallocate(this%knot)
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%knot)) then
+            if (size(this%knot) /= size(knot)) deallocate(this%knot)
+        end if
+
+        if (allocated(this%Xc)) then
+            if (size(this%Xc, 1) /= size(Xc, 1) .or. size(this%Xc, 2) /= size(Xc, 2)) deallocate(this%Xc)
+        end if
 
         this%knot = knot
         call this%cmp_degree()
@@ -158,7 +163,9 @@ contains
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -176,19 +183,30 @@ contains
         real(rk), intent(in), contiguous :: Xc(:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        if (allocated(this%knot)) deallocate(this%knot)
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%knot)) then
+            if (size(this%knot) /= size(knot)) deallocate(this%knot)
+        end if
+
+        if (allocated(this%Xc)) then
+            if (size(this%Xc, 1) /= size(Xc) .or. size(this%Xc, 2) /= 3) then
+                deallocate(this%Xc)
+                allocate(this%Xc(size(Xc), 3), source = 0.0_rk)
+            end if
+        else
+            allocate(this%Xc(size(Xc), 3), source = 0.0_rk)
+        end if
 
         this%knot = knot
         call this%cmp_degree()
-        allocate(this%Xc(size(Xc), 3), source = 0.0_rk)
         this%Xc(:,1) = Xc
         this%nc = size(this%Xc, 1)
         if (present(Wc)) then
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -209,12 +227,24 @@ contains
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         if (allocated(this%knot)) deallocate(this%knot)
-        if (allocated(this%Xc)) deallocate(this%Xc)
+
+        if (present(Xc)) then
+            if (allocated(this%Xc)) then
+                if (size(this%Xc, 1) /= size(Xc, 1) .or. size(this%Xc, 2) /= size(Xc, 2)) deallocate(this%Xc)
+            end if
+            this%Xc = Xc
+        end if
+
+        if (present(Wc)) then
+            if (allocated(this%Wc)) then
+                if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+            end if
+            this%Wc = Wc
+        end if
 
         this%knot = compute_knot_vector(Xth_dir, degree, continuity)
         this%degree = degree
         call this%cmp_nc()
-        if (present(Xc)) this%Xc = Xc
         if (present(Wc)) this%Wc = Wc
     end subroutine
     !===============================================================================
@@ -229,14 +259,21 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        if (allocated(this%knot)) deallocate(this%knot)
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%Xc)) then
+            if (size(this%Xc, 1) /= size(Xc, 1) .or. size(this%Xc, 2) /= size(Xc, 2)) deallocate(this%Xc)
+        end if
 
         this%Xc = Xc
         this%nc = size(this%Xc, 1)
 
-        if (allocated(this%knot)) deallocate(this%knot)
-        allocate(this%knot(2*this%nc))
+        if (allocated(this%knot)) then
+            if (size(this%knot) /= 2*this%nc) then
+                deallocate(this%knot)
+                allocate(this%knot(2*this%nc))
+            end if
+        else
+            allocate(this%knot(2*this%nc))
+        end if
         this%knot(1:this%nc) = 0.0_rk
         this%knot(this%nc+1:2*this%nc) = 1.0_rk
 
@@ -245,7 +282,9 @@ contains
             if (size(Wc) /= this%nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -264,7 +303,9 @@ contains
         real(rk), intent(in), contiguous, optional :: Wc(:)
         integer :: m, i
 
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%Xc)) then
+            if (size(this%Xc, 1) /= size(Xc, 1) .or. size(this%Xc, 2) /= size(Xc, 2)) deallocate(this%Xc)
+        end if
 
         this%Xc = Xc
         this%nc = nc
@@ -273,8 +314,14 @@ contains
         ! Size of knot vectors
         m = nc + degree + 1
 
-        if (allocated(this%knot)) deallocate(this%knot)
-        allocate(this%knot(m))
+        if (allocated(this%knot)) then
+            if (size(this%knot) /= m) then
+                deallocate(this%knot)
+                allocate(this%knot(m))
+            end if
+        else
+            allocate(this%knot(m))
+        end if
         this%knot(1:degree+1) = 0.0_rk
         this%knot(degree+2:m-degree-1) = [(real(i, rk)/(m-2*degree-1), i=1, m-2*degree-2)]
         this%knot(m-degree:m) = 1.0_rk
@@ -283,7 +330,9 @@ contains
             if (size(Wc) /= nc) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -311,11 +360,19 @@ contains
 
         ! Set parameter values
         if (present(Xt)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
+            if (allocated(this%Xt)) then
+                if (size(this%Xt) /= size(Xt)) deallocate(this%Xt)
+            end if
             this%Xt = Xt
         elseif (present(res)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
-            allocate(this%Xt(res))
+            if (allocated(this%Xt)) then
+                if (size(this%Xt) /= res) then
+                    deallocate(this%Xt)
+                    allocate(this%Xt(res))
+                end if
+            else
+                allocate(this%Xt(res))
+            end if
             this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
@@ -325,7 +382,9 @@ contains
         this%ng = size(this%Xt)
 
         ! Allocate memory for geometry points
-        if (allocated(this%Xg)) deallocate(this%Xg)
+        if (allocated(this%Xg)) then
+            if (size(this%Xg, 1) /= this%ng .or. size(this%Xg, 2) /= size(this%Xc, 2)) deallocate(this%Xg)
+        end if
 
         if (this%is_rational()) then ! NURBS
             this%Xg = compute_Xg(&
@@ -665,9 +724,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xc(this, filename, encoding)
+    impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -682,7 +743,8 @@ contains
             elemConn = this%elemConn_Xc_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xc, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xc, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -690,9 +752,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xg(this, filename, encoding)
+    impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -707,7 +771,8 @@ contains
             elemConn = this%elemConn_Xg_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xg, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xg, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -715,9 +780,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xth(this, filename, encoding)
+    impure subroutine export_Xth(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
@@ -731,7 +798,8 @@ contains
         call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
         elemConn = th%cmp_elem()
 
-        call export_vtk_legacy(filename, Xth, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -1081,11 +1149,19 @@ contains
 
         ! Set parameter values
         if (present(Xt)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
+            if (allocated(this%Xt)) then
+                if (size(Xt,1) /= size(this%Xt,1)) deallocate(this%Xt)
+            end if
             this%Xt = Xt
         elseif (present(res)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
-            allocate(this%Xt(res))
+            if (allocated(this%Xt)) then
+                if (size(this%Xt,1) /= res) then
+                    deallocate(this%Xt)
+                    allocate(this%Xt(res))
+                end if
+            else
+                allocate(this%Xt(res))
+            end if
             this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
@@ -1136,11 +1212,19 @@ contains
 
         ! Set parameter values
         if (present(Xt)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
+            if (allocated(this%Xt)) then
+                if (size(Xt,1) /= size(this%Xt,1)) deallocate(this%Xt)
+            end if
             this%Xt = Xt
         elseif (present(res)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
-            allocate(this%Xt(res))
+            if (allocated(this%Xt)) then
+                if (size(this%Xt,1) /= res) then
+                    deallocate(this%Xt)
+                    allocate(this%Xt(res))
+                end if
+            else
+                allocate(this%Xt(res))
+            end if
             this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
@@ -1189,11 +1273,19 @@ contains
 
         ! Set parameter values
         if (present(Xt)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
+            if (allocated(this%Xt)) then
+                if (size(Xt,1) /= size(this%Xt,1)) deallocate(this%Xt)
+            end if
             this%Xt = Xt
         elseif (present(res)) then
-            if (allocated(this%Xt)) deallocate(this%Xt)
-            allocate(this%Xt(res))
+            if (allocated(this%Xt)) then
+                if (size(this%Xt,1) /= res) then
+                    deallocate(this%Xt)
+                    allocate(this%Xt(res))
+                end if
+            else
+                allocate(this%Xt(res))
+            end if
             this%Xt = [(this%knot(1)+(this%knot(size(this%knot))-this%knot(1))*real(i-1,rk)/real(res-1,rk), i=1, res)]
             ! else
             ! this%Xt = this%Xt
@@ -1253,7 +1345,11 @@ contains
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        if (allocated(this%elemConn_Xc_vis)) then
+            if (size(this%elemConn_Xc_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xc_vis,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn_Xc_vis)
+            end if
+        end if
         this%elemConn_Xc_vis = elemConn
     end subroutine
     !===============================================================================
@@ -1266,7 +1362,11 @@ contains
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
+        if (allocated(this%elemConn_Xg_vis)) then
+            if (size(this%elemConn_Xg_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xg_vis,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn_Xg_vis)
+            end if
+        end if
         this%elemConn_Xg_vis = elemConn
     end subroutine
     !===============================================================================
@@ -1279,7 +1379,11 @@ contains
         class(nurbs_curve), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn)) deallocate(this%elemConn)
+        if (allocated(this%elemConn)) then
+            if (size(this%elemConn,1) /= size(elemConn,1) .or. size(this%elemConn,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn)
+            end if
+        end if
         this%elemConn = elemConn
     end subroutine
     !===============================================================================

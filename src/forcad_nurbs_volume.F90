@@ -161,10 +161,18 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        if (allocated(this%knot1)) deallocate(this%knot1)
-        if (allocated(this%knot2)) deallocate(this%knot2)
-        if (allocated(this%knot3)) deallocate(this%knot3)
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%knot1)) then
+            if (size(this%knot1) /= size(knot1)) deallocate(this%knot1)
+        end if
+        if (allocated(this%knot2)) then
+            if (size(this%knot2) /= size(knot2)) deallocate(this%knot2)
+        end if
+        if (allocated(this%knot3)) then
+            if (size(this%knot3) /= size(knot3)) deallocate(this%knot3)
+        end if
+        if (allocated(this%Xc)) then
+            if (size(this%Xc,1) /= size(Xc,1) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
+        end if
 
         this%knot1 = knot1
         this%knot2 = knot2
@@ -176,7 +184,9 @@ contains
             if (size(Wc) /= this%nc(1)*this%nc(2)*this%nc(3)) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -219,23 +229,43 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%Xc)) then
+            if (size(this%Xc,1) /= nc(1)*nc(2)*nc(3) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
+        end if
 
         this%Xc = Xc
         this%nc = nc
 
-        if (allocated(this%knot1)) deallocate(this%knot1)
-        allocate(this%knot1(2*this%nc(1)))
+        if (allocated(this%knot1)) then
+            if (size(this%knot1) /= 2*nc(1)) then
+                deallocate(this%knot1)
+                allocate(this%knot1(2*this%nc(1)))
+            end if
+        else
+            allocate(this%knot1(2*this%nc(1)))
+        end if
         this%knot1(1:this%nc(1)) = 0.0_rk
         this%knot1(this%nc(1)+1:2*this%nc(1)) = 1.0_rk
 
-        if (allocated(this%knot2)) deallocate(this%knot2)
-        allocate(this%knot2(2*this%nc(2)))
+        if (allocated(this%knot2)) then
+            if (size(this%knot2) /= 2*nc(2)) then
+                deallocate(this%knot2)
+                allocate(this%knot2(2*this%nc(2)))
+            end if
+        else
+            allocate(this%knot2(2*this%nc(2)))
+        end if
         this%knot2(1:this%nc(2)) = 0.0_rk
         this%knot2(this%nc(2)+1:2*this%nc(2)) = 1.0_rk
 
-        if (allocated(this%knot3)) deallocate(this%knot3)
-        allocate(this%knot3(2*this%nc(3)))
+        if (allocated(this%knot3)) then
+            if (size(this%knot3) /= 2*nc(3)) then
+                deallocate(this%knot3)
+                allocate(this%knot3(2*this%nc(3)))
+            end if
+        else
+            allocate(this%knot3(2*this%nc(3)))
+        end if
         this%knot3(1:this%nc(3)) = 0.0_rk
         this%knot3(this%nc(3)+1:2*this%nc(3)) = 1.0_rk
 
@@ -244,7 +274,9 @@ contains
             if (size(Wc) /= this%nc(1)*this%nc(2)*this%nc(3)) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -263,7 +295,9 @@ contains
         real(rk), intent(in), contiguous, optional :: Wc(:)
         integer :: m(3), i
 
-        if (allocated(this%Xc)) deallocate(this%Xc)
+        if (allocated(this%Xc)) then
+            if (size(this%Xc,1) /= nc(1)*nc(2)*nc(3) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
+        end if
 
         this%Xc = Xc
         this%nc = nc
@@ -272,20 +306,38 @@ contains
         ! Size of knot vectors
         m = nc + degree + 1
 
-        if (allocated(this%knot1)) deallocate(this%knot1)
-        allocate(this%knot1(m(1)))
+        if (allocated(this%knot1)) then
+            if (size(this%knot1) /= m(1)) then
+                deallocate(this%knot1)
+                allocate(this%knot1(m(1)))
+            end if
+        else
+            allocate(this%knot1(m(1)))
+        end if
         this%knot1(1:degree(1)+1) = 0.0_rk
         this%knot1(degree(1)+2:m(1)-degree(1)-1) = [(real(i, rk)/(m(1)-2*degree(1)-1), i=1, m(1)-2*degree(1)-2)]
         this%knot1(m(1)-degree(1):m(1)) = 1.0_rk
 
-        if (allocated(this%knot2)) deallocate(this%knot2)
-        allocate(this%knot2(m(2)))
+        if (allocated(this%knot2)) then
+            if (size(this%knot2) /= m(2)) then
+                deallocate(this%knot2)
+                allocate(this%knot2(m(2)))
+            end if
+        else
+            allocate(this%knot2(m(2)))
+        end if
         this%knot2(1:degree(2)+1) = 0.0_rk
         this%knot2(degree(2)+2:m(2)-degree(2)-1) = [(real(i, rk)/(m(2)-2*degree(2)-1), i=1, m(2)-2*degree(2)-2)]
         this%knot2(m(2)-degree(2):m(2)) = 1.0_rk
 
-        if (allocated(this%knot3)) deallocate(this%knot3)
-        allocate(this%knot3(m(3)))
+        if (allocated(this%knot3)) then
+            if (size(this%knot3) /= m(3)) then
+                deallocate(this%knot3)
+                allocate(this%knot3(m(3)))
+            end if
+        else
+            allocate(this%knot3(m(3)))
+        end if
         this%knot3(1:degree(3)+1) = 0.0_rk
         this%knot3(degree(3)+2:m(3)-degree(3)-1) = [(real(i, rk)/(m(3)-2*degree(3)-1), i=1, m(3)-2*degree(3)-2)]
         this%knot3(m(3)-degree(3):m(3)) = 1.0_rk
@@ -294,7 +346,9 @@ contains
             if (size(Wc) /= nc(1)*nc(2)*nc(3)) then
                 error stop 'Number of weights does not match the number of control points.'
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -323,11 +377,19 @@ contains
 
         ! Set parameter values
         if (present(Xt1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            if (allocated(this%Xt1)) then
+                if (size(this%Xt1) /= size(Xt1)) deallocate(this%Xt1)
+            end if
             this%Xt1 = Xt1
         elseif (present(res1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
-            allocate(this%Xt1(res1))
+            if (allocated(this%Xt1)) then
+                if (size(this%Xt1) /= res1) then
+                    deallocate(this%Xt1)
+                    allocate(this%Xt1(res1))
+                end if
+            else
+                allocate(this%Xt1(res1))
+            end if
             this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
@@ -335,11 +397,19 @@ contains
 
         ! Set parameter values
         if (present(Xt2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            if (allocated(this%Xt2)) then
+                if (size(this%Xt2) /= size(Xt2)) deallocate(this%Xt2)
+            end if
             this%Xt2 = Xt2
         elseif (present(res2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
-            allocate(this%Xt2(res2))
+            if (allocated(this%Xt2)) then
+                if (size(this%Xt2) /= res2) then
+                    deallocate(this%Xt2)
+                    allocate(this%Xt2(res2))
+                end if
+            else
+                allocate(this%Xt2(res2))
+            end if
             this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
@@ -347,11 +417,19 @@ contains
 
         ! Set parameter values
         if (present(Xt3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            if (allocated(this%Xt3)) then
+                if (size(this%Xt3) /= size(Xt3)) deallocate(this%Xt3)
+            end if
             this%Xt3 = Xt3
         elseif (present(res3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
-            allocate(this%Xt3(res3))
+            if (allocated(this%Xt3)) then
+                if (size(this%Xt3) /= res3) then
+                    deallocate(this%Xt3)
+                    allocate(this%Xt3(res3))
+                end if
+            else
+                allocate(this%Xt3(res3))
+            end if
             this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
@@ -369,8 +447,14 @@ contains
             call ndgrid(this%Xt1, this%Xt2, this%Xt3, this%Xt)
         end if
 
-        if (allocated(this%Xg)) deallocate(this%Xg)
-        allocate(this%Xg(this%ng(1)*this%ng(2)*this%ng(3), size(this%Xc,2)))
+        if (allocated(this%Xg)) then
+            if (size(this%Xg,1) /= product(this%ng) .or. size(this%Xg,2) /= size(this%Xc,2)) then
+                deallocate(this%Xg)
+                allocate(this%Xg(product(this%ng), size(this%Xc,2)))
+            end if
+        else
+            allocate(this%Xg(product(this%ng), size(this%Xc,2)))
+        end if
 
         if (this%is_rational()) then ! NURBS
             this%Xg = compute_Xg(&
@@ -822,9 +906,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xc(this, filename, encoding)
+    impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -839,7 +925,8 @@ contains
             elemConn = this%elemConn_Xc_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xc, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xc, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -847,9 +934,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xg(this, filename, encoding)
+    impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -864,7 +953,8 @@ contains
             elemConn = this%elemConn_Xg_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xg, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xg, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -872,9 +962,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xth(this, filename, encoding)
+    impure subroutine export_Xth(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
@@ -891,7 +983,8 @@ contains
             [this%knot3(1),Xth3,this%knot3(size(this%knot3))], Xth)
         elemConn = th%cmp_elem()
 
-        call export_vtk_legacy(filename, Xth, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -1168,11 +1261,19 @@ contains
 
         ! Set parameter values
         if (present(Xt1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            if (allocated(this%Xt1)) then
+                if (size(Xt1,1) /= size(this%Xt1,1)) deallocate(this%Xt1)
+            end if
             this%Xt1 = Xt1
         elseif (present(res1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
-            allocate(this%Xt1(res1))
+            if (allocated(this%Xt1)) then
+                if (size(this%Xt1,1) /= res1) then
+                    deallocate(this%Xt1)
+                    allocate(this%Xt1(res1))
+                end if
+            else
+                allocate(this%Xt1(res1))
+            end if
             this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
@@ -1180,11 +1281,19 @@ contains
 
         ! Set parameter values
         if (present(Xt2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            if (allocated(this%Xt2)) then
+                if (size(Xt2,1) /= size(this%Xt2,1)) deallocate(this%Xt2)
+            end if
             this%Xt2 = Xt2
         elseif (present(res2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
-            allocate(this%Xt2(res2))
+            if (allocated(this%Xt2)) then
+                if (size(this%Xt2,1) /= res2) then
+                    deallocate(this%Xt2)
+                    allocate(this%Xt2(res2))
+                end if
+            else
+                allocate(this%Xt2(res2))
+            end if
             this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
@@ -1192,11 +1301,19 @@ contains
 
         ! Set parameter values
         if (present(Xt3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            if (allocated(this%Xt3)) then
+                if (size(Xt3,1) /= size(this%Xt3,1)) deallocate(this%Xt3)
+            end if
             this%Xt3 = Xt3
         elseif (present(res3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
-            allocate(this%Xt3(res3))
+            if (allocated(this%Xt3)) then
+                if (size(this%Xt3,1) /= res3) then
+                    deallocate(this%Xt3)
+                    allocate(this%Xt3(res3))
+                end if
+            else
+                allocate(this%Xt3(res3))
+            end if
             this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
@@ -1252,11 +1369,19 @@ contains
 
         ! Set parameter values
         if (present(Xt1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            if (allocated(this%Xt1)) then
+                if (size(Xt1,1) /= size(this%Xt1,1)) deallocate(this%Xt1)
+            end if
             this%Xt1 = Xt1
         elseif (present(res1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
-            allocate(this%Xt1(res1))
+            if (allocated(this%Xt1)) then
+                if (size(this%Xt1,1) /= res1) then
+                    deallocate(this%Xt1)
+                    allocate(this%Xt1(res1))
+                end if
+            else
+                allocate(this%Xt1(res1))
+            end if
             this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
@@ -1264,11 +1389,19 @@ contains
 
         ! Set parameter values
         if (present(Xt2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            if (allocated(this%Xt2)) then
+                if (size(Xt2,1) /= size(this%Xt2,1)) deallocate(this%Xt2)
+            end if
             this%Xt2 = Xt2
         elseif (present(res2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
-            allocate(this%Xt2(res2))
+            if (allocated(this%Xt2)) then
+                if (size(this%Xt2,1) /= res2) then
+                    deallocate(this%Xt2)
+                    allocate(this%Xt2(res2))
+                end if
+            else
+                allocate(this%Xt2(res2))
+            end if
             this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
@@ -1276,11 +1409,19 @@ contains
 
         ! Set parameter values
         if (present(Xt3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            if (allocated(this%Xt3)) then
+                if (size(Xt3,1) /= size(this%Xt3,1)) deallocate(this%Xt3)
+            end if
             this%Xt3 = Xt3
         elseif (present(res3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
-            allocate(this%Xt3(res3))
+            if (allocated(this%Xt3)) then
+                if (size(this%Xt3,1) /= res3) then
+                    deallocate(this%Xt3)
+                    allocate(this%Xt3(res3))
+                end if
+            else
+                allocate(this%Xt3(res3))
+            end if
             this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
@@ -1335,11 +1476,19 @@ contains
 
         ! Set parameter values
         if (present(Xt1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
+            if (allocated(this%Xt1)) then
+                if (size(Xt1,1) /= size(this%Xt1,1)) deallocate(this%Xt1)
+            end if
             this%Xt1 = Xt1
         elseif (present(res1)) then
-            if (allocated(this%Xt1)) deallocate(this%Xt1)
-            allocate(this%Xt1(res1))
+            if (allocated(this%Xt1)) then
+                if (size(this%Xt1,1) /= res1) then
+                    deallocate(this%Xt1)
+                    allocate(this%Xt1(res1))
+                end if
+            else
+                allocate(this%Xt1(res1))
+            end if
             this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
             ! else
             ! this%Xt1 = this%Xt1
@@ -1347,11 +1496,19 @@ contains
 
         ! Set parameter values
         if (present(Xt2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
+            if (allocated(this%Xt2)) then
+                if (size(Xt2,1) /= size(this%Xt2,1)) deallocate(this%Xt2)
+            end if
             this%Xt2 = Xt2
         elseif (present(res2)) then
-            if (allocated(this%Xt2)) deallocate(this%Xt2)
-            allocate(this%Xt2(res2))
+            if (allocated(this%Xt2)) then
+                if (size(this%Xt2,1) /= res2) then
+                    deallocate(this%Xt2)
+                    allocate(this%Xt2(res2))
+                end if
+            else
+                allocate(this%Xt2(res2))
+            end if
             this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
             ! else
             ! this%Xt2 = this%Xt2
@@ -1359,11 +1516,19 @@ contains
 
         ! Set parameter values
         if (present(Xt3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
+            if (allocated(this%Xt3)) then
+                if (size(Xt3,1) /= size(this%Xt3,1)) deallocate(this%Xt3)
+            end if
             this%Xt3 = Xt3
         elseif (present(res3)) then
-            if (allocated(this%Xt3)) deallocate(this%Xt3)
-            allocate(this%Xt3(res3))
+            if (allocated(this%Xt3)) then
+                if (size(this%Xt3,1) /= res3) then
+                    deallocate(this%Xt3)
+                    allocate(this%Xt3(res3))
+                end if
+            else
+                allocate(this%Xt3(res3))
+            end if
             this%Xt3 = [(this%knot3(1)+(this%knot3(size(this%knot3))-this%knot3(1))*real(i-1,rk)/real(res3-1,rk), i=1, res3)]
             ! else
             ! this%Xt3 = this%Xt3
@@ -1874,7 +2039,11 @@ contains
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn_Xc_vis)) deallocate(this%elemConn_Xc_vis)
+        if (allocated(this%elemConn_Xc_vis)) then
+            if (size(this%elemConn_Xc_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xc_vis,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn_Xc_vis)
+            end if
+        end if
         this%elemConn_Xc_vis = elemConn
     end subroutine
     !===============================================================================
@@ -1887,7 +2056,11 @@ contains
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn_Xg_vis)) deallocate(this%elemConn_Xg_vis)
+        if (allocated(this%elemConn_Xg_vis)) then
+            if (size(this%elemConn_Xg_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xg_vis,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn_Xg_vis)
+            end if
+        end if
         this%elemConn_Xg_vis = elemConn
     end subroutine
     !===============================================================================
@@ -1900,7 +2073,11 @@ contains
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
-        if (allocated(this%elemConn)) deallocate(this%elemConn)
+        if (allocated(this%elemConn)) then
+            if (size(this%elemConn,1) /= size(elemConn,1) .or. size(this%elemConn,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn)
+            end if
+        end if
         this%elemConn = elemConn
     end subroutine
     !===============================================================================

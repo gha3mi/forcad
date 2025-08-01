@@ -1570,14 +1570,16 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, encoding)
+    impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, point_data, field_names, encoding)
         character(len=*), intent(in) :: filename
         real(rk), intent(in) :: points(:,:)
         integer, intent(in) :: elemConn(:,:)
         integer, intent(in) :: vtkCellType
+        real(rk), intent(in), optional :: point_data(:,:)     ! [npoints, nfields]
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
 
-        integer :: i, ne, np, nn, n, nunit
+        integer :: i, j, ne, np, nn, n, nunit
         character(len=6) :: encoding_
         integer, parameter :: dp = kind(1.0d0)
 
@@ -1634,6 +1636,16 @@ contains
 
             write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
             write(nunit,'(g0)') (vtkCellType , i = 1, ne)
+
+            if (present(point_data) .and. present(field_names)) then
+                write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
+                do i = 1, size(point_data,2)
+                    write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
+                    write(nunit, '(a)') 'LOOKUP_TABLE default'
+                    write(nunit, '(g0)') (point_data(j,i), j = 1, size(point_data,1))
+                end do
+            end if
+
             close(nunit)
         end if
 
@@ -1688,6 +1700,25 @@ contains
                 action="write", convert="big_endian", status="unknown")
             write(nunit) (vtkCellType, i=1, ne)
             close(nunit)
+
+            if (present(point_data) .and. present(field_names)) then
+            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+            write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
+            close(nunit)
+
+            do i = 1, size(point_data,2)
+                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+                write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
+                write(nunit, '(a)') 'LOOKUP_TABLE default'
+                close(nunit)
+
+                open(newunit=nunit, file=filename, position='append', access='stream', form='unformatted', &
+                    action='write', convert='big_endian', status='unknown')
+                write(nunit) (real(point_data(j,i),dp), j=1,size(point_data,1))
+                close(nunit)
+            end do
+        end if
+
         end if
     end subroutine
     !===============================================================================
