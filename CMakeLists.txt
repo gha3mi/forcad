@@ -229,6 +229,10 @@ if(${PROJECT_NAME_UPPER}_BUILD_EXAMPLES)
             target_link_libraries(${example_name} PRIVATE forimage forcolormap fortime)
         elseif(${example_name} STREQUAL "nearest_point_2d_bench")
             target_link_libraries(${example_name} PRIVATE fortime)
+        elseif(${example_name} STREQUAL "poisson_iga_solver_2d")
+            target_link_libraries(${example_name} PRIVATE fortime)
+        elseif(${example_name} STREQUAL "poisson_iga_solver_3d")
+            target_link_libraries(${example_name} PRIVATE fortime)
         endif()
 
         target_include_directories(${example_name} PRIVATE
