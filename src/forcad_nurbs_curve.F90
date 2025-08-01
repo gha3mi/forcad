@@ -724,9 +724,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xc(this, filename, encoding)
+    impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -741,7 +743,8 @@ contains
             elemConn = this%elemConn_Xc_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xc, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xc, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -749,9 +752,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xg(this, filename, encoding)
+    impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -766,7 +771,8 @@ contains
             elemConn = this%elemConn_Xg_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xg, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xg, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -774,9 +780,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xth(this, filename, encoding)
+    impure subroutine export_Xth(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
@@ -790,7 +798,8 @@ contains
         call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
         elemConn = th%cmp_elem()
 
-        call export_vtk_legacy(filename, Xth, elemConn, 3, encoding)
+        call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=3, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 

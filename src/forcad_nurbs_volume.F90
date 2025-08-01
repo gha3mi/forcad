@@ -906,9 +906,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xc(this, filename, encoding)
+    impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -923,7 +925,8 @@ contains
             elemConn = this%elemConn_Xc_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xc, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xc, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -931,9 +934,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xg(this, filename, encoding)
+    impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -948,7 +953,8 @@ contains
             elemConn = this%elemConn_Xg_vis
         end if
 
-        call export_vtk_legacy(filename, this%Xg, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=this%Xg, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
@@ -956,9 +962,11 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine export_Xth(this, filename, encoding)
+    impure subroutine export_Xth(this, filename, point_data, field_names, encoding)
         class(nurbs_volume), intent(in) :: this
         character(len=*), intent(in) :: filename
+        real(rk), intent(in), optional :: point_data(:,:)
+        character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
@@ -975,7 +983,8 @@ contains
             [this%knot3(1),Xth3,this%knot3(size(this%knot3))], Xth)
         elemConn = th%cmp_elem()
 
-        call export_vtk_legacy(filename, Xth, elemConn, 12, encoding)
+        call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=12, &
+                               point_data=point_data, field_names=field_names, encoding=encoding)
     end subroutine
     !===============================================================================
 
