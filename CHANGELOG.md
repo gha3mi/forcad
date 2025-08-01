@@ -1,3 +1,31 @@
+## [v0.13.0](https://github.com/gha3mi/forcad/compare/v0.12.0...v0.13.0) - 2025-08-01
+
+
+### Features
+
+* feat: optimize memory management and enhance VTK export (#48) ([440022ead](https://github.com/gha3mi/forcad/commit/440022ead99b47e0510a4bc27a0ca4708c7fb3a7)) by [@gha3mi](https://github.com/gha3mi)
+* feat: add 2D and 3D Poisson IGA solver examples and update README (#49) ([55652d145](https://github.com/gha3mi/forcad/commit/55652d1454d7e541724d720f0b6bcae40ff016dd)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* fix(ci): use separate build directories for test, static and shared builds ([b6e5e4d53](https://github.com/gha3mi/forcad/commit/b6e5e4d53e0a455917d07d2ce54e74ea348c3c6f)) by [@gha3mi](https://github.com/gha3mi)
+* fix: update cmake compiler flags ([e571c0af9](https://github.com/gha3mi/forcad/commit/e571c0af9a11aec556ab3dc887da5f8aa9b4cf05)) by [@gha3mi](https://github.com/gha3mi)
+* fix: ensure all fpm and cmake tests run regardless of previous failures ([2a6187e29](https://github.com/gha3mi/forcad/commit/2a6187e2925d17d542c5fe34bda9a846ce8b5f55)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* chore: add workflow_dispatch trigger to CI/CD configuration ([50e7b81b4](https://github.com/gha3mi/forcad/commit/50e7b81b4cbfdfef20f42bf99c726c101b42ae5f)) by [@gha3mi](https://github.com/gha3mi)
+* chore: fix codecov workflow to trigger on pushes to main branch ([6354d885c](https://github.com/gha3mi/forcad/commit/6354d885c556834c216a67ac5a4b80691eae159d)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#47) ([f219070fd](https://github.com/gha3mi/forcad/commit/f219070fd036a170ea8851bb8657ce2b47203863)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.12.0...v0.13.0](https://github.com/gha3mi/forcad/compare/v0.12.0...v0.13.0)
+
 ## [v0.12.0](https://github.com/gha3mi/forcad/compare/v0.11.0...v0.12.0) - 2025-07-29
 
 
