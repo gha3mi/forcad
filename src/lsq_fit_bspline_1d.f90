@@ -1,8 +1,7 @@
 program lsq_fit_bspline_1d
 
-   use forcad_kinds, only: rk
+   use forcad, only: rk, nurbs_curve
    use forcad_utils, only: ndgrid
-   use forcad_nurbs_curve, only: nurbs_curve
 
    implicit none
 

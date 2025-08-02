@@ -1,10 +1,10 @@
 program lsq_fit_bspline_3d
 
-   use forcad_kinds, only: rk
+   use forcad, only: rk, nurbs_volume
    use forcad_utils, only: ndgrid
-   use forcad_nurbs_volume, only: nurbs_volume
 
    implicit none
+
    type(nurbs_volume) :: bsp
    integer :: n(3), ndata, i
    real(rk), parameter :: pi = acos(-1.0_rk)
