@@ -219,10 +219,6 @@ command:
 ford README.md
 ```
 
-## Roadmap
-
-For a detailed roadmap outlining upcoming features and enhancements, please refer to [ROADMAP.md](https://github.com/gha3mi/forcad/blob/main/ROADMAP.md).
-
 ## Contributing
 
 To contribute to ForCAD, please review the [CONTRIBUTING.md](https://github.com/gha3mi/forcad/blob/main/CONTRIBUTING.md).
