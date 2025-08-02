@@ -26,7 +26,7 @@
 
 program poisson_iga_solver_2d
    use forcad, only: rk, nurbs_surface
-   use forcad_utils, only: solve, export_vtk_legacy
+   use forcad_utils, only: solve
    use fortime, only: timer
    implicit none
 

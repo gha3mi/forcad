@@ -1,10 +1,10 @@
 program lsq_fit_bspline_2d
 
-   use forcad_kinds, only: rk
+   use forcad, only: rk, nurbs_surface
    use forcad_utils, only: ndgrid
-   use forcad_nurbs_surface, only: nurbs_surface
 
    implicit none
+
    type(nurbs_surface) :: bsp
    integer :: n(2), ndata, i
    real(rk), parameter :: pi = acos(-1.0_rk)
