@@ -3346,6 +3346,12 @@ contains
         integer :: ngauss_(3)
         real(rk) :: dV, dV_ig
 
+        if (present(ngauss)) then
+            ngauss_ = ngauss
+        else
+            ngauss_ = this%degree + 1
+        end if
+
         volume = 0.0_rk
 #if defined(__NVCOMPILER)
         do ie = 1, size(this%cmp_elem(),1)
