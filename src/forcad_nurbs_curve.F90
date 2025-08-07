@@ -1944,12 +1944,13 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dL)
+    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dL, ngauss)
         class(nurbs_curve), intent(inout) :: this
 
         integer, intent(in) :: ie, ig
         real(rk), intent(out) :: dL
         real(rk), allocatable, intent(out) :: Tgc(:), dTgc_dXg(:,:)
+        integer, intent(in), optional :: ngauss
         real(rk), allocatable :: Xth(:), Xth_e(:), Xc_eT(:,:), Xksi(:), Wksi(:)
         integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
         type(nurbs_curve) :: th, th_e
@@ -1958,7 +1959,11 @@ contains
         real(rk), allocatable :: dXg_dXksi(:) !! Jacobian matrix
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
 
-        call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        if (present(ngauss)) then
+            call gauss_leg([0.0_rk, 1.0_rk], ngauss-1, Xksi, Wksi)
+        else
+            call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        end if
 
         Xth = unique(this%knot)
 
@@ -1993,12 +1998,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_length(this, length)
+    pure subroutine cmp_length(this, length, ngauss)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(out) :: length
+        integer, intent(in), optional :: ngauss
         real(rk), allocatable :: Tgc(:), dTgc_dXg(:,:)
-        integer :: ie, ig
+        integer :: ie, ig, ngauss_
         real(rk) :: dL, dL_ig
+
+        if (present(ngauss)) then
+            ngauss_ = ngauss
+        else
+            ngauss_ = this%degree + 1
+        end if
 
         length = 0.0_rk
 #if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
@@ -2007,8 +2019,8 @@ contains
         do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:length)
 #endif
             dL = 0.0_rk
-            do ig = 1, size(this%cmp_elem(),2)
-                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig)
+            do ig = 1, ngauss_
+                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig, ngauss_)
                 dL = dL + dL_ig
             end do
             length = length + dL

@@ -3280,11 +3280,12 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dV)
+    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dV, ngauss)
         class(nurbs_volume), intent(inout) :: this
         integer, intent(in) :: ie, ig
         real(rk), intent(out) :: dV
         real(rk), allocatable, intent(out) :: Tgc(:), dTgc_dXg(:,:)
+        integer, intent(in), optional :: ngauss(3)
         real(rk), allocatable :: Xth(:,:), Xth_e(:,:), Xth_eT(:,:), Xc_eT(:,:), Xth1(:), Xth2(:), Xth3(:), Xksi(:,:), Wksi(:)
         integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
         type(nurbs_volume) :: th, th_e
@@ -3293,7 +3294,11 @@ contains
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
         real(rk) :: Xksii(3)
 
-        call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        if (present(ngauss)) then
+            call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], ngauss-1, Xksi, Wksi)
+        else
+            call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        end if
 
         Xth1 = unique(this%knot1)
         Xth2 = unique(this%knot2)
@@ -3332,11 +3337,13 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_volume(this, volume)
+    pure subroutine cmp_volume(this, volume, ngauss)
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(out) :: volume
+        integer, intent(in), optional :: ngauss(3)
         real(rk), allocatable :: Tgc(:), dTgc_dXg(:,:)
         integer :: ie, ig
+        integer :: ngauss_(3)
         real(rk) :: dV, dV_ig
 
         volume = 0.0_rk
@@ -3346,8 +3353,8 @@ contains
         do concurrent (ie = 1:size(this%cmp_elem(),1)) reduce(+:volume)
 #endif
             dV = 0.0_rk
-            do ig = 1, size(this%cmp_elem(),2)
-                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dV_ig)
+            do ig = 1, product(ngauss_)
+                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dV_ig, ngauss_)
                 dV = dV + dV_ig
             end do
             volume = volume + dV
