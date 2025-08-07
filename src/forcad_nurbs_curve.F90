@@ -2458,7 +2458,7 @@ contains
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xt(:), Xdata(:,:)
         integer, intent(in) :: ndata
-        real(rk), allocatable :: T(:,:), Tt(:,:)
+        real(rk), allocatable :: T(:,:), Tt(:,:), TtT(:,:), TtX(:,:)
         integer :: i
 
         if (this%nc > ndata) error stop "Error: in the first direction, number of control points exceeds number of data points."
@@ -2472,7 +2472,9 @@ contains
             T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
         end do
         Tt = transpose(T)
-        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+        TtT = matmul(Tt, T)
+        TtX = matmul(Tt, Xdata)
+        this%Xc = solve(TtT, TtX)
     end subroutine
    !===============================================================================
 
