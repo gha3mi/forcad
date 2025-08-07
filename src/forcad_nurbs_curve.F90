@@ -2213,14 +2213,19 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
+        real(rk) :: Xti, d2Tgci(nc), dTgci(nc), Tgci(nc)
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
 #if defined(__NVCOMPILER)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(Xti, d2Tgci, dTgci, Tgci)
 #endif
-            call basis_bspline_2der(Xt(i), knot, nc, degree, d2Tgc(i,:) , dTgc(i,:), Tgc(i,:))
+            Xti = Xt(i)
+            call basis_bspline_2der(Xti, knot, nc, degree, d2Tgci , dTgci, Tgci)
+            d2Tgc(i,:) = d2Tgci
+            dTgc(i,:) = dTgci
+            Tgc(i,:) = Tgci
         end do
     end subroutine
     !===============================================================================
@@ -2314,16 +2319,18 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
-        real(rk) :: Xti
+        real(rk) :: Xti, dTgci(nc), Tgci(nc)
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt)) local(Xti)
+        do concurrent (i = 1: size(Xt)) local(Xti, dTgci, Tgci)
 #endif
             Xti = Xt(i)
-            call basis_bspline_der(Xti, knot, nc, degree, dTgc(i,:), Tgc(i,:))
+            call basis_bspline_der(Xti, knot, nc, degree, dTgci, Tgci)
+            dTgc(i,:) = dTgci
+            Tgc(i,:) = Tgci
         end do
     end subroutine
     !===============================================================================
