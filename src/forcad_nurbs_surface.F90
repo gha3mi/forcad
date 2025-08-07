@@ -910,9 +910,10 @@ contains
         type(DElist_t)    :: Dlist
         type(PElist_t)    :: Plist
         character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
-        real(rk), allocatable :: W(:,:), X(:,:), Y(:,:), Z(:,:), S(:), T(:)
+        real(wp) :: X(0:this%degree(1), 0:this%degree(2)), Y(0:this%degree(1), 0:this%degree(2)), Z(0:this%degree(1), 0:this%degree(2)), W(0:this%degree(1), 0:this%degree(2)), S(-this%degree(1):1+this%degree(1)), T(-this%degree(2):1+this%degree(2))
         integer :: i, j, idx
         integer :: K1, K2, M1, M2, N1, N2, prop3
+        real(wp) :: U(0:1), V(0:1)
 
         ! Parameters consistent with the IGES definition
         K1 = this%degree(1)
@@ -924,30 +925,24 @@ contains
         N1 = 1 + K1 - M1
         N2 = 1 + K2 - M2
 
-        ! Allocate exactly as expected by your IGES library
-        allocate(S(-M1:N1+K1), T(-M2:N2+K2))
-
         ! Copy knots explicitly, matching IGES indexing exactly
         do i = -M1, N1 + K1
-            S(i) = this%knot1(i + M1 + 1)
+            S(i) = real(this%knot1(i + M1 + 1), kind=wp)
         end do
 
         do i = -M2, N2 + K2
-            T(i) = this%knot2(i + M2 + 1)
+            T(i) = real(this%knot2(i + M2 + 1), kind=wp)
         end do
-
-        ! Allocate and fill control point arrays
-        allocate(X(0:K1, 0:K2), Y(0:K1, 0:K2), Z(0:K1, 0:K2), W(0:K1, 0:K2))
 
         ! Correctly map control points and weights
         if (this%is_rational()) then
             do j = 0, K2
                 do i = 0, K1
                     idx = j * this%nc(1) + i + 1
-                    X(i,j) = this%Xc(idx,1)
-                    Y(i,j) = this%Xc(idx,2)
-                    Z(i,j) = this%Xc(idx,3)
-                    W(i,j) = this%Wc(idx)
+                    X(i,j) = real(this%Xc(idx,1), kind=wp)
+                    Y(i,j) = real(this%Xc(idx,2), kind=wp)
+                    Z(i,j) = real(this%Xc(idx,3), kind=wp)
+                    W(i,j) = real(this%Wc(idx), kind=wp)
                 end do
             end do
             prop3 = 1  ! Rational surface
@@ -955,14 +950,17 @@ contains
             do j = 0, K2
                 do i = 0, K1
                     idx = j * this%nc(1) + i + 1
-                    X(i,j) = this%Xc(idx,1)
-                    Y(i,j) = this%Xc(idx,2)
-                    Z(i,j) = this%Xc(idx,3)
-                    W(i,j) = 1.0_rk
+                    X(i,j) = real(this%Xc(idx,1), kind=wp)
+                    Y(i,j) = real(this%Xc(idx,2), kind=wp)
+                    Z(i,j) = real(this%Xc(idx,3), kind=wp)
+                    W(i,j) = real(1.0_rk, kind=wp)
                 end do
             end do
             prop3 = 0  ! b-Spline surface
         end if
+
+        U = real([minval(this%knot1), maxval(this%knot1)], kind=wp)
+        V = real([minval(this%knot2), maxval(this%knot2)], kind=wp)
 
         ! Initialize IGES entity 128 (Rational B-spline Surface)
         call surf128%init(&
@@ -977,14 +975,14 @@ contains
             PROP3 = prop3,&
             PROP4 = 0,&
             PROP5 = 0,&
-            S     = real(S, kind=wp),&
-            T     = real(T, kind=wp),&
-            W     = real(W, kind=wp),&
-            X     = real(X, kind=wp),&
-            Y     = real(Y, kind=wp),&
-            Z     = real(Z, kind=wp),&
-            U     = real([minval(this%knot1), maxval(this%knot1)], kind=wp),&
-            V     = real([minval(this%knot2), maxval(this%knot2)], kind=wp))
+            S     = S,&
+            T     = T,&
+            W     = W,&
+            X     = X,&
+            Y     = Y,&
+            Z     = Z,&
+            U     = U,&
+            V     = V)
 
         ! Directory entry
         call D%init(entity_type=128, param_data=1, transformation_matrix=0, form_number=0)
@@ -1484,7 +1482,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine basis_scalar(this, Xt, Tgc)
         class(nurbs_surface), intent(inout) :: this
-        real(rk), intent(in) :: Xt(:)
+        real(rk), intent(in), contiguous :: Xt(:)
         real(rk), allocatable, intent(out) :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
@@ -2146,8 +2144,8 @@ contains
     !> license: BSD 3-Clause
     pure subroutine set_tetragon(this, L, nc, Wc)
         class(nurbs_surface), intent(inout) :: this
-        real(rk), intent(in) :: L(2)
-        integer, intent(in) :: nc(2)
+        real(rk), intent(in), contiguous :: L(:)
+        integer, intent(in), contiguous :: nc(:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
         call this%set(nc = nc, Xc = tetragon_Xc(L, nc), Wc = Wc)
@@ -2505,7 +2503,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_surface), intent(in) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
         real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
         integer, intent(out), optional :: id
@@ -2529,7 +2527,7 @@ contains
     impure subroutine nearest_point2(this, point_Xg, tol, maxit, nearest_Xt, nearest_Xg)
 
         class(nurbs_surface), intent(inout) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(in) :: tol
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt(2)
@@ -2644,6 +2642,7 @@ contains
         real(rk), allocatable :: dTtth_dXksi(:,:), Ttth(:), dTgc_dXt(:,:), Xt(:), dXt_dXksi(:,:), dXg_dXt(:,:)
         real(rk), allocatable :: dXg_dXksi(:,:) !! Jacobian matrix
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
+        real(rk) :: Xksii(2)
 
         call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
 
@@ -2663,7 +2662,8 @@ contains
         elem_ce = elem_c(ie,:)
         Xc_eT = transpose(this%Xc(elem_ce,:))
 
-        call th_e%derivative(Xksi(ig,:), dTtth_dXksi, Ttth)
+        Xksii = Xksi(ig,:)
+        call th_e%derivative(Xksii, dTtth_dXksi, Ttth)
         Xt = matmul(Xth_eT, Ttth)
         dXt_dXksi = matmul(Xth_eT, dTtth_dXksi)
 
@@ -2714,7 +2714,7 @@ contains
         real(rk), intent(in), contiguous :: Xti(:)
         real(rk), intent(in), contiguous :: knot1(:)
         real(rk), intent(in), contiguous :: knot2(:)
-        integer, intent(in) :: degree(2), nc(2)
+        integer, intent(in), contiguous :: degree(:), nc(:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk) :: Tgc(nc(1)*nc(2))
         real(rk) :: tmp
@@ -2737,21 +2737,24 @@ contains
     pure function compute_Xg_nurbs_2d(Xt, knot1, knot2, degree, nc, ng, Xc, Wc) result(Xg)
         real(rk), intent(in), contiguous :: Xt(:,:)
         real(rk), intent(in), contiguous :: knot1(:), knot2(:)
-        integer, intent(in) :: degree(2)
-        integer, intent(in) :: nc(2)
-        integer, intent(in) :: ng(2)
+        integer, intent(in), contiguous :: degree(:)
+        integer, intent(in), contiguous :: nc(:)
+        integer, intent(in), contiguous :: ng(:)
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
+        real(rk) :: Xti(size(Xt,2)), Tgci(size(Xc,1))
         integer :: i
 
         allocate(Xg(ng(1)*ng(2), size(Xc,2)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, ng(1)*ng(2)
 #else
-        do concurrent (i = 1: ng(1)*ng(2))
+        do concurrent (i = 1: ng(1)*ng(2)) local(Xti, Tgci)
 #endif
-            Xg(i,:) = matmul(cmp_Tgc_2d(Xt(i,:), knot1, knot2, nc, degree, Wc), Xc)
+            Xti = Xt(i,:)
+            Tgci = cmp_Tgc_2d(Xti, knot1, knot2, nc, degree, Wc)
+            Xg(i,:) = matmul(Tgci, Xc)
         end do
     end function
     !===============================================================================

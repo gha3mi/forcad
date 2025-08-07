@@ -2940,7 +2940,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_volume), intent(in) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
         real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
         integer, intent(out), optional :: id
@@ -2965,7 +2965,7 @@ contains
     impure subroutine nearest_point2(this, point_Xg, tol, maxit, nearest_Xt, nearest_Xg)
 
         class(nurbs_volume), intent(inout) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(in) :: tol
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt(3)
@@ -3291,6 +3291,7 @@ contains
         real(rk), allocatable :: dTtth_dXksi(:,:), Ttth(:), dTgc_dXt(:,:), Xt(:), dXt_dXksi(:,:), dXg_dXt(:,:)
         real(rk), allocatable :: dXg_dXksi(:,:) !! Jacobian matrix
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
+        real(rk) :: Xksii(3)
 
         call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
 
@@ -3310,7 +3311,8 @@ contains
         elem_ce = elem_c(ie,:)
         Xc_eT = transpose(this%Xc(elem_ce,:))
 
-        call th_e%derivative(Xksi(ig,:), dTtth_dXksi, Ttth)
+        Xksii = Xksi(ig,:)
+        call th_e%derivative(Xksii, dTtth_dXksi, Ttth)
         Xt = matmul(Xth_eT, Ttth)
         dXt_dXksi = matmul(Xth_eT, dTtth_dXksi)
 
@@ -3392,15 +3394,18 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
+        real(rk) :: Xti(size(Xt,2)), Tgci(size(Xc,1))
         integer :: i
 
         allocate(Xg(ng(1)*ng(2)*ng(3), size(Xc,2)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, ng(1)*ng(2)*ng(3)
 #else
-        do concurrent (i = 1: ng(1)*ng(2)*ng(3))
+        do concurrent (i = 1: ng(1)*ng(2)*ng(3)) local(Xti, Tgci)
 #endif
-            Xg(i,:) = matmul(cmp_Tgc_3d(Xt(i,:), knot1, knot2, knot3, nc, degree, Wc), Xc)
+            Xti = Xt(i,:)
+            Tgci = cmp_Tgc_3d(Xti, knot1, knot2, knot3, nc, degree, Wc)
+            Xg(i,:) = matmul(Tgci, Xc)
         end do
     end function
     !===============================================================================

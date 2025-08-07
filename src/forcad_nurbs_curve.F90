@@ -820,40 +820,44 @@ contains
         type(DElist_t)    :: Dlist
         type(PElist_t)    :: Plist
         character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
-        real(rk), allocatable :: W(:), X(:), Y(:), Z(:), T(:)
-        integer :: i, M, K, N, prop3
+        integer :: i, K, M, N, prop3
+        real(wp) :: T(-this%degree:1+this%degree), X(0:this%degree), Y(0:this%degree), Z(0:this%degree), W(0:this%degree), V(0:1)
+        real(wp) :: XNORM, YNORM, ZNORM
 
         ! Parameters for IGES knot vector
         K = this%degree
         M = this%degree
         N = 1 + K - M
 
-        ! Allocate IGES arrays explicitly with correct indexing
-        allocate(T(-M:N+K), X(0:K), Y(0:K), Z(0:K), W(0:K))
-
         ! Copy your knot vector to IGES indexing
         do i = -M, N + K
-            T(i) = this%knot(i + M + 1)
+            T(i) = real(this%knot(i + M + 1), kind=wp)
         end do
 
         ! Copy control points
         if (this%is_rational()) then
             do i = 0, K
-                X(i) = this%Xc(i+1, 1)
-                Y(i) = this%Xc(i+1, 2)
-                Z(i) = this%Xc(i+1, 3)
-                W(i) = this%Wc(i+1)
+                X(i) = real(this%Xc(i+1, 1), kind=wp)
+                Y(i) = real(this%Xc(i+1, 2), kind=wp)
+                Z(i) = real(this%Xc(i+1, 3), kind=wp)
+                W(i) = real(this%Wc(i+1), kind=wp)
             end do
             prop3 = 1
         else
             do i = 0, K
-                X(i) = this%Xc(i+1, 1)
-                Y(i) = this%Xc(i+1, 2)
-                Z(i) = this%Xc(i+1, 3)
-                W(i) = 1.0_rk
+                X(i) = real(this%Xc(i+1, 1), kind=wp)
+                Y(i) = real(this%Xc(i+1, 2), kind=wp)
+                Z(i) = real(this%Xc(i+1, 3), kind=wp)
+                W(i) = real(1.0_rk, kind=wp)
             end do
             prop3 = 0
         end if
+
+        XNORM = real(0.0_rk, kind=wp)
+        YNORM = real(0.0_rk, kind=wp)
+        ZNORM = real(0.0_rk, kind=wp)
+
+        V = real([minval(this%knot), maxval(this%knot)], kind=wp)
 
         ! Initialize IGES entity126 (Rational B-spline Curve)
         call curve126%init(&
@@ -865,15 +869,15 @@ contains
             PROP2 = 0,&
             PROP3 = prop3,&
             PROP4 = 0,&
-            T     = real(T, kind=wp),&
-            W     = real(W, kind=wp),&
-            X     = real(X, kind=wp),&
-            Y     = real(Y, kind=wp),&
-            Z     = real(Z, kind=wp),&
-            V     = real([minval(this%knot), maxval(this%knot)], kind=wp),&
-            XNORM = real(0.0_rk, kind=wp),&
-            YNORM = real(0.0_rk, kind=wp),&
-            ZNORM = real(0.0_rk, kind=wp))
+            T     = T,&
+            W     = W,&
+            X     = X,&
+            Y     = Y,&
+            Z     = Z,&
+            V     = V,&
+            XNORM = XNORM,&
+            YNORM = YNORM,&
+            ZNORM = ZNORM)
 
         ! Directory entry
         call D%init(entity_type=126, param_data=1, transformation_matrix=0, form_number=0)
@@ -1832,7 +1836,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_curve), intent(in) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
         real(rk), intent(out), optional :: nearest_Xt
         integer, intent(out), optional :: id
@@ -1856,7 +1860,7 @@ contains
     impure subroutine nearest_point2(this, point_Xg, tol, maxit, nearest_Xt, nearest_Xg)
 
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(in) :: tol
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt
@@ -2298,14 +2302,16 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
+        real(rk) :: Xti
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
 #if defined(__NVCOMPILER)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(Xti)
 #endif
-            call basis_bspline_der(Xt(i), knot, nc, degree, dTgc(i,:), Tgc(i,:))
+            Xti = Xt(i)
+            call basis_bspline_der(Xti, knot, nc, degree, dTgc(i,:), Tgc(i,:))
         end do
     end subroutine
     !===============================================================================

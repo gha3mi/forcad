@@ -299,9 +299,9 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: nc
         real(rk), intent(in) :: Xt
-        real(rk), intent(out) :: d2B(nc)
-        real(rk), intent(out) :: dB(nc)
-        real(rk), intent(out) :: B(nc)
+        real(rk), intent(out), contiguous :: d2B(:)
+        real(rk), intent(out), contiguous :: dB(:)
+        real(rk), intent(out), contiguous :: B(:)
         integer :: i, p
         real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
         real(rk) :: B_curr(nc)
@@ -1225,11 +1225,11 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function hexahedron_Xc(L, nc) result(Xc)
-        real(rk), intent(in) :: L(3)
-        integer, intent(in) :: nc(3)
+        real(rk), intent(in), contiguous :: L(:)
+        integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: dx, dy, dz
-        integer :: i, j, k, nci
+        integer :: i, j, k
 
         dx = L(1) / real(nc(1)-1, rk)
         dy = L(2) / real(nc(2)-1, rk)
@@ -1249,11 +1249,11 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function tetragon_Xc(L, nc) result(Xc)
-        real(rk), intent(in) :: L(2)
-        integer, intent(in) :: nc(2)
+        real(rk), intent(in), contiguous :: L(:)
+        integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: dx, dy
-        integer :: i, j, nci
+        integer :: i, j
 
         dx = L(1) / real(nc(1)-1, rk)
         dy = L(2) / real(nc(2)-1, rk)
@@ -1471,20 +1471,24 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     recursive pure function inv(A) result(A_inv)
-        real(rk), intent(in) :: A(:,:)
+        real(rk), intent(in), contiguous :: A(:,:)
         real(rk), allocatable :: A_inv(:,:)
+        integer :: m, n
 
-        if (size(A,1) == size(A,2)) then
-            select case(size(A,1))
+        m = size(A,1)
+        n = size(A,2)
+
+        if (m == n) then
+            select case(m)
               case(2)
-                allocate(A_inv(size(A,1),size(A,2)))
+                allocate(A_inv(m,n))
                 A_inv(1,1) =  A(2,2)
                 A_inv(1,2) = -A(1,2)
                 A_inv(2,1) = -A(2,1)
                 A_inv(2,2) =  A(1,1)
                 A_inv = A_inv/det(A)
               case(3)
-                allocate(A_inv(size(A,1),size(A,2)))
+                allocate(A_inv(m,n))
                 A_inv(1,1) = A(2,2)*A(3,3) - A(2,3)*A(3,2)
                 A_inv(1,2) = A(1,3)*A(3,2) - A(1,2)*A(3,3)
                 A_inv(1,3) = A(1,2)*A(2,3) - A(1,3)*A(2,2)
@@ -1496,14 +1500,14 @@ contains
                 A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
                 A_inv = A_inv/det(A)
               case default
-                A_inv = solve(A,eye(size(A,1)))
+                A_inv = solve(A,eye(m))
             end select
-        elseif (size(A,1)>size(A,2)) then
-            allocate(A_inv(size(A,2),size(A,1)))
+        elseif (m>n) then
+            allocate(A_inv(n,m))
             A_inv = transpose(A)
             A_inv = matmul(inv(matmul(A_inv, A)), A_inv)
-        elseif (size(A,1)<size(A,2)) then
-            allocate(A_inv(size(A,2),size(A,1)))
+        elseif (m<n) then
+            allocate(A_inv(n,m))
             A_inv = transpose(A)
             A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
         end if
@@ -1551,7 +1555,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_1D(interval, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval(2)
+        real(rk), intent(in), contiguous :: interval(:)
         integer, intent(in) :: degree
         real(rk), allocatable, intent(out) :: Xksi(:), Wksi(:)
 
@@ -1566,8 +1570,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_2D(interval1, interval2, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval1(2), interval2(2)
-        integer, intent(in) :: degree(2)
+        real(rk), intent(in), contiguous :: interval1(:), interval2(:)
+        integer, intent(in), contiguous :: degree(:)
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:)
 
@@ -1587,8 +1591,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_3D(interval1, interval2, interval3, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval1(2), interval2(2), interval3(2)
-        integer, intent(in) :: degree(3)
+        real(rk), intent(in), contiguous :: interval1(:), interval2(:), interval3(:)
+        integer, intent(in), contiguous :: degree(:)
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:), Xksi3(:), Wksi3(:)
 
@@ -1611,7 +1615,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre(x, w, interval)
         real(rk), intent(out) :: x(:), w(:)
-        real(rk), intent(in) :: interval(2)
+        real(rk), intent(in), contiguous :: interval(:)
         real(rk) :: xi, delta, p_next, dp_next, p_prev, p_curr, dp_prev, dp_curr, midpoint, half_length
         integer :: i, j, k, n
         real(rk), parameter :: pi = acos(-1.0_rk)
