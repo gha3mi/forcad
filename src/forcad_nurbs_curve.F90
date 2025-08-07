@@ -1674,6 +1674,7 @@ contains
     impure subroutine show(this, vtkfile_Xc, vtkfile_Xg)
         class(nurbs_curve), intent(inout) :: this
         character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
+#if defined(SHOW_PYVISTA)
         character(len=3000) :: pyvista_script
 
         pyvista_script = &
@@ -1785,6 +1786,7 @@ contains
             "p.deep_clean()"//achar(10)//&
             "del p"
         call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
+#endif
     end subroutine
     !===============================================================================
 
