@@ -10,7 +10,8 @@ module forcad_utils
     private
     public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve
+        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve, &
+        repelem, linspace, eye
 
     !===============================================================================
     interface elemConn_C0
@@ -66,6 +67,15 @@ module forcad_utils
         module procedure gauss_legendre_1D
         module procedure gauss_legendre_2D
         module procedure gauss_legendre_3D
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface kron
+        module procedure kron_t1_t1
+        module procedure kron_t1_t2
+        module procedure kron3
     end interface
     !===============================================================================
 
@@ -517,7 +527,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function kron(u,v) result(w)
+    pure function kron_t1_t1(u,v) result(w)
         real(rk), intent(in), contiguous :: u(:), v(:)
         real(rk) :: w(size(u)*size(v))
         integer :: i, j, n
@@ -526,6 +536,44 @@ contains
 
         do concurrent(i = 1:size(u), j = 1:n)
             w((i-1)*n + j) = u(i)*v(j)
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function kron_t1_t2(u,A) result(B)
+        real(rk), intent(in), contiguous :: u(:)
+        real(rk), intent(in), contiguous :: A(:,:)
+        real(rk) :: B(size(u)*size(A,1), size(A,2))
+        integer :: i, j, k, m, n, r, c
+
+        m = size(u)
+        r = size(A, 1)
+        c = size(A, 2)
+
+        do concurrent (i=1:m, j=1:r, k=1:c)
+            B((i-1)*r + j, k) = u(i) * A(j, k)
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function kron3(u, v, w) result(out)
+        real(rk), intent(in), contiguous :: u(:), v(:), w(:)
+        real(rk) :: out(size(u)*size(v)*size(w))
+        integer :: i, j, k, nv, nw
+
+        nv = size(v)
+        nw = size(w)
+
+        do concurrent(i = 1:size(u), j = 1:nv, k = 1:nw)
+            out(((i-1)*nv + j -1)*nw + k) = u(i) * v(j) * w(k)
         end do
     end function
     !===============================================================================
@@ -586,6 +634,29 @@ contains
             c(l+1:l+n) = a(i)
             l = l + n
         end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function linspace(a, b, n) result(x)
+        real(rk), intent(in) :: a, b
+        integer, intent(in) :: n
+        real(rk), allocatable :: x(:)
+        integer :: i
+
+        if (n < 1) error stop "linspace: n must be ≥ 1"
+        allocate(x(n))
+
+        if (n == 1) then
+            x(1) = a
+        else
+            do concurrent(i = 1:n)
+                x(i) = a + (i - 1) * (b - a) / real(n - 1, rk)
+            end do
+        end if
     end function
     !===============================================================================
 
@@ -1393,6 +1464,24 @@ contains
             A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
         end if
 
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function eye(n) result(I)
+        integer, intent(in) :: n
+        real(rk), allocatable :: I(:,:)
+
+        ! local variables
+        integer :: k
+
+        allocate(I(n,n), source=0.0_rk)
+        do concurrent (k = 1: n)
+            I(k, k) = 1.0_rk
+        end do
     end function
     !===============================================================================
 
