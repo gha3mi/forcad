@@ -299,9 +299,9 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: nc
         real(rk), intent(in) :: Xt
-        real(rk), intent(out), contiguous :: d2B(:)
-        real(rk), intent(out), contiguous :: dB(:)
-        real(rk), intent(out), contiguous :: B(:)
+        real(rk), intent(out) :: d2B(nc)
+        real(rk), intent(out) :: dB(nc)
+        real(rk), intent(out) :: B(nc)
         integer :: i, p
         real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
         real(rk) :: B_curr(nc)
