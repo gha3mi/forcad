@@ -337,6 +337,7 @@ program test_forcad_utils
    rr = 1
    s  = 1
    k  = 3
+   allocate(knot_in(0:6))
    knot_in = [0.0_rk, 0.0_rk, 0.0_rk, 0.5_rk, 1.0_rk, 1.0_rk, 1.0_rk]
    allocate(Pw(0:2,1:2))
    Pw(0,:) = [0.0_rk, 0.0_rk]
@@ -355,12 +356,17 @@ program test_forcad_utils
    ! ----------------------------
    ! Test: elevate_degree_A_5_9
    ! ----------------------------
-   call elevate_degree_A_5_9(t=1, knot=knot_out, degree=p, Xcw=Qw, nc_new=nc, knot_new=knot_in, Xcw_new=Pw)
+   deallocate(knot_in, knot_out, Pw, Qw)
+   knot_in = [0.0_rk, 0.0_rk, 1.0_rk, 1.0_rk]
+   allocate(Pw(1:2,1:2))
+   Pw(1,:) = [0.0_rk, 0.0_rk]
+   Pw(2,:) = [0.5_rk, 0.5_rk]
+   call elevate_degree_A_5_9(t=1, knot=knot_in, degree=1, Xcw=Pw, nc_new=nc, knot_new=knot_out, Xcw_new=Qw)
 
    call ut%test(30)%check( &
       name     = "elevate_degree_nc", &
       res      = nc, &
-      expected = size(Pw,1), &
+      expected = 3, &
       msg      = "New number of control points after elevation", &
       group    = "elevate_degree")
 
@@ -478,7 +484,7 @@ program test_forcad_utils
    ! Test: elemConn_Cn (2D)
    ! ----------------------------
    call elemConn_Cn(5, 5, 2, 2, [0.0_rk, 0.5_rk, 1.0_rk], [0.0_rk, 0.5_rk, 1.0_rk], &
-      [2,1], [2,1], conn2D)
+      [3,1,3], [3,1,3], conn2D)
 
    call ut%test(40)%check( &
       name     = "elemConn_Cn_S", &
@@ -506,7 +512,7 @@ program test_forcad_utils
       [0.0_rk, 0.5_rk, 1.0_rk], &
       [0.0_rk, 0.5_rk, 1.0_rk], &
       [0.0_rk, 0.5_rk, 1.0_rk], &
-      [2,1], [2,1], [2,1], conn3D)
+      [3,1,3], [3,1,3], [3,1,3], conn3D)
 
    call ut%test(42)%check( &
       name     = "elemConn_Cn_V", &
