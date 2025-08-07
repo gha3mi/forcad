@@ -548,7 +548,7 @@ contains
         real(rk), intent(in), contiguous :: u(:)
         real(rk), intent(in), contiguous :: A(:,:)
         real(rk) :: B(size(u)*size(A,1), size(A,2))
-        integer :: i, j, k, m, n, r, c
+        integer :: i, j, k, m, r, c
 
         m = size(u)
         r = size(A, 1)
