@@ -2158,7 +2158,7 @@ contains
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
 
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
         do concurrent (i = 1: size(Xt))
