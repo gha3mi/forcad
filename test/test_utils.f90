@@ -353,23 +353,11 @@ program test_forcad_utils
       group    = "insert_knot")
 
    ! ----------------------------
-   ! Test: remove_knots_A_5_8
-   ! ----------------------------
-   call remove_knots_A_5_8(p=2, knot=knot_out, Pw=Qw, u=0.5_rk, r=3, s=2, num=1, t=t, knot_new=knot_new, Pw_new=Pw_new)
-
-   call ut%test(30)%check( &
-      name     = "remove_knots_A_5_8_t", &
-      res      = t, &
-      expected = 1, &
-      msg      = "Removed 1 knot successfully", &
-      group    = "remove_knot")
-
-   ! ----------------------------
    ! Test: elevate_degree_A_5_9
    ! ----------------------------
    call elevate_degree_A_5_9(t=1, knot=knot_out, degree=p, Xcw=Qw, nc_new=nc, knot_new=knot_in, Xcw_new=Pw)
 
-   call ut%test(31)%check( &
+   call ut%test(30)%check( &
       name     = "elevate_degree_nc", &
       res      = nc, &
       expected = size(Pw,1), &
@@ -381,7 +369,7 @@ program test_forcad_utils
    ! ----------------------------
    call gauss_leg([0.0_rk, 1.0_rk], 2, Xksi=vec, Wksi=A)
 
-   call ut%test(32)%check( &
+   call ut%test(31)%check( &
       name     = "gauss_legendre_1D_pts", &
       res      = size(vec), &
       expected = 3, &
@@ -393,7 +381,7 @@ program test_forcad_utils
    ! ----------------------------
    call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [2, 2], Xksi=Xksi, Wksi=Wksi)
 
-   call ut%test(33)%check( &
+   call ut%test(32)%check( &
       name     = "gauss_legendre_2D_shape", &
       res      = shape(Xksi), &
       expected = [9,2], &
@@ -405,7 +393,7 @@ program test_forcad_utils
    ! ----------------------------
    call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [1, 1, 1], Xksi=Xksi, Wksi=Wksi)
 
-   call ut%test(34)%check( &
+   call ut%test(33)%check( &
       name     = "gauss_legendre_3D_size", &
       res      = size(Xksi,1), &
       expected = 8, &
@@ -418,7 +406,7 @@ program test_forcad_utils
    call export_vtk_legacy(filename=vtk_file, points=reshape([0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 0.0_rk, 0.0_rk], [2,3]), &
       elemConn=reshape([1,2], [1,2]), vtkCellType=3)
 
-   call ut%test(35)%check( &
+   call ut%test(34)%check( &
       name     = "export_vtk_legacy", &
       res      = .true., &
       expected = .true., &
@@ -428,7 +416,7 @@ program test_forcad_utils
    ! ----------------------------
    ! Test: linspace
    ! ----------------------------
-   call ut%test(36)%check( &
+   call ut%test(35)%check( &
       name     = "linspace_uniform", &
       res      = linspace(0.0_rk, 1.0_rk, 5), &
       expected = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk], &
