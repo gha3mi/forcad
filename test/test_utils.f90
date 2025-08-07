@@ -27,11 +27,11 @@ program test_forcad_utils
    real(rk), allocatable :: X1(:), X2(:), X3(:)
    real(rk), allocatable :: Xt2(:,:), Xt3(:,:)
    real(rk), allocatable :: R(:,:), R_expected(:,:)
-   real(rk), allocatable :: knot_in(:), knot_out(:), Pw(:,:), Qw(:,:), Pw_new(:,:), knot_new(:)
+   real(rk), allocatable :: knot_in(:), knot_out(:), Pw(:,:), Qw(:,:)
    real(rk), allocatable :: Xksi(:,:), Wksi(:)
    real(rk), allocatable :: K3(:), K2(:), K1(:), out(:)
    integer, allocatable :: conn1D(:,:), conn2D(:,:), conn3D(:,:)
-   integer :: nq, p, rr, s, k, t, vtk_type
+   integer :: nq, p, rr, s, k
    character(len=*), parameter :: vtk_file = "vtk/test_output.vtk"
    real(rk), allocatable :: A2(:,:), A_inv(:,:)
 
