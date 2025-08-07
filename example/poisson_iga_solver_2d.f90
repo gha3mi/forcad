@@ -164,7 +164,7 @@ program poisson_iga_solver_2d
    end do
    call ti%timer_stop(message="L2 error evaluation                  : ")
 
-   print '(a,1pe10.4)', "L2 error norm                        = ", sqrt(l2_error)
+   print '(a,1pe11.4)', "L2 error norm                        = ", sqrt(l2_error)
    print '(a,a,a,a)', trim(filename)//".vtk", " and ", trim(filename)//"_interp.vtk", " exported"
 
    call surf%finalize()
