@@ -701,9 +701,17 @@ contains
         allocate(elemConn(nelem1 * nelem2, nnel))
         nodes = reshape([(i, i = 1, nnode1 * nnode2)], [nnode1, nnode2])
 
+#if defined(__NVCOMPILER)
+        do i = 1,nnode1 - p1,p1
+            do j = 1,nnode2 - p2,p2
+            elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
+            end do
+        end do
+#else
         do concurrent (j = 1:nnode2 - p2:p2, i = 1:nnode1 - p1:p1)
             elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
         end do
+#endif
     end function
     !===============================================================================
 
@@ -728,10 +736,19 @@ contains
         nnel = (p1 + 1) * (p2 + 1) * (p3 + 1)
         allocate(elemConn(nelem1 * nelem2 * nelem3, nnel))
         nodes = reshape([(i, i=1, nnode1 * nnode2 * nnode3)], [nnode1, nnode2, nnode3])
-
+#if defined(__NVCOMPILER)
+        do k = 1,nnode3 - p3,p3
+            do j = 1,nnode2 - p2,p2
+                do i = 1,nnode1 - p1,p1
+                    elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
+                end do
+            end do
+        end do
+#else
         do concurrent (k = 1:nnode3-p3:p3, j = 1:nnode2-p2:p2, i = 1:nnode1-p1:p1)
             elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
         end do
+#endif
     end function
     !===============================================================================
 
@@ -788,12 +805,23 @@ contains
 
         allocate(elemConn(nelem, nnel1 * nnel2))
 
+#if defined(__NVCOMPILER)
+        do j = 1, nelem2
+            do i = 1, nelem1
+                m = -p1 + sum(vecKnot_mul1(1:i))
+                n = -p2 + sum(vecKnot_mul2(1:j))
+                l = (j - 1) * nelem1 + i
+                elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
+            end do
+        end do
+#else
         do concurrent (j = 1:nelem2, i = 1:nelem1)
             m = -p1 + sum(vecKnot_mul1(1:i))
             n = -p2 + sum(vecKnot_mul2(1:j))
             l = (j - 1) * nelem1 + i
             elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
         end do
+#endif
     end subroutine
     !===============================================================================
 
@@ -828,7 +856,19 @@ contains
 
         nnel = nnel1*nnel2*nnel3
         allocate(elemConn(nelem,nnel))
-
+#if defined(__NVCOMPILER)
+        do k = 1, nelem3
+            do j = 1, nelem2
+                do i = 1, nelem1
+                    o = -p3 + sum(vecKnot_mul3(1:k))
+                    n = -p2 + sum(vecKnot_mul2(1:j))
+                    m = -p1 + sum(vecKnot_mul1(1:i))
+                    l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
+                    elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
+                end do
+            end do
+        end do
+#else
         do concurrent (k = 1:nelem3, j = 1:nelem2, i = 1:nelem1)
             o = -p3 + sum(vecKnot_mul3(1:k))
             n = -p2 + sum(vecKnot_mul2(1:j))
@@ -836,6 +876,7 @@ contains
             l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
             elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
         end do
+#endif
     end subroutine
     !===============================================================================
 
