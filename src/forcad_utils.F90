@@ -1453,6 +1453,8 @@ contains
                 A_inv(3,2) = A(1,2)*A(3,1) - A(1,1)*A(3,2)
                 A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
                 A_inv = A_inv/det(A)
+              case default
+                A_inv = solve(A,eye(size(A,1)))
             end select
         elseif (size(A,1)>size(A,2)) then
             allocate(A_inv(size(A,2),size(A,1)))
