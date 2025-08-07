@@ -108,7 +108,7 @@ To install PyVista, run the following command:
 pip install pyvista
 ```
 
-To disable PyVista-based visualization, define the preprocessor flag `NOSHOW_PYVISTA` in the `fpm.toml` file or pass it as a compiler flag.
+By default PyVista visualization is enabled. To disable it, define the preprocessor flag `NOSHOW_PYVISTA` in the `fpm.toml` file or pass it as a compiler flag.
 
 ### Using fpm
 

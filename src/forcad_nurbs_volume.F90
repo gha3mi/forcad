@@ -2611,7 +2611,7 @@ contains
     impure subroutine show(this, vtkfile_Xc, vtkfile_Xg)
         class(nurbs_volume), intent(inout) :: this
         character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
-#if defined(SHOW_PYVISTA)
+#ifndef NOSHOW_PYVISTA
         character(len=3000) :: pyvista_script
 
         pyvista_script = &
