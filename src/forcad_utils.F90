@@ -889,7 +889,8 @@ contains
             if (abs(knot(i) - Xth) < 2.0_rk*epsilon(0.0_rk)) then
                 count = 1
                 ! do while (i + count <= size_knot .and. knot(i + count) == Xth)
-                do while (i + count <= size_knot .and. abs(knot(i + count) - Xth) < 2.0_rk*epsilon(0.0_rk))
+                do while ((i + count) <= size_knot)
+                    if (abs(knot(i + count) - Xth) >= 2.0_rk*epsilon(0.0_rk)) exit
                     count = count + 1
                 end do
                 if (count > multiplicity) then
