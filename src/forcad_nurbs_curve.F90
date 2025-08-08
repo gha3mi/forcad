@@ -58,6 +58,7 @@ module forcad_nurbs_curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: cmp_elem_Xc_vis       !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis       !!> Generate connectivity for geometry points
+        procedure :: cmp_elem_Xth          !!> Generate connectivity for parameter points
         procedure :: cmp_elem              !!> Generate IGA element connectivity
         procedure :: get_elem_Xc_vis       !!> Get connectivity for control points
         procedure :: get_elem_Xg_vis       !!> Get connectivity for geometry points
@@ -716,6 +717,23 @@ contains
             elemConn = elemConn_C0(this%ng,p)
         else
             elemConn = elemConn_C0(this%ng,1)
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function cmp_elem_Xth(this, p) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+        integer, intent(in), optional :: p
+
+        if (present(p)) then
+            elemConn = elemConn_C0(size(unique(this%knot)), p)
+        else
+            elemConn = elemConn_C0(size(unique(this%knot)), 1)
         end if
     end function
     !===============================================================================
