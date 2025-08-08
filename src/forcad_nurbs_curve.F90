@@ -1194,7 +1194,13 @@ contains
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
-            call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
+            if (present(elem)) then
+                associate(Wce => this%Wc(elem))
+                    call compute_dTgc(Xt, this%knot, this%degree, this%nc, Wce, dTgc, Tgc, elem)
+                end associate
+            else
+                call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
+            end if
         else ! B-Spline
             call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc, elem)
         end if
@@ -2300,8 +2306,8 @@ contains
             dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
         else
             allocate(dTgc(size(elem)), Tgc(size(elem)))
-            Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
-            dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))
+            Tgc = Bi(elem)*(Wc/(dot_product(Bi(elem),Wc)))
+            dTgc = ( dBi(elem)*Wc - Tgc*dot_product(dBi(elem),Wc) ) / dot_product(Bi(elem),Wc)
         end if
     end subroutine
     !===============================================================================

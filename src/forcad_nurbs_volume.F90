@@ -1346,7 +1346,13 @@ contains
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
-            call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
+            if (present(elem)) then
+                associate(Wce => this%Wc(elem))
+                    call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, Wce, dTgc, Tgc, elem)
+                end associate
+            else
+                call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, this%Wc, dTgc, Tgc)
+            end if
         else
             call compute_dTgc(Xt, this%knot1, this%knot2, this%knot3, this%degree, this%nc, dTgc, Tgc, elem)
         end if
@@ -3545,6 +3551,8 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> If `elem` is not present: `Wc` refers to the full weight vector.
+    !> If `elem` is present:     `Wc` refers to the element-local weight vector (`Wce`).
     pure subroutine compute_dTgc_nurbs_3d_scalar(Xt, knot1, knot2, knot3, degree, nc, Wc, dTgc, Tgc, elem)
         real(rk), intent(in), contiguous :: Xt(:)
         real(rk), intent(in), contiguous :: knot1(:), knot2(:), knot3(:)
@@ -3584,7 +3592,7 @@ contains
 
             associate(Biall => kron( B3, kron( B2,  B1)))
                 Bi = Biall(elem)
-                Tgc = Bi*(Wc(elem)/(dot_product(Bi,Wc(elem))))
+                Tgc = Bi*(Wc/(dot_product(Bi,Wc)))
             end associate
 
             associate(dB1all => kron(kron(B3,B2),dB1), dB2all => kron(kron(B3,dB2),B1), dB3all => kron(kron(dB3,B2),B1))
@@ -3593,9 +3601,9 @@ contains
                 dBi(:,3) = dB3all(elem)
             end associate
 
-            dTgc(:,1) = ( dBi(:,1)*Wc(elem) - Tgc*dot_product(dBi(:,1),Wc(elem)) ) / dot_product(Bi,Wc(elem))
-            dTgc(:,2) = ( dBi(:,2)*Wc(elem) - Tgc*dot_product(dBi(:,2),Wc(elem)) ) / dot_product(Bi,Wc(elem))
-            dTgc(:,3) = ( dBi(:,3)*Wc(elem) - Tgc*dot_product(dBi(:,3),Wc(elem)) ) / dot_product(Bi,Wc(elem))
+            dTgc(:,1) = ( dBi(:,1)*Wc - Tgc*dot_product(dBi(:,1),Wc) ) / dot_product(Bi,Wc)
+            dTgc(:,2) = ( dBi(:,2)*Wc - Tgc*dot_product(dBi(:,2),Wc) ) / dot_product(Bi,Wc)
+            dTgc(:,3) = ( dBi(:,3)*Wc - Tgc*dot_product(dBi(:,3),Wc) ) / dot_product(Bi,Wc)
         end if
     end subroutine
     !===============================================================================
