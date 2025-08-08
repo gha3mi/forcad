@@ -806,15 +806,12 @@ contains
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
-        type(nurbs_curve) :: th
 
+        elemConn = this%cmp_elem_Xth()
         Xth1 = unique(this%knot)
         Xth2 = [0.0_rk]
         Xth3 = [0.0_rk]
         call ndgrid(Xth1, Xth2, Xth3, Xth)
-
-        call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
-        elemConn = th%cmp_elem()
 
         call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=3, &
                                point_data=point_data, field_names=field_names, encoding=encoding)

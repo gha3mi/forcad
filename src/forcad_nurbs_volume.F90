@@ -988,18 +988,12 @@ contains
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
-        type(nurbs_volume) :: th
 
+        elemConn = this%cmp_elem_Xth()
         Xth1 = unique(this%knot1)
         Xth2 = unique(this%knot2)
         Xth3 = unique(this%knot3)
         call ndgrid(Xth1, Xth2, Xth3, Xth)
-
-        call th%set(&
-            [this%knot1(1),Xth1,this%knot1(size(this%knot1))],&
-            [this%knot2(1),Xth2,this%knot2(size(this%knot2))],&
-            [this%knot3(1),Xth3,this%knot3(size(this%knot3))], Xth)
-        elemConn = th%cmp_elem()
 
         call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=12, &
                                point_data=point_data, field_names=field_names, encoding=encoding)
