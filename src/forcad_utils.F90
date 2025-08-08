@@ -647,7 +647,7 @@ contains
         real(rk), allocatable :: x(:)
         integer :: i
 
-        if (n < 1) error stop "linspace: n must be ≥ 1"
+        if (n < 1) error stop "linspace: n must be >= 1"
         allocate(x(n))
 
         if (n == 1) then
