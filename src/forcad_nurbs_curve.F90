@@ -2216,7 +2216,7 @@ contains
         real(rk) :: Xti, d2Tgci(nc), dTgci(nc), Tgci(nc)
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
         do concurrent (i = 1: size(Xt)) local(Xti, d2Tgci, dTgci, Tgci)
