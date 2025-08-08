@@ -11,7 +11,7 @@ module forcad_nurbs_surface
     implicit none
 
     private
-    public nurbs_surface
+    public nurbs_surface, compute_Tgc, compute_dTgc
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi

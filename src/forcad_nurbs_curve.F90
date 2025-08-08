@@ -11,7 +11,7 @@ module forcad_nurbs_curve
     implicit none
 
     private
-    public nurbs_curve
+    public nurbs_curve, compute_Tgc, compute_dTgc
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi

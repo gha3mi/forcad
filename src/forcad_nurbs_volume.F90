@@ -11,7 +11,7 @@ module forcad_nurbs_volume
     implicit none
 
     private
-    public nurbs_volume
+    public nurbs_volume, compute_Tgc, compute_dTgc
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
