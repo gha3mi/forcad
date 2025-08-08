@@ -76,6 +76,7 @@ module forcad_nurbs_surface
         procedure :: export_Xc              !!> Export control points to VTK file
         procedure :: export_Xg              !!> Export geometry points to VTK file
         procedure :: export_Xth             !!> Export parameter space to VTK file
+        procedure :: export_Xth_in_Xg       !!> Export parameter space in geometry points to VTK file
         procedure :: export_iges            !!> Export the NURBS surface to IGES format
         procedure :: modify_Xc              !!> Modify control points
         procedure :: modify_Wc              !!> Modify weights
@@ -903,6 +904,116 @@ contains
 
         call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=9, &
                                point_data=point_data, field_names=field_names, encoding=encoding)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    impure subroutine export_Xth_in_Xg(this, filename, res, encoding)
+        class(nurbs_surface), intent(in) :: this
+        character(len=*),     intent(in) :: filename
+        integer, intent(in),  optional   :: res
+        character(len=*), intent(in), optional :: encoding
+
+        integer :: ne_u, ne_v, ne_total, nn, np, j, i, m, s, r, o, a, b, t, g, offsetP, line_nodes
+        integer :: res_min, dim, N1sp, N2sp, L, N, res1, res2
+
+        real(rk), allocatable :: U1(:), U2(:)
+        real(rk), allocatable :: U1r(:), U2r(:)
+        real(rk), allocatable :: Xt_all(:,:), Xg_all(:,:)
+        integer,  allocatable :: elemConn(:,:)
+
+
+        if (.not. allocated(this%Xc)) error stop 'Control points are not set.'
+        if (.not. allocated(this%knot1) .or. .not. allocated(this%knot2)) &
+            error stop 'Knot vectors are not set.'
+
+        res_min = 10
+        if (present(res)) res_min = max(2, res)
+
+        U1 = unique(this%knot1); if (size(U1) < 2) error stop 'knot1 needs >= 2 unique values.'
+        U2 = unique(this%knot2); if (size(U2) < 2) error stop 'knot2 needs >= 2 unique values.'
+
+        N1sp = size(U1) - 1
+        N2sp = size(U2) - 1
+
+        L = N1sp
+        if (N2sp > 0) then
+            a = L; b = N2sp
+            do; t = mod(a,b); if (t==0) exit; a=b; b=t; end do
+            g = b
+            L = (L/g) * N2sp
+        end if
+
+        L = L * max(1, res_min - 1)
+
+        N    = L + 1
+        res1 = L / N1sp + 1
+        res2 = L / N2sp + 1
+
+        dim = size(this%Xc,2)
+        if (dim < 2 .or. dim > 3) error stop 'Invalid geometry dimension.'
+
+        ! Allocate refined knot vectors
+        allocate(U1r( (size(U1)-1)*(res1-1) + 1 ))
+        allocate(U2r( (size(U2)-1)*(res2-1) + 1 ))
+
+        do s = 1, size(U1)-1
+            o = (s-1)*(res1-1)
+            do r = 1, res1
+                U1r(o+r) = U1(s) + (U1(s+1)-U1(s)) * real(r-1,rk)/real(res1-1,rk)
+            end do
+        end do
+        do s = 1, size(U2)-1
+            o = (s-1)*(res2-1)
+            do r = 1, res2
+                U2r(o+r) = U2(s) + (U2(s+1)-U2(s)) * real(r-1,rk)/real(res2-1,rk)
+            end do
+        end do
+        if (size(U1r)/=N .or. size(U2r)/=N) error stop 'Refinement size mismatch.'
+
+        ! total element count and node count
+        ne_u = size(U2)
+        ne_v = size(U1)
+        ne_total = size(U2) + size(U1)
+        np = ne_total * N
+
+        ! Allocate global arrays
+        allocate(Xt_all(np,2), Xg_all(np,dim), elemConn(ne_total, N))
+
+        ! build all parametric points
+        offsetP    = 0
+        line_nodes = N
+
+        ! dir-1: u varies (v=U2(j), w=U3(k))
+        do concurrent (j = 1:size(U2))
+            Xt_all(offsetP + (j-1)*line_nodes + 1 : offsetP + j*line_nodes, 1) = U1r
+            Xt_all(offsetP + (j-1)*line_nodes + 1 : offsetP + j*line_nodes, 2) = U2(j)
+        end do
+        offsetP = offsetP + ne_u*line_nodes
+
+        ! dir-2: v varies (u=U1(i), w=U3(k))
+        do concurrent (i = 1:size(U1))
+            Xt_all(offsetP + (i-1)*line_nodes + 1 : offsetP + i*line_nodes, 1) = U1(i)
+            Xt_all(offsetP + (i-1)*line_nodes + 1 : offsetP + i*line_nodes, 2) = U2r
+        end do
+
+        ! compute global points
+        if (this%is_rational()) then
+            Xg_all = compute_Xg(Xt_all, this%knot1, this%knot2, this%degree, this%nc, [np,1], this%Xc, this%Wc)
+        else
+            Xg_all = compute_Xg(Xt_all, this%knot1, this%knot2, this%degree, this%nc, [np,1], this%Xc)
+        end if
+
+        ! connectivity
+        do concurrent (l = 1:ne_total, m = 1:N)
+            elemConn(l, m) = (l-1)*N + m
+        end do
+
+        ! write VTK file
+        call export_vtk_legacy(filename=filename, points=Xg_all, elemConn=elemConn, vtkCellType=4, encoding=encoding)
     end subroutine
     !===============================================================================
 
