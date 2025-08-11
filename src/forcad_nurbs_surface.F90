@@ -917,7 +917,7 @@ contains
         integer, intent(in),  optional   :: res
         character(len=*), intent(in), optional :: encoding
 
-        integer :: ne_u, ne_v, ne_total, nn, np, j, i, m, s, r, o, a, b, t, g, offsetP, line_nodes
+        integer :: ne_u, ne_v, ne_total, np, j, i, m, s, r, o, a, b, t, g, offsetP, line_nodes
         integer :: res_min, dim, N1sp, N2sp, L, N, res1, res2
 
         real(rk), allocatable :: U1(:), U2(:)
@@ -2921,7 +2921,6 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
-        real(rk) :: Xti(size(Xt,2)), Tgci(size(Xc,1))
         integer :: i
 
         allocate(Xg(ng(1)*ng(2), size(Xc,2)))
