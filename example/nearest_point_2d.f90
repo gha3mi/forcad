@@ -5,8 +5,8 @@ program nearest_point_2d
     implicit none
 
     type(nurbs_surface) :: shape           !! Declare a NURBS surface object
-    real(rk), allocatable :: nearest_Xg(:) !! Coordinates of the nearest point on the surface
-    real(rk), allocatable :: nearest_Xt(:) !! Corresponding parametric coordinates of the nearest point
+    real(rk) :: nearest_Xg(3)              !! Coordinates of the nearest point on the surface
+    real(rk) :: nearest_Xt(2)              !! Corresponding parametric coordinates of the nearest point
     integer :: id                          !! id of the nearest point
     real(rk) :: Xc(4,3)                    !! Control points
     real(rk) :: Wc(4)                      !! Weights of the control points

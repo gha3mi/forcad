@@ -3105,14 +3105,21 @@ contains
     pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_volume), intent(in) :: this
         real(rk), intent(in), contiguous :: point_Xg(:)
-        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
-        real(rk), intent(out), allocatable, optional :: nearest_Xt(:)
+        real(rk), intent(out), optional :: nearest_Xg(size(point_Xg))
+        real(rk), intent(out), optional :: nearest_Xt(3)
         integer, intent(out), optional :: id
-        integer :: id_
+        integer :: id_, i
         real(rk), allocatable :: distances(:)
 
         allocate(distances(this%ng(1)*this%ng(2)*this%ng(3)))
-        distances = nearest_point_help_3d(this%ng, this%Xg, point_Xg)
+
+#if defined(__NVCOMPILER)
+        do i = 1, this%ng(1)*this%ng(2)*this%ng(3)
+#else
+        do concurrent (i = 1: this%ng(1)*this%ng(2)*this%ng(3))
+#endif
+            distances(i) = norm2(this%Xg(i,:) - point_Xg)
+        end do
 
         id_ = minloc(distances, dim=1)
         if (present(id)) id = id_
@@ -3120,7 +3127,6 @@ contains
         if (present(nearest_Xt)) nearest_Xt = this%Xt(id_,:)
     end subroutine
     !===============================================================================
-
 
 
     !===============================================================================
@@ -3133,65 +3139,49 @@ contains
         real(rk), intent(in) :: tol
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt(3)
-        real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
-        real(rk):: obj, grad(3), hess(3,3), dk(3), alphak, tau, beta, lower_bounds(3), upper_bounds(3)
-        real(rk), allocatable :: Xg(:), xk(:), xkn(:), Tgc(:), dTgc(:,:), d2Tgc(:,:)
-        integer :: k, l
+        real(rk), intent(out), optional :: nearest_Xg(size(this%Xc,2))
+
+        real(rk) :: obj, obj_trial, grad(3), hess(3,3), dk(3)
+        real(rk) :: alphak, alpha_max, alpha_i, tau, beta, eps
+        real(rk) :: lower_bounds(3), upper_bounds(3), xt(3)
+        real(rk), allocatable ::Tgc(:), dTgc(:,:), d2Tgc(:,:)
+        real(rk) :: Xg(size(this%Xc,2)), xk(3), xkn(3)
+        integer :: k, l, i
         logical :: convergenz
         type(nurbs_volume) :: copy_this
 
         alphak = 0.0_rk
-        dk = 0.0_rk
-        k = 0
+        dk     = 0.0_rk
+        k      = 0
+        eps    = 10.0_rk*tiny(1.0_rk)
 
-        ! lower and upper bounds
+        ! bounds
         lower_bounds = [minval(this%knot1), minval(this%knot2), minval(this%knot3)]
         upper_bounds = [maxval(this%knot1), maxval(this%knot2), maxval(this%knot3)]
 
-        ! guess initial point
+        ! initial guess (coarse search)
         copy_this = this
         call copy_this%create(50,50,50)
         call copy_this%nearest_point(point_Xg=point_Xg, nearest_Xt=xk)
         call copy_this%finalize()
 
-        ! Check if xk is within the knot vector range
-        if (xk(1) < minval(this%knot1)) then
-            xk(1) = minval(this%knot1)
-        else if (xk(1) > maxval(this%knot1)) then
-            xk(1) = maxval(this%knot1)
-        end if
-
-        if (xk(2) < minval(this%knot2)) then
-            xk(2) = minval(this%knot2)
-        else if (xk(2) > maxval(this%knot2)) then
-            xk(2) = maxval(this%knot2)
-        end if
-
-        if (xk(3) < minval(this%knot3)) then
-            xk(3) = minval(this%knot3)
-        else if (xk(3) > maxval(this%knot3)) then
-            xk(3) = maxval(this%knot3)
-        end if
+        ! clamp initial guess to bounds
+        xk = max(min(xk, upper_bounds), lower_bounds)
 
         xkn = xk
-
         convergenz = .false.
-
-        allocate(Xg(size(this%Xc,2)))
-        ! allocate(dTgc(size(this%Xc,1), 2))
-        ! allocate(d2Tgc(size(this%Xc,1), 2))
 
         do while (.not. convergenz .and. k < maxit)
 
-            ! objection, gradient and hessian
+            ! objective, gradient, hessian
             Xg = this%cmp_Xg(xk)
-            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc) ! Tgc is not needed
+            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)  ! Tgc unused
 
-            obj = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
+            obj = norm2(Xg - point_Xg) + 0.001_rk  ! small epsilon to avoid divide-by-zero
 
-            grad(1) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,1),this%Xc))
-            grad(2) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,2),this%Xc))
-            grad(3) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,3),this%Xc))
+            grad(1) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,1), this%Xc))
+            grad(2) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,2), this%Xc))
+            grad(3) = dot_product((Xg-point_Xg)/obj, matmul(dTgc(:,3), this%Xc))
 
             hess(1,1) = ( dot_product(matmul(dTgc(:,1),this%Xc), matmul(dTgc(:,1),this%Xc)) + dot_product((Xg-point_Xg), &
                 matmul(d2Tgc(1:this%nc(1)*this%nc(2)*this%nc(3)                                      ,1),this%Xc)) ) /obj &
@@ -3225,27 +3215,63 @@ contains
             print '(i3,1x,3e20.10,1x,e20.10)', k, xk, norm2(grad)
 
             if (norm2(grad) <= tol .or. (k>0 .and. norm2(xk-xkn) <= tol)) then
-                convergenz = .true.
-                nearest_Xt = xk
+                convergenz  = .true.
+                nearest_Xt  = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
             else
-
+                ! Newton step
                 dk = - matmul(inv(hess), grad)
 
-                ! Backtracking-Armijo Line Search
-                alphak = 1.0_rk
-                tau = 0.5_rk     ! 0 < tau  < 1
-                beta = 1.0e-4_rk ! 0 < beta < 1
+                ! Backtracking-Armijo with feasibility (box constraints)
+                tau  = 0.5_rk
+                beta = 1.0e-4_rk
+
+                ! compute maximum feasible step so xk + alpha*dk stays in [lower_bounds, upper_bounds]
+                alpha_max = 1.0_rk
+                do i = 1, 3
+                    if (dk(i) > 0.0_rk) then
+                        if (upper_bounds(i) > xk(i)) then
+                            alpha_i = (upper_bounds(i) - xk(i)) / dk(i)
+                            alpha_max = min(alpha_max, max(0.0_rk, alpha_i))
+                        else
+                            alpha_max = 0.0_rk
+                        end if
+                    else if (dk(i) < 0.0_rk) then
+                        if (lower_bounds(i) < xk(i)) then
+                            alpha_i = (lower_bounds(i) - xk(i)) / dk(i)
+                            alpha_max = min(alpha_max, max(0.0_rk, alpha_i))
+                        else
+                            alpha_max = 0.0_rk
+                        end if
+                    end if
+                end do
+
+                if (alpha_max <= eps) then
+                    convergenz = .true.
+                    nearest_Xt = xk
+                    if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
+                    exit
+                end if
+
+                alphak = min(1.0_rk, alpha_max)
                 l = 0
-                do while (.not. norm2(this%cmp_Xg(xk + alphak*dk) - point_Xg) <= obj + alphak*beta*dot_product(grad,dk) .and. l<50)
-                    alphak = tau * alphak
+                do
+                    if (alphak <= eps .or. l >= 50) exit
+                    xt = xk + alphak*dk        ! feasible since alphak ≤ alpha_max
+                    obj_trial = norm2(this%cmp_Xg(xt) - point_Xg) + 0.001_rk
+                    if (obj_trial <= obj + alphak*beta*dot_product(grad, dk)) exit
+                    alphak = min(tau*alphak, alpha_max)  ! shrink but stay feasible
                     l = l + 1
                 end do
 
                 xkn = xk
-                xk = xk + alphak*dk
-                ! Check if xk is within the knot vector range
+                if (alphak > eps) then
+                    xk = xk + alphak*dk
+                end if
+
+                ! clamp updated iterate
                 xk = max(min(xk, upper_bounds), lower_bounds)
+
                 k = k + 1
             end if
         end do
@@ -4194,28 +4220,6 @@ contains
         Tgc= kron(basis_bspline(Xt(3), knot3, nc(3), degree(3)), kron(&
             basis_bspline(Xt(2), knot2, nc(2), degree(2)),&
             basis_bspline(Xt(1), knot1, nc(1), degree(1))))
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    pure function nearest_point_help_3d(ng, Xg, point_Xg) result(distances)
-        integer, intent(in) :: ng(3)
-        real(rk), intent(in), contiguous :: Xg(:,:)
-        real(rk), intent(in), contiguous :: point_Xg(:)
-        real(rk), allocatable :: distances(:)
-        integer :: i
-
-        allocate(distances(ng(1)*ng(2)*ng(3)))
-#if defined(__NVCOMPILER)
-        do i = 1, ng(1)*ng(2)*ng(3)
-#else
-        do concurrent (i = 1: ng(1)*ng(2)*ng(3))
-#endif
-            distances(i) = norm2(Xg(i,:) - point_Xg)
-        end do
     end function
     !===============================================================================
 
