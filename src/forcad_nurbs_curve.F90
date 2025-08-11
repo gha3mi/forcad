@@ -1874,7 +1874,15 @@ contains
             distances(i) = norm2(this%Xg(i,:) - point_Xg)
         end do
 
+        ! replaced minloc due to NVFortran bug
+#if defined(__NVCOMPILER)
+        id_ = 1
+        do i = 2, size(distances)
+            if (distances(i) < distances(id_)) id_ = i
+        end do
+#else
         id_ = minloc(distances, dim=1)
+#endif
         if (present(id)) id = id_
         if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
         if (present(nearest_Xt)) nearest_Xt = this%Xt(id_)
