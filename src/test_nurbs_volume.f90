@@ -12,7 +12,7 @@ program test_nurbs_volume
     real(rk), allocatable :: Tgc1(:), dTgc1(:,:), Tgc1b(:), dTgc1b(:,:), d2Tgc1(:,:), d2Tgc1b(:,:)
     real(rk) :: knot1(4), knot2(4), knot3(4), volume, volumeb
     integer :: i, id
-    real(rk), allocatable :: nearest_Xg(:), nearest_Xt(:)
+    real(rk) :: nearest_Xg(3), nearest_Xt(3)
     type(unit_test) :: ut
 
     allocate(Xc(8, 3))

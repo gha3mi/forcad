@@ -6,10 +6,11 @@ program nearest_point_2d_bench
     implicit none
 
     type(nurbs_surface) :: shape           !! Declare a NURBS surface object
-    real(rk), allocatable :: nearest_Xg(:) !! Coordinates of the nearest point on the surface
-    real(rk), allocatable :: nearest_Xt(:) !! Corresponding parametric coordinates of the nearest point
+    real(rk) :: nearest_Xg(3)              !! Coordinates of the nearest point on the surface
+    real(rk) :: nearest_Xt(2)              !! Corresponding parametric coordinates of the nearest point
     integer :: id                          !! id of the nearest point
     real(rk), allocatable :: points(:,:)
+    real(rk) :: pointsi(3)
     integer :: i, j
     type(timer) :: t
 
@@ -42,7 +43,8 @@ program nearest_point_2d_bench
         call random_number(points)
         call t%timer_start()
         do i = 1, size(points,1)
-            call shape%nearest_point(points(i,:), nearest_Xg, nearest_Xt, id)
+            pointsi = points(i,:)
+            call shape%nearest_point(pointsi, nearest_Xg, nearest_Xt, id)
         end do
         call t%timer_stop()
         deallocate(points)
@@ -53,6 +55,5 @@ program nearest_point_2d_bench
 
     !> Finalize the NURBS surface object
     call shape%finalize()
-    deallocate(nearest_Xg, nearest_Xt)
 
 end program

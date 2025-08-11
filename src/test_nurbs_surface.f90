@@ -13,7 +13,7 @@ program test_nurbs_surface
     real(rk), allocatable :: Tgc(:,:), dTgc(:,:,:), Tgcb(:,:), dTgcb(:,:,:), d2Tgc(:,:,:), d2Tgcb(:,:,:)
     real(rk), allocatable :: Tgc1(:), dTgc1(:,:), Tgc1b(:), dTgc1b(:,:), d2Tgc1(:,:), d2Tgc1b(:,:)
     integer :: i, id
-    real(rk), allocatable :: nearest_Xg(:), nearest_Xt(:)
+    real(rk) :: nearest_Xg(3), nearest_Xt(2)
     type(unit_test) :: ut
 
     allocate(Xc(4, 3))
