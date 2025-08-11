@@ -1,3 +1,61 @@
+## [v0.14.0](https://github.com/gha3mi/forcad/compare/v0.13.0...v0.14.0) - 2025-08-11
+
+
+### Features
+
+* [#67] feat: add kron, linspace and eye ([b91d98082](https://github.com/gha3mi/forcad/commit/b91d980828dc2cbba0cb1e92d68f85dc1e0b9db1)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add default case for matrix inversion ([5bad62d05](https://github.com/gha3mi/forcad/commit/5bad62d05174cd354ac0108f880e494484b38944)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add option to disable PyVista visualization via preprocessor flag ([c381bace3](https://github.com/gha3mi/forcad/commit/c381bace392b32ef7c0008ea1443f7b543b5aa9a)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add unit tests for forcad_utils module ([e78f50091](https://github.com/gha3mi/forcad/commit/e78f500912239ace0d25d7c84e636384e7fbd9b8)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add optional number of Gauss points ([3538af3ad](https://github.com/gha3mi/forcad/commit/3538af3ad6c720aeb2f5d70a9912119ee8e316e1)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: update compute_dTgc calls to handle optional elem parameter ([ee9126887](https://github.com/gha3mi/forcad/commit/ee91268870a84274a94988fc5d047bf3d6bffa5d)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: make compute_Tgc, compute_dTgc public ([a899fcb34](https://github.com/gha3mi/forcad/commit/a899fcb34b47ecbbfeee33ca0785be7b65f3336f)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add cmp_elem_Xth to NURBS objects ([8e84ac22e](https://github.com/gha3mi/forcad/commit/8e84ac22e6520c6d664928f07ac347ac3f0872cf)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: replace local element connection handling with cmp_elem_Xth ([d2e2147fe](https://github.com/gha3mi/forcad/commit/d2e2147fec7ab26806753d7553ab8880d2d024f3)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] feat: add export_Xth_in_Xg for surface and volume ([859791c42](https://github.com/gha3mi/forcad/commit/859791c4276594f6b374f840f840cc788efc5dc8)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* [#67] fix: condition in knot multiplicity calculation ([6bf3cb8eb](https://github.com/gha3mi/forcad/commit/6bf3cb8ebd613424f43ef0bdbc626a469bf6c42a)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: test30, 40, 42 ([0de619e68](https://github.com/gha3mi/forcad/commit/0de619e68e3ad1a4efd7b7781ff67eb70618791d)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: use do loops for nvcompiler ([0bd396e9e](https://github.com/gha3mi/forcad/commit/0bd396e9e143355379403c1d9001fd83fb28e076)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: NOSHOW_PYVISTA preprocessor ([6ba5e6770](https://github.com/gha3mi/forcad/commit/6ba5e67708277bd84ecb316adbfcefca58124a24)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: warnings for temporary arrays ([9e18ca99d](https://github.com/gha3mi/forcad/commit/9e18ca99ddd1b4a83d53685fb658df43490b0ceb)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: improve lsq_bspline_* ([3c69d15d1](https://github.com/gha3mi/forcad/commit/3c69d15d12ec79902f562c619671c9afd926f1b4)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: remove unused variable ([963f6a1d6](https://github.com/gha3mi/forcad/commit/963f6a1d63d31f23d8b9889c75344902020b958e)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: avoid temporary array ([baf3644cf](https://github.com/gha3mi/forcad/commit/baf3644cf2a2f2fa615878b5c2307277608aeb87)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: cmp_volume add missing ngauss_ ([261ee14db](https://github.com/gha3mi/forcad/commit/261ee14db6a063e141109eba3c4f463796fb632b)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: remove unused variables from test program ([e66b98579](https://github.com/gha3mi/forcad/commit/e66b98579e883d1b449ae03da65b658cb84730b8)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: avoid temporary array warnings ([f82ebdb85](https://github.com/gha3mi/forcad/commit/f82ebdb8500cb07208da0e544687f27f0dbd1cfd)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: print format for L2 error norm ([4b2012f70](https://github.com/gha3mi/forcad/commit/4b2012f70a3a31209f4bcc79006583c5aaa72d7d)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: update preprocessor condition ([a2f8b7e20](https://github.com/gha3mi/forcad/commit/a2f8b7e20e12c339197d08ee786452dfe1ecbcc4)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: change output array declarations to use explicit size ([660445ad0](https://github.com/gha3mi/forcad/commit/660445ad0aebaaf08290442d8542c2cfe1a12f73)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: update preprocessor condition for gfortran ([23686d9ec](https://github.com/gha3mi/forcad/commit/23686d9ec1174b8b7c8864d401f2ba8d77943833)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: correct error message ([05ea02219](https://github.com/gha3mi/forcad/commit/05ea02219f331332aad0637373eeb250aa033704)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: add local variables to do concurrent loops ([19e4d95e1](https://github.com/gha3mi/forcad/commit/19e4d95e19447f5eeaa550250711c78f6f73c4f7)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] fix: improve nearest_point* methods ([2223670ca](https://github.com/gha3mi/forcad/commit/2223670cae35ba30e03985529a70808238f952bd)) by [@gha3mi](https://github.com/gha3mi)
+* fix: remove unused variables ([b612525d3](https://github.com/gha3mi/forcad/commit/b612525d32f48bc00b61b9204964fbfe65dbf5a1)) by [@gha3mi](https://github.com/gha3mi)
+* fix: replace minloc with manual implementation due to nvfoortran bug ([393623c88](https://github.com/gha3mi/forcad/commit/393623c88f101a634a4c3b7a1d07ee3052d8f0c5)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* Feature Additions, Bug Fixes, and Compiler Compatibility Improvements ([#67](https://github.com/gha3mi/forcad/pull/67)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] refactor: do concurrent for connectivity/coordinates ([e6dddd778](https://github.com/gha3mi/forcad/commit/e6dddd7780a58be027f917fbf990ffd91d39a260)) by [@gha3mi](https://github.com/gha3mi)
+* [#67] refactor: remove test for remove_knots ([2e84096c4](https://github.com/gha3mi/forcad/commit/2e84096c45777f94874153c1d8daf71231e465cc)) by [@gha3mi](https://github.com/gha3mi)
+* chore(vscode): exclude vtk, iges, ppm from fortls ([1f510d18f](https://github.com/gha3mi/forcad/commit/1f510d18fafbccfefee277361143abe815138dd0)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: update module usage in lsqe_* and poisson_* examples ([8dc8d51ba](https://github.com/gha3mi/forcad/commit/8dc8d51bac2d539602d887f8cc047e2af159f46c)) by [@gha3mi](https://github.com/gha3mi)
+* chore: migrate ROADMAP.md to issues [skip ci] ([ca550e2c7](https://github.com/gha3mi/forcad/commit/ca550e2c7a9c2e5dfa93add3d601e1a18deab8b8)) by [@gha3mi](https://github.com/gha3mi)
+* chore: clean up conda environment file [skip ci] ([18486abad](https://github.com/gha3mi/forcad/commit/18486abad0a49fae9851455f9c8831ef85a0bb54)) by [@gha3mi](https://github.com/gha3mi)
+* chore: update release.sh [skip ci] ([020962ee3](https://github.com/gha3mi/forcad/commit/020962ee34709802241d6ed9018d931d355fec6c)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.13.0...v0.14.0](https://github.com/gha3mi/forcad/compare/v0.13.0...v0.14.0)
+
 ## [v0.13.0](https://github.com/gha3mi/forcad/compare/v0.12.0...v0.13.0) - 2025-08-01
 
 
