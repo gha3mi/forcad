@@ -53,6 +53,7 @@ EOF
 
 DRY_RUN=false
 LOCAL_ONLY=false
+INCLUDE_PR_COMMITS=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -151,27 +152,8 @@ if ! echo "$raw_prs" | jq empty >/dev/null 2>&1; then
     echo "$raw_prs"
     exit 1
 fi
-
 mapfile -t all_prs < <(echo "$raw_prs" | jq -c '.[]')
 echo "ℹ️ Retrieved ${#all_prs[@]} PRs"
-
-matched_prs=()
-pr_commit_shas=()
-for pr in "${all_prs[@]}"; do
-    merged_at=$(echo "$pr" | jq -r '.merged_at')
-    [[ "$merged_at" == "null" ]] && continue
-
-    pr_number=$(echo "$pr" | jq -r '.number')
-    pr_commits=$(gh api "/repos/$repo/pulls/$pr_number/commits" | jq -r '.[].sha')
-
-    for sha in $pr_commits; do
-        if [[ " ${all_commit_shas[*]} " =~ " $sha " ]]; then
-            matched_prs+=("$pr")
-            pr_commit_shas+=($pr_commits)
-            break
-        fi
-    done
-done
 
 features=()
 fixes=()
@@ -192,7 +174,24 @@ classify() {
     fi
 }
 
-for pr_json in "${matched_prs[@]}"; do
+matched_prs=()
+pr_commit_shas=()
+for pr_json in "${all_prs[@]}"; do
+    merged_at=$(echo "$pr_json" | jq -r '.merged_at')
+    [[ "$merged_at" == "null" ]] && continue
+
+    pr_number=$(echo "$pr_json" | jq -r '.number')
+    mapfile -t pr_commits < <(gh api "/repos/$repo/pulls/$pr_number/commits" | jq -r '.[].sha')
+
+    pr_matches_range=false
+    for sha in "${pr_commits[@]}"; do
+        if [[ " ${all_commit_shas[*]} " =~ " $sha " ]]; then
+            pr_matches_range=true
+            break
+        fi
+    done
+    [[ "$pr_matches_range" == false ]] && continue
+
     title=$(echo "$pr_json" | jq -r '.title')
     number=$(echo "$pr_json" | jq -r '.number')
     author=$(echo "$pr_json" | jq -r '.user.login')
@@ -202,9 +201,27 @@ for pr_json in "${matched_prs[@]}"; do
         continue
     fi
 
+    matched_prs+=("$pr_json")
+    pr_commit_shas+=("${pr_commits[@]}")
+
     line="* $title ([#${number}](https://github.com/$repo/pull/${number})) by [@$author](https://github.com/$author)"
     classify "$title" "$line"
     contributors+=("$author")
+
+    if [[ "${INCLUDE_PR_COMMITS:-true}" == true ]]; then
+        for sha in "${pr_commits[@]}"; do
+            if [[ " ${all_commit_shas[*]} " =~ " $sha " ]]; then
+                msg=$(git show -s --format="%s" "$sha")
+                if should_ignore "$msg"; then continue; fi
+                commit_author=$(gh api "/repos/$repo/commits/$sha" --jq '.author.login' 2>/dev/null || echo "")
+                author_name=${commit_author:-$(git show -s --format="%an" "$sha")}
+                short_sha=$(git rev-parse --short "$sha")
+                subline="* [#${number}] $msg ([${short_sha}](https://github.com/$repo/commit/$sha)) by [@$author_name](https://github.com/$author_name)"
+                classify "$msg" "$subline"
+                contributors+=("$author_name")
+            fi
+        done
+    fi
 done
 
 for sha in "${all_commit_shas[@]}"; do
