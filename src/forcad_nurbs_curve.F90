@@ -2174,24 +2174,20 @@ contains
         real(rk), allocatable, intent(out) :: d2Tgc(:,:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
-        real(rk), allocatable :: d2Bi(:), dBi(:), Tgci(:), dTgci(:), Bi(:)
+        real(rk) :: d2Bi(nc), dBi(nc), Bi(nc)
         integer :: i
 
-        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
+        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
 
 #if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(d2Bi, dBi, Bi)
 #endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
-            Tgci = Bi*(Wc/(dot_product(Bi,Wc)))
-            Tgc(i,:) = Tgci
-
-            dTgci = ( dBi*Wc - Tgci*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
-            dTgc(i,:) = dTgci
-
-            d2Tgc(i,:) = (d2Bi*Wc - 2.0_rk*dTgci*dot_product(dBi,Wc) - Tgci*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
+            Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
+            dTgc(i,:) = ( dBi*Wc - Tgc(i,:)*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+            d2Tgc(i,:) = (d2Bi*Wc - 2.0_rk*dTgc(i,:)*dot_product(dBi,Wc) - Tgc(i,:)*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
         end do
     end subroutine
     !===============================================================================
@@ -2286,10 +2282,10 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(dBi, Bi)
 #endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))

@@ -3571,18 +3571,15 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
-        real(rk) :: Xti(size(Xt,2)), Tgci(size(Xc,1))
         integer :: i
 
         allocate(Xg(ng(1)*ng(2)*ng(3), size(Xc,2)))
-#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
+#if defined(__NVCOMPILER)
         do i = 1, ng(1)*ng(2)*ng(3)
 #else
-        do concurrent (i = 1: ng(1)*ng(2)*ng(3)) local(Xti, Tgci)
+        do concurrent (i = 1: ng(1)*ng(2)*ng(3))
 #endif
-            Xti = Xt(i,:)
-            Tgci = cmp_Tgc_3d(Xti, knot1, knot2, knot3, nc, degree, Wc)
-            Xg(i,:) = matmul(Tgci, Xc)
+            Xg(i,:) = matmul(cmp_Tgc_3d(Xt(i,:), knot1, knot2, knot3, nc, degree, Wc), Xc)
         end do
     end function
     !===============================================================================
@@ -3676,16 +3673,15 @@ contains
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk) :: dB1(nc(1)), dB2(nc(2)), dB3(nc(3))
         real(rk) :: B1(nc(1)), B2(nc(2)), B3(nc(3))
-        real(rk), allocatable :: dBi(:,:), Bi(:)
+        real(rk) :: dBi(nc(1)*nc(2)*nc(3), 3), Bi(nc(1)*nc(2)*nc(3))
         integer :: i
 
         allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3), 3))
         allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-        allocate(Bi(nc(1)*nc(2)*nc(3)), dBi(nc(1)*nc(2)*nc(3), 3))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt, 1)
 #else
-        do concurrent (i = 1: size(Xt, 1))
+        do concurrent (i = 1: size(Xt, 1)) local(B1, B2, B3, dB1, dB2, dB3, Bi, dBi)
 #endif
             call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
             call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
@@ -3785,10 +3781,10 @@ contains
         allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3), 3))
         allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
 
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt, 1)
 #else
-        do concurrent (i = 1: size(Xt, 1))
+        do concurrent (i = 1: size(Xt, 1)) local(B1, B2, B3, dB1, dB2, dB3)
 #endif
             call basis_bspline_der(Xt(i,1), knot1, nc(1), degree(1), dB1, B1)
             call basis_bspline_der(Xt(i,2), knot2, nc(2), degree(2), dB2, B2)
@@ -3866,19 +3862,18 @@ contains
         real(rk) :: dB1(nc(1)), dB2(nc(2)), dB3(nc(3))
         real(rk) :: B1(nc(1)), B2(nc(2)), B3(nc(3))
         real(rk), allocatable :: Tgci(:), dTgci(:)
-        real(rk), allocatable :: d2Bi(:,:), dBi(:,:), Bi(:)
+        real(rk) :: d2Bi(3*nc(1)*nc(2)*nc(3), 3), dBi(nc(1)*nc(2)*nc(3), 3), Bi(nc(1)*nc(2)*nc(3))
         integer :: i
 
-        allocate(Bi(nc(1)*nc(2)*nc(3)), dBi(nc(1)*nc(2)*nc(3), 3), d2Bi(3*nc(1)*nc(2)*nc(3), 3))
 
         allocate(Tgci(nc(1)*nc(2)*nc(3)), dTgci(nc(1)*nc(2)*nc(3)))
         allocate(d2Tgc(ng(1)*ng(2)*ng(3), 3*nc(1)*nc(2)*nc(3), 3))
         allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3), 3))
         allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt, 1)
 #else
-        do concurrent (i = 1: size(Xt, 1))
+        do concurrent (i = 1: size(Xt, 1)) local(B1, B2, B3, dB1, dB2, dB3, d2B1, d2B2, d2B3, Bi, dBi, d2Bi)
 #endif
             call basis_bspline_2der(Xt(i,1), knot1, nc(1), degree(1), d2B1, dB1, B1)
             call basis_bspline_2der(Xt(i,2), knot2, nc(2), degree(2), d2B2, dB2, B2)
@@ -4040,10 +4035,10 @@ contains
         allocate(d2Tgc(ng(1)*ng(2)*ng(3), 3*nc(1)*nc(2)*nc(3), 3))
         allocate(dTgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3), 3))
         allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt, 1)
 #else
-        do concurrent (i = 1: size(Xt, 1))
+        do concurrent (i = 1: size(Xt, 1)) local(B1, B2, B3, dB1, dB2, dB3, d2B1, d2B2, d2B3)
 #endif
             call basis_bspline_2der(Xt(i,1), knot1, nc(1), degree(1), d2B1, dB1, B1)
             call basis_bspline_2der(Xt(i,2), knot2, nc(2), degree(2), d2B2, dB2, B2)
@@ -4121,15 +4116,14 @@ contains
         integer, intent(in) :: ng(3)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Tgc(:,:)
-        real(rk), allocatable :: Tgci(:)
+        real(rk) :: Tgci(nc(1)*nc(2)*nc(3))
         integer :: i
 
         allocate(Tgc(ng(1)*ng(2)*ng(3), nc(1)*nc(2)*nc(3)))
-        allocate(Tgci(nc(1)*nc(2)*nc(3)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt, 1)
 #else
-        do concurrent (i = 1: size(Xt, 1))
+        do concurrent (i = 1: size(Xt, 1)) local(Tgci)
 #endif
             Tgci = kron(basis_bspline(Xt(i,3), knot3, nc(3), degree(3)), kron(&
                 basis_bspline(Xt(i,2), knot2, nc(2), degree(2)),&
