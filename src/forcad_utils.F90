@@ -10,7 +10,8 @@ module forcad_utils
     private
     public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve
+        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve, &
+        repelem, linspace, eye
 
     !===============================================================================
     interface elemConn_C0
@@ -66,6 +67,15 @@ module forcad_utils
         module procedure gauss_legendre_1D
         module procedure gauss_legendre_2D
         module procedure gauss_legendre_3D
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    interface kron
+        module procedure kron_t1_t1
+        module procedure kron_t1_t2
+        module procedure kron3
     end interface
     !===============================================================================
 
@@ -517,7 +527,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function kron(u,v) result(w)
+    pure function kron_t1_t1(u,v) result(w)
         real(rk), intent(in), contiguous :: u(:), v(:)
         real(rk) :: w(size(u)*size(v))
         integer :: i, j, n
@@ -526,6 +536,44 @@ contains
 
         do concurrent(i = 1:size(u), j = 1:n)
             w((i-1)*n + j) = u(i)*v(j)
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function kron_t1_t2(u,A) result(B)
+        real(rk), intent(in), contiguous :: u(:)
+        real(rk), intent(in), contiguous :: A(:,:)
+        real(rk) :: B(size(u)*size(A,1), size(A,2))
+        integer :: i, j, k, m, r, c
+
+        m = size(u)
+        r = size(A, 1)
+        c = size(A, 2)
+
+        do concurrent (i=1:m, j=1:r, k=1:c)
+            B((i-1)*r + j, k) = u(i) * A(j, k)
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function kron3(u, v, w) result(out)
+        real(rk), intent(in), contiguous :: u(:), v(:), w(:)
+        real(rk) :: out(size(u)*size(v)*size(w))
+        integer :: i, j, k, nv, nw
+
+        nv = size(v)
+        nw = size(w)
+
+        do concurrent(i = 1:size(u), j = 1:nv, k = 1:nw)
+            out(((i-1)*nv + j -1)*nw + k) = u(i) * v(j) * w(k)
         end do
     end function
     !===============================================================================
@@ -593,21 +641,42 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure function linspace(a, b, n) result(x)
+        real(rk), intent(in) :: a, b
+        integer, intent(in) :: n
+        real(rk), allocatable :: x(:)
+        integer :: i
+
+        if (n < 1) error stop "linspace: n must be >= 1"
+        allocate(x(n))
+
+        if (n == 1) then
+            x(1) = a
+        else
+            do concurrent(i = 1:n)
+                x(i) = a + (i - 1) * (b - a) / real(n - 1, rk)
+            end do
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure function cmp_elemConn_C0_L(nnode,p) result(elemConn)
         integer, intent(in) :: nnode
         integer, intent(in) :: p
         integer, allocatable :: elemConn(:,:)
-        integer :: i, l
+        integer :: i
         integer, allocatable :: nodes(:)
 
         if (mod(nnode-1,p) /= 0) error stop 'cmp_elemConn_C0_L: nnode-1 must be divisible by p'
 
         allocate(elemConn( (nnode-1) / p ,p+1))
         nodes = [(i, i=1,nnode)]
-        l = 0
-        do i = 1,nnode-p, p
-            l = l+1
-            elemConn(l,:) = reshape(nodes(i:i+p),[(p + 1)])
+        do concurrent (i = 1:nnode-p:p)
+            elemConn((i-1)/p+1, :) = reshape(nodes(i:i+p), [p + 1])
         end do
     end function
     !===============================================================================
@@ -616,25 +685,33 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function cmp_elemConn_C0_S(nnode1,nnode2,p1,p2) result(elemConn)
-        integer, intent(in) :: nnode1, nnode2
-        integer, intent(in) :: p1, p2
+    pure function cmp_elemConn_C0_S(nnode1, nnode2, p1, p2) result(elemConn)
+        integer, intent(in) :: nnode1, nnode2, p1, p2
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j, l
+        integer :: i, j, nelem1, nelem2, nnel
         integer, allocatable :: nodes(:,:)
 
-        if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
-        if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
+        if (mod(nnode1 - 1, p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
+        if (mod(nnode2 - 1, p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
 
-        allocate(elemConn( ((nnode1-1) / p1) * ((nnode2-1) / p2), (p1+1)*(p2+1)))
-        nodes = reshape([(i, i=1,nnode1*nnode2)], [nnode1, nnode2])
-        l = 0
-        do j = 1,nnode2-p2, p2
-            do i = 1,nnode1-p1, p1
-                l = l+1
-                elemConn(l,:) = reshape(nodes(i:i+p1,j:j+p2),[(p1 + 1)*(p2 + 1)])
+        nelem1 = (nnode1 - 1) / p1
+        nelem2 = (nnode2 - 1) / p2
+        nnel   = (p1 + 1) * (p2 + 1)
+
+        allocate(elemConn(nelem1 * nelem2, nnel))
+        nodes = reshape([(i, i = 1, nnode1 * nnode2)], [nnode1, nnode2])
+
+#if defined(__NVCOMPILER)
+        do i = 1,nnode1 - p1,p1
+            do j = 1,nnode2 - p2,p2
+            elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
             end do
         end do
+#else
+        do concurrent (j = 1:nnode2 - p2:p2, i = 1:nnode1 - p1:p1)
+            elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
+        end do
+#endif
     end function
     !===============================================================================
 
@@ -643,27 +720,35 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function cmp_elemConn_C0_V(nnode1,nnode2,nnode3,p1,p2,p3) result(elemConn)
-        integer, intent(in) :: nnode1, nnode2, nnode3
-        integer, intent(in) :: p1, p2, p3
+        integer, intent(in) :: nnode1, nnode2, nnode3, p1, p2, p3
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j, k, l
+        integer :: i, j, k, nnel, nelem1, nelem2, nelem3
         integer, allocatable :: nodes(:,:,:)
 
         if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_V: nnode1-1 must be divisible by p1'
         if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_V: nnode2-1 must be divisible by p2'
         if (mod(nnode3-1,p3) /= 0) error stop 'cmp_elemConn_C0_V: nnode3-1 must be divisible by p3'
 
-        allocate(elemConn( ((nnode1-1) / p1) * ((nnode2-1) / p2) * ((nnode3-1) / p3) ,(p1+1)*(p2+1)*(p3+1)))
-        nodes = reshape([(i, i=1,nnode1*nnode2*nnode3)], [nnode1, nnode2, nnode3])
-        l = 0
-        do k = 1,nnode3-p3, p3
-            do j = 1,nnode2-p2, p2
-                do i = 1,nnode1-p1, p1
-                    l = l+1
-                    elemConn(l,:) = reshape(nodes(i:i+p1,j:j+p2,k:k+p3),[(p1 + 1)*(p2 + 1)*(p3 + 1)])
+        nelem1 = (nnode1 - 1) / p1
+        nelem2 = (nnode2 - 1) / p2
+        nelem3 = (nnode3 - 1) / p3
+
+        nnel = (p1 + 1) * (p2 + 1) * (p3 + 1)
+        allocate(elemConn(nelem1 * nelem2 * nelem3, nnel))
+        nodes = reshape([(i, i=1, nnode1 * nnode2 * nnode3)], [nnode1, nnode2, nnode3])
+#if defined(__NVCOMPILER)
+        do k = 1,nnode3 - p3,p3
+            do j = 1,nnode2 - p2,p2
+                do i = 1,nnode1 - p1,p1
+                    elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
                 end do
             end do
         end do
+#else
+        do concurrent (k = 1:nnode3-p3:p3, j = 1:nnode2-p2:p2, i = 1:nnode1-p1:p1)
+            elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
+        end do
+#endif
     end function
     !===============================================================================
 
@@ -671,21 +756,24 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_elemConn_Cn_L(nnode, p, Xth,vecKnot_mul, elemConn)
+    pure subroutine cmp_elemConn_Cn_L(nnode, p, Xth, vecKnot_mul, elemConn)
         integer, intent(in) :: p, nnode
         integer, intent(in), contiguous :: vecKnot_mul(:)
         real(rk), intent(in), contiguous :: Xth(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:)
-        integer :: i, nnel, m, nelem
+        integer :: i, m, nnel, nelem
 
-        nnel = p + 1
-        nodes = [(i, i=1, nnode)]
+        nnel  = p + 1
         nelem = size(Xth) - 1
-        allocate(elemConn(nelem,nnel))
-        m = -p
-        do i = 1, nelem
-            m = m + vecKnot_mul(i)
+
+        allocate(nodes(nnode))
+        nodes = [(i, i=1, nnode)]
+
+        allocate(elemConn(nelem, nnel))
+
+        do concurrent (i = 1:nelem)
+            m = -p + sum(vecKnot_mul(1:i))
             elemConn(i,:) = nodes(m:m+p)
         end do
     end subroutine
@@ -695,44 +783,45 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_elemConn_Cn_S(nnode1,nnode2,p1,p2,&
-        Xth1,Xth2,vecKnot_mul1,vecKnot_mul2, elemConn)
+    pure subroutine cmp_elemConn_Cn_S(nnode1, nnode2, p1, p2, &
+        Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)
         integer, intent(in) :: p1, p2, nnode1, nnode2
         integer, intent(in), contiguous :: vecKnot_mul1(:), vecKnot_mul2(:)
         real(rk), intent(in), contiguous :: Xth1(:), Xth2(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, l, nnel1, nnel2, m, n, nelem1, nelem2, nelem
+        integer :: nnd_total, i, j, l, m, n, nnel1, nnel2, nelem1, nelem2, nelem
 
         nnel1 = p1 + 1
         nnel2 = p2 + 1
-
-        nnd_total = nnode1*nnode2
-        allocate(nodes_vec(nnd_total))
-
-        Nodes_vec = [(i, i=1, nnd_total)]
-        nodes = reshape(nodes_vec,[nnode1,nnode2])
-
         nelem1 = size(Xth1) - 1
         nelem2 = size(Xth2) - 1
+        nelem  = nelem1 * nelem2
 
-        nelem = nelem1*nelem2
+        nnd_total = nnode1 * nnode2
+        allocate(nodes_vec(nnd_total))
+        nodes_vec = [(i, i=1, nnd_total)]
+        nodes = reshape(nodes_vec, [nnode1, nnode2])
 
-        allocate(elemConn(nelem,nnel1*nnel2))
+        allocate(elemConn(nelem, nnel1 * nnel2))
 
-        l = 0
-
-        n = -p2
+#if defined(__NVCOMPILER)
         do j = 1, nelem2
-            n = n + vecKnot_mul2(j)
-            m = -p1
             do i = 1, nelem1
-                m = m + vecKnot_mul1(i)
-                l = l + 1
-                elemConn(l,:) = reshape(nodes(m:m+p1,n:n+p2), [nnel1*nnel2])
+                m = -p1 + sum(vecKnot_mul1(1:i))
+                n = -p2 + sum(vecKnot_mul2(1:j))
+                l = (j - 1) * nelem1 + i
+                elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
             end do
         end do
-
+#else
+        do concurrent (j = 1:nelem2, i = 1:nelem1)
+            m = -p1 + sum(vecKnot_mul1(1:i))
+            n = -p2 + sum(vecKnot_mul2(1:j))
+            l = (j - 1) * nelem1 + i
+            elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
+        end do
+#endif
     end subroutine
     !===============================================================================
 
@@ -747,7 +836,7 @@ contains
         real(rk), intent(in), contiguous :: Xth1(:), Xth2(:), Xth3(:)
         integer, allocatable, intent(out) :: elemConn(:,:)
         integer, allocatable :: nodes(:,:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, m, n, o, nelem1, nelem2, nelem3, nelem
+        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, nnel, m, n, o, nelem1, nelem2, nelem3, nelem
 
         nnel1 = p1 + 1
         nnel2 = p2 + 1
@@ -756,7 +845,7 @@ contains
         nnd_total = nnode1*nnode2*nnode3
         allocate(nodes_vec(nnd_total))
 
-        Nodes_vec = [(i, i=1, nnd_total)]
+        nodes_vec = [(i, i=1, nnd_total)]
         nodes = reshape(nodes_vec,[nnode1,nnode2,nnode3])
 
         nelem1 = size(Xth1) - 1
@@ -765,25 +854,29 @@ contains
 
         nelem = nelem1*nelem2*nelem3
 
-        allocate(elemConn(nelem,nnel1*nnel2*nnel3))
-
-        l = 0
-
-        o = -p3
+        nnel = nnel1*nnel2*nnel3
+        allocate(elemConn(nelem,nnel))
+#if defined(__NVCOMPILER)
         do k = 1, nelem3
-            o = o + vecKnot_mul3(k)
-            n = -p2
             do j = 1, nelem2
-                n = n + vecKnot_mul2(j)
-                m = -p1
                 do i = 1, nelem1
-                    m = m + vecKnot_mul1(i)
-                    l = l + 1
-                    elemConn(l,:) = reshape(nodes(m:m+p1,n:n+p2,o:o+p3), [nnel1*nnel2*nnel3])
+                    o = -p3 + sum(vecKnot_mul3(1:k))
+                    n = -p2 + sum(vecKnot_mul2(1:j))
+                    m = -p1 + sum(vecKnot_mul1(1:i))
+                    l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
+                    elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
                 end do
             end do
         end do
-
+#else
+        do concurrent (k = 1:nelem3, j = 1:nelem2, i = 1:nelem1)
+            o = -p3 + sum(vecKnot_mul3(1:k))
+            n = -p2 + sum(vecKnot_mul2(1:j))
+            m = -p1 + sum(vecKnot_mul1(1:i))
+            l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
+            elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
+        end do
+#endif
     end subroutine
     !===============================================================================
 
@@ -837,7 +930,8 @@ contains
             if (abs(knot(i) - Xth) < 2.0_rk*epsilon(0.0_rk)) then
                 count = 1
                 ! do while (i + count <= size_knot .and. knot(i + count) == Xth)
-                do while (i + count <= size_knot .and. abs(knot(i + count) - Xth) < 2.0_rk*epsilon(0.0_rk))
+                do while ((i + count) <= size_knot)
+                    if (abs(knot(i + count) - Xth) >= 2.0_rk*epsilon(0.0_rk)) exit
                     count = count + 1
                 end do
                 if (count > multiplicity) then
@@ -1131,29 +1225,22 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function hexahedron_Xc(L, nc) result(Xc)
-        real(rk), intent(in) :: L(3)
-        integer, intent(in) :: nc(3)
+        real(rk), intent(in), contiguous :: L(:)
+        integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: dx, dy, dz
-        integer :: i, j, k, nci
+        integer :: i, j, k
 
         dx = L(1) / real(nc(1)-1, rk)
         dy = L(2) / real(nc(2)-1, rk)
         dz = L(3) / real(nc(3)-1, rk)
 
         allocate(Xc(nc(1) * nc(2) * nc(3), 3))
-        nci = 1
-        do k = 0, nc(3)-1
-            do j = 0, nc(2)-1
-                do i = 0, nc(1)-1
-                    Xc(nci, 1) = real(i,rk) * dx
-                    Xc(nci, 2) = real(j,rk) * dy
-                    Xc(nci, 3) = real(k,rk) * dz
-                    nci = nci + 1
-                end do
-            end do
+        do concurrent (k = 0:nc(3)-1, j = 0:nc(2)-1, i = 0:nc(1)-1)
+            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 1) = real(i, rk) * dx
+            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 2) = real(j, rk) * dy
+            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 3) = real(k, rk) * dz
         end do
-
     end function
     !===============================================================================
 
@@ -1162,26 +1249,21 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function tetragon_Xc(L, nc) result(Xc)
-        real(rk), intent(in) :: L(2)
-        integer, intent(in) :: nc(2)
+        real(rk), intent(in), contiguous :: L(:)
+        integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: dx, dy
-        integer :: i, j, nci
+        integer :: i, j
 
         dx = L(1) / real(nc(1)-1, rk)
         dy = L(2) / real(nc(2)-1, rk)
 
         allocate(Xc(nc(1) * nc(2), 3))
-        nci = 1
-        do j = 0, nc(2)-1
-            do i = 0, nc(1)-1
-                Xc(nci, 1) = real(i,rk) * dx
-                Xc(nci, 2) = real(j,rk) * dy
-                Xc(nci, 3) = 0.0_rk
-                nci = nci + 1
-            end do
+        do concurrent (j = 0:nc(2)-1, i = 0:nc(1)-1)
+            Xc(i + j * nc(1) + 1, 1) = real(i, rk) * dx
+            Xc(i + j * nc(1) + 1, 2) = real(j, rk) * dy
+            Xc(i + j * nc(1) + 1, 3) = 0.0_rk
         end do
-
     end function
     !===============================================================================
 
@@ -1389,20 +1471,24 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     recursive pure function inv(A) result(A_inv)
-        real(rk), intent(in) :: A(:,:)
+        real(rk), intent(in), contiguous :: A(:,:)
         real(rk), allocatable :: A_inv(:,:)
+        integer :: m, n
 
-        if (size(A,1) == size(A,2)) then
-            select case(size(A,1))
+        m = size(A,1)
+        n = size(A,2)
+
+        if (m == n) then
+            select case(m)
               case(2)
-                allocate(A_inv(size(A,1),size(A,2)))
+                allocate(A_inv(m,n))
                 A_inv(1,1) =  A(2,2)
                 A_inv(1,2) = -A(1,2)
                 A_inv(2,1) = -A(2,1)
                 A_inv(2,2) =  A(1,1)
                 A_inv = A_inv/det(A)
               case(3)
-                allocate(A_inv(size(A,1),size(A,2)))
+                allocate(A_inv(m,n))
                 A_inv(1,1) = A(2,2)*A(3,3) - A(2,3)*A(3,2)
                 A_inv(1,2) = A(1,3)*A(3,2) - A(1,2)*A(3,3)
                 A_inv(1,3) = A(1,2)*A(2,3) - A(1,3)*A(2,2)
@@ -1413,17 +1499,37 @@ contains
                 A_inv(3,2) = A(1,2)*A(3,1) - A(1,1)*A(3,2)
                 A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
                 A_inv = A_inv/det(A)
+              case default
+                A_inv = solve(A,eye(m))
             end select
-        elseif (size(A,1)>size(A,2)) then
-            allocate(A_inv(size(A,2),size(A,1)))
+        elseif (m>n) then
+            allocate(A_inv(n,m))
             A_inv = transpose(A)
             A_inv = matmul(inv(matmul(A_inv, A)), A_inv)
-        elseif (size(A,1)<size(A,2)) then
-            allocate(A_inv(size(A,2),size(A,1)))
+        elseif (m<n) then
+            allocate(A_inv(n,m))
             A_inv = transpose(A)
             A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
         end if
 
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure function eye(n) result(I)
+        integer, intent(in) :: n
+        real(rk), allocatable :: I(:,:)
+
+        ! local variables
+        integer :: k
+
+        allocate(I(n,n), source=0.0_rk)
+        do concurrent (k = 1: n)
+            I(k, k) = 1.0_rk
+        end do
     end function
     !===============================================================================
 
@@ -1449,7 +1555,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_1D(interval, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval(2)
+        real(rk), intent(in), contiguous :: interval(:)
         integer, intent(in) :: degree
         real(rk), allocatable, intent(out) :: Xksi(:), Wksi(:)
 
@@ -1464,8 +1570,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_2D(interval1, interval2, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval1(2), interval2(2)
-        integer, intent(in) :: degree(2)
+        real(rk), intent(in), contiguous :: interval1(:), interval2(:)
+        integer, intent(in), contiguous :: degree(:)
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:)
 
@@ -1485,8 +1591,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre_3D(interval1, interval2, interval3, degree, Xksi, Wksi)
-        real(rk), intent(in) :: interval1(2), interval2(2), interval3(2)
-        integer, intent(in) :: degree(3)
+        real(rk), intent(in), contiguous :: interval1(:), interval2(:), interval3(:)
+        integer, intent(in), contiguous :: degree(:)
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:), Xksi3(:), Wksi3(:)
 
@@ -1509,7 +1615,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine gauss_legendre(x, w, interval)
         real(rk), intent(out) :: x(:), w(:)
-        real(rk), intent(in) :: interval(2)
+        real(rk), intent(in), contiguous :: interval(:)
         real(rk) :: xi, delta, p_next, dp_next, p_prev, p_curr, dp_prev, dp_curr, midpoint, half_length
         integer :: i, j, k, n
         real(rk), parameter :: pi = acos(-1.0_rk)
@@ -1573,7 +1679,7 @@ contains
     impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, point_data, field_names, encoding)
         character(len=*), intent(in) :: filename
         real(rk), intent(in) :: points(:,:)
-        integer, intent(in) :: elemConn(:,:)
+        integer, intent(in) :: elemConn(:,:) ! for VTK_POLY_LINE all rows have same nn
         integer, intent(in) :: vtkCellType
         real(rk), intent(in), optional :: point_data(:,:)     ! [npoints, nfields]
         character(len=*), intent(in), optional :: field_names(:)
@@ -1582,11 +1688,14 @@ contains
         integer :: i, j, ne, np, nn, n, nunit
         character(len=6) :: encoding_
         integer, parameter :: dp = kind(1.0d0)
+        logical :: is_polyline
 
         ne = size(elemConn, 1)
         nn = size(elemConn, 2)
         np = size(points, 1)
         n = ne*(nn+1)
+
+        is_polyline = (vtkCellType == 4)   ! VTK_POLY_LINE
 
         if (present(encoding)) then
             select case (trim(encoding))
@@ -1607,7 +1716,11 @@ contains
             write(nunit,'(a)') '# vtk DataFile Version 2.0'
             write(nunit,'(a)') 'Generated by ForCAD'
             write(nunit,'(a)') 'ASCII'
-            write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+            if (is_polyline) then
+                write(nunit,'(a)') 'DATASET POLYDATA'
+            else
+                write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+            end if
 
             write(nunit,'(a,1x,g0,1x,a)') 'POINTS', np, 'double'
             if (size(points,2) == 2) then
@@ -1618,24 +1731,31 @@ contains
                 error stop 'Invalid dimension for points.'
             end if
 
-            write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
-            select case (nn)
-            case (2)
-                write(nunit,'(g0,1x,g0,1x,g0)')&
-                    (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
-            case (4)
-                write(nunit,'(g0,1x,g0,1x,g0,1x,g0)')&
-                    (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
-            case (8)
-                write(nunit,'(g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0)')&
-                    (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
-                    elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
-            case default
-                error stop 'Invalid number of nodes per element.'
-            end select
+            if (is_polyline) then
+                write(nunit,'(a,1x,g0,1x,g0)') 'LINES', ne, n
+                do i = 1, ne
+                    write(nunit,'(g0, *(1x,g0))') nn, (elemConn(i,j)-1, j=1, nn)
+                end do
+            else
+                write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
+                select case (nn)
+                    case (2)
+                        write(nunit,'(g0,1x,g0,1x,g0)')&
+                            (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
+                    case (4)
+                        write(nunit,'(g0,1x,g0,1x,g0,1x,g0)')&
+                            (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
+                    case (8)
+                        write(nunit,'(g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0)')&
+                            (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
+                            elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
+                    case default
+                        error stop 'Invalid number of nodes per element.'
+                end select
 
-            write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
-            write(nunit,'(g0)') (vtkCellType , i = 1, ne)
+                write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
+                write(nunit,'(g0)') (vtkCellType , i = 1, ne)
+            end if
 
             if (present(point_data) .and. present(field_names)) then
                 write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
@@ -1655,7 +1775,11 @@ contains
             write(nunit,'(a)') '# vtk DataFile Version 2.0'
             write(nunit,'(a)') 'Generated by ForCAD'
             write(nunit,'(a)') 'BINARY'
-            write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+            if (is_polyline) then
+                write(nunit,'(a)') 'DATASET POLYDATA'
+            else
+                write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+            end if
             close(nunit)
 
             open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
@@ -1665,59 +1789,69 @@ contains
                 action="write", convert="big_endian", status="unknown")
             if (size(points,2) == 2) then
                 write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(0.0_rk,dp) , i = 1, np)
-            elseif (size(points,2) == 3) then
+            else if (size(points,2) == 3) then
                 write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(points(i,3),dp) , i = 1, np)
             else
                 error stop 'Invalid dimension for points.'
             end if
             close(nunit)
 
-            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
-            close(nunit)
-            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                action="write", convert="big_endian", status="unknown")
-            select case (nn)
-            case (2)
-                write(nunit)&
-                    (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
-            case (4)
-                write(nunit)&
-                    (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
-            case (8)
-                write(nunit)&
-                    (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
-                    elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
-            case default
-                error stop 'Invalid number of nodes per element.'
-            end select
-            close(nunit)
+            if (is_polyline) then
+                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+                write(nunit,'(a,1x,g0,1x,g0)') 'LINES', ne, n
+                close(nunit)
+                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                    action="write", convert="big_endian", status="unknown")
+                    write(nunit) ( nn, (elemConn(i,j)-1, j=1,nn), i=1,ne )
+                close(nunit)
+            else
+                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+                write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
+                close(nunit)
+                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                    action="write", convert="big_endian", status="unknown")
+                select case (nn)
+                    case (2)
+                        write(nunit)&
+                            (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
+                    case (4)
+                        write(nunit)&
+                            (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
+                    case (8)
+                    write(nunit)&
+                        (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
+                        elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
+                    case default
+                        error stop 'Invalid number of nodes per element.'
+                end select
+                close(nunit)
 
-            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
-            close(nunit)
-            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                action="write", convert="big_endian", status="unknown")
-            write(nunit) (vtkCellType, i=1, ne)
-            close(nunit)
+                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+                write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
+                close(nunit)
+                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
+                    action="write", convert="big_endian", status="unknown")
+                write(nunit) (vtkCellType, i=1, ne)
+                close(nunit)
+            end if
 
             if (present(point_data) .and. present(field_names)) then
-            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
-            close(nunit)
-
-            do i = 1, size(point_data,2)
                 open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
-                write(nunit, '(a)') 'LOOKUP_TABLE default'
+                write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
                 close(nunit)
 
-                open(newunit=nunit, file=filename, position='append', access='stream', form='unformatted', &
-                    action='write', convert='big_endian', status='unknown')
-                write(nunit) (real(point_data(j,i),dp), j=1,size(point_data,1))
-                close(nunit)
-            end do
-        end if
+                do i = 1, size(point_data,2)
+                    open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
+                    write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
+                    write(nunit, '(a)') 'LOOKUP_TABLE default'
+                    close(nunit)
+
+                    open(newunit=nunit, file=filename, position='append', access='stream', form='unformatted', &
+                        action='write', convert='big_endian', status='unknown')
+                    write(nunit) (real(point_data(j,i),dp), j=1,size(point_data,1))
+                    close(nunit)
+                end do
+            end if
 
         end if
     end subroutine

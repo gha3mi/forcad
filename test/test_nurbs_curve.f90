@@ -12,7 +12,7 @@ program test_nurbs_curve
     real(rk), allocatable :: Tgc(:,:), dTgc(:,:), Tgcb(:,:), dTgcb(:,:), d2Tgc(:,:), d2Tgcb(:,:)
     real(rk), allocatable :: Tgc1(:), dTgc1(:), Tgc1b(:), dTgc1b(:), d2Tgc1(:), d2Tgc1b(:)
     integer :: i, id
-    real(rk), allocatable :: nearest_Xg(:)
+    real(rk) :: nearest_Xg(3)
     real(rk) :: nearest_Xt, length, lengthb
     type(unit_test) :: ut
 

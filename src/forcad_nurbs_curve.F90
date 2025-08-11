@@ -11,7 +11,7 @@ module forcad_nurbs_curve
     implicit none
 
     private
-    public nurbs_curve
+    public nurbs_curve, compute_Tgc, compute_dTgc
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
@@ -58,6 +58,7 @@ module forcad_nurbs_curve
         procedure :: finalize              !!> Finalize the NURBS curve object
         procedure :: cmp_elem_Xc_vis       !!> Generate connectivity for control points
         procedure :: cmp_elem_Xg_vis       !!> Generate connectivity for geometry points
+        procedure :: cmp_elem_Xth          !!> Generate connectivity for parameter points
         procedure :: cmp_elem              !!> Generate IGA element connectivity
         procedure :: get_elem_Xc_vis       !!> Get connectivity for control points
         procedure :: get_elem_Xg_vis       !!> Get connectivity for geometry points
@@ -724,6 +725,23 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure function cmp_elem_Xth(this, p) result(elemConn)
+        class(nurbs_curve), intent(in) :: this
+        integer, allocatable :: elemConn(:,:)
+        integer, intent(in), optional :: p
+
+        if (present(p)) then
+            elemConn = elemConn_C0(size(unique(this%knot)), p)
+        else
+            elemConn = elemConn_C0(size(unique(this%knot)), 1)
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
@@ -788,15 +806,12 @@ contains
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
-        type(nurbs_curve) :: th
 
+        elemConn = this%cmp_elem_Xth()
         Xth1 = unique(this%knot)
         Xth2 = [0.0_rk]
         Xth3 = [0.0_rk]
         call ndgrid(Xth1, Xth2, Xth3, Xth)
-
-        call th%set([this%knot(1),Xth1,this%knot(size(this%knot))], Xth)
-        elemConn = th%cmp_elem()
 
         call export_vtk_legacy(filename=filename, points=Xth, elemConn=elemConn, vtkCellType=3, &
                                point_data=point_data, field_names=field_names, encoding=encoding)
@@ -820,40 +835,44 @@ contains
         type(DElist_t)    :: Dlist
         type(PElist_t)    :: Plist
         character(80), allocatable :: Ssection(:), Gsection(:), Dsection(:), Psection(:), Ssec_out(:)
-        real(rk), allocatable :: W(:), X(:), Y(:), Z(:), T(:)
-        integer :: i, M, K, N, prop3
+        integer :: i, K, M, N, prop3
+        real(wp) :: T(-this%degree:1+this%degree), X(0:this%degree), Y(0:this%degree), Z(0:this%degree), W(0:this%degree), V(0:1)
+        real(wp) :: XNORM, YNORM, ZNORM
 
         ! Parameters for IGES knot vector
         K = this%degree
         M = this%degree
         N = 1 + K - M
 
-        ! Allocate IGES arrays explicitly with correct indexing
-        allocate(T(-M:N+K), X(0:K), Y(0:K), Z(0:K), W(0:K))
-
         ! Copy your knot vector to IGES indexing
         do i = -M, N + K
-            T(i) = this%knot(i + M + 1)
+            T(i) = real(this%knot(i + M + 1), kind=wp)
         end do
 
         ! Copy control points
         if (this%is_rational()) then
             do i = 0, K
-                X(i) = this%Xc(i+1, 1)
-                Y(i) = this%Xc(i+1, 2)
-                Z(i) = this%Xc(i+1, 3)
-                W(i) = this%Wc(i+1)
+                X(i) = real(this%Xc(i+1, 1), kind=wp)
+                Y(i) = real(this%Xc(i+1, 2), kind=wp)
+                Z(i) = real(this%Xc(i+1, 3), kind=wp)
+                W(i) = real(this%Wc(i+1), kind=wp)
             end do
             prop3 = 1
         else
             do i = 0, K
-                X(i) = this%Xc(i+1, 1)
-                Y(i) = this%Xc(i+1, 2)
-                Z(i) = this%Xc(i+1, 3)
-                W(i) = 1.0_rk
+                X(i) = real(this%Xc(i+1, 1), kind=wp)
+                Y(i) = real(this%Xc(i+1, 2), kind=wp)
+                Z(i) = real(this%Xc(i+1, 3), kind=wp)
+                W(i) = real(1.0_rk, kind=wp)
             end do
             prop3 = 0
         end if
+
+        XNORM = real(0.0_rk, kind=wp)
+        YNORM = real(0.0_rk, kind=wp)
+        ZNORM = real(0.0_rk, kind=wp)
+
+        V = real([minval(this%knot), maxval(this%knot)], kind=wp)
 
         ! Initialize IGES entity126 (Rational B-spline Curve)
         call curve126%init(&
@@ -865,15 +884,15 @@ contains
             PROP2 = 0,&
             PROP3 = prop3,&
             PROP4 = 0,&
-            T     = real(T, kind=wp),&
-            W     = real(W, kind=wp),&
-            X     = real(X, kind=wp),&
-            Y     = real(Y, kind=wp),&
-            Z     = real(Z, kind=wp),&
-            V     = real([minval(this%knot), maxval(this%knot)], kind=wp),&
-            XNORM = real(0.0_rk, kind=wp),&
-            YNORM = real(0.0_rk, kind=wp),&
-            ZNORM = real(0.0_rk, kind=wp))
+            T     = T,&
+            W     = W,&
+            X     = X,&
+            Y     = Y,&
+            Z     = Z,&
+            V     = V,&
+            XNORM = XNORM,&
+            YNORM = YNORM,&
+            ZNORM = ZNORM)
 
         ! Directory entry
         call D%init(entity_type=126, param_data=1, transformation_matrix=0, form_number=0)
@@ -1190,7 +1209,13 @@ contains
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
         if (this%is_rational()) then ! NURBS
-            call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
+            if (present(elem)) then
+                associate(Wce => this%Wc(elem))
+                    call compute_dTgc(Xt, this%knot, this%degree, this%nc, Wce, dTgc, Tgc, elem)
+                end associate
+            else
+                call compute_dTgc(Xt, this%knot, this%degree, this%nc, this%Wc, dTgc, Tgc, elem)
+            end if
         else ! B-Spline
             call compute_dTgc(Xt, this%knot, this%degree, this%nc, dTgc, Tgc, elem)
         end if
@@ -1674,6 +1699,7 @@ contains
     impure subroutine show(this, vtkfile_Xc, vtkfile_Xg)
         class(nurbs_curve), intent(inout) :: this
         character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
+#ifndef NOSHOW_PYVISTA
         character(len=3000) :: pyvista_script
 
         pyvista_script = &
@@ -1785,6 +1811,7 @@ contains
             "p.deep_clean()"//achar(10)//&
             "del p"
         call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
+#endif
     end subroutine
     !===============================================================================
 
@@ -1830,17 +1857,32 @@ contains
     !> license: BSD 3-Clause
     pure subroutine nearest_point(this, point_Xg, nearest_Xg, nearest_Xt, id)
         class(nurbs_curve), intent(in) :: this
-        real(rk), intent(in) :: point_Xg(:)
-        real(rk), intent(out), allocatable, optional :: nearest_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
+        real(rk), intent(out), optional :: nearest_Xg(size(point_Xg))
         real(rk), intent(out), optional :: nearest_Xt
         integer, intent(out), optional :: id
-        integer :: id_
+        integer :: id_, i
         real(rk), allocatable :: distances(:)
 
         allocate(distances(this%ng))
-        distances = nearest_point_help_1d(this%ng, this%Xg, point_Xg)
 
+#if defined(__NVCOMPILER)
+        do i = 1, this%ng
+#else
+        do concurrent (i = 1: this%ng)
+#endif
+            distances(i) = norm2(this%Xg(i,:) - point_Xg)
+        end do
+
+        ! replaced minloc due to NVFortran bug
+#if defined(__NVCOMPILER)
+        id_ = 1
+        do i = 2, size(distances)
+            if (distances(i) < distances(id_)) id_ = i
+        end do
+#else
         id_ = minloc(distances, dim=1)
+#endif
         if (present(id)) id = id_
         if (present(nearest_Xg)) nearest_Xg = this%Xg(id_,:)
         if (present(nearest_Xt)) nearest_Xt = this%Xt(id_)
@@ -1854,53 +1896,49 @@ contains
     impure subroutine nearest_point2(this, point_Xg, tol, maxit, nearest_Xt, nearest_Xg)
 
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: point_Xg(:)
+        real(rk), intent(in), contiguous :: point_Xg(:)
         real(rk), intent(in) :: tol
         integer, intent(in) :: maxit
         real(rk), intent(out) :: nearest_Xt
-        real(rk), allocatable, intent(out), optional :: nearest_Xg(:)
-        real(rk):: xk, xkn, obj, grad, hess, dk, alphak, tau, beta, lower_bounds, upper_bounds
-        real(rk), allocatable :: Xg(:), Tgc(:), dTgc(:), d2Tgc(:)
+        real(rk), intent(out), optional :: nearest_Xg(size(this%Xc,2))
+
+        real(rk) :: xk, xkn, obj, obj_trial, grad, hess, dk, alphak
+        real(rk) :: tau, beta, eps, lower_bounds, upper_bounds, alpha_max, alpha_i, xt
+        real(rk) :: Xg(size(this%Xc,2))
+        real(rk), allocatable :: Tgc(:), dTgc(:), d2Tgc(:)
         integer :: k, l
         logical :: convergenz
         type(nurbs_curve) :: copy_this
 
-        k = 0
+        dk  = 0.0_rk
+        k   = 0
+        eps = 10.0_rk*tiny(1.0_rk)
 
-        ! lower and upper bounds
+        ! bounds
         lower_bounds = minval(this%knot)
         upper_bounds = maxval(this%knot)
 
-        ! guess initial point
+        ! initial guess (coarse search)
         copy_this = this
         call copy_this%create(10)
         call copy_this%nearest_point(point_Xg=point_Xg, nearest_Xt=xk)
         call copy_this%finalize()
 
-        ! Check if xk is within the knot vector range
-        if (xk < minval(this%knot)) then
-            xk = minval(this%knot)
-        else if (xk > maxval(this%knot)) then
-            xk = maxval(this%knot)
-        end if
+        ! clamp initial guess to bounds
+        xk = max(min(xk, upper_bounds), lower_bounds)
 
         xkn = xk
-
         convergenz = .false.
-
-        allocate(Xg(size(this%Xc,2)))
-        ! allocate(dTgc(size(this%Xc,1)))
-        ! allocate(d2Tgc(size(this%Xc,1)))
 
         do while (.not. convergenz .and. k < maxit)
 
-            ! objection, gradient and hessian
+            ! objective, gradient, hessian
             Xg = this%cmp_Xg(xk)
-            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc) ! Tgc is not needed
+            call this%derivative2(Xt=xk, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)  ! Tgc unused
 
-            obj  = norm2(Xg - point_Xg) + 0.001_rk ! add a small number to avoid division by zero
-            grad = dot_product((Xg-point_Xg)/obj, matmul(dTgc,this%Xc))
-            hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj&
+            obj  = norm2(Xg - point_Xg) + 0.001_rk  ! small epsilon to avoid divide-by-zero
+            grad = dot_product((Xg-point_Xg)/obj, matmul(dTgc, this%Xc))
+            hess = dot_product(matmul(dTgc,this%Xc) - (Xg-point_Xg)/obj*grad, matmul(dTgc,this%Xc))/obj &
                 + dot_product((Xg-point_Xg)/obj, matmul(d2Tgc,this%Xc))
 
             ! debug
@@ -1911,22 +1949,58 @@ contains
                 nearest_Xt = xk
                 if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
             else
+                ! Newton step
                 dk = - grad / hess
 
-                ! Backtracking-Armijo Line Search
-                alphak = 1.0_rk
-                tau = 0.5_rk     ! 0 < tau  < 1
-                beta = 1.0e-4_rk ! 0 < beta < 1
+                ! Backtracking-Armijo with feasibility
+                tau  = 0.5_rk
+                beta = 1.0e-4_rk
+
+                ! maximum feasible step so xk + alpha*dk stays within [lower_bounds, upper_bounds]
+                if (dk > 0.0_rk) then
+                    if (upper_bounds > xk) then
+                        alpha_i  = (upper_bounds - xk) / dk
+                        alpha_max = max(0.0_rk, alpha_i)
+                    else
+                        alpha_max = 0.0_rk
+                    end if
+                else if (dk < 0.0_rk) then
+                    if (lower_bounds < xk) then
+                        alpha_i  = (lower_bounds - xk) / dk
+                        alpha_max = max(0.0_rk, alpha_i)
+                    else
+                        alpha_max = 0.0_rk
+                    end if
+                else
+                    alpha_max = 0.0_rk
+                end if
+
+                if (alpha_max <= eps) then
+                    convergenz = .true.
+                    nearest_Xt = xk
+                    if (present(nearest_Xg)) nearest_Xg = this%cmp_Xg(nearest_Xt)
+                    exit
+                end if
+
+                alphak = min(1.0_rk, alpha_max)
                 l = 0
-                do while (.not. norm2(this%cmp_Xg(xk + alphak*dk) - point_Xg)  <= obj + alphak*beta*grad*dk .and. l<50)
-                    alphak = tau * alphak
+                do
+                    if (alphak <= eps .or. l >= 50) exit
+                    xt = xk + alphak*dk        ! feasible since alphak ≤ alpha_max
+                    obj_trial = norm2(this%cmp_Xg(xt) - point_Xg) + 0.001_rk
+                    if (obj_trial <= obj + alphak*beta*grad*dk) exit
+                    alphak = min(tau*alphak, alpha_max)  ! shrink but stay feasible
                     l = l + 1
                 end do
 
                 xkn = xk
-                xk = xk + alphak*dk
-                ! Check if xk is within the knot vector range
+                if (alphak > eps) then
+                    xk = xk + alphak*dk
+                end if
+
+                ! clamp updated iterate
                 xk = max(min(xk, upper_bounds), lower_bounds)
+
                 k = k + 1
             end if
         end do
@@ -1938,12 +2012,13 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dL)
+    pure subroutine ansatz(this, ie, ig, Tgc, dTgc_dXg, dL, ngauss)
         class(nurbs_curve), intent(inout) :: this
 
         integer, intent(in) :: ie, ig
         real(rk), intent(out) :: dL
         real(rk), allocatable, intent(out) :: Tgc(:), dTgc_dXg(:,:)
+        integer, intent(in), optional :: ngauss
         real(rk), allocatable :: Xth(:), Xth_e(:), Xc_eT(:,:), Xksi(:), Wksi(:)
         integer, allocatable :: elem_th(:,:), elem_c(:,:), elem_ce(:)
         type(nurbs_curve) :: th, th_e
@@ -1952,7 +2027,11 @@ contains
         real(rk), allocatable :: dXg_dXksi(:) !! Jacobian matrix
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
 
-        call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        if (present(ngauss)) then
+            call gauss_leg([0.0_rk, 1.0_rk], ngauss-1, Xksi, Wksi)
+        else
+            call gauss_leg([0.0_rk, 1.0_rk], this%degree, Xksi, Wksi)
+        end if
 
         Xth = unique(this%knot)
 
@@ -1987,12 +2066,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_length(this, length)
+    pure subroutine cmp_length(this, length, ngauss)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(out) :: length
+        integer, intent(in), optional :: ngauss
         real(rk), allocatable :: Tgc(:), dTgc_dXg(:,:)
-        integer :: ie, ig
+        integer :: ie, ig, ngauss_
         real(rk) :: dL, dL_ig
+
+        if (present(ngauss)) then
+            ngauss_ = ngauss
+        else
+            ngauss_ = this%degree + 1
+        end if
 
         length = 0.0_rk
 #if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
@@ -2001,8 +2087,8 @@ contains
         do concurrent (ie = 1: size(this%cmp_elem(),1)) reduce(+:length)
 #endif
             dL = 0.0_rk
-            do ig = 1, size(this%cmp_elem(),2)
-                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig)
+            do ig = 1, ngauss_
+                call this%ansatz(ie, ig, Tgc, dTgc_dXg, dL_ig, ngauss_)
                 dL = dL + dL_ig
             end do
             length = length + dL
@@ -2135,24 +2221,20 @@ contains
         real(rk), allocatable, intent(out) :: d2Tgc(:,:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
-        real(rk), allocatable :: d2Bi(:), dBi(:), Tgci(:), dTgci(:), Bi(:)
+        real(rk) :: d2Bi(nc), dBi(nc), Bi(nc)
         integer :: i
 
-        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc), d2Bi(nc), dTgci(nc), dBi(nc), Tgci(nc), Bi(nc))
+        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
 
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(d2Bi, dBi, Bi)
 #endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
-            Tgci = Bi*(Wc/(dot_product(Bi,Wc)))
-            Tgc(i,:) = Tgci
-
-            dTgci = ( dBi*Wc - Tgci*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
-            dTgc(i,:) = dTgci
-
-            d2Tgc(i,:) = (d2Bi*Wc - 2.0_rk*dTgci*dot_product(dBi,Wc) - Tgci*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
+            Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
+            dTgc(i,:) = ( dBi*Wc - Tgc(i,:)*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
+            d2Tgc(i,:) = (d2Bi*Wc - 2.0_rk*dTgc(i,:)*dot_product(dBi,Wc) - Tgc(i,:)*dot_product(d2Bi,Wc)) / dot_product(Bi,Wc)
         end do
     end subroutine
     !===============================================================================
@@ -2195,14 +2277,19 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
+        real(rk) :: Xti, d2Tgci(nc), dTgci(nc), Tgci(nc)
 
         allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(Xti, d2Tgci, dTgci, Tgci)
 #endif
-            call basis_bspline_2der(Xt(i), knot, nc, degree, d2Tgc(i,:) , dTgc(i,:), Tgc(i,:))
+            Xti = Xt(i)
+            call basis_bspline_2der(Xti, knot, nc, degree, d2Tgci , dTgci, Tgci)
+            d2Tgc(i,:) = d2Tgci
+            dTgc(i,:) = dTgci
+            Tgc(i,:) = Tgci
         end do
     end subroutine
     !===============================================================================
@@ -2242,10 +2329,10 @@ contains
         integer :: i
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(dBi, Bi)
 #endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
@@ -2277,8 +2364,8 @@ contains
             dTgc = ( dBi*Wc - Tgc*dot_product(dBi,Wc) ) / dot_product(Bi,Wc)
         else
             allocate(dTgc(size(elem)), Tgc(size(elem)))
-            Tgc = Bi(elem)*(Wc(elem)/(dot_product(Bi(elem),Wc(elem))))
-            dTgc = ( dBi(elem)*Wc(elem) - Tgc*dot_product(dBi(elem),Wc(elem)) ) / dot_product(Bi(elem),Wc(elem))
+            Tgc = Bi(elem)*(Wc/(dot_product(Bi(elem),Wc)))
+            dTgc = ( dBi(elem)*Wc - Tgc*dot_product(dBi(elem),Wc) ) / dot_product(Bi(elem),Wc)
         end if
     end subroutine
     !===============================================================================
@@ -2296,14 +2383,18 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
+        real(rk) :: Xti, dTgci(nc), Tgci(nc)
 
         allocate(dTgc(ng, nc), Tgc(ng, nc))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, size(Xt)
 #else
-        do concurrent (i = 1: size(Xt))
+        do concurrent (i = 1: size(Xt)) local(Xti, dTgci, Tgci)
 #endif
-            call basis_bspline_der(Xt(i), knot, nc, degree, dTgc(i,:), Tgc(i,:))
+            Xti = Xt(i)
+            call basis_bspline_der(Xti, knot, nc, degree, dTgci, Tgci)
+            dTgc(i,:) = dTgci
+            Tgc(i,:) = Tgci
         end do
     end subroutine
     !===============================================================================
@@ -2423,34 +2514,12 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function nearest_point_help_1d(ng, Xg, point_Xg) result(distances)
-        integer, intent(in) :: ng
-        real(rk), intent(in), contiguous :: Xg(:,:)
-        real(rk), intent(in), contiguous :: point_Xg(:)
-        real(rk), allocatable :: distances(:)
-        integer :: i
-
-        allocate(distances(ng))
-#if defined(__NVCOMPILER)
-        do i = 1, ng
-#else
-        do concurrent (i = 1: ng)
-#endif
-            distances(i) = norm2(Xg(i,:) - point_Xg)
-        end do
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
     pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
         use forcad_interface, only: solve
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in), contiguous :: Xt(:), Xdata(:,:)
         integer, intent(in) :: ndata
-        real(rk), allocatable :: T(:,:), Tt(:,:)
+        real(rk), allocatable :: T(:,:), Tt(:,:), TtT(:,:), TtX(:,:)
         integer :: i
 
         if (this%nc > ndata) error stop "Error: in the first direction, number of control points exceeds number of data points."
@@ -2464,7 +2533,9 @@ contains
             T(i,:) = basis_bspline(Xt(i), this%knot, this%nc, this%degree)
         end do
         Tt = transpose(T)
-        this%Xc = solve(matmul(Tt, T), matmul(Tt, Xdata))
+        TtT = matmul(Tt, T)
+        TtX = matmul(Tt, Xdata)
+        this%Xc = solve(TtT, TtX)
     end subroutine
    !===============================================================================
 
