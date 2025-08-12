@@ -29,11 +29,11 @@ module forcad_nurbs_curve
         integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
         integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
-        procedure :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
-        procedure :: set1a
-        procedure :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
-        procedure :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
-        procedure :: set4                  !!> Set NURBS curve using degree, number of control points, control points and weights
+        procedure, private :: set1                  !!> Set knot vector, control points and weights for the NURBS curve object
+        procedure, private :: set1a
+        procedure, private :: set2                  !!> Set NURBS curve using nodes of parameter space, degree, continuity, control points and weights
+        procedure, private :: set3                  !!> Set Bezier or Rational Bezier curve using control points and weights
+        procedure, private :: set4                  !!> Set NURBS curve using degree, number of control points, control points and weights
         generic :: set => set1, set1a, set2, set3, set4 !!> Set NURBS curve
         procedure :: create                !!> Generate geometry points
         procedure :: cmp_Xg                !!> Compute geometry points

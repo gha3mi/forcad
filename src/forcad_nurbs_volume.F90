@@ -34,10 +34,10 @@ module forcad_nurbs_volume
         integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
         integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
     contains
-        procedure :: set1                   !!> Set knot vectors, control points and weights for the NURBS volume object
-        procedure :: set2                   !!> Set NURBS volume using nodes of parameter space, degree, continuity, control points and weights
-        procedure :: set3                   !!> Set Bezier or Rational Bezier volume using control points and weights
-        procedure :: set4                   !!> Set NURBS volume using degree, number of control points, control points and weights
+        procedure, private :: set1                   !!> Set knot vectors, control points and weights for the NURBS volume object
+        procedure, private :: set2                   !!> Set NURBS volume using nodes of parameter space, degree, continuity, control points and weights
+        procedure, private :: set3                   !!> Set Bezier or Rational Bezier volume using control points and weights
+        procedure, private :: set4                   !!> Set NURBS volume using degree, number of control points, control points and weights
         generic :: set => set1, set2, set3, set4  !!> Set NURBS volume
         procedure :: create                 !!> Generate geometry points
         procedure :: cmp_Xg                !!> Compute geometry points
