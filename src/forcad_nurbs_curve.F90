@@ -2157,7 +2157,7 @@ contains
         real(rk), allocatable :: Xg(:)
         real(rk), allocatable :: Tgc(:)
 
-        allocate(Xg(size(Xc)))
+        allocate(Xg(size(Xc,2)))
         allocate(Tgc(nc))
         Tgc = basis_bspline(Xt, knot, nc, degree)
         Tgc = Tgc*(Wc/(dot_product(Tgc,Wc)))
@@ -2202,7 +2202,7 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), allocatable :: Xg(:)
 
-        allocate(Xg(size(Xc)))
+        allocate(Xg(size(Xc,2)))
         Xg = matmul(basis_bspline(Xt, knot, nc, degree), Xc)
     end function
     !===============================================================================
