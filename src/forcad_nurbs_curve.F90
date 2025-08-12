@@ -2154,10 +2154,9 @@ contains
         integer, intent(in) :: nc
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
-        real(rk), allocatable :: Xg(:)
+        real(rk) :: Xg(size(Xc,2))
         real(rk), allocatable :: Tgc(:)
 
-        allocate(Xg(size(Xc,2)))
         allocate(Tgc(nc))
         Tgc = basis_bspline(Xt, knot, nc, degree)
         Tgc = Tgc*(Wc/(dot_product(Tgc,Wc)))
@@ -2200,9 +2199,8 @@ contains
         integer, intent(in) :: degree
         integer, intent(in) :: nc
         real(rk), intent(in), contiguous :: Xc(:,:)
-        real(rk), allocatable :: Xg(:)
+        real(rk) :: Xg(size(Xc,2))
 
-        allocate(Xg(size(Xc,2)))
         Xg = matmul(basis_bspline(Xt, knot, nc, degree), Xc)
     end function
     !===============================================================================

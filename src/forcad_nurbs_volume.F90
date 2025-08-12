@@ -3629,10 +3629,9 @@ contains
         integer, intent(in) :: nc(3)
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
-        real(rk), allocatable :: Xg(:)
+        real(rk) :: Xg(size(Xc,2))
         real(rk), allocatable :: Tgc(:)
 
-        allocate(Xg(size(Xc,2)))
         allocate(Tgc(nc(1)*nc(2)*nc(3)))
 
         Tgc = kron(basis_bspline(Xt(3), knot3, nc(3), degree(3)),&
@@ -3682,9 +3681,8 @@ contains
         integer, intent(in) :: degree(3)
         integer, intent(in) :: nc(3)
         real(rk), intent(in), contiguous :: Xc(:,:)
-        real(rk), allocatable :: Xg(:)
+        real(rk) :: Xg(size(Xc,2))
 
-        allocate(Xg(size(Xc,2)))
         Xg = matmul(kron(basis_bspline(Xt(3), knot3, nc(3), degree(3)), kron(&
             basis_bspline(Xt(2), knot2, nc(2), degree(2)),&
             basis_bspline(Xt(1), knot1, nc(1), degree(1)))),&
