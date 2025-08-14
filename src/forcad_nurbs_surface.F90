@@ -2366,6 +2366,7 @@ contains
         class(nurbs_surface), intent(inout) :: this
         character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
 #ifndef NOSHOW_PYVISTA
+        block
         character(len=3000) :: pyvista_script
 
         pyvista_script = &
@@ -2477,6 +2478,7 @@ contains
             "p.deep_clean()"//achar(10)//&
             "del p"
         call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
+        end block
 #endif
     end subroutine
     !===============================================================================
