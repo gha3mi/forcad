@@ -1686,7 +1686,7 @@ contains
         real(rk), intent(in) :: vec(:)
         integer :: i
 
-        do i = 1, this%nc
+        do i = 1, this%ng
             this%Xg(i, :) = this%Xg(i, :) + vec
         end do
     end subroutine
