@@ -80,7 +80,19 @@ if(OpenMP_Fortran_FOUND)
     message(STATUS "OpenMP found and enabled")
 endif()
 
-# Required: forIGES
+# Required: fordebug, forIGES
+set(BUILD_TEST OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    fordebug
+    GIT_REPOSITORY https://github.com/gha3mi/fordebug.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(fordebug)
+set_target_properties(fordebug PROPERTIES
+    Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
+)
+target_compile_definitions(fordebug PRIVATE NOPURE_DEBUG)
+
 set(BUILD_TEST OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     forIGES
@@ -103,7 +115,7 @@ set_target_properties(${PROJECT_NAME_LOWER} PROPERTIES
     Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
 )
 
-target_link_libraries(${PROJECT_NAME_LOWER} PUBLIC forIGES)
+target_link_libraries(${PROJECT_NAME_LOWER} PUBLIC forIGES fordebug)
 
 target_include_directories(${PROJECT_NAME_LOWER} PUBLIC
     $<BUILD_INTERFACE:${Fortran_MODULE_DIRECTORY}>
@@ -118,7 +130,7 @@ endif()
 # install
 include(GNUInstallDirs)
 
-install(TARGETS ${PROJECT_NAME_LOWER} forIGES
+install(TARGETS ${PROJECT_NAME_LOWER} fordebug forIGES
     EXPORT ${PROJECT_NAME_LOWER}-targets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -253,6 +265,11 @@ configure_file(
     @ONLY
 )
 
-add_custom_target(uninstall
+add_custom_target(${PROJECT_NAME_LOWER}_uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/uninstall.cmake
 )
+
+if(NOT TARGET uninstall)
+  add_custom_target(uninstall)
+  add_dependencies(uninstall ${PROJECT_NAME_LOWER}_uninstall)
+endif()

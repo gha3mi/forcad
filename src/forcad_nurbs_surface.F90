@@ -7,6 +7,7 @@ module forcad_nurbs_surface
     use forcad_utils, only: basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, remove_knots_A_5_8, tetragon_Xc, &
         elemConn_Cn, unique, rotation, det, inv, gauss_leg, export_vtk_legacy, basis_bspline_2der
+    use fordebug, only: debug
 
     implicit none
 
@@ -31,6 +32,8 @@ module forcad_nurbs_surface
         integer, allocatable, private :: elemConn_Xc_vis(:,:) !! Connectivity for visualization of control points
         integer, allocatable, private :: elemConn_Xg_vis(:,:) !! Connectivity for visualization of geometry points
         integer, allocatable, private :: elemConn(:,:)        !! IGA element connectivity
+
+        type(debug) :: err !! 101: size mismatch (weights vs control points), 102: missing control points, 103: missing knot vector, 104: missing geometry points, 105: missing weights, 106: lsq fit underdetermined
     contains
         procedure, private :: set1                   !!> Set knot vectors, control points and weights for the NURBS surface object
         procedure, private :: set2                   !!> Set NURBS surface using nodes of parameter space, degree, continuity, control points and weights
@@ -156,6 +159,8 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%knot1)) then
             if (size(this%knot1) /= size(knot1)) deallocate(this%knot1)
         end if
@@ -163,7 +168,7 @@ contains
             if (size(this%knot2) /= size(knot2)) deallocate(this%knot2)
         end if
         if (allocated(this%Xc)) then
-            if (size(this%Xc, 1) /= size(Xc, 1) .or. size(this%Xc, 2) /= size(Xc, 2)) deallocate(this%Xc)
+            if (size(this%Xc,1) /= size(Xc,1) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
         end if
 
         this%knot1 = knot1
@@ -171,11 +176,21 @@ contains
         call this%cmp_degree()
         call this%cmp_nc()
         this%Xc = Xc
+
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)) then
-                error stop 'Number of weights does not match the number of control points.'
+                call this%err%set(&
+                    code       = 101,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Weights length mismatch: size(Wc) must equal number of control points.',&
+                    location   = 'set1',&
+                    suggestion = 'Provide Wc with size(Wc) == nc(1)*nc(2).')
+                return
             else
-                if (allocated(this%Wc)) deallocate(this%Wc)
+                if (allocated(this%Wc)) then
+                    if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+                end if
                 this%Wc = Wc
             end if
         end if
@@ -195,13 +210,52 @@ contains
         real(rk), intent(in), contiguous, optional :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
-        this%knot1 = compute_knot_vector(Xth_dir1, degree(1), continuity1)
-        this%knot2 = compute_knot_vector(Xth_dir2, degree(2), continuity2)
-        this%degree(1) = degree(1)
-        this%degree(2) = degree(2)
+        if (.not. this%err%ok) return
+
+        if (allocated(this%knot1)) deallocate(this%knot1)
+        if (allocated(this%knot2)) deallocate(this%knot2)
+        this%knot1    = compute_knot_vector(Xth_dir1, degree(1), continuity1)
+        this%knot2    = compute_knot_vector(Xth_dir2, degree(2), continuity2)
+        this%degree   = degree
         call this%cmp_nc()
-        if (present(Xc)) this%Xc = Xc
-        if (present(Wc)) this%Wc = Wc
+
+        if (present(Xc)) then
+            if (size(Xc,1) /= this%nc(1)*this%nc(2)) then
+                call this%err%set(&
+                    code       = 101,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface', &
+                    message    = 'Control points size mismatch in set2',&
+                    location   = 'set2', &
+                    suggestion = 'size(Xc,1) must equal nc(1)*nc(2).' )
+                return
+            end if
+        end if
+        if (present(Wc)) then
+            if (size(Wc) /= this%nc(1)*this%nc(2)) then
+                call this%err%set(&
+                    code       = 101,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface', &
+                    message    = 'Weights size mismatch in set2',&
+                    location   = 'set2', &
+                    suggestion = 'size(Wc) must equal nc(1)*nc(2).' )
+                return
+            end if
+        end if
+
+        if (present(Xc)) then
+            if (allocated(this%Xc)) then
+                if (size(this%Xc,1) /= size(Xc,1) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
+            end if
+            this%Xc = Xc
+        end if
+        if (present(Wc)) then
+            if (allocated(this%Wc)) then
+                if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
+            end if
+            this%Wc = Wc
+        end if
     end subroutine
     !===============================================================================
 
@@ -215,6 +269,8 @@ contains
         integer, intent(in), contiguous :: nc(:)
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Xc)) then
             if (size(this%Xc,1) /= size(Xc,1) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
@@ -234,11 +290,9 @@ contains
         this%knot1(1:this%nc(1)) = 0.0_rk
         this%knot1(this%nc(1)+1:2*this%nc(1)) = 1.0_rk
 
-
         if (allocated(this%knot2)) then
             if (size(this%knot2) /= 2*this%nc(2)) then
-                deallocate(this%knot2)
-                allocate(this%knot2(2*this%nc(2)))
+                deallocate(this%knot2); allocate(this%knot2(2*this%nc(2)))
             end if
         else
             allocate(this%knot2(2*this%nc(2)))
@@ -249,7 +303,14 @@ contains
         call this%cmp_degree()
         if (present(Wc)) then
             if (size(Wc) /= this%nc(1)*this%nc(2)) then
-                error stop 'Number of weights does not match the number of control points.'
+                call this%err%set(&
+                    code       = 101,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Weights length mismatch: size(Wc) must equal number of control points.',&
+                    location   = 'set3',&
+                    suggestion = 'Provide Wc with size(Wc) == nc(1)*nc(2).')
+                return
             else
                 if (allocated(this%Wc)) then
                     if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
@@ -272,6 +333,8 @@ contains
         real(rk), intent(in), contiguous, optional :: Wc(:)
         integer :: m(2), i
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Xc)) then
             if (size(this%Xc,1) /= size(Xc,1) .or. size(this%Xc,2) /= size(Xc,2)) deallocate(this%Xc)
         end if
@@ -280,9 +343,7 @@ contains
         this%nc = nc
         this%degree = degree
 
-        ! Size of knot vectors
         m = nc + degree + 1
-
 
         if (allocated(this%knot1)) then
             if (size(this%knot1) /= m(1)) then
@@ -298,8 +359,7 @@ contains
 
         if (allocated(this%knot2)) then
             if (size(this%knot2) /= m(2)) then
-                deallocate(this%knot2)
-                allocate(this%knot2(m(2)))
+                deallocate(this%knot2); allocate(this%knot2(m(2)))
             end if
         else
             allocate(this%knot2(m(2)))
@@ -310,7 +370,14 @@ contains
 
         if (present(Wc)) then
             if (size(Wc) /= nc(1)*nc(2)) then
-                error stop 'Number of weights does not match the number of control points.'
+                call this%err%set(&
+                    code       = 101,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Weights length mismatch: size(Wc) must equal number of control points.',&
+                    location   = 'set4',&
+                    suggestion = 'Provide Wc with size(Wc) == nc(1)*nc(2).')
+                return
             else
                 if (allocated(this%Wc)) then
                     if (size(this%Wc) /= size(Wc)) deallocate(this%Wc)
@@ -332,17 +399,31 @@ contains
         real(rk), contiguous, intent(in), optional :: Xt(:,:)
         integer :: i
 
+        if (.not. this%err%ok) return
+
         ! check
         if (.not.allocated(this%Xc)) then
-            error stop 'Control points are not set.'
+            call this%err%set(&
+                code       = 102,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Control points are not set.',&
+                location   = 'create',&
+                suggestion = 'Call set(...) first before create().')
+            return
         end if
 
         if (.not.allocated(this%knot1) .or. .not.allocated(this%knot2)) then
-            error stop 'Knot vector(s) is/are not set.'
+            call this%err%set(&
+                code       = 103,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Knot vector is not set.',&
+                location   = 'create',&
+                suggestion = 'Call set(...) first before create().')
+            return
         end if
 
-
-        ! Set parameter values
         if (present(Xt1)) then
             if (allocated(this%Xt1)) then
                 if (size(this%Xt1) /= size(Xt1)) deallocate(this%Xt1)
@@ -358,11 +439,8 @@ contains
                 allocate(this%Xt1(res1))
             end if
             this%Xt1 = [(this%knot1(1)+(this%knot1(size(this%knot1))-this%knot1(1))*real(i-1,rk)/real(res1-1,rk), i=1, res1)]
-            ! else
-            ! this%Xt1 = this%Xt1
         end if
 
-        ! Set parameter values
         if (present(Xt2)) then
             if (allocated(this%Xt2)) then
                 if (size(this%Xt2) /= size(Xt2)) deallocate(this%Xt2)
@@ -378,18 +456,13 @@ contains
                 allocate(this%Xt2(res2))
             end if
             this%Xt2 = [(this%knot2(1)+(this%knot2(size(this%knot2))-this%knot2(1))*real(i-1,rk)/real(res2-1,rk), i=1, res2)]
-            ! else
-            ! this%Xt2 = this%Xt2
         end if
 
         if (present(Xt)) then
             this%Xt = Xt
         else
-
-            ! Set number of geometry points
             this%ng(1) = size(this%Xt1,1)
             this%ng(2) = size(this%Xt2,1)
-
             call ndgrid(this%Xt1, this%Xt2, this%Xt)
         end if
 
@@ -418,6 +491,8 @@ contains
         real(rk), contiguous, intent(in) :: Xt(:)
         real(rk), allocatable :: Xg(:)
 
+        if (.not. this%err%ok) return
+
         ! check
         if (.not.allocated(this%Xc)) then
             error stop 'Control points are not set.'
@@ -443,6 +518,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         real(rk), allocatable :: Xc(:,:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Xc)) then
             Xc = this%Xc
         else
@@ -459,6 +536,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: n
         real(rk), allocatable :: Xc(:)
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Xc)) then
             if (n<lbound(this%Xc,1) .or. n>ubound(this%Xc,1)) then
@@ -480,6 +559,8 @@ contains
         integer, intent(in) :: n
         integer, intent(in) :: dir
         real(rk) :: Xc
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Xc)) then
             if (n<lbound(this%Xc,1) .or. n>ubound(this%Xc,1)) then
@@ -503,6 +584,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         real(rk), allocatable :: Xg(:,:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Xg)) then
             Xg = this%Xg
         else
@@ -519,6 +602,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: n
         real(rk), allocatable :: Xg(:)
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Xg)) then
             if (n<lbound(this%Xg,1) .or. n>ubound(this%Xg,1)) then
@@ -540,6 +625,8 @@ contains
         integer, intent(in) :: n
         integer, intent(in) :: dir
         real(rk) :: Xg
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Xg)) then
             if (n<lbound(this%Xg,1) .or. n>ubound(this%Xg,1)) then
@@ -563,6 +650,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         real(rk), allocatable :: Wc(:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Wc)) then
             Wc = this%Wc
         else
@@ -579,6 +668,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: n
         real(rk) :: Wc
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%Wc)) then
             if (n<lbound(this%Wc,1) .or. n>ubound(this%Wc,1)) then
@@ -599,6 +690,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         real(rk), allocatable :: Xt(:)
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
             if (allocated(this%Xt1)) then
@@ -627,6 +720,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer :: ng(2)
 
+        if (.not. this%err%ok) return
+
         ng = this%ng
     end function
     !===============================================================================
@@ -640,6 +735,8 @@ contains
         integer, intent(in), optional :: dir
         integer, allocatable :: m1(:), m2(:)
 
+        if (.not. this%err%ok) return
+
         if (present(dir)) then
             if (dir == 1) then
                 m1 = this%get_multiplicity(1)
@@ -648,7 +745,14 @@ contains
                 m2 = this%get_multiplicity(2)
                 this%degree(2) = m2(1) - 1
             else
-                error stop 'Invalid direction for degree.'
+                call this%err%set(&
+                    code       = 100,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Invalid direction for degree.',&
+                    location   = 'cmp_degree',&
+                    suggestion = 'Check the direction argument.')
+                return
             end if
         else
             m1 = this%get_multiplicity(1)
@@ -669,6 +773,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer :: degree(2)
 
+        if (.not. this%err%ok) return
+
         degree = this%degree
     end function
     !===============================================================================
@@ -681,6 +787,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         integer :: degree
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
             degree = this%degree(1)
@@ -700,6 +808,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         real(rk), allocatable :: knot(:)
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
             if (allocated(this%knot1)) then
@@ -729,6 +839,8 @@ contains
         integer, intent(in) :: dir
         integer, intent(in) :: i
         real(rk) :: knot
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
             if (allocated(this%knot1)) then
@@ -786,6 +898,8 @@ contains
         integer, allocatable :: elemConn(:,:)
         integer, intent(in), contiguous, optional :: p(:)
 
+        if (.not. this%err%ok) return
+
         if (present(p)) then
             elemConn = elemConn_C0(this%nc(1), this%nc(2), p(1), p(2))
         else
@@ -802,6 +916,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
         integer, intent(in), contiguous, optional :: p(:)
+
+        if (.not. this%err%ok) return
 
         if (present(p)) then
             elemConn = elemConn_C0(this%ng(1), this%ng(2), p(1), p(2))
@@ -820,6 +936,8 @@ contains
         integer, allocatable :: elemConn(:,:)
         integer, intent(in), contiguous, optional :: p(:)
 
+        if (.not. this%err%ok) return
+
         if (present(p)) then
             elemConn = elemConn_C0(size(unique(this%knot1)), size(unique(this%knot2)), p(1), p(2))
         else
@@ -833,16 +951,24 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
-        class(nurbs_surface), intent(in) :: this
+        class(nurbs_surface), intent(inout) :: this
         character(len=*), intent(in) :: filename
         real(rk), intent(in), optional :: point_data(:,:)
         character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
-        ! check
+        if (.not. this%err%ok) return
+
         if (.not.allocated(this%Xc)) then
-            error stop 'Control points are not set.'
+            call this%err%set(&
+                code       = 102,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Control points are not set.',&
+                location   = 'export_Xc',&
+                suggestion = 'Call set(...) first before exporting.')
+            return
         end if
 
         if (.not.allocated(this%elemConn_Xc_vis)) then
@@ -861,16 +987,24 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
-        class(nurbs_surface), intent(in) :: this
+        class(nurbs_surface), intent(inout) :: this
         character(len=*), intent(in) :: filename
         real(rk), intent(in), optional :: point_data(:,:)
         character(len=*), intent(in), optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
-        ! check
+        if (.not. this%err%ok) return
+
         if (.not.allocated(this%Xg)) then
-            error stop 'Geometry points are not set.'
+            call this%err%set(&
+                code       = 104,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Geometry points are not set.',&
+                location   = 'export_Xg',&
+                suggestion = 'Generate Xg by calling create(...) before exporting.')
+            return
         end if
 
         if (.not.allocated(this%elemConn_Xg_vis)) then
@@ -897,6 +1031,8 @@ contains
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:)
 
+        if (.not. this%err%ok) return
+
         elemConn = this%cmp_elem_Xth()
         Xth1 = unique(this%knot1)
         Xth2 = unique(this%knot2)
@@ -912,7 +1048,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     impure subroutine export_Xth_in_Xg(this, filename, res, encoding)
-        class(nurbs_surface), intent(in) :: this
+        class(nurbs_surface), intent(inout) :: this
         character(len=*),     intent(in) :: filename
         integer, intent(in),  optional   :: res
         character(len=*), intent(in), optional :: encoding
@@ -925,16 +1061,55 @@ contains
         real(rk), allocatable :: Xt_all(:,:), Xg_all(:,:)
         integer,  allocatable :: elemConn(:,:)
 
+        if (.not. this%err%ok) return
 
-        if (.not. allocated(this%Xc)) error stop 'Control points are not set.'
-        if (.not. allocated(this%knot1) .or. .not. allocated(this%knot2)) &
-            error stop 'Knot vectors are not set.'
+        if (.not. allocated(this%Xc)) then
+            call this%err%set(&
+                code       = 102,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Control points are not set.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Call set(...) first before exporting.')
+            return
+        end if
+
+        if (.not. allocated(this%knot1) .or. .not. allocated(this%knot2)) then
+            call this%err%set(&
+                code       = 103,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Knot vector is not set.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Call set(...) first before exporting.')
+            return
+        end if
 
         res_min = 10
         if (present(res)) res_min = max(2, res)
 
-        U1 = unique(this%knot1); if (size(U1) < 2) error stop 'knot1 needs >= 2 unique values.'
-        U2 = unique(this%knot2); if (size(U2) < 2) error stop 'knot2 needs >= 2 unique values.'
+        U1 = unique(this%knot1)
+        if (size(U1) < 2) then
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'knot1 needs >= 2 unique values.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Check the knot vector for sufficient unique values.')
+            return
+        end if
+        U2 = unique(this%knot2)
+        if (size(U2) < 2) then
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'knot2 needs >= 2 unique values.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Check the knot vector for sufficient unique values.')
+            return
+        end if
 
         N1sp = size(U1) - 1
         N2sp = size(U2) - 1
@@ -954,7 +1129,16 @@ contains
         res2 = L / N2sp + 1
 
         dim = size(this%Xc,2)
-        if (dim < 2 .or. dim > 3) error stop 'Invalid geometry dimension.'
+        if (dim < 2 .or. dim > 3) then
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid geometry dimension.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Check the geometry dimension before exporting the NURBS surface.')
+            return
+        end if
 
         ! Allocate refined knot vectors
         allocate(U1r( (size(U1)-1)*(res1-1) + 1 ))
@@ -972,7 +1156,16 @@ contains
                 U2r(o+r) = U2(s) + (U2(s+1)-U2(s)) * real(r-1,rk)/real(res2-1,rk)
             end do
         end do
-        if (size(U1r)/=N .or. size(U2r)/=N) error stop 'Refinement size mismatch.'
+        if (size(U1r)/=N .or. size(U2r)/=N) then
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Refinement size mismatch.',&
+                location   = 'export_Xth_in_Xg',&
+                suggestion = 'Check the refinement process for consistency.')
+            return
+        end if
 
         ! total element count and node count
         ne_u = size(U2)
@@ -1038,6 +1231,8 @@ contains
         integer :: i, j, idx
         integer :: K1, K2, M1, M2, N1, N2, prop3
         real(wp) :: U(0:1), V(0:1)
+
+        if (.not. this%err%ok) return
 
         ! Parameters consistent with the IGES definition
         K1 = this%degree(1)
@@ -1148,6 +1343,8 @@ contains
         integer, intent(in) :: num
         integer, intent(in) :: dir
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Xc)) then
             this%Xc(num,dir) = X
             if (allocated(this%Wc)) then
@@ -1156,7 +1353,14 @@ contains
                 call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), Xc=this%get_Xc())
             end if
         else
-            error stop 'Control points are not set.'
+            call this%err%set(&
+                code       = 102,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Control points are not set.',&
+                location   = 'modify_Xc',&
+                suggestion = 'Call set(...) before modifying it.')
+            return
         end if
     end subroutine
     !===============================================================================
@@ -1170,6 +1374,8 @@ contains
         real(rk), intent(in) :: W
         integer, intent(in) :: num
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%Wc)) then
             this%Wc(num) = W
             if (allocated(this%knot1) .and. allocated(this%knot2)) then
@@ -1178,7 +1384,14 @@ contains
                 call this%set(nc=this%nc, Xc=this%get_Xc(), Wc=this%get_Wc())
             end if
         else
-            error stop 'The NURBS surface is not rational.'
+            call this%err%set(&
+                code       = 105,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Weights are not set.',&
+                location   = 'modify_Wc',&
+                suggestion = 'Pass Wc when calling set(...), before modifying weights.')
+            return
         end if
     end subroutine
     !===============================================================================
@@ -1191,6 +1404,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         integer, allocatable :: m(:)
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
 
@@ -1226,6 +1441,8 @@ contains
         integer, intent(in) :: dir
         integer, allocatable :: c(:)
 
+        if (.not. this%err%ok) return
+
         if (dir == 1) then
 
             ! check
@@ -1259,47 +1476,72 @@ contains
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), optional :: dir
 
+        if (.not. this%err%ok) return
+
         if (present(dir)) then
-
             if (dir == 1) then
-
-                ! check
                 if (.not.allocated(this%knot1)) then
-                    error stop 'Knot vector is not set.'
+                    call this%err%set(&
+                        code       = 103,&
+                        severity   = 1,&
+                        category   = 'forcad_nurbs_surface',&
+                        message    = 'Knot vector is not set.',&
+                        location   = 'cmp_nc',&
+                        suggestion = 'Call set(...) first before computing nc.')
+                    return
                 else
                     this%nc(1) = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
                 end if
-
             elseif (dir == 2) then
-
-                ! check
                 if (.not.allocated(this%knot2)) then
-                    error stop 'Knot vector is not set.'
+                    call this%err%set(&
+                        code       = 103,&
+                        severity   = 1,&
+                        category   = 'forcad_nurbs_surface',&
+                        message    = 'Knot vector is not set.',&
+                        location   = 'cmp_nc',&
+                        suggestion = 'Call set(...) first before computing nc.')
+                    return
                 else
                     this%nc(2) = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
                 end if
-
             else
-                error stop 'Invalid direction.'
+                call this%err%set(&
+                    code       = 103,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Invalid direction for computing number of control points.',&
+                    location   = 'cmp_nc',&
+                    suggestion = 'Use dir=1 or dir=2 to specify the direction.')
+                return
             end if
-
         else
-            ! check
             if (.not.allocated(this%knot1)) then
-                error stop 'Knot vector is not set.'
+                call this%err%set(&
+                    code       = 103,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Knot vector is not set.',&
+                    location   = 'cmp_nc',&
+                    suggestion = 'Call set(...) first before computing nc.')
+                return
             else
                 this%nc(1) = sum(compute_multiplicity(this%knot1)) - this%degree(1) - 1
             end if
 
-            ! check
             if (.not.allocated(this%knot2)) then
-                error stop 'Knot vector is not set.'
+                call this%err%set(&
+                    code       = 103,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_surface',&
+                    message    = 'Knot vector is not set.',&
+                    location   = 'cmp_nc',&
+                    suggestion = 'Call set(...) first before computing nc.')
+                return
             else
                 this%nc(2) = sum(compute_multiplicity(this%knot2)) - this%degree(2) - 1
             end if
-
         end if
-
     end subroutine
     !===============================================================================
 
@@ -1310,6 +1552,8 @@ contains
     pure function get_nc_all(this) result(nc)
         class(nurbs_surface), intent(in) :: this
         integer :: nc(2)
+
+        if (.not. this%err%ok) return
 
         nc = this%nc
     end function
@@ -1323,6 +1567,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, intent(in) :: dir
         integer :: nc
+
+        if (.not. this%err%ok) return
 
         if (dir == 1) then
 
@@ -1361,6 +1607,8 @@ contains
         real(rk), allocatable, intent(out), optional :: Tgc(:,:)
         integer :: i
         real(rk), allocatable :: Xt(:,:)
+
+        if (.not. this%err%ok) return
 
         ! Set parameter values
         if (present(Xt1)) then
@@ -1431,6 +1679,8 @@ contains
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
+        if (.not. this%err%ok) return
+
         if (this%is_rational()) then ! NURBS
             if (present(elem)) then
                 associate(Wce => this%Wc(elem))
@@ -1458,6 +1708,8 @@ contains
         real(rk), allocatable, intent(out), optional :: Tgc(:,:)
         integer :: i
         real(rk), allocatable :: Xt(:,:)
+
+        if (.not. this%err%ok) return
 
         ! Set parameter values
         if (present(Xt1)) then
@@ -1528,6 +1780,8 @@ contains
         real(rk), allocatable, intent(out), optional :: dTgc(:,:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
+        if (.not. this%err%ok) return
+
         if (this%is_rational()) then ! NURBS
             call compute_d2Tgc(Xt, this%knot1, this%knot2, this%degree, this%nc, this%Wc, d2Tgc, dTgc, Tgc)
         else ! B-Spline
@@ -1547,6 +1801,8 @@ contains
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         integer :: i
         real(rk), allocatable :: Xt(:,:)
+
+        if (.not. this%err%ok) return
 
         ! Set parameter values
         if (present(Xt1)) then
@@ -1615,6 +1871,8 @@ contains
         real(rk), intent(in), contiguous :: Xt(:)
         real(rk), allocatable, intent(out) :: Tgc(:)
 
+        if (.not. this%err%ok) return
+
         if (this%is_rational()) then ! NURBS
             Tgc = compute_Tgc(Xt, this%knot1, this%knot2, this%degree, this%nc, this%Wc)
         else ! B-Spline
@@ -1636,6 +1894,7 @@ contains
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
 
+        if (.not. this%err%ok) return
 
         if (dir == 1) then ! direction 1
 
@@ -1811,7 +2070,14 @@ contains
             end if
 
         else
-            error stop 'Invalid direction.'
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid direction for inserting knots.',&
+                location   = 'insert_knots',&
+                suggestion = 'Use dir=1 or dir=2 to specify the direction.')
+            return
         end if
 
     end subroutine
@@ -1829,6 +2095,7 @@ contains
         integer :: d, j, nc_new
         real(rk), allocatable:: Xc3(:,:,:)
 
+        if (.not. this%err%ok) return
 
         if (dir == 1) then ! direction 1
 
@@ -1924,7 +2191,14 @@ contains
             end if
 
         else
-            error stop 'Invalid direction.'
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid direction for elevating degree.',&
+                location   = 'elevate_degree',&
+                suggestion = 'Use dir=1 or dir=2 to specify the direction.')
+            return
         end if
 
     end subroutine
@@ -1937,6 +2211,8 @@ contains
     pure function is_rational(this) result(r)
         class(nurbs_surface), intent(in) :: this
         logical :: r
+
+        if (.not. this%err%ok) return
 
         r = .false.
         if(allocated(this%Wc)) then
@@ -1956,6 +2232,8 @@ contains
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%elemConn_Xc_vis)) then
             if (size(this%elemConn_Xc_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xc_vis,2) /= size(elemConn,2)) then
                 deallocate(this%elemConn_Xc_vis)
@@ -1972,6 +2250,8 @@ contains
     pure subroutine set_elem_Xg_vis(this, elemConn)
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
+
+        if (.not. this%err%ok) return
 
         if (allocated(this%elemConn_Xc_vis)) then
             if (size(this%elemConn_Xc_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xc_vis,2) /= size(elemConn,2)) then
@@ -1990,6 +2270,8 @@ contains
         class(nurbs_surface), intent(inout) :: this
         integer, intent(in), contiguous :: elemConn(:,:)
 
+        if (.not. this%err%ok) return
+
         if (allocated(this%elemConn)) then
             if (size(this%elemConn,1) /= size(elemConn,1) .or. size(this%elemConn,2) /= size(elemConn,2)) then
                 deallocate(this%elemConn)
@@ -2007,6 +2289,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
 
+        if (.not. this%err%ok) return
+
         elemConn = this%elemConn_Xc_vis
     end function
     !===============================================================================
@@ -2019,6 +2303,8 @@ contains
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
 
+        if (.not. this%err%ok) return
+
         elemConn = this%elemConn_Xg_vis
     end function
     !===============================================================================
@@ -2030,6 +2316,8 @@ contains
     pure function get_elem(this) result(elemConn)
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
+
+        if (.not. this%err%ok) return
 
         elemConn = this%elemConn
     end function
@@ -2048,6 +2336,7 @@ contains
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
         real(rk), allocatable:: Xc3(:,:,:)
 
+        if (.not. this%err%ok) return
 
         if (dir == 1) then ! direction 1
 
@@ -2262,7 +2551,14 @@ contains
             end if
 
         else
-            error stop 'Invalid direction.'
+            call this%err%set(&
+                code       = 100,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid direction for removing knots.',&
+                location   = 'remove_knots',&
+                suggestion = 'Use dir=1 or dir=2 to specify the direction.')
+            return
         end if
 
     end subroutine
@@ -2278,6 +2574,8 @@ contains
         integer, intent(in), contiguous :: nc(:)
         real(rk), intent(in), contiguous, optional :: Wc(:)
 
+        if (.not. this%err%ok) return
+
         call this%set(nc = nc, Xc = tetragon_Xc(L, nc), Wc = Wc)
     end subroutine
     !===============================================================================
@@ -2289,6 +2587,8 @@ contains
     pure function cmp_elem(this) result(elemConn)
         class(nurbs_surface), intent(in) :: this
         integer, allocatable :: elemConn(:,:)
+
+        if (.not. this%err%ok) return
 
         call elemConn_Cn(this%nc(1), this%nc(2),&
             this%degree(1),this%degree(2),&
@@ -2307,6 +2607,8 @@ contains
         real(rk), intent(in) :: alpha, beta, theta
         integer :: i
 
+        if (.not. this%err%ok) return
+
         do i = 1, this%nc(1)*this%nc(2)
             this%Xc(i, :) = matmul(rotation(alpha,beta,theta), this%Xc(i, :))
         end do
@@ -2321,6 +2623,8 @@ contains
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: alpha, beta, theta
         integer :: i
+
+        if (.not. this%err%ok) return
 
         do i = 1, this%ng(1)*this%ng(2)
             this%Xg(i, :) = matmul(rotation(alpha,beta,theta), this%Xg(i, :))
@@ -2337,6 +2641,8 @@ contains
         real(rk), intent(in) :: vec(:)
         integer :: i
 
+        if (.not. this%err%ok) return
+
         do i = 1, this%nc(1)*this%nc(2)
             this%Xc(i, :) = this%Xc(i, :) + vec
         end do
@@ -2351,6 +2657,8 @@ contains
         class(nurbs_surface), intent(inout) :: this
         real(rk), intent(in) :: vec(:)
         integer :: i
+
+        if (.not. this%err%ok) return
 
         do i = 1, this%ng(1)*this%ng(2)
             this%Xg(i, :) = this%Xg(i, :) + vec
@@ -2368,6 +2676,8 @@ contains
 #ifndef NOSHOW_PYVISTA
         block
         character(len=3000) :: pyvista_script
+
+        if (.not. this%err%ok) return
 
         pyvista_script = &
             "import pyvista as pv"//achar(10)//&
@@ -2494,6 +2804,8 @@ contains
         real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
         integer :: i
 
+        if (.not. this%err%ok) return
+
         ! Define control points for ring
         allocate(Xc(14, 3))
         Xc(1,:) = [ 1.0_rk,  0.0_rk,              0.0_rk]
@@ -2545,6 +2857,8 @@ contains
         real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
         integer :: i
 
+        if (.not. this%err%ok) return
+
         ! Define control points for C-shape
         allocate(Xc(10, 3))
         Xc(1,:)= [ 1.0_rk,  0.0_rk,              0.0_rk]
@@ -2591,6 +2905,8 @@ contains
         real(rk), intent(in) :: radius1, radius2
         real(rk), allocatable :: Xc(:,:), Wc(:), knot1(:), knot2(:)
         integer :: i
+
+        if (.not. this%err%ok) return
 
         ! Define control points for half ring
         allocate(Xc(10, 3))
@@ -2642,6 +2958,8 @@ contains
         integer :: id_, i
         real(rk), allocatable :: distances(:)
 
+        if (.not. this%err%ok) return
+
         allocate(distances(this%ng(1)*this%ng(2)))
 
 #if defined(__NVCOMPILER)
@@ -2688,6 +3006,8 @@ contains
         integer :: k, l, i
         logical :: convergenz
         type(nurbs_surface) :: copy_this
+
+        if (.not. this%err%ok) return
 
         alphak = 0.0_rk
         dk     = 0.0_rk
@@ -2820,6 +3140,8 @@ contains
         real(rk) :: det_dXg_dXksi !! Determinant of the Jacobian matrix
         real(rk) :: Xksii(2)
 
+        if (.not. this%err%ok) return
+
         if (present(ngauss)) then
             call gauss_leg([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], ngauss-1, Xksi, Wksi)
         else
@@ -2871,6 +3193,8 @@ contains
         integer :: ie, ig
         integer :: ngauss_(2)
         real(rk) :: dA, dA_ig
+
+        if (.not. this%err%ok) return
 
         if (present(ngauss)) then
             ngauss_ = ngauss
@@ -3485,8 +3809,29 @@ contains
         real(rk), allocatable :: T(:,:), Tt(:,:), TtT(:,:), TtX(:,:)
         integer :: i, n
 
-        if (this%nc(1) > ndata(1)) error stop "Error: in the first direction, number of control points exceeds number of data points."
-        if (this%nc(2) > ndata(2)) error stop "Error: in the second direction, number of control points exceeds number of data points."
+        if (.not. this%err%ok) return
+
+        if (this%nc(1) > ndata(1)) then
+            call this%err%set(&
+                code       = 106,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid number of control points in the first direction.',&
+                location   = 'lsq_fit_bspline',&
+                suggestion = 'Ensure that the number of control points does not exceed the number of data points.')
+            return
+        end if
+
+        if (this%nc(1) > ndata(1)) then
+            call this%err%set(&
+                code       = 106,&
+                severity   = 1,&
+                category   = 'forcad_nurbs_surface',&
+                message    = 'Invalid number of control points in the second direction.',&
+                location   = 'lsq_fit_bspline',&
+                suggestion = 'Ensure that the number of control points does not exceed the number of data points.')
+            return
+        end if
 
         n = ndata(1)*ndata(2)
 

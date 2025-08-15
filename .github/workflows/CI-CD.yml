@@ -115,21 +115,21 @@ jobs:
       - name: cmake test (debug)
         if: always()
         run: |
-          cmake -S . -B build/cmake/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake -S . -B build/cmake/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
           cmake --build build/cmake/debug --config Debug --verbose
           ctest --test-dir build/cmake/debug --output-on-failure -VV
 
       - name: cmake test (release)
         if: always()
         run: |
-          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON
+          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
           cmake --build build/cmake/release --config Release --verbose
           ctest --test-dir build/cmake/release --output-on-failure -VV
       
       - name: cmake install (static)
         if: always()
         run: |
-          cmake -S . -B build/cmake/static -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -G Ninja
+          cmake -S . -B build/cmake/static -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -G Ninja -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
           cmake --build build/cmake/static --config Release
           cmake --install build/cmake/static --config Release --verbose
 
@@ -140,7 +140,7 @@ jobs:
       - name: cmake install (shared)
         if: always()
         run: |
-          cmake -S . -B build/cmake/shared -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=. -G Ninja
+          cmake -S . -B build/cmake/shared -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=. -G Ninja -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
           cmake --build build/cmake/shared --config Release
           cmake --install build/cmake/shared --config Release --verbose
 
