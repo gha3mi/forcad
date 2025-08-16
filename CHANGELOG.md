@@ -1,3 +1,33 @@
+## [v0.15.0](https://github.com/gha3mi/forcad/compare/v0.14.0...v0.15.0) - 2025-08-16
+
+
+### Features
+
+* feat: use ForDebug for error handling #22 (#68) ([4259e1848](https://github.com/gha3mi/forcad/commit/4259e1848dc16236aaef9c72aa3f2d63bfa4057f)) by [@gha3mi](https://github.com/gha3mi)
+* feat: improve put_to_nurbs ([7d7db4b07](https://github.com/gha3mi/forcad/commit/7d7db4b072ff8f0a16c6bc618bb78f379d7a1aeb)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* fix: correct allocation size for Xg in forcad_nurbs_curve module ([c8d050207](https://github.com/gha3mi/forcad/commit/c8d05020727e95d03daae3743a6961838daedf06)) by [@gha3mi](https://github.com/gha3mi)
+* fix: add block structure to pyvista script execution ([9d11e5027](https://github.com/gha3mi/forcad/commit/9d11e50272de57f5e63faaa01f28f1bfb032f3b0)) by [@gha3mi](https://github.com/gha3mi)
+* fix: correct loop index in translate_Xg ([e494b9942](https://github.com/gha3mi/forcad/commit/e494b99423339e150d5b47fb2bb897c229428c43)) by [@gha3mi](https://github.com/gha3mi)
+* fix: avoid temporary array creation ([1437e6f63](https://github.com/gha3mi/forcad/commit/1437e6f63a2c45210577521d8995b3a49cc20181)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* refactor: change set* procedures to private ([17bebde77](https://github.com/gha3mi/forcad/commit/17bebde779d15b675737ddacb604897386d9832d)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: replace allocatable Xg with fixed-size array ([b0f61a618](https://github.com/gha3mi/forcad/commit/b0f61a618ef4c10afaacd27097e69dde95224cbc)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: make number of geometry points ng optional ([b8596b530](https://github.com/gha3mi/forcad/commit/b8596b53063e2d375a67ba8ad68245c5a55afe66)) by [@gha3mi](https://github.com/gha3mi)
+* refactor: add contiguous attribute ([7eb72b924](https://github.com/gha3mi/forcad/commit/7eb72b924be1bf10de99f0c59b40245e6184c20e)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.14.0...v0.15.0](https://github.com/gha3mi/forcad/compare/v0.14.0...v0.15.0)
+
 ## [v0.14.0](https://github.com/gha3mi/forcad/compare/v0.13.0...v0.14.0) - 2025-08-11
 
 
