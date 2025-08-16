@@ -1375,8 +1375,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function unique_integer(vec) result(output)
-        integer, dimension(:), intent(in), contiguous :: vec
-        integer, dimension(:), allocatable :: output
+        integer, intent(in), contiguous :: vec(:)
+        integer, allocatable :: output(:)
         integer :: i, j, k
         allocate(output(0))
         do i = 1, size(vec)
@@ -1399,8 +1399,8 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function unique_real(vec) result(output)
-        real(rk), dimension(:), intent(in), contiguous :: vec
-        real(rk), dimension(:), allocatable :: output
+        real(rk), intent(in), contiguous :: vec(:)
+        real(rk), allocatable :: output(:)
         integer :: i, j, k
         allocate(output(0))
         do i = 1, size(vec)
@@ -1425,7 +1425,7 @@ contains
     !> license: BSD 3-Clause
     pure function rotation(alpha, beta, theta) result(R)
         real(rk), intent(in) :: alpha, beta, theta
-        real(rk), dimension(3,3) :: R
+        real(rk) :: R(3,3)
 
         R(1,1) = cosd(beta)*cosd(theta)
         R(2,1) = cosd(beta)*sind(theta)
@@ -1444,7 +1444,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function det(A) result(detA)
-        real(rk), intent(in) :: A(:,:)
+        real(rk), intent(in), contiguous :: A(:,:)
         real(rk) :: detA
 
         if (size(A,1) == size(A,2)) then
@@ -1678,11 +1678,11 @@ contains
     !> license: BSD 3-Clause
     impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, point_data, field_names, encoding)
         character(len=*), intent(in) :: filename
-        real(rk), intent(in) :: points(:,:)
-        integer, intent(in) :: elemConn(:,:) ! for VTK_POLY_LINE all rows have same nn
+        real(rk), intent(in), contiguous :: points(:,:)
+        integer, intent(in), contiguous :: elemConn(:,:) ! for VTK_POLY_LINE all rows have same nn
         integer, intent(in) :: vtkCellType
-        real(rk), intent(in), optional :: point_data(:,:)     ! [npoints, nfields]
-        character(len=*), intent(in), optional :: field_names(:)
+        real(rk), intent(in), contiguous, optional :: point_data(:,:)     ! [npoints, nfields]
+        character(len=*), intent(in), contiguous, optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
 
         integer :: i, j, ne, np, nn, n, nunit
