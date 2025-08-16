@@ -2644,16 +2644,13 @@ contains
     pure subroutine put_to_nurbs(this, X, elemConn)
         class(nurbs_volume), intent(inout) :: this
         real(rk), intent(in), contiguous :: X(:,:)
-        integer, intent(in), contiguous :: elemConn(:,:)
-        integer :: i
-        real(rk), allocatable :: Tgc1(:), Tgc2(:), Tgc3(:), Tgc(:)
+        integer, intent(in), contiguous, optional :: elemConn(:,:)
         real(rk), allocatable :: Xt(:,:)
         real(rk) :: min_X1, max_X1, min_X2, max_X2, min_X3, max_X3
 
         if (.not. this%err%ok) return
 
-        ! Assuming knot vectors are in the range [0,1]
-        ! Normalize the X coordinates to the range [0,1]
+        ! Normalize the X coordinates to the range of knot vectors
         allocate(Xt(size(X,1), size(X,2)))
         min_X1 = minval(X(:,1))
         max_X1 = maxval(X(:,1))
@@ -2664,34 +2661,17 @@ contains
         min_X3 = minval(X(:,3))
         max_X3 = maxval(X(:,3))
 
-        Xt(:,1) = (X(:,1) -  min_X1) / (max_X1 -  min_X1)
-        Xt(:,2) = (X(:,2) -  min_X2) / (max_X2 -  min_X2)
-        Xt(:,3) = (X(:,3) -  min_X3) / (max_X3 -  min_X3)
+        Xt(:,1) = (X(:,1) - min_X1) / (max_X1 - min_X1) * (this%knot1(size(this%knot1)) - this%knot1(1)) + this%knot1(1)
+        Xt(:,2) = (X(:,2) - min_X2) / (max_X2 - min_X2) * (this%knot2(size(this%knot2)) - this%knot2(1)) + this%knot2(1)
+        Xt(:,3) = (X(:,3) - min_X3) / (max_X3 - min_X3) * (this%knot3(size(this%knot3)) - this%knot3(1)) + this%knot3(1)
 
-        allocate(this%Xg(size(Xt,1), size(this%Xc,2)))
-        allocate(Tgc(this%nc(1)*this%nc(2)*this%nc(3)))
-
-        if (allocated(this%Wc)) then ! NURBS volume
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
-                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
-                Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
-                Tgc = Tgc*(this%Wc/(dot_product(Tgc,this%Wc)))
-                this%Xg(i,:) = matmul(Tgc,this%Xc)
-            end do
-        else ! B-Spline volume
-            do i = 1, size(Xt, 1)
-                Tgc1 = basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1))
-                Tgc2 = basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2))
-                Tgc3 = basis_bspline(Xt(i,3), this%knot3, this%nc(3), this%degree(3))
-                Tgc = kron(Tgc3, kron(Tgc2, Tgc1))
-                this%Xg(i,:) = matmul(Tgc,this%Xc)
-            end do
+        if (this%is_rational()) then
+            this%Xg = compute_Xg(Xt=Xt, knot1=this%knot1, knot2=this%knot2, knot3=this%knot3, degree=this%degree, nc=this%nc, Xc=this%Xc, Wc=this%Wc)
+        else
+            this%Xg = compute_Xg(Xt=Xt, knot1=this%knot1, knot2=this%knot2, knot3=this%knot3, degree=this%degree, nc=this%nc, Xc=this%Xc)
         end if
 
-        call this%set_elem_Xg_vis(elemConn)
-
+        if (present(elemConn)) call this%set_elem_Xg_vis(elemConn)
     end subroutine
     !===============================================================================
 
