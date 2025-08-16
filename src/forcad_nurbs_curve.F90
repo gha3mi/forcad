@@ -860,8 +860,8 @@ contains
     impure subroutine export_Xc(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(inout) :: this
         character(len=*), intent(in) :: filename
-        real(rk), intent(in), optional :: point_data(:,:)
-        character(len=*), intent(in), optional :: field_names(:)
+        real(rk), intent(in), contiguous, optional :: point_data(:,:)
+        character(len=*), intent(in), contiguous, optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -897,8 +897,8 @@ contains
     impure subroutine export_Xg(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(inout) :: this
         character(len=*), intent(in) :: filename
-        real(rk), intent(in), optional :: point_data(:,:)
-        character(len=*), intent(in), optional :: field_names(:)
+        real(rk), intent(in), contiguous, optional :: point_data(:,:)
+        character(len=*), intent(in), contiguous, optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
 
@@ -934,8 +934,8 @@ contains
     impure subroutine export_Xth(this, filename, point_data, field_names, encoding)
         class(nurbs_curve), intent(in) :: this
         character(len=*), intent(in) :: filename
-        real(rk), intent(in), optional :: point_data(:,:)
-        character(len=*), intent(in), optional :: field_names(:)
+        real(rk), intent(in), contiguous, optional :: point_data(:,:)
+        character(len=*), intent(in), contiguous, optional :: field_names(:)
         character(len=*), intent(in), optional :: encoding
         integer, allocatable :: elemConn(:,:)
         real(rk), allocatable :: Xth(:,:), Xth1(:), Xth2(:), Xth3(:)
@@ -1374,7 +1374,7 @@ contains
     pure subroutine derivative_scalar(this, Xt, dTgc, Tgc, elem)
         class(nurbs_curve), intent(inout) :: this
         real(rk), intent(in) :: Xt
-        integer, intent(in), optional :: elem(:)
+        integer, intent(in), contiguous, optional :: elem(:)
         real(rk), allocatable, intent(out) :: dTgc(:)
         real(rk), allocatable, intent(out), optional :: Tgc(:)
 
@@ -1874,7 +1874,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine translate_Xc(this, vec)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: vec(:)
+        real(rk), intent(in), contiguous :: vec(:)
         integer :: i
 
         if (.not. this%err%ok) return
@@ -1891,7 +1891,7 @@ contains
     !> license: BSD 3-Clause
     pure subroutine translate_Xg(this, vec)
         class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in) :: vec(:)
+        real(rk), intent(in), contiguous :: vec(:)
         integer :: i
 
         if (.not. this%err%ok) return
@@ -2604,7 +2604,7 @@ contains
         integer, intent(in) :: degree
         integer, intent(in) :: nc
         real(rk), intent(in), contiguous :: Wc(:)
-        integer, intent(in), optional :: elem(:)
+        integer, intent(in), contiguous, optional :: elem(:)
         real(rk), allocatable, intent(out) :: dTgc(:)
         real(rk), allocatable, intent(out) :: Tgc(:)
         real(rk) :: dBi(nc), Bi(nc)
@@ -2667,7 +2667,7 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in), optional :: elem(:)
+        integer, intent(in), contiguous, optional :: elem(:)
         real(rk), allocatable, intent(out) :: dTgc(:)
         real(rk), allocatable, intent(out) :: Tgc(:)
         real(rk), allocatable :: dB(:), B(:)
