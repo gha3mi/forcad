@@ -2351,17 +2351,23 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(Xg(ng, size(Xc,2)), source = 0.0_rk)
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(Xg(ng_, size(Xc,2)), source = 0.0_rk)
 #if defined(__NVCOMPILER)
-        do i = 1, ng
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: ng)
+        do concurrent (i = 1: ng_)
 #endif
             Xg(i,:) = matmul(cmp_Tgc_1d(Xt(i), knot, nc, degree, Wc), Xc)
         end do
@@ -2398,16 +2404,22 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), allocatable :: Xg(:,:)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(Xg(ng, size(Xc,2)))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(Xg(ng_, size(Xc,2)))
 #if defined(__NVCOMPILER)
-        do i = 1, ng
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: ng)
+        do concurrent (i = 1: ng_)
 #endif
             Xg(i,:) = matmul(basis_bspline(Xt(i), knot, nc, degree), Xc)
         end do
@@ -2439,20 +2451,26 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable, intent(out) :: d2Tgc(:,:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk) :: d2Bi(nc), dBi(nc), Bi(nc)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(d2Tgc(ng_, nc), dTgc(ng_, nc), Tgc(ng_, nc))
 
 #if defined(__NVCOMPILER) || defined(__GFORTRAN__)
-        do i = 1, size(Xt)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt)) local(d2Bi, dBi, Bi)
+        do concurrent (i = 1: ng_) local(d2Bi, dBi, Bi)
 #endif
             call basis_bspline_2der(Xt(i), knot, nc, degree, d2Bi, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
@@ -2495,18 +2513,24 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), allocatable, intent(out) :: d2Tgc(:,:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
-        integer :: i
+        integer :: i, ng_
         real(rk) :: Xti, d2Tgci(nc), dTgci(nc), Tgci(nc)
 
-        allocate(d2Tgc(ng, nc), dTgc(ng, nc), Tgc(ng, nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(d2Tgc(ng_, nc), dTgc(ng_, nc), Tgc(ng_, nc))
 #if defined(__NVCOMPILER) || defined(__GFORTRAN__)
-        do i = 1, size(Xt)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt)) local(Xti, d2Tgci, dTgci, Tgci)
+        do concurrent (i = 1: ng_) local(Xti, d2Tgci, dTgci, Tgci)
 #endif
             Xti = Xt(i)
             call basis_bspline_2der(Xti, knot, nc, degree, d2Tgci , dTgci, Tgci)
@@ -2544,18 +2568,24 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
         real(rk) :: dBi(nc), Bi(nc)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(dTgc(ng, nc), Tgc(ng, nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(dTgc(ng_, nc), Tgc(ng_, nc))
 #if defined(__NVCOMPILER) || defined(__GFORTRAN__)
-        do i = 1, size(Xt)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt)) local(dBi, Bi)
+        do concurrent (i = 1: ng_) local(dBi, Bi)
 #endif
             call basis_bspline_der(Xt(i), knot, nc, degree, dBi, Bi)
             Tgc(i,:) = Bi*(Wc/(dot_product(Bi,Wc)))
@@ -2602,17 +2632,23 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), allocatable, intent(out) :: dTgc(:,:)
         real(rk), allocatable, intent(out) :: Tgc(:,:)
-        integer :: i
+        integer :: i, ng_
         real(rk) :: Xti, dTgci(nc), Tgci(nc)
 
-        allocate(dTgc(ng, nc), Tgc(ng, nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(dTgc(ng_, nc), Tgc(ng_, nc))
 #if defined(__NVCOMPILER) || defined(__GFORTRAN__)
-        do i = 1, size(Xt)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt)) local(Xti, dTgci, Tgci)
+        do concurrent (i = 1: ng_) local(Xti, dTgci, Tgci)
 #endif
             Xti = Xt(i)
             call basis_bspline_der(Xti, knot, nc, degree, dTgci, Tgci)
@@ -2657,17 +2693,23 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Tgc(:,:)
         real(rk), allocatable :: Tgci(:)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(Tgc(ng, nc), Tgci(nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(Tgc(ng_, nc), Tgci(nc))
 #if defined(__NVCOMPILER)
-        do i = 1, size(Xt,1)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt,1))
+        do concurrent (i = 1: ng_)
 #endif
             Tgci = basis_bspline(Xt(i), knot, nc, degree)
             Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
@@ -2702,15 +2744,21 @@ contains
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: degree
         integer, intent(in) :: nc
-        integer, intent(in) :: ng
+        integer, intent(in), optional :: ng
         real(rk), allocatable :: Tgc(:,:)
-        integer :: i
+        integer :: i, ng_
 
-        allocate(Tgc(ng, nc))
+        if (present(ng)) then
+            ng_ = ng
+        else
+            ng_ = size(Xt, 1)
+        end if
+
+        allocate(Tgc(ng_, nc))
 #if defined(__NVCOMPILER)
-        do i = 1, size(Xt,1)
+        do i = 1, ng_
 #else
-        do concurrent (i = 1: size(Xt,1))
+        do concurrent (i = 1: ng_)
 #endif
             Tgc(i,:) = basis_bspline(Xt(i), knot, nc, degree)
         end do
