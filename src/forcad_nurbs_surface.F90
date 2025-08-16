@@ -3255,6 +3255,7 @@ contains
         real(rk), intent(in), contiguous :: Xc(:,:)
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Xg(:,:)
+        real(rk) :: Xti(size(Xt,2))
         integer :: i, ng_
 
         if (present(ng)) then
@@ -3264,12 +3265,13 @@ contains
         end if
 
         allocate(Xg(ng_, size(Xc,2)))
-#if defined(__NVCOMPILER)
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, ng_
 #else
-        do concurrent (i = 1: ng_)
+        do concurrent (i = 1: ng_) local(Xti)
 #endif
-            Xg(i,:) = matmul(cmp_Tgc_2d(Xt(i,:), knot1, knot2, nc, degree, Wc), Xc)
+            Xti = Xt(i,:)
+            Xg(i,:) = matmul(cmp_Tgc_2d(Xti, knot1, knot2, nc, degree, Wc), Xc)
         end do
     end function
     !===============================================================================
