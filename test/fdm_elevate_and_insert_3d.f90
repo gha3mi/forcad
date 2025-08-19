@@ -21,8 +21,8 @@ program fdm_elevate_and_insert_3d
    type(timer) :: t
 
    real(rk), parameter :: tol = 1e-5_rk             !! tolerance of finite differences
-   integer,  parameter :: dg1 = 5, dg2 = 4, dg3 = 3 !! degrees to elevate
-   integer,  parameter :: n1 = 8, n2 = 9, n3 = 10   !! number of knots to insert
+   integer,  parameter :: dg1 = 4, dg2 = 3, dg3 = 2 !! degrees to elevate
+   integer,  parameter :: n1 = 2, n2 = 3, n3 = 4    !! number of knots to insert
 
    !> set control points
    Xc = generate_Xc(5.0_rk)
