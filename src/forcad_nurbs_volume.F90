@@ -2324,7 +2324,7 @@ contains
                 real(rk), allocatable :: S_loc(:,:)
                 integer :: nc1, nc2, nc3, n1_new
                 integer :: i1, j1, i2, i3, i2_old, i2_new, ii, i3_old, i3_new
-                integer :: mS, nS, irow, jcol, c
+                integer :: mS, nS, c
 
                 nc1 = this%nc(1)
                 nc2 = this%nc(2)
@@ -2337,16 +2337,12 @@ contains
                     nS = nc_old(1)*nc2*nc3
                     allocate(S_loc(mS,nS), source=0.0_rk)
                     if (this%is_rational()) then
-                        do concurrent (i3=0:nc3-1, i2=0:nc2-1, j1=1:nc_old(1), i1=1:n1_new, A1(i1,j1) /= 0.0_rk) local(irow,jcol)
-                            irow = (i3*nc2 + i2)*n1_new    + i1
-                            jcol = (i3*nc2 + i2)*nc_old(1) + j1
-                            S_loc(irow,jcol) = A1(i1,j1) * Wc_old(jcol) / this%Wc(irow)
+                        do concurrent (i3=0:nc3-1, i2=0:nc2-1, j1=1:nc_old(1), i1=1:n1_new, A1(i1,j1) /= 0.0_rk)
+                            S_loc((i3*nc2 + i2)*n1_new    + i1,(i3*nc2 + i2)*nc_old(1) + j1) = A1(i1,j1) * Wc_old((i3*nc2 + i2)*nc_old(1) + j1) / this%Wc((i3*nc2 + i2)*n1_new    + i1)
                         end do
                     else
-                        do concurrent (i3=0:nc3-1, i2=0:nc2-1, j1=1:nc_old(1), i1=1:n1_new, A1(i1,j1) /= 0.0_rk) local(irow,jcol)
-                            irow = (i3*nc2 + i2)*n1_new    + i1
-                            jcol = (i3*nc2 + i2)*nc_old(1) + j1
-                            S_loc(irow,jcol) = A1(i1,j1)
+                        do concurrent (i3=0:nc3-1, i2=0:nc2-1, j1=1:nc_old(1), i1=1:n1_new, A1(i1,j1) /= 0.0_rk)
+                            S_loc((i3*nc2 + i2)*n1_new    + i1,(i3*nc2 + i2)*nc_old(1) + j1) = A1(i1,j1)
                         end do
                     end if
 
@@ -2356,16 +2352,12 @@ contains
                     nS = nc_old(2)*nc1*nc3
                     allocate(S_loc(mS,nS), source=0.0_rk)
                     if (this%is_rational()) then
-                        do concurrent (i3=0:nc3-1, i2_old=1:nc_old(2), i2_new=1:n1_new, ii=0:nc1-1, A1(i2_new,i2_old) /= 0.0_rk) local(irow,jcol)
-                            irow = ii + 1 + (i2_new-1)*nc1 + i3*nc1*n1_new
-                            jcol = ii + 1 + (i2_old-1)*nc1 + i3*nc1*nc_old(2)
-                            S_loc(irow,jcol) = A1(i2_new,i2_old) * Wc_old(jcol) / this%Wc(irow)
+                        do concurrent (i3=0:nc3-1, i2_old=1:nc_old(2), i2_new=1:n1_new, ii=0:nc1-1, A1(i2_new,i2_old) /= 0.0_rk)
+                            S_loc(ii + 1 + (i2_new-1)*nc1 + i3*nc1*n1_new,ii + 1 + (i2_old-1)*nc1 + i3*nc1*nc_old(2)) = A1(i2_new,i2_old) * Wc_old(ii + 1 + (i2_old-1)*nc1 + i3*nc1*nc_old(2)) / this%Wc(ii + 1 + (i2_new-1)*nc1 + i3*nc1*n1_new)
                         end do
                     else
-                        do concurrent (i3=0:nc3-1, i2_old=1:nc_old(2), i2_new=1:n1_new, ii=0:nc1-1, A1(i2_new,i2_old) /= 0.0_rk) local(irow,jcol)
-                            irow = ii + 1 + (i2_new-1)*nc1 + i3*nc1*n1_new
-                            jcol = ii + 1 + (i2_old-1)*nc1 + i3*nc1*nc_old(2)
-                            S_loc(irow,jcol) = A1(i2_new,i2_old)
+                        do concurrent (i3=0:nc3-1, i2_old=1:nc_old(2), i2_new=1:n1_new, ii=0:nc1-1, A1(i2_new,i2_old) /= 0.0_rk)
+                            S_loc(ii + 1 + (i2_new-1)*nc1 + i3*nc1*n1_new,ii + 1 + (i2_old-1)*nc1 + i3*nc1*nc_old(2)) = A1(i2_new,i2_old)
                         end do
                     end if
 
@@ -2375,16 +2367,12 @@ contains
                     nS = nc_old(3)*nc1*nc2
                     allocate(S_loc(mS,nS), source=0.0_rk)
                     if (this%is_rational()) then
-                        do concurrent (i3_old=1:nc_old(3), i3_new=1:n1_new, i2=0:nc2-1, ii=0:nc1-1, A1(i3_new,i3_old) /= 0.0_rk) local(irow,jcol)
-                            irow = ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2
-                            jcol = ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2
-                            S_loc(irow,jcol) = A1(i3_new,i3_old) * Wc_old(jcol) / this%Wc(irow)
+                        do concurrent (i3_old=1:nc_old(3), i3_new=1:n1_new, i2=0:nc2-1, ii=0:nc1-1, A1(i3_new,i3_old) /= 0.0_rk)
+                            S_loc(ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2,ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2) = A1(i3_new,i3_old) * Wc_old(ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2) / this%Wc(ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2)
                         end do
                     else
-                        do concurrent (i3_old=1:nc_old(3), i3_new=1:n1_new, i2=0:nc2-1, ii=0:nc1-1, A1(i3_new,i3_old) /= 0.0_rk) local(irow,jcol)
-                            irow = ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2
-                            jcol = ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2
-                            S_loc(irow,jcol) = A1(i3_new,i3_old)
+                        do concurrent (i3_old=1:nc_old(3), i3_new=1:n1_new, i2=0:nc2-1, ii=0:nc1-1, A1(i3_new,i3_old) /= 0.0_rk)
+                            S_loc(ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2,ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2) = A1(i3_new,i3_old)
                         end do
                     end if
                 end select
@@ -2421,7 +2409,7 @@ contains
         real(rk), allocatable :: knot_new(:)
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), H(:,:), Xc4(:,:,:,:)
         real(rk), allocatable :: Tdir(:,:)
-        integer :: nc_old(3), dim, ncp_old, mS, nS, irow, jcol, c
+        integer :: nc_old(3), dim, ncp_old, mS, nS, c
         real(rk), allocatable :: Wc_old(:), S_loc(:,:)
         integer :: i1, j1, i2, i3, i2_old, i2_new, ii, i3_old, i3_new
 
@@ -2588,16 +2576,12 @@ contains
                 allocate(S_loc(mS,nS), source=0.0_rk)
 
                 if (this%is_rational()) then
-                    do concurrent (i3=0:this%nc(3)-1, i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk) local(irow,jcol)
-                        irow = (i3*this%nc(2) + i2)*this%nc(1)    + i1
-                        jcol = (i3*this%nc(2) + i2)*nc_old(1)     + j1
-                        S_loc(irow,jcol) = Tdir(i1,j1) * Wc_old(jcol) / this%Wc(irow)
+                    do concurrent (i3=0:this%nc(3)-1, i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk)
+                        S_loc((i3*this%nc(2) + i2)*this%nc(1)    + i1,(i3*this%nc(2) + i2)*nc_old(1)     + j1) = Tdir(i1,j1) * Wc_old((i3*this%nc(2) + i2)*nc_old(1)     + j1) / this%Wc((i3*this%nc(2) + i2)*this%nc(1)    + i1)
                     end do
                 else
-                    do concurrent (i3=0:this%nc(3)-1, i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk) local(irow,jcol)
-                        irow = (i3*this%nc(2) + i2)*this%nc(1)    + i1
-                        jcol = (i3*this%nc(2) + i2)*nc_old(1)     + j1
-                        S_loc(irow,jcol) = Tdir(i1,j1)
+                    do concurrent (i3=0:this%nc(3)-1, i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk)
+                        S_loc((i3*this%nc(2) + i2)*this%nc(1)    + i1,(i3*this%nc(2) + i2)*nc_old(1)     + j1) = Tdir(i1,j1)
                     end do
                 end if
 
@@ -2607,16 +2591,12 @@ contains
                 allocate(S_loc(mS,nS), source=0.0_rk)
 
                 if (this%is_rational()) then
-                    do concurrent (i3=0:this%nc(3)-1, i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk) local(irow,jcol)
-                        irow = ii + 1 + (i2_new-1)*this%nc(1) + i3*this%nc(1)*this%nc(2)
-                        jcol = ii + 1 + (i2_old-1)*this%nc(1) + i3*this%nc(1)*nc_old(2)
-                        S_loc(irow,jcol) = Tdir(i2_new,i2_old) * Wc_old(jcol) / this%Wc(irow)
+                    do concurrent (i3=0:this%nc(3)-1, i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk)
+                        S_loc(ii + 1 + (i2_new-1)*this%nc(1) + i3*this%nc(1)*this%nc(2),ii + 1 + (i2_old-1)*this%nc(1) + i3*this%nc(1)*nc_old(2)) = Tdir(i2_new,i2_old) * Wc_old(ii + 1 + (i2_old-1)*this%nc(1) + i3*this%nc(1)*nc_old(2)) / this%Wc(ii + 1 + (i2_new-1)*this%nc(1) + i3*this%nc(1)*this%nc(2))
                     end do
                 else
-                    do concurrent (i3=0:this%nc(3)-1, i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk) local(irow,jcol)
-                        irow = ii + 1 + (i2_new-1)*this%nc(1) + i3*this%nc(1)*this%nc(2)
-                        jcol = ii + 1 + (i2_old-1)*this%nc(1) + i3*this%nc(1)*nc_old(2)
-                        S_loc(irow,jcol) = Tdir(i2_new,i2_old)
+                    do concurrent (i3=0:this%nc(3)-1, i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk)
+                        S_loc(ii + 1 + (i2_new-1)*this%nc(1) + i3*this%nc(1)*this%nc(2),ii + 1 + (i2_old-1)*this%nc(1) + i3*this%nc(1)*nc_old(2)) = Tdir(i2_new,i2_old)
                     end do
                 end if
 
@@ -2626,16 +2606,12 @@ contains
                 allocate(S_loc(mS,nS), source=0.0_rk)
 
                 if (this%is_rational()) then
-                    do concurrent (i3_old=1:nc_old(3), i3_new=1:this%nc(3), i2=0:this%nc(2)-1, ii=0:this%nc(1)-1, Tdir(i3_new,i3_old) /= 0.0_rk) local(irow,jcol)
-                        irow = ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2)
-                        jcol = ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)
-                        S_loc(irow,jcol) = Tdir(i3_new,i3_old) * Wc_old(jcol) / this%Wc(irow)
+                    do concurrent (i3_old=1:nc_old(3), i3_new=1:this%nc(3), i2=0:this%nc(2)-1, ii=0:this%nc(1)-1, Tdir(i3_new,i3_old) /= 0.0_rk)
+                        S_loc(ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2),ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)) = Tdir(i3_new,i3_old) * Wc_old(ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)) / this%Wc(ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2))
                     end do
                 else
-                    do concurrent (i3_old=1:nc_old(3), i3_new=1:this%nc(3), i2=0:this%nc(2)-1, ii=0:this%nc(1)-1, Tdir(i3_new,i3_old) /= 0.0_rk) local(irow,jcol)
-                        irow = ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2)
-                        jcol = ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)
-                        S_loc(irow,jcol) = Tdir(i3_new,i3_old)
+                    do concurrent (i3_old=1:nc_old(3), i3_new=1:this%nc(3), i2=0:this%nc(2)-1, ii=0:this%nc(1)-1, Tdir(i3_new,i3_old) /= 0.0_rk)
+                        S_loc(ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2),ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)) = Tdir(i3_new,i3_old)
                     end do
                 end if
             end select
