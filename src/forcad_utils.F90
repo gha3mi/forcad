@@ -11,7 +11,7 @@ module forcad_utils
     public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
         elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve, &
-        repelem, linspace, eye
+        repelem, linspace, eye, kron_eye
 
     !===============================================================================
     interface elemConn_C0
@@ -582,6 +582,25 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    pure function kron_eye(A, dim) result(B)
+        real(rk), intent(in), contiguous :: A(:,:)
+        integer, intent(in) :: dim
+        real(rk) :: B(size(A,1)*dim, size(A,2)*dim)
+        integer :: i, j, r
+
+        B = 0.0_rk
+        do concurrent (i = 1:size(A,1), j = 1:size(A,2))
+            do r = 1, dim
+                B((i-1)*dim + r, (j-1)*dim + r) = A(i,j)
+            end do
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
@@ -963,41 +982,64 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw)
+    pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw, T)
         integer, intent(in) :: p, k, s, r
         real(rk), intent(in), contiguous :: UP(0:), Pw(0:,:)
         real(rk), intent(in) :: u
         real(rk), allocatable, intent(out) :: UQ(:), Qw(:,:)
         integer, intent(out) :: nq
-        integer :: i, j, L, mp, d, np
+        real(rk), allocatable, intent(out), optional :: T(:,:)
+
         real(rk), allocatable :: Rw(:,:)
         real(rk) :: alpha
+        integer  :: i, j, L, mp, d, np, Lf, bw
 
-        d = size(Pw, 2)
-        np  = size(Pw, 1) - 1
-        mp  = np + p + 1
-        nq  = np + r
+        d  = size(Pw, 2)
+        np = size(Pw, 1)-1
+        mp = np+p+1
+        nq = np+r
 
         allocate(UQ(0:mp+r))
-        allocate(Qw(0:nq,1:d))
-        allocate(Rw(0:p ,1:d))
+        allocate(Qw(0:nq, 1:d))
+        allocate(Rw(0:p , 1:d))
 
-        UQ(0:k) = UP(0:k)
-        UQ(k+1:k+r) = u
-        UQ(k+1+r:mp+r) = UP(k+1:mp)
-        Qw(0:k-p,:) = Pw(0:k-p,:)
-        Qw(k-s+r:np+r,:) = Pw(k-s:np,:)
-        Rw(0:p-s,:) = Pw(k-p:k-s,:)
+        UQ(0:k)           = UP(0:k)
+        UQ(k+1:k+r)       = u
+        UQ(k+1+r:mp+r)    = UP(k+1:mp)
+        Qw(0:k-p, :)      = Pw(0:k-p, :)
+        Qw(k-s+r:np+r, :) = Pw(k-s:np, :)
+        Rw(0:p-s, :)      = Pw(k-p:k-s, :)
+        if (present(T)) then
+            allocate(T(0:nq, 0:np), source=0.0_rk)
+            do concurrent (i = 0:k-p)
+                T(i, i) = 1.0_rk
+            end do
+            do concurrent (i = k-s+r:nq)
+                T(i, i-r) = 1.0_rk
+            end do
+            Lf = k-p+r
+            bw = p-s
+            do concurrent (i = 0:bw)
+                T(Lf+i, k-p+i) = 1.0_rk
+            end do
+        end if
         do j = 1, r
             L = k-p+j
             do i = 0, p-j-s
-                alpha = (u - UP(L+i)) / (UP(i+k+1) - UP(L+i))
-                Rw(i,:) = alpha*Rw(i+1,:) + (1.0_rk - alpha) * Rw(i,:)
+                alpha = (u-UP(L+i))/(UP(i+k+1)-UP(L+i))
+                Rw(i, :) = alpha*Rw(i+1, :)+(1.0_rk-alpha)*Rw(i, :)
+                if (present(T)) then
+                    T(Lf+i, :) = alpha*T(Lf+i+1, :)+(1.0_rk-alpha)*T(Lf+i, :)
+                end if
             end do
-            Qw(L,:) = Rw(0,:)
-            Qw(k+r-j-s,:) = Rw(p-j-s,:)
+            Qw(L, :)       = Rw(0, :)
+            Qw(k+r-j-s, :) = Rw(p-j-s, :)
+            if (present(T)) then
+                T(L, :)       = T(Lf+0, :)
+                T(k+r-j-s, :) = T(Lf+(p-j-s), :)
+            end if
         end do
-        Qw(L+1:k-s-1,:) = Rw(1:k-s-1-L,:)
+        Qw(L+1:k-s-1, :) = Rw(1:k-s-1-L, :)
     end subroutine
     !===============================================================================
 
@@ -1033,160 +1075,187 @@ contains
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    !> author:  Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new)
-        integer, intent(in) :: t
+    pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap)
+        integer,  intent(in)             :: t
         real(rk), intent(in), contiguous :: Xcw(:,:), knot(:)
-        integer, intent(in) :: degree
-        integer, intent(out) :: nc_new
-        real(rk), allocatable, intent(out) :: Xcw_new(:,:), knot_new(:)
+        integer,  intent(in)             :: degree
+        integer,  intent(out)            :: nc_new
+        real(rk), allocatable, intent(out)           :: Xcw_new(:,:), knot_new(:)
+        real(rk), allocatable, intent(out), optional :: Tmap(:,:)
+
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
-        real(rk) :: iinv, alpha1, alpha2, Xth1, Xth2, numer, den
-        integer :: n, lbz, rbz, sv, tr, kj, first, knoti, last, alpha3, d, nc
-        integer :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
+        real(rk), allocatable :: bC(:,:), ebC(:,:), NextbC(:,:)  ! only used if Tmap present
+
+        real(rk) :: iinv, alpha1, alpha2, Xth1, Xth2, numer, den, alpha3
+        integer  :: n, lbz, rbz, sv, tr, kj, first, knoti, last, d, nc
+        integer  :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
         integer, allocatable :: mlp(:)
 
         nc = size(Xcw,1)
-        d = size(Xcw,2)
+        d  = size(Xcw,2)
+
         mlp = compute_multiplicity(knot)
         mlp = mlp + t
         nc_new = sum(mlp) - (mlp(1)-1) - 1
+
         allocate(Xcw_new(nc_new,d), source=0.0_rk)
         allocate(bezalfs(degree+1,degree+t+1), source=0.0_rk)
         allocate(bpts(degree+1,d), source=0.0_rk)
         allocate(ebpts(degree+t+1,d), source=0.0_rk)
         allocate(Nextbpts(degree+1,d), source=0.0_rk)
         allocate(alfs(degree), source=0.0_rk)
-        n = nc - 1
-        m = n + degree + 1
-        ph = degree + t
-        ph2 = ph / 2
-        bezalfs(1,1) = 1.0_rk
+
+        if (present(Tmap)) then
+            allocate(Tmap(nc_new, nc), source=0.0_rk)
+            allocate(bC(degree+1,nc), ebC(degree+t+1,nc), NextbC(degree+1,nc), source=0.0_rk)
+        end if
+
+        n   = nc - 1
+        m   = n + degree + 1
+        ph  = degree + t
+        ph2 = ph/2
+
+        bezalfs(1,1)           = 1.0_rk
         bezalfs(degree+1,ph+1) = 1.0_rk
-        do i = 1,ph2
-            iinv = 1.0_rk/bincoeff(ph,i)
+        do i = 1, ph2
+            iinv = 1.0_rk / bincoeff(ph,i)
             mpi = min(degree,i)
-            do j = max(0,i-t),mpi
-                bezalfs(j+1,i+1) = iinv*bincoeff(degree,j)*bincoeff(t,i-j)
+            do j = max(0,i-t), mpi
+                bezalfs(j+1,i+1) = iinv * bincoeff(degree,j) * bincoeff(t, i-j)
             end do
         end do
-        do i = ph2+1,ph-1
+        do i = ph2+1, ph-1
             mpi = min(degree,i)
-            do j = max(0,i-t),mpi
-                bezalfs(j+1,i+1) = bezalfs(degree-j+1,ph-i+1)
+            do j = max(0,i-t), mpi
+                bezalfs(j+1,i+1) = bezalfs(degree-j+1, ph-i+1)
             end do
         end do
-        mh = ph
-        knoti = ph+1
-        r = -1
-        a = degree
-        b = degree+1
-        Xcwi = 1
+
+        mh    = ph
+        knoti = ph + 1
+        r     = -1
+        a     = degree
+        b     = degree + 1
+        Xcwi  = 1
+
         Xth1 = knot(1)
         Xcw_new(1,:) = Xcw(1,:)
+        if (present(Tmap)) Tmap(1,1) = 1.0_rk
+
         allocate(knot_new(sum(mlp)), source=0.0_rk)
         knot_new(1:ph+1) = Xth1
-        do i = 0,degree
+
+        do i = 0, degree
             bpts(i+1,:) = Xcw(i+1,:)
+            if (present(Tmap)) bC(i+1, i+1) = 1.0_rk
         end do
-        do while (b<m)
+
+        do while (b < m)
             i = b
-            ! do while (b<m .and. knot(b+1) == knot(b+2))
-            do while (b<m .and. abs(knot(b+1)-knot(b+2)) < 2.0_rk*epsilon(0.0_rk))
+            do while (b < m .and. abs(knot(b+1)-knot(b+2)) < 2.0_rk*epsilon(0.0_rk))
                 b = b + 1
-                if (b+2 > size(knot)) then
-                    exit
-                end if
+                if (b+2 > size(knot)) exit
             end do
-            mul = b - i + 1
-            mh = mh + mul + t
+            mul  = b - i + 1
+            mh   = mh + mul + t
             Xth2 = knot(b+1)
             oldr = r
-            r = degree - mul
-            if (oldr > 0) then
-                lbz = (oldr+2)/2
-            else
-                lbz = 1
-            end if
+            r    = degree - mul
+
+            lbz = merge((oldr+2)/2, 1, oldr > 0)
+            rbz = merge(ph - (r+1)/2, ph, r > 0)
+
             if (r > 0) then
-                rbz = ph - (r+1)/2
-            else
-                rbz = ph
-            end if
-            if (r>0) then
                 numer = Xth2 - Xth1
-                do q = degree,mul+1,-1
-                    alfs(q-mul) = numer / (knot(a+q+1)-Xth1)
+                do q = degree, mul+1, -1
+                    alfs(q-mul) = numer / (knot(a+q+1) - Xth1)
                 end do
-                do j = 1,r
-                    sv = r - j
-                    s = mul + j
-                    do q = degree,s,-1
+                do j = 1, r
+                    sv = r - j;  s = mul + j
+                    do q = degree, s, -1
                         bpts(q+1,:) = (1.0_rk-alfs(q-s+1))*bpts(q,:) + alfs(q-s+1)*bpts(q+1,:)
+                        if (present(Tmap)) bC(q+1,:) = (1.0_rk-alfs(q-s+1))*bC(q,:) + alfs(q-s+1)*bC(q+1,:)
                     end do
                     Nextbpts(sv+1,:) = bpts(degree+1,:)
+                    if (present(Tmap)) NextbC(sv+1,:) = bC(degree+1,:)
                 end do
             end if
-            do i = lbz,ph
+
+            do i = lbz, ph
                 ebpts(i+1,:) = 0.0_rk
+                if (present(Tmap)) ebC(i+1,:) = 0.0_rk
                 mpi = min(degree,i)
-                do j = max(0,i-t),mpi
-                    ebpts(i+1,:) = bezalfs(j+1,i+1)*bpts(j+1,:) + ebpts(i+1,:)
+                do j = max(0,i-t), mpi
+                    ebpts(i+1,:) = ebpts(i+1,:) + bezalfs(j+1,i+1)*bpts(j+1,:)
+                    if (present(Tmap)) ebC(i+1,:) = ebC(i+1,:) + bezalfs(j+1,i+1)*bC(j+1,:)
                 end do
             end do
+
             if (oldr > 1) then
                 first = knoti - 2
-                last = knoti
-                den = Xth2 - Xth1
-                alpha3 = floor((Xth2-knot(knoti)) / den)
-                do tr = 1,oldr-1
-                    i = first
-                    j = last
+                last  = knoti
+                den   = Xth2 - Xth1
+                alpha3 = floor((Xth2 - knot(knoti)) / den)
+
+                do tr = 1, oldr-1
+                    i  = first
+                    j  = last
                     kj = j - knoti + 1
-                    do while (j-i > tr)
+                    do while (j - i > tr)
                         if (i < Xcwi) then
-                            alpha1 = (Xth2-knot(i+1))/(Xth1-knot(i+1))
-                            Xcw_new(i+1,:) = (1-alpha1)*Xcw_new(i,:) + alpha1*Xcw_new(i+1,:)
+                            alpha1 = (Xth2 - knot(i+1)) / (Xth1 - knot(i+1))
+                            Xcw_new(i+1,:) = (1.0_rk-alpha1)*Xcw_new(i,:) + alpha1*Xcw_new(i+1,:)
+                            if (present(Tmap)) Tmap(i+1,:) = (1.0_rk-alpha1)*Tmap(i,:) + alpha1*Tmap(i+1,:)
                         end if
                         if (j >= lbz) then
-                            if (j-tr <= knoti-ph+oldr) then
-                                alpha2 = (Xth2-knot_new(j-tr+1)) / den
-                                ebpts(kj+1,:) = alpha2*ebpts(kj+1,:) + (1-alpha2)*ebpts(kj+2,:)
+                            if (j-tr <= knoti - ph + oldr) then
+                                alpha2 = (Xth2 - knot_new(j-tr+1)) / den
+                                ebpts(kj+1,:) = alpha2*ebpts(kj+1,:) + (1.0_rk-alpha2)*ebpts(kj+2,:)
+                                if (present(Tmap)) ebC(kj+1,:) = alpha2*ebC(kj+1,:) + (1.0_rk-alpha2)*ebC(kj+2,:)
                             else
-                                ebpts(kj+1,:) = (1-alpha3)*ebpts(:,kj+2) + alpha3*ebpts(kj+1,:)
+                                ebpts(kj+1,:) = (1.0_rk-alpha3)*ebpts(kj+2,:) + alpha3*ebpts(kj+1,:)
+                                if (present(Tmap)) ebC(kj+1,:) = (1.0_rk-alpha3)*ebC(kj+2,:) + alpha3*ebC(kj+1,:)
                             end if
                         end if
-                        i = i + 1
-                        j = j - 1
-                        kj = kj - 1
+                        i  = i + 1;  j = j - 1;  kj = kj - 1
                     end do
                     first = first - 1
-                    last = last + 1
+                    last  = last + 1
                 end do
             end if
+
             if (a /= degree) then
-                do i = 0,ph-oldr-1
+                do i = 0, ph-oldr-1
                     knot_new(knoti+1) = Xth1
                     knoti = knoti + 1
                 end do
             end if
-            do j = lbz,rbz
+
+            do j = lbz, rbz
                 Xcw_new(Xcwi+1,:) = ebpts(j+1,:)
+                if (present(Tmap)) Tmap(Xcwi+1,:) = ebC(j+1,:)
                 Xcwi = Xcwi + 1
             end do
-            if (b<m) then
-                do j = 0,r-1
+
+            if (b < m) then
+                do j = 0, r-1
                     bpts(j+1,:) = Nextbpts(j+1,:)
+                    if (present(Tmap)) bC(j+1,:) = NextbC(j+1,:)
                 end do
-                do j = r,degree
+                do j = r, degree
                     bpts(j+1,:) = Xcw(b-degree+j+1,:)
+                    if (present(Tmap)) then
+                        bC(j+1,:)  = 0.0_rk
+                        bC(j+1, b-degree+j+1) = 1.0_rk
+                    end if
                 end do
-                a = b
-                b = b+1
+                a    = b
+                b    = b + 1
                 Xth1 = Xth2
             else
-                do i = 0,ph
+                do i = 0, ph
                     knot_new(knoti+i+1) = Xth2
                 end do
             end if
