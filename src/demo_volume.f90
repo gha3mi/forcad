@@ -26,6 +26,21 @@ program example_nurbs_volume
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
+    !-----------------------------------------------------------------------------
+    ! Refinement
+    !-----------------------------------------------------------------------------
+
+    !> Elevate the degree of the NURBS volume in the first, second and third directions
+    call nurbs%elevate_degree(1,2)
+    call nurbs%elevate_degree(2,2)
+    call nurbs%elevate_degree(3,2)
+
+    !> Insert knots into the NURBS volume in the first, second and third directions
+    call nurbs%insert_knots(1,[0.5_rk], [1])
+    call nurbs%insert_knots(2,[0.5_rk], [1])
+    call nurbs%insert_knots(3,[0.5_rk], [1])
+
+
     !> Export initial control points to a VTK file
     call nurbs%export_Xc('vtk/demo_volume_Xc.vtk')
 
@@ -36,16 +51,20 @@ program example_nurbs_volume
     !> Generate the NURBS volume with a resolution of 15X15X15
     call nurbs%create(15, 15, 15)
 
+
     !> Export the generated volume to a VTK file
     call nurbs%export_Xg('vtk/demo_volume_Xg.vtk')
+
+    !> Export the parameter space to a VTK file
+    call nurbs%export_Xth_in_Xg('vtk/demo_volume_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
     ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
     !-----------------------------------------------------------------------------
 
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/demo_volume_Xc.vtk','vtk/demo_volume_Xg.vtk')
+    !> Show the control geometry, geometry and parameters using PyVista
+    call nurbs%show('vtk/demo_volume_Xc.vtk', 'vtk/demo_volume_Xg.vtk', 'vtk/demo_volume_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
@@ -57,7 +76,7 @@ program example_nurbs_volume
 contains
 
     !-----------------------------------------------------------------------------
-    function generate_Xc(L) result(control_points)
+    pure function generate_Xc(L) result(control_points)
         implicit none
         real(rk), intent(in) :: L
         real(rk), allocatable :: control_points(:,:)
