@@ -1191,134 +1191,197 @@ contains
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    !> author:  Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine insert_knots(this,Xth,r)
-        class(nurbs_curve), intent(inout) :: this
-        real(rk), intent(in), contiguous :: Xth(:)
-        integer, intent(in), contiguous :: r(:)
-        integer :: k, i, s, d, j, n_new
-        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), Xc_new(:,:), Wc_new(:), knot_new(:)
+    pure subroutine insert_knots(this, Xth, r, B, Bs)
+        class(nurbs_curve),               intent(inout) :: this
+        real(rk), contiguous,             intent(in)    :: Xth(:)
+        integer,  contiguous,             intent(in)    :: r(:)
+        real(rk), allocatable, optional,  intent(out)   :: B(:,:)
+        real(rk), allocatable, optional,  intent(out)   :: Bs(:,:)
+
+        integer :: i, j, k, s, n_new, dim, n_old, mS, nS, c
+        real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), knot_new(:), H(:,:)
+        real(rk), allocatable :: Wc_old(:), S_loc(:,:), A1(:,:), A_re_loc(:,:)
 
         if (.not. this%err%ok) return
 
-        if (this%is_rational()) then ! NURBS
+        dim = size(this%Xc,2)
 
-            do i = 1, size(Xth)
-                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                ! if (this%knot(k+1) == Xth(i)) then
-                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
-                    s = compute_multiplicity(this%knot,Xth(i))
-                else
-                    s = 0
-                end if
-
-                d = size(this%Xc,2)
-                allocate(Xcw(size(this%Xc,1),d+1))
-
-                do j = 1, size(this%Xc,1)
-                    Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
-                end do
-                Xcw(:,d+1) = this%Wc(:)
-
-                call insert_knot_A_5_1(&
-                    this%degree,&
-                    this%knot,&
-                    Xcw,&
-                    Xth(i),&
-                    k,&
-                    s,&
-                    r(i),&
-                    n_new,&
-                    knot_new,&
-                    Xcw_new)
-
-                allocate(Xc_new(1:n_new+1,1:d))
-                allocate(Wc_new(1:n_new+1))
-                do j = 1, n_new+1
-                    Xc_new(j,1:d) = Xcw_new(j-1,1:d)/Xcw_new(j-1,d+1)
-                    Wc_new(j) = Xcw_new(j-1,d+1)
-                end do
-
-                call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
-                deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
+        if (present(B) .or. present(Bs)) then
+            n_old = size(this%Xc,1)
+            if (this%is_rational()) then
+                allocate(Wc_old(n_old)); Wc_old = this%Wc
+            end if
+            allocate(A1(n_old,n_old), source=0.0_rk)
+            do concurrent (j = 1:n_old)
+                A1(j,j) = 1.0_rk
             end do
-
-        else ! B-Spline
-
-            do i = 1, size(Xth)
-                k = findspan(this%nc-1,this%degree,Xth(i),this%knot)
-                ! if (this%knot(k+1) == Xth(i)) then
-                if (abs(this%knot(k+1) - Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
-                    s = compute_multiplicity(this%knot,Xth(i))
-                else
-                    s = 0
-                end if
-
-                call insert_knot_A_5_1(&
-                    this%degree,&
-                    this%knot,&
-                    this%Xc,&
-                    Xth(i),&
-                    k,&
-                    s,&
-                    r(i),&
-                    n_new,&
-                    knot_new,&
-                    Xc_new)
-
-                call this%set(knot=knot_new, Xc=Xc_new)
-            end do
-
         end if
 
+        if (this%is_rational()) then
+            allocate(Xcw(size(this%Xc,1), dim+1))
+            do concurrent (j = 1: size(this%Xc,1))
+                Xcw(j,1:dim) = this%Xc(j,1:dim) * this%Wc(j)
+            end do
+            Xcw(:,dim+1) = this%Wc(:)
+
+            do i = 1, size(Xth)
+                k = findspan(size(this%Xc,1)-1, this%degree, Xth(i), this%knot)
+                if (abs(this%knot(k+1)-Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
+                    s = compute_multiplicity(this%knot, Xth(i))
+                else
+                    s = 0
+                end if
+
+                if (present(B) .or. present(Bs)) then
+                    call insert_knot_A_5_1(this%degree, this%knot, Xcw, Xth(i), k, s, r(i), n_new, knot_new, Xcw_new, A_re_loc)
+                    A1 = matmul(A_re_loc, A1)
+                else
+                    call insert_knot_A_5_1(this%degree, this%knot, Xcw, Xth(i), k, s, r(i), n_new, knot_new, Xcw_new)
+                end if
+
+                call move_alloc(Xcw_new, Xcw)
+                H = reshape(Xcw, [n_new+1, dim+1])
+                associate (C => H(:,1:dim), W => H(:,dim+1))
+                    do j = 1, dim
+                    C(:,j) = C(:,j) / W(:)
+                    end do
+                    call this%set(knot=knot_new, Xc=C, Wc=W)
+                end associate
+                deallocate(H)
+            end do
+
+        else
+            Xc = this%Xc
+            do i = 1, size(Xth)
+                k = findspan(size(Xc,1)-1, this%degree, Xth(i), this%knot)
+                if (abs(this%knot(k+1)-Xth(i)) < 2.0_rk*epsilon(0.0_rk)) then
+                    s = compute_multiplicity(this%knot, Xth(i))
+                else
+                    s = 0
+                end if
+
+                if (present(B) .or. present(Bs)) then
+                    call insert_knot_A_5_1(this%degree, this%knot, Xc, Xth(i), k, s, r(i), n_new, knot_new, Xcw_new, A_re_loc)
+                    A1 = matmul(A_re_loc, A1)
+                else
+                    call insert_knot_A_5_1(this%degree, this%knot, Xc, Xth(i), k, s, r(i), n_new, knot_new, Xcw_new)
+                end if
+
+                call move_alloc(Xcw_new, Xc)
+                call this%set(knot=knot_new, Xc=Xc)
+            end do
+        end if
+
+        if (present(B) .or. present(Bs)) then
+            mS = size(this%Xc,1)
+            nS = size(A1,2)
+            allocate(S_loc(mS,nS), source=0.0_rk)
+
+            if (this%is_rational()) then
+                do i = 1, mS
+                    do j = 1, nS
+                    if (A1(i,j) /= 0.0_rk) S_loc(i,j) = A1(i,j) * Wc_old(j) / this%Wc(i)
+                    end do
+                end do
+            else
+                S_loc = A1
+            end if
+
+            if (present(B)) then
+                allocate(B(mS*dim, nS*dim), source=0.0_rk)
+                do c = 1, dim
+                    B(c:mS*dim:dim, c:nS*dim:dim) = S_loc
+                end do
+            end if
+            if (present(Bs)) then
+                call move_alloc(S_loc, Bs)
+            else
+                deallocate(S_loc)
+            end if
+            if (allocated(Wc_old)) deallocate(Wc_old)
+        end if
     end subroutine
     !===============================================================================
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    !> author:  Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine elevate_degree(this, t)
-        class(nurbs_curve), intent(inout) :: this
-        integer, intent(in) :: t
-        real(rk), allocatable :: Xcw(:,:), Xcw_new(:,:), knot_new(:), Xc_new(:,:), Wc_new(:)
-        integer :: d, j, nc_new
+    pure subroutine elevate_degree(this, t, B, Bs)
+        class(nurbs_curve),               intent(inout) :: this
+        integer,                          intent(in)    :: t
+        real(rk), allocatable, optional,  intent(out)   :: B(:,:)
+        real(rk), allocatable, optional,  intent(out)   :: Bs(:,:)
+
+        integer :: dim, mS, nS, c, i, nc_new
+        real(rk), allocatable :: knot_new(:)
+        real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:)
+        real(rk), allocatable :: Tdir(:,:), Wc_old(:), S_loc(:,:)
 
         if (.not. this%err%ok) return
 
-        if (this%is_rational()) then ! NURBS
+        dim = size(this%Xc,2)
 
-            d = size(this%Xc,2)
-            allocate(Xcw(size(this%Xc,1),d+1))
-            do j = 1, size(this%Xc,1)
-                Xcw(j,1:d) = this%Xc(j,1:d)*this%Wc(j)
-                Xcw(j,d+1) = this%Wc(j)
-            end do
-
-            call elevate_degree_A_5_9(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new)
-
-            allocate(Xc_new(1:nc_new,1:d))
-            allocate(Wc_new(1:nc_new))
-            do j = 1, nc_new
-                Xc_new(j,1:d) = Xcw_new(j,1:d)/Xcw_new(j,d+1)
-            end do
-            Wc_new(:) = Xcw_new(:,d+1)
-
-            call this%set(knot=knot_new, Xc=Xc_new, Wc=Wc_new)
-            deallocate(Xcw, Xcw_new, Xc_new, Wc_new)
-
-        else ! B-Spline
-
-            d = size(this%Xc,2)
-
-            call elevate_degree_A_5_9(t, this%knot, this%degree, this%Xc, nc_new, knot_new, Xc_new)
-
-            call this%set(knot=knot_new, Xc=Xc_new)
-            deallocate(Xc_new)
-
+        if (present(B) .or. present(Bs)) then
+            if (this%is_rational()) then
+                allocate(Wc_old(size(this%Xc,1)))
+                Wc_old = this%Wc
+            end if
         end if
 
+        if (this%is_rational()) then
+            allocate(Xcw(size(this%Xc,1), dim+1))
+            do concurrent (i = 1:size(this%Xc,1))
+                Xcw(i,1:dim) = this%Xc(i,1:dim) * this%Wc(i)
+            end do
+            Xcw(:,dim+1) = this%Wc(:)
+
+            call elevate_degree_A_5_9(t, this%knot, this%degree, Xcw, nc_new, knot_new, Xcw_new, Tdir)
+
+            associate (C => Xcw_new(:,1:dim), W => Xcw_new(:,dim+1))
+                do i = 1, dim
+                    C(:,i) = C(:,i) / W(:)
+                end do
+                call this%set(knot=knot_new, Xc=C, Wc=W)
+            end associate
+            deallocate(Xcw, Xcw_new)
+
+        else
+            Xc = this%Xc
+            call elevate_degree_A_5_9(t, this%knot, this%degree, Xc, nc_new, knot_new, Xcw_new, Tdir)
+            call this%set(knot=knot_new, Xc=Xcw_new)
+            deallocate(Xc, Xcw_new)
+        end if
+
+        if (present(B) .or. present(Bs)) then
+            mS = size(this%Xc,1)
+            nS = size(Tdir,2)
+            allocate(S_loc(mS,nS), source=0.0_rk)
+
+            if (this%is_rational()) then
+                do i = 1, mS
+                    S_loc(i,:) = Tdir(i,:) * ( Wc_old(:) / this%Wc(i) )
+                end do
+            else
+                S_loc = Tdir
+            end if
+
+            if (present(B)) then
+                allocate(B(mS*dim, nS*dim), source=0.0_rk)
+                do c = 1, dim
+                    B(c:mS*dim:dim, c:nS*dim:dim) = S_loc
+                end do
+            end if
+            if (present(Bs)) then
+                call move_alloc(S_loc, Bs)
+            else
+                deallocate(S_loc)
+            end if
+
+            if (allocated(Wc_old)) deallocate(Wc_old)
+        end if
     end subroutine
     !===============================================================================
 

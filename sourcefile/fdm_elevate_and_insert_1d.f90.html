@@ -1,0 +1,576 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>fdm_elevate_and_insert_1d.f90 &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>fdm_elevate_and_insert_1d.f90
+      <small>Source File</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.7% of total for source files.">87 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/fdm_elevate_and_insert_1d.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+            <li class="breadcrumb-item active" aria-current="page">fdm_elevate_and_insert_1d.f90</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+        <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#progs-0"
+         aria-expanded="false" aria-controls="progs-0">
+         <h4 class="card-header bg-primary text-white">Programs</h4>
+      </a>
+      <div id="progs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/fdm_elevate_and_insert_1d.html">fdm_elevate_and_insert_1d</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../sourcefile/fdm_elevate_and_insert_1d.f90.html#src">fdm_elevate_and_insert_1d.f90</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    <div class="col-md-9" id='text'>
+      
+      <br>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">This file depends on</h3>
+          </div>
+          <div class="card-body">
+            <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph Pages: 1 -->
+<svg id="sourcefilefdm_elevate_and_insert_1df90EfferentGraph" width="641pt" height="176pt"
+ viewBox="0.00 0.00 641.00 176.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph" class="graph" transform="scale(0.715905 0.715905) rotate(0) translate(4 241.79)">
+<title>sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-241.79 891.37,-241.79 891.37,4 -4,4"/>
+<!-- sourcefile~fdm_elevate_and_insert_1d.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node1" class="node">
+<title>sourcefile~fdm_elevate_and_insert_1d.f90</title>
+<polygon fill="none" stroke="black" points="887.37,-69.59 710.1,-69.59 710.1,-45.32 887.37,-45.32 887.37,-69.59"/>
+<text xml:space="preserve" text-anchor="middle" x="798.73" y="-53.85" font-family="Helvetica,sans-Serif" font-size="10.50">fdm_elevate_and_insert_1d.f90</text>
+</g>
+<!-- sourcefile~forcad.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node2" class="node">
+<title>sourcefile~forcad.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node2"><a xlink:href="../sourcefile/forcad.f90.html" xlink:title="forcad.f90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="674.1,-127.59 608.58,-127.59 608.58,-103.32 674.1,-103.32 674.1,-127.59"/>
+<text xml:space="preserve" text-anchor="middle" x="641.34" y="-111.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad.f90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~fdm_elevate_and_insert_1d.f90&#45;&gt;sourcefile~forcad.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge1" class="edge">
+<title>sourcefile~fdm_elevate_and_insert_1d.f90&#45;&gt;sourcefile~forcad.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M764.02,-70.04C740.85,-78.69 709.89,-90.24 685,-99.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="683.96,-96.18 675.82,-102.96 686.41,-102.74 683.96,-96.18"/>
+</g>
+<!-- sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node3" class="node">
+<title>sourcefile~forcad_utils.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node3"><a xlink:href="../sourcefile/forcad_utils.f90.html" xlink:title="forcad_utils.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="231.54,-89.59 136.77,-89.59 136.77,-65.32 231.54,-65.32 231.54,-89.59"/>
+<text xml:space="preserve" text-anchor="middle" x="184.15" y="-73.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~fdm_elevate_and_insert_1d.f90&#45;&gt;sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge2" class="edge">
+<title>sourcefile~fdm_elevate_and_insert_1d.f90&#45;&gt;sourcefile~forcad_utils.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M755.02,-44.87C663.44,-20 442.32,28.72 267.54,-23.45 245.15,-30.14 223.19,-45.07 207.58,-57.54"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="205.35,-54.84 199.9,-63.93 209.83,-60.23 205.35,-54.84"/>
+</g>
+<!-- sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node4" class="node">
+<title>sourcefile~forcad_kinds.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node4"><a xlink:href="../sourcefile/forcad_kinds.f90.html" xlink:title="forcad_kinds.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="100.77,-89.59 0,-89.59 0,-65.32 100.77,-65.32 100.77,-89.59"/>
+<text xml:space="preserve" text-anchor="middle" x="50.38" y="-73.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge3" class="edge">
+<title>sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_kinds.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M630.85,-127.96C618.96,-142.65 597.14,-166.51 572.58,-178.45 417.62,-253.82 346.12,-254.97 185.15,-193.45"/>
+</g>
+<!-- sourcefile~forcad_nurbs_curve.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node5" class="node">
+<title>sourcefile~forcad_nurbs_curve.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node5"><a xlink:href="../sourcefile/forcad_nurbs_curve.f90.html" xlink:title="forcad_nurbs_curve.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="567.7,-169.59 429.43,-169.59 429.43,-145.32 567.7,-145.32 567.7,-169.59"/>
+<text xml:space="preserve" text-anchor="middle" x="498.57" y="-153.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_curve.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge4" class="edge">
+<title>sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_curve.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M608.33,-125.52C597.04,-129.03 584.26,-132.96 572.58,-136.45 566.81,-138.18 560.78,-139.95 554.77,-141.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="554.1,-138.26 545.47,-144.41 556.05,-144.98 554.1,-138.26"/>
+</g>
+<!-- sourcefile~forcad_nurbs_surface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node6" class="node">
+<title>sourcefile~forcad_nurbs_surface.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node6"><a xlink:href="../sourcefile/forcad_nurbs_surface.f90.html" xlink:title="forcad_nurbs_surface.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="572.58,-127.59 424.56,-127.59 424.56,-103.32 572.58,-103.32 572.58,-127.59"/>
+<text xml:space="preserve" text-anchor="middle" x="498.57" y="-111.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_surface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge5" class="edge">
+<title>sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_surface.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M608.4,-115.45C601.01,-115.45 592.8,-115.45 584.31,-115.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="584.53,-111.95 574.53,-115.45 584.53,-118.95 584.53,-111.95"/>
+</g>
+<!-- sourcefile~forcad_nurbs_volume.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node7" class="node">
+<title>sourcefile~forcad_nurbs_volume.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node7"><a xlink:href="../sourcefile/forcad_nurbs_volume.f90.html" xlink:title="forcad_nurbs_volume.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="572.58,-85.59 424.56,-85.59 424.56,-61.32 572.58,-61.32 572.58,-85.59"/>
+<text xml:space="preserve" text-anchor="middle" x="498.57" y="-69.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_volume.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge6" class="edge">
+<title>sourcefile~forcad.f90&#45;&gt;sourcefile~forcad_nurbs_volume.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M608.33,-105.39C597.04,-101.88 584.26,-97.94 572.58,-94.45 566.81,-92.73 560.78,-90.96 554.77,-89.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="556.05,-85.93 545.47,-86.5 554.1,-92.65 556.05,-85.93"/>
+</g>
+<!-- sourcefile~forcad_utils.f90&#45;&gt;sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge7" class="edge">
+<title>sourcefile~forcad_utils.f90&#45;&gt;sourcefile~forcad_kinds.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M136.33,-77.45C128.58,-77.45 120.46,-77.45 112.43,-77.45"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="112.7,-73.95 102.7,-77.45 112.7,-80.95 112.7,-73.95"/>
+</g>
+<!-- sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge10" class="edge">
+<title>sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_utils.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M465.93,-170.05C432.33,-182.05 377.48,-197.71 329.05,-193.45"/>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M327.05,-193.45C269.27,-188.38 221.84,-131.73 199.31,-99.51"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="202.23,-97.59 193.73,-91.27 196.43,-101.51 202.23,-97.59"/>
+</g>
+<!-- sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge9" class="edge">
+<title>sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_kinds.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M327.05,-193.45C264.23,-187.94 244.06,-215.97 185.15,-193.45"/>
+</g>
+<!-- sourcefile~forcad_interface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node8" class="node">
+<title>sourcefile~forcad_interface.f90</title>
+<g id="a_sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_node8"><a xlink:href="../sourcefile/forcad_interface.f90.html" xlink:title="forcad_interface.F90">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="388.56,-127.59 267.54,-127.59 267.54,-103.32 388.56,-103.32 388.56,-127.59"/>
+<text xml:space="preserve" text-anchor="middle" x="328.05" y="-111.85" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_interface.F90</text>
+</a>
+</g>
+</g>
+<!-- sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_interface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge8" class="edge">
+<title>sourcefile~forcad_nurbs_curve.f90&#45;&gt;sourcefile~forcad_interface.f90</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M447.01,-144.85C429.26,-140.43 409.13,-135.41 390.58,-130.79"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="391.59,-127.44 381.04,-128.41 389.9,-134.23 391.59,-127.44"/>
+</g>
+<!-- sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge13" class="edge">
+<title>sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_utils.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M438.36,-102.85C422.26,-99.76 404.79,-96.69 388.56,-94.45 339.73,-87.73 283.91,-83.29 243.12,-80.65"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="243.47,-77.16 233.27,-80.02 243.03,-84.15 243.47,-77.16"/>
+</g>
+<!-- sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge12" class="edge">
+<title>sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_kinds.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M452.74,-128.07C369.39,-151.32 197.81,-198.18 185.15,-193.45"/>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M183.15,-193.45C133.24,-174.38 89.89,-127.02 67.52,-99.07"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="70.35,-97 61.44,-91.26 64.83,-101.3 70.35,-97"/>
+</g>
+<!-- sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_interface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge11" class="edge">
+<title>sourcefile~forcad_nurbs_surface.f90&#45;&gt;sourcefile~forcad_interface.f90</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M424.14,-115.45C416.22,-115.45 408.16,-115.45 400.26,-115.45"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="400.35,-111.95 390.35,-115.45 400.35,-118.95 400.35,-111.95"/>
+</g>
+<!-- sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge16" class="edge">
+<title>sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_utils.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M327.05,-37.45C290.24,-36.17 249.98,-48.96 221.78,-60.42"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="220.47,-57.17 212.62,-64.29 223.19,-63.62 220.47,-57.17"/>
+</g>
+<!-- sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_kinds.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge15" class="edge">
+<title>sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_kinds.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M457.89,-60.86C424.05,-51.11 373.9,-39.02 329.05,-37.45"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M327.05,-37.45C242.11,-34.48 220.53,-42.05 136.77,-56.45 127.47,-58.05 117.68,-60.11 108.19,-62.3"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="107.61,-58.84 98.69,-64.56 109.23,-65.65 107.61,-58.84"/>
+</g>
+<!-- sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_interface.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge14" class="edge">
+<title>sourcefile~forcad_nurbs_volume.f90&#45;&gt;sourcefile~forcad_interface.f90</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M447.01,-86.06C429.26,-90.48 409.13,-95.5 390.58,-100.12"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="389.9,-96.68 381.04,-102.5 391.59,-103.47 389.9,-96.68"/>
+</g>
+<!-- sourcefile~forcad_interface.f90&#45;&gt;sourcefile~forcad_utils.f90 -->
+<g id="sourcefile~~fdm_elevate_and_insert_1d.f90~~EfferentGraph_edge17" class="edge">
+<title>sourcefile~forcad_interface.f90&#45;&gt;sourcefile~forcad_utils.f90</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M280.2,-102.91C268.21,-99.7 255.18,-96.21 242.72,-92.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="243.99,-89.59 233.42,-90.38 242.18,-96.35 243.99,-89.59"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var pansourcefilefdm_elevate_and_insert_1df90EfferentGraph = svgPanZoom('#sourcefilefdm_elevate_and_insert_1df90EfferentGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#EfferentGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="EfferentGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="200pt" height="32pt"
+ viewBox="0.00 0.00 200.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 195.52,-28.27 195.52,4 -4,4"/>
+<!-- Source File -->
+<g id="node1" class="node">
+<title>Source File</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Source File</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node2" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="191.52,-24.27 87.75,-24.27 87.75,0 191.52,0 191.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="139.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a file to a file which it depends on. A file
+is dependent upon another if the latter must be compiled before the former
+can be.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+<br>
+      <section>
+        <h2><span class="anchor" id="src"></span>Source Code</h2>
+        <div class="hl codehilite"><pre><span></span><a id="ln-1" name="ln-1" href="#ln-1"></a><span class="k">program </span><span class="n">fdm_elevate_and_insert_1d</span><span class="w"></span>
+<a id="ln-2" name="ln-2" href="#ln-2"></a>
+<a id="ln-3" name="ln-3" href="#ln-3"></a><span class="w">   </span><span class="k">use </span><span class="n">forcad</span><span class="p">,</span><span class="w">       </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span><span class="p">,</span><span class="w"> </span><span class="n">nurbs_curve</span><span class="w"></span>
+<a id="ln-4" name="ln-4" href="#ln-4"></a><span class="w">   </span><span class="k">use </span><span class="n">forcad_utils</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">linspace</span><span class="p">,</span><span class="w"> </span><span class="n">kron_eye</span><span class="w"></span>
+<a id="ln-5" name="ln-5" href="#ln-5"></a><span class="w">   </span><span class="k">use </span><span class="n">fortime</span><span class="p">,</span><span class="w">      </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">timer</span><span class="w"></span>
+<a id="ln-6" name="ln-6" href="#ln-6"></a>
+<a id="ln-7" name="ln-7" href="#ln-7"></a><span class="w">   </span><span class="k">implicit none</span>
+<a id="ln-8" name="ln-8" href="#ln-8"></a>
+<a id="ln-9" name="ln-9" href="#ln-9"></a><span class="k">   type</span><span class="p">(</span><span class="n">nurbs_curve</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sh0</span><span class="p">,</span><span class="w"> </span><span class="n">shr</span><span class="p">,</span><span class="w"> </span><span class="n">shfd</span><span class="w"></span>
+<a id="ln-10" name="ln-10" href="#ln-10"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xc</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">Wc</span><span class="p">(:)</span><span class="w"></span>
+<a id="ln-11" name="ln-11" href="#ln-11"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xc0</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">Xp</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">Xm</span><span class="p">(:,:)</span><span class="w"></span>
+<a id="ln-12" name="ln-12" href="#ln-12"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xcp_vec</span><span class="p">(:),</span><span class="w"> </span><span class="n">Xcm_vec</span><span class="p">(:)</span><span class="w"></span>
+<a id="ln-13" name="ln-13" href="#ln-13"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">knot</span><span class="p">(:)</span><span class="w"></span>
+<a id="ln-14" name="ln-14" href="#ln-14"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">S1</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">S2</span><span class="p">(:,:)</span><span class="w"></span>
+<a id="ln-15" name="ln-15" href="#ln-15"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Bs</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">B</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">Bfd</span><span class="p">(:,:)</span><span class="w"></span>
+<a id="ln-16" name="ln-16" href="#ln-16"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">u</span><span class="p">(:)</span><span class="w"></span>
+<a id="ln-17" name="ln-17" href="#ln-17"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">  </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">r</span><span class="p">(:)</span><span class="w"></span>
+<a id="ln-18" name="ln-18" href="#ln-18"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rel_err</span><span class="w"></span>
+<a id="ln-19" name="ln-19" href="#ln-19"></a><span class="w">   </span><span class="kt">integer</span><span class="w">  </span><span class="kd">::</span><span class="w"> </span><span class="nb">dim</span><span class="p">,</span><span class="w"> </span><span class="n">nc0</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_old</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_new</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
+<a id="ln-20" name="ln-20" href="#ln-20"></a><span class="w">   </span><span class="k">type</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">t</span><span class="w"></span>
+<a id="ln-21" name="ln-21" href="#ln-21"></a>
+<a id="ln-22" name="ln-22" href="#ln-22"></a><span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tol</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-5_rk</span><span class="w">      </span><span class="c">!! tolerance of finite differences</span>
+<a id="ln-23" name="ln-23" href="#ln-23"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">  </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">tdeg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w">            </span><span class="c">!! degrees to elevate</span>
+<a id="ln-24" name="ln-24" href="#ln-24"></a><span class="w">   </span><span class="kt">integer</span><span class="p">,</span><span class="w">  </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">nins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w">            </span><span class="c">!! number of knots to insert</span>
+<a id="ln-25" name="ln-25" href="#ln-25"></a>
+<a id="ln-26" name="ln-26" href="#ln-26"></a><span class="w">   </span><span class="c">!&gt; set control points</span>
+<a id="ln-27" name="ln-27" href="#ln-27"></a><span class="w">   </span><span class="n">Xc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">generate_Xc</span><span class="p">(</span><span class="mf">5.0_rk</span><span class="p">)</span><span class="w"></span>
+<a id="ln-28" name="ln-28" href="#ln-28"></a>
+<a id="ln-29" name="ln-29" href="#ln-29"></a><span class="w">   </span><span class="c">!&gt; set weights</span>
+<a id="ln-30" name="ln-30" href="#ln-30"></a><span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Wc</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">Xc</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mf">1.0_rk</span><span class="p">)</span><span class="w"></span>
+<a id="ln-31" name="ln-31" href="#ln-31"></a><span class="w">   </span><span class="n">Wc</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5_rk</span><span class="w"></span>
+<a id="ln-32" name="ln-32" href="#ln-32"></a>
+<a id="ln-33" name="ln-33" href="#ln-33"></a><span class="w">   </span><span class="c">!&gt; set knot vector</span>
+<a id="ln-34" name="ln-34" href="#ln-34"></a><span class="w">   </span><span class="n">knot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">]</span><span class="w"></span>
+<a id="ln-35" name="ln-35" href="#ln-35"></a>
+<a id="ln-36" name="ln-36" href="#ln-36"></a><span class="w">   </span><span class="c">!&gt; set NURBS curve</span>
+<a id="ln-37" name="ln-37" href="#ln-37"></a><span class="w">   </span><span class="k">call </span><span class="n">shr</span><span class="p">%</span><span class="n">set</span><span class="p">(</span><span class="n">knot</span><span class="p">,</span><span class="w"> </span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="n">Wc</span><span class="p">)</span><span class="w"></span>
+<a id="ln-38" name="ln-38" href="#ln-38"></a>
+<a id="ln-39" name="ln-39" href="#ln-39"></a><span class="w">   </span><span class="c">!&gt; deallocate temporary arrays</span>
+<a id="ln-40" name="ln-40" href="#ln-40"></a><span class="w">   </span><span class="k">deallocate</span><span class="p">(</span><span class="n">Xc</span><span class="p">,</span><span class="w"> </span><span class="n">Wc</span><span class="p">,</span><span class="w"> </span><span class="n">knot</span><span class="p">)</span><span class="w"></span>
+<a id="ln-41" name="ln-41" href="#ln-41"></a>
+<a id="ln-42" name="ln-42" href="#ln-42"></a><span class="w">   </span><span class="c">!&gt; copy initial NURBS curve (before refinement)</span>
+<a id="ln-43" name="ln-43" href="#ln-43"></a><span class="w">   </span><span class="n">sh0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shr</span><span class="w"></span>
+<a id="ln-44" name="ln-44" href="#ln-44"></a>
+<a id="ln-45" name="ln-45" href="#ln-45"></a><span class="w">   </span><span class="c">!&gt; get initial control points, dimension, number of control points and degrees of freedom</span>
+<a id="ln-46" name="ln-46" href="#ln-46"></a><span class="w">   </span><span class="n">Xc0</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">sh0</span><span class="p">%</span><span class="n">get_Xc</span><span class="p">()</span><span class="w"></span>
+<a id="ln-47" name="ln-47" href="#ln-47"></a><span class="w">   </span><span class="nb">dim</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">Xc0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<a id="ln-48" name="ln-48" href="#ln-48"></a><span class="w">   </span><span class="n">nc0</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">Xc0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<a id="ln-49" name="ln-49" href="#ln-49"></a><span class="w">   </span><span class="n">ndof_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nc0</span><span class="o">*</span><span class="nb">dim</span><span class="w"></span>
+<a id="ln-50" name="ln-50" href="#ln-50"></a>
+<a id="ln-51" name="ln-51" href="#ln-51"></a><span class="w">   </span><span class="c">!&gt; elevate degree and get sensitivities (Bs: in compact form, memory efficient)</span>
+<a id="ln-52" name="ln-52" href="#ln-52"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_start</span><span class="p">()</span><span class="w"></span>
+<a id="ln-53" name="ln-53" href="#ln-53"></a><span class="w">   </span><span class="k">call </span><span class="n">shr</span><span class="p">%</span><span class="n">elevate_degree</span><span class="p">(</span><span class="n">tdeg</span><span class="p">,</span><span class="w"> </span><span class="n">Bs</span><span class="o">=</span><span class="n">S1</span><span class="p">)</span><span class="w"></span>
+<a id="ln-54" name="ln-54" href="#ln-54"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_stop</span><span class="p">()</span><span class="w"></span>
+<a id="ln-55" name="ln-55" href="#ln-55"></a>
+<a id="ln-56" name="ln-56" href="#ln-56"></a><span class="w">   </span><span class="c">!&gt; set knot vectors to insert</span>
+<a id="ln-57" name="ln-57" href="#ln-57"></a><span class="w">   </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">,</span><span class="w"> </span><span class="n">nins</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<a id="ln-58" name="ln-58" href="#ln-58"></a><span class="w">   </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="n">nins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<a id="ln-59" name="ln-59" href="#ln-59"></a><span class="w">   </span><span class="c">!&gt; multiplicities of knots to insert</span>
+<a id="ln-60" name="ln-60" href="#ln-60"></a><span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">r</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">u</span><span class="p">)),</span><span class="w"> </span><span class="n">source</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="w"></span>
+<a id="ln-61" name="ln-61" href="#ln-61"></a>
+<a id="ln-62" name="ln-62" href="#ln-62"></a><span class="w">   </span><span class="c">!&gt; insert knots and get sensitivities (Bs: in compact form, memory efficient)</span>
+<a id="ln-63" name="ln-63" href="#ln-63"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_start</span><span class="p">()</span><span class="w"></span>
+<a id="ln-64" name="ln-64" href="#ln-64"></a><span class="w">   </span><span class="k">call </span><span class="n">shr</span><span class="p">%</span><span class="n">insert_knots</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">Bs</span><span class="o">=</span><span class="n">S2</span><span class="p">)</span><span class="w"></span>
+<a id="ln-65" name="ln-65" href="#ln-65"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_stop</span><span class="p">()</span><span class="w"></span>
+<a id="ln-66" name="ln-66" href="#ln-66"></a>
+<a id="ln-67" name="ln-67" href="#ln-67"></a><span class="w">   </span><span class="c">!&gt; compute global sensitivities (dXc_old/dXc_new)</span>
+<a id="ln-68" name="ln-68" href="#ln-68"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_start</span><span class="p">()</span><span class="w"></span>
+<a id="ln-69" name="ln-69" href="#ln-69"></a><span class="w">   </span><span class="n">Bs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">matmul</span><span class="p">(</span><span class="n">S2</span><span class="p">,</span><span class="w"> </span><span class="n">S1</span><span class="p">)</span><span class="w"></span>
+<a id="ln-70" name="ln-70" href="#ln-70"></a><span class="w">   </span><span class="n">B</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">kron_eye</span><span class="p">(</span><span class="n">Bs</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="p">)</span><span class="w"></span>
+<a id="ln-71" name="ln-71" href="#ln-71"></a><span class="w">   </span><span class="k">call </span><span class="n">t</span><span class="p">%</span><span class="n">timer_stop</span><span class="p">()</span><span class="w"></span>
+<a id="ln-72" name="ln-72" href="#ln-72"></a>
+<a id="ln-73" name="ln-73" href="#ln-73"></a><span class="w">   </span><span class="c">!&gt; get new degrees of freedom (after refinement)</span>
+<a id="ln-74" name="ln-74" href="#ln-74"></a><span class="w">   </span><span class="n">ndof_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">shr</span><span class="p">%</span><span class="n">get_Xc</span><span class="p">(),</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">dim</span><span class="w"></span>
+<a id="ln-75" name="ln-75" href="#ln-75"></a>
+<a id="ln-76" name="ln-76" href="#ln-76"></a><span class="w">   </span><span class="c">!&gt; start finite difference computations</span>
+<a id="ln-77" name="ln-77" href="#ln-77"></a><span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Xp</span><span class="p">(</span><span class="n">nc0</span><span class="p">,</span><span class="nb">dim</span><span class="p">),</span><span class="w"> </span><span class="n">Xm</span><span class="p">(</span><span class="n">nc0</span><span class="p">,</span><span class="nb">dim</span><span class="p">))</span><span class="w"></span>
+<a id="ln-78" name="ln-78" href="#ln-78"></a><span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Xcp_vec</span><span class="p">(</span><span class="n">ndof_new</span><span class="p">),</span><span class="w"> </span><span class="n">Xcm_vec</span><span class="p">(</span><span class="n">ndof_new</span><span class="p">))</span><span class="w"></span>
+<a id="ln-79" name="ln-79" href="#ln-79"></a><span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Bfd</span><span class="p">(</span><span class="n">ndof_new</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_old</span><span class="p">))</span><span class="w"></span>
+<a id="ln-80" name="ln-80" href="#ln-80"></a>
+<a id="ln-81" name="ln-81" href="#ln-81"></a><span class="w">   </span><span class="k">do </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_old</span><span class="w"></span>
+<a id="ln-82" name="ln-82" href="#ln-82"></a><span class="w">      </span><span class="n">Xp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xc0</span><span class="w"></span>
+<a id="ln-83" name="ln-83" href="#ln-83"></a><span class="w">      </span><span class="n">Xm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xc0</span><span class="w"></span>
+<a id="ln-84" name="ln-84" href="#ln-84"></a><span class="w">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nb">dim</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<a id="ln-85" name="ln-85" href="#ln-85"></a><span class="w">      </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">mod</span><span class="p">(</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">dim</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<a id="ln-86" name="ln-86" href="#ln-86"></a><span class="w">      </span><span class="n">Xp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tol</span><span class="w"></span>
+<a id="ln-87" name="ln-87" href="#ln-87"></a><span class="w">      </span><span class="n">Xm</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xm</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tol</span><span class="w"></span>
+<a id="ln-88" name="ln-88" href="#ln-88"></a>
+<a id="ln-89" name="ln-89" href="#ln-89"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">set</span><span class="p">(</span><span class="n">sh0</span><span class="p">%</span><span class="n">get_knot</span><span class="p">(),</span><span class="w"> </span><span class="n">Xp</span><span class="p">,</span><span class="w"> </span><span class="n">sh0</span><span class="p">%</span><span class="n">get_Wc</span><span class="p">())</span><span class="w"></span>
+<a id="ln-90" name="ln-90" href="#ln-90"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">elevate_degree</span><span class="p">(</span><span class="n">tdeg</span><span class="p">)</span><span class="w"></span>
+<a id="ln-91" name="ln-91" href="#ln-91"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">insert_knots</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"></span>
+<a id="ln-92" name="ln-92" href="#ln-92"></a><span class="w">      </span><span class="n">Xcp_vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">reshape</span><span class="p">(</span><span class="nb">transpose</span><span class="p">(</span><span class="n">shfd</span><span class="p">%</span><span class="n">get_Xc</span><span class="p">()),</span><span class="w"> </span><span class="p">[</span><span class="n">ndof_new</span><span class="p">])</span><span class="w"></span>
+<a id="ln-93" name="ln-93" href="#ln-93"></a>
+<a id="ln-94" name="ln-94" href="#ln-94"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">set</span><span class="p">(</span><span class="n">sh0</span><span class="p">%</span><span class="n">get_knot</span><span class="p">(),</span><span class="w"> </span><span class="n">Xm</span><span class="p">,</span><span class="w"> </span><span class="n">sh0</span><span class="p">%</span><span class="n">get_Wc</span><span class="p">())</span><span class="w"></span>
+<a id="ln-95" name="ln-95" href="#ln-95"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">elevate_degree</span><span class="p">(</span><span class="n">tdeg</span><span class="p">)</span><span class="w"></span>
+<a id="ln-96" name="ln-96" href="#ln-96"></a><span class="w">      </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">insert_knots</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"></span>
+<a id="ln-97" name="ln-97" href="#ln-97"></a><span class="w">      </span><span class="n">Xcm_vec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">reshape</span><span class="p">(</span><span class="nb">transpose</span><span class="p">(</span><span class="n">shfd</span><span class="p">%</span><span class="n">get_Xc</span><span class="p">()),</span><span class="w"> </span><span class="p">[</span><span class="n">ndof_new</span><span class="p">])</span><span class="w"></span>
+<a id="ln-98" name="ln-98" href="#ln-98"></a>
+<a id="ln-99" name="ln-99" href="#ln-99"></a><span class="w">      </span><span class="n">Bfd</span><span class="p">(:,</span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Xcp_vec</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Xcm_vec</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="mf">0.5_rk</span><span class="o">/</span><span class="n">tol</span><span class="p">)</span><span class="w"></span>
+<a id="ln-100" name="ln-100" href="#ln-100"></a><span class="w">   </span><span class="k">end do</span><span class="w"></span>
+<a id="ln-101" name="ln-101" href="#ln-101"></a>
+<a id="ln-102" name="ln-102" href="#ln-102"></a><span class="w">   </span><span class="c">!&gt; compute relative error between finite difference and analytical sensitivities</span>
+<a id="ln-103" name="ln-103" href="#ln-103"></a><span class="w">   </span><span class="n">rel_err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Bfd</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">B</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Bfd</span><span class="p">)</span><span class="w"></span>
+<a id="ln-104" name="ln-104" href="#ln-104"></a>
+<a id="ln-105" name="ln-105" href="#ln-105"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a)&#39;</span><span class="p">,</span><span class="w">        </span><span class="s1">&#39;--- CENTRAL FDM vs Analytic (elevate + insert) ---&#39;</span><span class="w"></span>
+<a id="ln-106" name="ln-106" href="#ln-106"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,i0)&#39;</span><span class="p">,</span><span class="w">     </span><span class="s1">&#39;  ndof_old     = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_old</span><span class="w"></span>
+<a id="ln-107" name="ln-107" href="#ln-107"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,i0)&#39;</span><span class="p">,</span><span class="w">     </span><span class="s1">&#39;  ndof_new     = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">ndof_new</span><span class="w"></span>
+<a id="ln-108" name="ln-108" href="#ln-108"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,1pe12.4)&#39;</span><span class="p">,</span><span class="s1">&#39;  ||B||_2      = &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="w"></span>
+<a id="ln-109" name="ln-109" href="#ln-109"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,1pe12.4)&#39;</span><span class="p">,</span><span class="s1">&#39;  ||Bfd||_2    = &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Bfd</span><span class="p">)</span><span class="w"></span>
+<a id="ln-110" name="ln-110" href="#ln-110"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,1pe12.4)&#39;</span><span class="p">,</span><span class="s1">&#39;  ||B-Bfd||_2  = &#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Bfd</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">B</span><span class="p">)</span><span class="w"></span>
+<a id="ln-111" name="ln-111" href="#ln-111"></a><span class="w">   </span><span class="k">print</span><span class="w"> </span><span class="s1">&#39;(a,1pe12.4)&#39;</span><span class="p">,</span><span class="s1">&#39;  rel l2 error = &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">rel_err</span><span class="w"></span>
+<a id="ln-112" name="ln-112" href="#ln-112"></a>
+<a id="ln-113" name="ln-113" href="#ln-113"></a><span class="w">   </span><span class="c">!&gt; finalize</span>
+<a id="ln-114" name="ln-114" href="#ln-114"></a><span class="w">   </span><span class="k">call </span><span class="n">shr</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span><span class="w"></span>
+<a id="ln-115" name="ln-115" href="#ln-115"></a><span class="w">   </span><span class="k">call </span><span class="n">sh0</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span><span class="w"></span>
+<a id="ln-116" name="ln-116" href="#ln-116"></a><span class="w">   </span><span class="k">call </span><span class="n">shfd</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span><span class="w"></span>
+<a id="ln-117" name="ln-117" href="#ln-117"></a>
+<a id="ln-118" name="ln-118" href="#ln-118"></a><span class="k">contains</span>
+<a id="ln-119" name="ln-119" href="#ln-119"></a>
+<a id="ln-120" name="ln-120" href="#ln-120"></a><span class="k">   pure function </span><span class="n">generate_Xc</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">control_points</span><span class="p">)</span><span class="w"></span>
+<a id="ln-121" name="ln-121" href="#ln-121"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">L</span><span class="w"></span>
+<a id="ln-122" name="ln-122" href="#ln-122"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">control_points</span><span class="p">(:,:)</span><span class="w"></span>
+<a id="ln-123" name="ln-123" href="#ln-123"></a><span class="w">      </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">L2</span><span class="w"></span>
+<a id="ln-124" name="ln-124" href="#ln-124"></a><span class="w">      </span><span class="n">L2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0_rk</span><span class="w"></span>
+<a id="ln-125" name="ln-125" href="#ln-125"></a><span class="w">      </span><span class="k">allocate</span><span class="p">(</span><span class="n">control_points</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="w"></span>
+<a id="ln-126" name="ln-126" href="#ln-126"></a><span class="w">      </span><span class="n">control_points</span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">]</span><span class="w"></span>
+<a id="ln-127" name="ln-127" href="#ln-127"></a><span class="w">      </span><span class="n">control_points</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="n">L2</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">]</span><span class="w"></span>
+<a id="ln-128" name="ln-128" href="#ln-128"></a><span class="w">   </span><span class="k">end function</span>
+<a id="ln-129" name="ln-129" href="#ln-129"></a>
+<a id="ln-130" name="ln-130" href="#ln-130"></a><span class="k">end program</span><span class="w"></span>
+</pre></div>
+
+      </section>
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2025-08-20T09:05:16.483407+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
