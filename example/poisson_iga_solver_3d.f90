@@ -30,7 +30,7 @@ program poisson_iga_solver_3d
    use fortime, only: timer
    implicit none
 
-   type(nurbs_volume) :: surf                 !! NURBS volume object
+   type(nurbs_volume) :: vol                  !! NURBS volume object
    real(rk), parameter :: pi = acos(-1.0_rk)  !! Constant \( \pi \)
    integer :: ie                              !! Element index
    integer :: ig                              !! Quadrature (Gauss) point index
@@ -73,26 +73,26 @@ program poisson_iga_solver_3d
    !> filename for VTK export
    filename = "vtk/poisson_iga_solver_3d"
 
-   !> Construct the NURBS surface
-   !> For simplicity, set_hexahedron creates a rectangular surface with uniform knot spacing
-   !> For more complex geometries, use surf%set() with knots, continuity,...
-   call surf%set_hexahedron(L=L, nc=nc)
+   !> Construct the NURBS volume
+   !> For simplicity, set_hexahedron creates a rectangular volume with uniform knot spacing
+   !> For more complex geometries, use vol%set() with knots, continuity,...
+   call vol%set_hexahedron(L=L, nc=nc)
 
    !> Insert knots in the first and second directions
-   call surf%insert_knots(1, [(real(i,rk)/real(ki(1),rk), i=1,ki(1)-1)], [(1, i=1, ki(1)-1)])
-   call surf%insert_knots(2, [(real(i,rk)/real(ki(2),rk), i=1,ki(2)-1)], [(1, i=1, ki(2)-1)])
-   call surf%insert_knots(3, [(real(i,rk)/real(ki(3),rk), i=1,ki(3)-1)], [(1, i=1, ki(3)-1)])
+   call vol%insert_knots(1, [(real(i,rk)/real(ki(1),rk), i=1,ki(1)-1)], [(1, i=1, ki(1)-1)])
+   call vol%insert_knots(2, [(real(i,rk)/real(ki(2),rk), i=1,ki(2)-1)], [(1, i=1, ki(2)-1)])
+   call vol%insert_knots(3, [(real(i,rk)/real(ki(3),rk), i=1,ki(3)-1)], [(1, i=1, ki(3)-1)])
 
    !> Extract geometry and mesh structure
-   Xc     = surf%get_Xc()
-   elem   = surf%cmp_elem()
-   nct    = product(surf%get_nc())
+   Xc     = vol%get_Xc()
+   elem   = vol%cmp_elem()
+   nct    = product(vol%get_nc())
    nelem  = size(elem, 1)
    nnelem = size(elem, 2)
    dof    = 1
    ndof   = dof * nct
 
-   print '(a,g0,",",g0,",",g0)',     "Degree (dir1, dir2, dir3)                  : ", surf%get_degree(1), surf%get_degree(2), surf%get_degree(3)
+   print '(a,g0,",",g0,",",g0)',     "Degree (dir1, dir2, dir3)                  : ", vol%get_degree(1), vol%get_degree(2), vol%get_degree(3)
    print '(a,g0,"x",g0,"x",g0)',     "Control net size (dir1 x dir2 x dir3)      : ", nc(1), nc(2), nc(3)
    print '(a,g0)',                   "Total control points                       : ", nct
    print '(a,g0)',                   "Number of elements                         : ", nelem
@@ -109,7 +109,7 @@ program poisson_iga_solver_3d
    do ie = 1, nelem
       elem_e = elem(ie, :)
       do ig = 1, nnelem
-         call surf%ansatz(ie, ig, T, dT, dV)
+         call vol%ansatz(ie, ig, T, dT, dV)
          Xg = matmul(T, Xc(elem_e,:))
          !$omp critical
          b(elem_e)         = b(elem_e)         + T * source_term(Xg, L, m) * dV
@@ -145,13 +145,13 @@ program poisson_iga_solver_3d
    call ti%timer_stop(message="System solution                      : ")
 
    !> Export solution at control points to VTK
-   call surf%export_Xc(filename=trim(filename)//".vtk", point_data=reshape(X, [nct,1]), field_names=["u"])
+   call vol%export_Xc(filename=trim(filename)//".vtk", point_data=reshape(X, [nct,1]), field_names=["u"])
 
    !> Interpolate solution and export field
-   call surf%create(res1=res(1), res2=res(2), res3=res(3))
-   call surf%basis(Tgc = u_h)
+   call vol%create(res1=res(1), res2=res(2), res3=res(3))
+   call vol%basis(Tgc = u_h)
    u_h = matmul(u_h, reshape(X(:,1), [nct,1]))
-   call surf%export_Xg(filename=trim(filename)//"_interp.vtk", point_data=u_h, field_names=["u"])
+   call vol%export_Xg(filename=trim(filename)//"_interp.vtk", point_data=u_h, field_names=["u"])
 
    !> Compute the L2 error norm
    call ti%timer_start()
@@ -159,7 +159,7 @@ program poisson_iga_solver_3d
    do ie = 1, nelem
       elem_e = elem(ie, :)
       do ig = 1, nnelem
-         call surf%ansatz(ie, ig, T, dT, dV)
+         call vol%ansatz(ie, ig, T, dT, dV)
          Xg = matmul(T, Xc(elem_e,:))
          l2_error = l2_error + (dot_product(T, X(elem_e,1)) - exact_solution(Xg, L, m))**2 * dV
       end do
@@ -169,7 +169,7 @@ program poisson_iga_solver_3d
    print '(a,1pe11.4)', "L2 error norm                        = ", sqrt(l2_error)
    print '(a,a,a,a)', trim(filename)//".vtk", " and ", trim(filename)//"_interp.vtk", " exported"
 
-   call surf%finalize()
+   call vol%finalize()
    ! deallocate(K, b, Xc, Xg, T, dT, X, u_h)
 
 contains
