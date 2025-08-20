@@ -37,7 +37,7 @@ program test_forcad_utils
    real(rk), allocatable :: A2(:,:), A_inv(:,:)
 
    ! Initialize unit tests
-   call ut%initialize(n=56)
+   call ut%initialize(n=57)
 
    ! ----------------------------
    ! Test: basis_bspline
@@ -411,9 +411,19 @@ program test_forcad_utils
    ! Test: export_vtk_legacy
    ! ----------------------------
    call export_vtk_legacy(filename=vtk_file, points=reshape([0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 0.0_rk, 0.0_rk], [2,3]), &
-      elemConn=reshape([1,2], [1,2]), vtkCellType=3)
+      elemConn=reshape([1,2], [1,2]), vtkCellType=3, encoding="binary")
 
    call ut%test(34)%check( &
+      name     = "export_vtk_legacy", &
+      res      = .true., &
+      expected = .true., &
+      msg      = "Export to VTK (not crashing)", &
+      group    = "export")
+
+   call export_vtk_legacy(filename=vtk_file, points=reshape([0.0_rk, 0.0_rk, 0.0_rk, 1.0_rk, 0.0_rk, 0.0_rk], [2,3]), &
+      elemConn=reshape([1,2], [1,2]), vtkCellType=3, encoding="ascii")
+
+   call ut%test(35)%check( &
       name     = "export_vtk_legacy", &
       res      = .true., &
       expected = .true., &
@@ -423,7 +433,7 @@ program test_forcad_utils
    ! ----------------------------
    ! Test: linspace
    ! ----------------------------
-   call ut%test(35)%check( &
+   call ut%test(36)%check( &
       name     = "linspace_uniform", &
       res      = linspace(0.0_rk, 1.0_rk, 5), &
       expected = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk], &
@@ -438,7 +448,7 @@ program test_forcad_utils
    K3 = [4.0_rk, 5.0_rk]
    out = kron(K1, K2, K3)
 
-   call ut%test(36)%check( &
+   call ut%test(37)%check( &
       name     = "kron3_product", &
       res      = out, &
       expected = [12.0_rk, 15.0_rk, 24.0_rk, 30.0_rk], &
@@ -450,7 +460,7 @@ program test_forcad_utils
    ! ----------------------------
    conn1D = elemConn_C0(5, 2)
 
-   call ut%test(37)%check( &
+   call ut%test(38)%check( &
       name     = "elemConn_C0_L", &
       res      = conn1D, &
       expected = reshape([1,3,2,4,3,5], [2,3]), &
@@ -462,7 +472,7 @@ program test_forcad_utils
    ! ----------------------------
    call elemConn_Cn(5, 2, [0.0_rk, 0.5_rk, 1.0_rk], [3,1,3], conn1D)
 
-   call ut%test(38)%check( &
+   call ut%test(39)%check( &
       name     = "elemConn_Cn_L", &
       res      = conn1D, &
       expected = reshape([1,2,2,3,3,4], [2,3]), &
@@ -474,7 +484,7 @@ program test_forcad_utils
    ! ----------------------------
    conn2D = elemConn_C0(5, 5, 2, 2)
 
-   call ut%test(39)%check( &
+   call ut%test(40)%check( &
       name     = "elemConn_C0_S", &
       res      = shape(conn2D), &
       expected = [4,9], &
@@ -487,7 +497,7 @@ program test_forcad_utils
    call elemConn_Cn(5, 5, 2, 2, [0.0_rk, 0.5_rk, 1.0_rk], [0.0_rk, 0.5_rk, 1.0_rk], &
       [3,1,3], [3,1,3], conn2D)
 
-   call ut%test(40)%check( &
+   call ut%test(41)%check( &
       name     = "elemConn_Cn_S", &
       res      = shape(conn2D), &
       expected = [4,9], &
@@ -499,7 +509,7 @@ program test_forcad_utils
    ! ----------------------------
    conn3D = elemConn_C0(5, 5, 5, 2, 2, 2)
 
-   call ut%test(41)%check( &
+   call ut%test(42)%check( &
       name     = "elemConn_C0_V", &
       res      = shape(conn3D), &
       expected = [8,27], &
@@ -515,7 +525,7 @@ program test_forcad_utils
       [0.0_rk, 0.5_rk, 1.0_rk], &
       [3,1,3], [3,1,3], [3,1,3], conn3D)
 
-   call ut%test(42)%check( &
+   call ut%test(43)%check( &
       name     = "elemConn_Cn_V", &
       res      = shape(conn3D), &
       expected = [8,27], &
@@ -531,7 +541,7 @@ program test_forcad_utils
       5.0_rk, 6.0_rk, 0.0_rk], [3,3])
    A_inv = inv(A2)
 
-   call ut%test(43)%check( &
+   call ut%test(44)%check( &
       name     = "inv_3x3", &
       res      = matmul(A2, A_inv), &
       expected = eye(3), &
@@ -546,7 +556,7 @@ program test_forcad_utils
    A2 = reshape([1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk, 5.0_rk, 6.0_rk], [3,2])
    A_inv = inv(A2)
 
-   call ut%test(44)%check( &
+   call ut%test(45)%check( &
       name     = "inv_rectangular_3x2", &
       res      = matmul(A_inv, A2), &
       expected = eye(2), &
@@ -561,7 +571,7 @@ program test_forcad_utils
    A2 = reshape([1.0_rk, 4.0_rk, 2.0_rk, 5.0_rk, 3.0_rk, 6.0_rk], [2,3])
    A_inv = inv(A2)
 
-   call ut%test(45)%check( &
+   call ut%test(46)%check( &
       name     = "inv_rectangular_2x3", &
       res      = matmul(A2, A_inv), &
       expected = eye(2), &
@@ -576,14 +586,14 @@ program test_forcad_utils
    A2 = eye(4)
    A_inv = inv(A2)
 
-   call ut%test(46)%check( &
+   call ut%test(47)%check( &
       name     = "inv_identity", &
       res      = A_inv, &
       expected = A2, &
       msg      = "inv(I) = I", &
       group    = "matrix")
 
-   call ut%test(47)%check( &
+   call ut%test(48)%check( &
       name     = "inv_rectangular_2x3_proj", &
       res      = matmul(A_inv, A2), &
       expected = transpose(matmul(A_inv, A2)), &
@@ -598,7 +608,7 @@ program test_forcad_utils
    A2 = reshape([1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk],[2,2])
    R = kron_eye(A2, 2)
 
-   call ut%test(48)%check( &
+   call ut%test(49)%check( &
       name     = "kron_eye_block_diag", &
       res      = R, &
       expected = reshape([ &
@@ -618,7 +628,7 @@ program test_forcad_utils
    v2 = [ 5.0_rk, -3.0_rk]
    w2 = kron(u2, v2)
 
-   call ut%test(49)%check( &
+   call ut%test(50)%check( &
       name     = "kron_t1_t1_values", &
       res      = w2, &
       expected = [-5.0_rk, 3.0_rk, 0.0_rk, 0.0_rk, 10.0_rk, -6.0_rk], &
@@ -626,7 +636,7 @@ program test_forcad_utils
       group    = "kron")
 
    ! length matches size(u)*size(v)
-   call ut%test(50)%check( &
+   call ut%test(51)%check( &
       name     = "kron_t1_t1_size", &
       res      = size(w2), &
       expected = size(u2)*size(v2), &
@@ -634,7 +644,7 @@ program test_forcad_utils
       group    = "kron")
 
    ! non-commutativity (order matters)
-   call ut%test(51)%check( &
+   call ut%test(52)%check( &
       name     = "kron_t1_t1_noncommutative", &
       res      = all(w2 == kron(v2, u2)), &
       expected = .false., &
@@ -650,7 +660,7 @@ program test_forcad_utils
    v2 = [0.0_rk, 3.0_rk]
    K3 = [-2.0_rk]
    out = kron(u2, v2, K3)  ! kron3
-   call ut%test(52)%check( &
+   call ut%test(53)%check( &
       name     = "kron3_values_mixed", &
       res      = out, &
       expected = [0.0_rk, 6.0_rk, 0.0_rk, -12.0_rk], &
@@ -658,7 +668,7 @@ program test_forcad_utils
       group    = "kron")
 
    ! size = |u|*|v|*|w|
-   call ut%test(53)%check( &
+   call ut%test(54)%check( &
       name     = "kron3_size", &
       res      = size(out), &
       expected = size(u2) * size(v2) * size(K3), &
@@ -672,7 +682,7 @@ program test_forcad_utils
    out = kron(u2, v2, K3)
    w2  = kron(v2, K3)
    A   = kron(u2, w2)
-   call ut%test(54)%check( &
+   call ut%test(55)%check( &
       name     = "kron3_associativity_vec", &
       res      = all(abs(out - A) <= epsilon(0.0_rk)), &
       expected = .true., &
@@ -684,7 +694,7 @@ program test_forcad_utils
    v2 = [7.0_rk]
    K3 = [1.0_rk, 0.0_rk, -2.0_rk]
    out = kron(u2, v2, K3)
-   call ut%test(55)%check( &
+   call ut%test(56)%check( &
       name     = "kron3_values_ordering", &
       res      = out, &
       expected = [14.0_rk, 0.0_rk, -28.0_rk, -7.0_rk, 0.0_rk, 14.0_rk], &
@@ -695,7 +705,7 @@ program test_forcad_utils
    u2 = [1.0_rk, 2.0_rk]
    v2 = [3.0_rk, 4.0_rk]
    K3 = [5.0_rk]     ! length-1 w is fine; non-commutativity comes from u vs v
-   call ut%test(56)%check( &
+   call ut%test(57)%check( &
       name     = "kron3_noncommutative", &
       res      = all(kron(u2, v2, K3) == kron(v2, u2, K3)), &
       expected = .false., &

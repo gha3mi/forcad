@@ -1013,7 +1013,7 @@ program test_nurbs_curve
    call ut%test(ti)%check( &
       name="set_half_circle(): nearest point param (NURBS)", &
       res=nearest_Xt, &
-      expected=0.5_rk, &  ! Matches modern program's expectation
+      expected=0.5_rk, &
       tol=TOL, &
       msg="NURBS half-circle nearest point param incorrect", &
       group="shapes"); ti=ti+1
@@ -1051,7 +1051,7 @@ program test_nurbs_curve
          name="lsq_fit_bspline(): RMS error", &
          res=rms, &
          expected=0.0_rk, &
-         tol=1.0e-6_rk, &  ! Matches old program's tolerance
+         tol=1.0e-6_rk, &
          msg="B-spline least-squares fit RMS error too high", &
          group="basis"); ti=ti+1
 
