@@ -2739,10 +2739,12 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    impure subroutine show(this, vtkfile_Xc, vtkfile_Xg)
+    impure subroutine show(this, vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg)
         class(nurbs_surface), intent(inout) :: this
-        character(len=*), intent(in) :: vtkfile_Xc, vtkfile_Xg
+        character(len=*),     intent(in)    :: vtkfile_Xc, vtkfile_Xg
+        character(len=*),     intent(in), optional :: vtkfile_Xth_in_Xg
 #ifndef NOSHOW_PYVISTA
+
         block
         character(len=3000) :: pyvista_script
 
@@ -2774,7 +2776,7 @@ contains
             "    Xg,"//achar(10)//&
             "    show_edges=False,"//achar(10)//&
             "    color='cyan',"//achar(10)//&
-            "    line_width=7,"//achar(10)//&
+            "    line_width=1,"//achar(10)//&
             "    metallic=0.6,"//achar(10)//&
             "    pbr=True,"//achar(10)//&
             "    split_sharp_edges=True,"//achar(10)//&
@@ -2785,77 +2787,49 @@ contains
             "    point_id = mesh.find_closest_point(point)"//achar(10)//&
             "    point_coords = mesh.points[point_id]"//achar(10)//&
             "    label = f'ID: {point_id + 1}\n({point_coords[0]:.3f}, {point_coords[1]:.3f}, {point_coords[2]:.3f})'"//achar(10)//&
-            "    p.add_point_labels("//achar(10)//&
-            "        [point_coords],"//achar(10)//&
-            "        [label],"//achar(10)//&
-            "        font_size=14,"//achar(10)//&
-            "        text_color='black',"//achar(10)//&
-            "        show_points=False,"//achar(10)//&
-            "        fill_shape=False,"//achar(10)//&
-            "        shape=None,"//achar(10)//&
-            "    )"//achar(10)//&
+            "    p.add_point_labels([point_coords],[label],font_size=14,text_color='black',show_points=False,fill_shape=False,shape=None)"//achar(10)//&
             "picker = p.enable_point_picking(callback=point_picker_callback, show_message=False)"//achar(10)//&
             "window_size = p.window_size"//achar(10)//&
             "y_pos = window_size[1]"//achar(10)//&
-            "def Xcp_toggle_vis(flag):"//achar(10)//&
-            "    actor_Xcp.SetVisibility(flag)"//achar(10)//&
-            "def Xcw_toggle_vis(flag):"//achar(10)//&
-            "    actor_Xcw.SetVisibility(flag)"//achar(10)//&
-            "def Xg_toggle_vis(flag):"//achar(10)//&
-            "    actor_Xg.SetVisibility(flag)"//achar(10)//&
-            "p.add_checkbox_button_widget("//achar(10)//&
-            "    Xcp_toggle_vis,"//achar(10)//&
-            "    value=True,"//achar(10)//&
-            "    color_on='red',"//achar(10)//&
-            "    size=25,"//achar(10)//&
-            "    position=(0, y_pos - 1 * 25),"//achar(10)//&
-            ")"//achar(10)//&
-            "p.add_checkbox_button_widget("//achar(10)//&
-            "    Xcw_toggle_vis,"//achar(10)//&
-            "    value=True,"//achar(10)//&
-            "    color_on='yellow',"//achar(10)//&
-            "    size=25,"//achar(10)//&
-            "    position=(0, y_pos - 2 * 25),"//achar(10)//&
-            ")"//achar(10)//&
-            "p.add_checkbox_button_widget("//achar(10)//&
-            "    Xg_toggle_vis,"//achar(10)//&
-            "    value=True,"//achar(10)//&
-            "    color_on='cyan',"//achar(10)//&
-            "    size=25,"//achar(10)//&
-            "    position=(0, y_pos - 3 * 25),"//achar(10)//&
-            ")"//achar(10)//&
-            "p.add_text("//achar(10)//&
-            "    'Xc (Points)',"//achar(10)//&
-            "    position=(25 + 3, y_pos - 1 * 25),"//achar(10)//&
-            "    font_size=8,"//achar(10)//&
-            "    color='black',"//achar(10)//&
-            "    font='times',"//achar(10)//&
-            ")"//achar(10)//&
-            "p.add_text("//achar(10)//&
-            "    'Xc (Control geometry)',"//achar(10)//&
-            "    position=(25 + 3, y_pos - 2 * 25),"//achar(10)//&
-            "    font_size=8,"//achar(10)//&
-            "    color='black',"//achar(10)//&
-            "    font='times',"//achar(10)//&
-            ")"//achar(10)//&
-            "p.add_text("//achar(10)//&
-            "    'Xg (Geometry)',"//achar(10)//&
-            "    position=(25 + 3, y_pos - 3 * 25),"//achar(10)//&
-            "    font_size=8,"//achar(10)//&
-            "    color='black',"//achar(10)//&
-            "    font='times',"//achar(10)//&
-            ")"//achar(10)//&
+            "def Xcp_toggle_vis(flag): actor_Xcp.SetVisibility(flag)"//achar(10)//&
+            "def Xcw_toggle_vis(flag): actor_Xcw.SetVisibility(flag)"//achar(10)//&
+            "def Xg_toggle_vis(flag):  actor_Xg.SetVisibility(flag)"//achar(10)
+
+        if (present(vtkfile_Xth_in_Xg)) then
+            pyvista_script = trim(adjustl(pyvista_script))//achar(10)//&
+                "Xth = pv.read('"//trim(vtkfile_Xth_in_Xg)//"')"//achar(10)//&
+                "actor_Xth = p.add_mesh("//achar(10)//&
+                "    Xth,"//achar(10)//&
+                "    style='wireframe',"//achar(10)//&
+                "    color='magenta',"//achar(10)//&
+                "    line_width=2,"//achar(10)//&
+                "    opacity=0.8"//achar(10)//&
+                ")"//achar(10)//&
+                "def Xth_toggle_vis(flag): actor_Xth.SetVisibility(flag)"
+        end if
+
+        pyvista_script = trim(adjustl(pyvista_script))//achar(10)//&
+            "p.add_checkbox_button_widget(Xcp_toggle_vis, value=True, color_on='red',    size=25, position=(0, y_pos - 1*25))"//achar(10)//&
+            "p.add_checkbox_button_widget(Xcw_toggle_vis, value=True, color_on='yellow', size=25, position=(0, y_pos - 2*25))"//achar(10)//&
+            "p.add_checkbox_button_widget(Xg_toggle_vis,  value=True, color_on='cyan',   size=25, position=(0, y_pos - 3*25))"//achar(10)//&
+            "p.add_text('Xc (Points)',             position=(28, y_pos - 1*25), font_size=8, color='black', font='times')"//achar(10)//&
+            "p.add_text('Xc (Control geometry)',   position=(28, y_pos - 2*25), font_size=8, color='black', font='times')"//achar(10)//&
+            "p.add_text('Xg (Geometry)',           position=(28, y_pos - 3*25), font_size=8, color='black', font='times')"
+
+        if (present(vtkfile_Xth_in_Xg)) then
+            pyvista_script = trim(adjustl(pyvista_script))//achar(10)//&
+                "p.add_checkbox_button_widget(Xth_toggle_vis, value=True, color_on='magenta', size=25, position=(0, y_pos - 4*25))"//achar(10)//&
+                "p.add_text('Xth (Parameter)', position=(28, y_pos - 4*25), font_size=8, color='black', font='times')"
+
+        end if
+
+        pyvista_script = trim(adjustl(pyvista_script))//achar(10)//&
             "p.add_text('ForCAD', position=(0.0, 10.0), font_size=14, color='black', font='times')"//achar(10)//&
-            "p.add_text("//achar(10)//&
-            "    'https://github.com/gha3mi/forcad',"//achar(10)//&
-            "    position=(0.0, 0.0),"//achar(10)//&
-            "    font_size=7,"//achar(10)//&
-            "    color='blue',"//achar(10)//&
-            "    font='times',"//achar(10)//&
-            ")"//achar(10)//&
+            "p.add_text('https://github.com/gha3mi/forcad', position=(0.0, 0.0), font_size=7, color='blue', font='times')"//achar(10)//&
             "p.show(title='ForCAD', interactive=True)"//achar(10)//&
             "p.deep_clean()"//achar(10)//&
             "del p"
+
         call execute_command_line('python -c "'//trim(adjustl(pyvista_script))//'"')
         end block
 #endif

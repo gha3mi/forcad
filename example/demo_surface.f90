@@ -26,7 +26,20 @@ program example_nurbs_surface
     !> Deallocate local arrays
     deallocate(Xc, Wc)
 
-    !> Export initial control points to a VTK file
+    !-----------------------------------------------------------------------------
+    ! Refinement
+    !-----------------------------------------------------------------------------
+
+    !> Elevate the degree of the NURBS surface in the first and second directions
+    call nurbs%elevate_degree(1,3)
+    call nurbs%elevate_degree(2,3)
+
+    !> Insert knots into the NURBS surface in the first and second directions
+    call nurbs%insert_knots(1,[0.5_rk], [1])
+    call nurbs%insert_knots(2,[0.5_rk], [1])
+
+
+    !> Export control points to a VTK file
     call nurbs%export_Xc('vtk/demo_surface_Xc.vtk')
 
     !-----------------------------------------------------------------------------
@@ -36,16 +49,20 @@ program example_nurbs_surface
     !> Generate the NURBS surface with a resolution of 30x30
     call nurbs%create(res1=30, res2=30)
 
+
     !> Export the generated surface to a VTK file
     call nurbs%export_Xg('vtk/demo_surface_Xg.vtk')
+
+    !> Export the parameter space to a VTK file
+    call nurbs%export_Xth_in_Xg('vtk/demo_surface_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Visualization using PyVista
     ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
     !-----------------------------------------------------------------------------
 
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/demo_surface_Xc.vtk','vtk/demo_surface_Xg.vtk')
+    !> Show the control geometry, geometry and parameters using PyVista
+    call nurbs%show('vtk/demo_surface_Xc.vtk', 'vtk/demo_surface_Xg.vtk', 'vtk/demo_surface_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing
@@ -57,7 +74,7 @@ program example_nurbs_surface
 contains
 
     !-----------------------------------------------------------------------------
-    function generate_Xc(num_rows, num_cols, peak_height) result(control_points)
+    pure function generate_Xc(num_rows, num_cols, peak_height) result(control_points)
         integer, intent(in) :: num_rows, num_cols
         real(rk), intent(in) :: peak_height
         real(rk), allocatable :: control_points(:,:)
