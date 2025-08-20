@@ -1,7 +1,7 @@
-!> Author: Seyed Ali Ghasemi
-!> License: BSD 3-Clause
-!> Unit test program for `forcad_utils`.
-!> using ForUnitTest: https://github.com/gha3mi/forunittest
+ !> Author: Seyed Ali Ghasemi
+ !> License: BSD 3-Clause
+ !> Unit test program for `forcad_utils`.
+ !> using ForUnitTest: https://github.com/gha3mi/forunittest
 program test_forcad_utils
 
    use forcad_kinds, only: rk
@@ -9,7 +9,7 @@ program test_forcad_utils
       basis_bernstein, compute_multiplicity, ndgrid, dyad, kron, unique, findspan, &
       compute_knot_vector, insert_knot_A_5_1, remove_knots_A_5_8, elevate_degree_A_5_9, &
       hexahedron_Xc, tetragon_Xc, elemConn_C0, elemConn_Cn, rotation, det, inv, gauss_leg, &
-      export_vtk_legacy, solve, repelem, linspace, eye
+      export_vtk_legacy, solve, repelem, linspace, eye, kron_eye
    use forunittest, only: unit_tests
 
    implicit none
@@ -22,6 +22,7 @@ program test_forcad_utils
    real(rk) :: B4(4), dB(4), d2B(4), A4(2,2)
    real(rk) :: B_ref(4), dB_ref(4), d2B_ref(4)
    real(rk) :: u(2), v(2), w(4)
+   real(rk), allocatable :: u2(:), v2(:), w2(:)
    real(rk) :: A2x2(2,2), Bk(4,2)
    real(rk), allocatable :: A(:), vec(:), M(:,:)
    real(rk), allocatable :: X1(:), X2(:), X3(:)
@@ -36,7 +37,7 @@ program test_forcad_utils
    real(rk), allocatable :: A2(:,:), A_inv(:,:)
 
    ! Initialize unit tests
-   call ut%initialize(n=47)
+   call ut%initialize(n=56)
 
    ! ----------------------------
    ! Test: basis_bspline
@@ -588,6 +589,119 @@ program test_forcad_utils
       expected = transpose(matmul(A_inv, A2)), &
       msg      = "inv(A) . A is symmetric projection (2x3)", &
       group    = "matrix")
+
+   ! ----------------------------
+   ! Test: kron_eye
+   ! ----------------------------
+   if (allocated(A2)) deallocate(A2)
+   allocate(A2(2,2))
+   A2 = reshape([1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk],[2,2])
+   R = kron_eye(A2, 2)
+
+   call ut%test(48)%check( &
+      name     = "kron_eye_block_diag", &
+      res      = R, &
+      expected = reshape([ &
+      1.0_rk,0.0_rk,2.0_rk,0.0_rk, &
+      0.0_rk,1.0_rk,0.0_rk,2.0_rk, &
+      3.0_rk,0.0_rk,4.0_rk,0.0_rk, &
+      0.0_rk,3.0_rk,0.0_rk,4.0_rk], [4,4]), &
+      msg      = "Kronecker with identity blocks", &
+      group    = "kron")
+
+   ! ----------------------------
+   ! Test: kron_t1_t1 (vector .kron. vector)
+   ! ----------------------------
+
+   ! different sizes + negatives/zeros
+   u2 = [-1.0_rk, 0.0_rk, 2.0_rk]
+   v2 = [ 5.0_rk, -3.0_rk]
+   w2 = kron(u2, v2)
+
+   call ut%test(49)%check( &
+      name     = "kron_t1_t1_values", &
+      res      = w2, &
+      expected = [-5.0_rk, 3.0_rk, 0.0_rk, 0.0_rk, 10.0_rk, -6.0_rk], &
+      msg      = "kron(u,v) concatenates u(i)*v blocks", &
+      group    = "kron")
+
+   ! length matches size(u)*size(v)
+   call ut%test(50)%check( &
+      name     = "kron_t1_t1_size", &
+      res      = size(w2), &
+      expected = size(u2)*size(v2), &
+      msg      = "Length of kron(u,v)", &
+      group    = "kron")
+
+   ! non-commutativity (order matters)
+   call ut%test(51)%check( &
+      name     = "kron_t1_t1_noncommutative", &
+      res      = all(w2 == kron(v2, u2)), &
+      expected = .false., &
+      msg      = "kron(u,v) /= kron(v,u) for vectors", &
+      group    = "kron")
+
+   ! ----------------------------
+   ! Test: kron3(u, v, w)
+   ! ----------------------------
+
+   ! values with zeros/negatives and |v|=2, |w|=1
+   u2 = [-1.0_rk, 2.0_rk]
+   v2 = [0.0_rk, 3.0_rk]
+   K3 = [-2.0_rk]
+   out = kron(u2, v2, K3)  ! kron3
+   call ut%test(52)%check( &
+      name     = "kron3_values_mixed", &
+      res      = out, &
+      expected = [0.0_rk, 6.0_rk, 0.0_rk, -12.0_rk], &
+      msg      = "ordering: (u1*v1*w1, u1*v2*w1, u2*v1*w1, u2*v2*w1)", &
+      group    = "kron")
+
+   ! size = |u|*|v|*|w|
+   call ut%test(53)%check( &
+      name     = "kron3_size", &
+      res      = size(out), &
+      expected = size(u2) * size(v2) * size(K3), &
+      msg      = "length of kron3 output", &
+      group    = "kron")
+
+   ! associativity check: kron3(u,v,w) == kron(u, kron(v,w))
+   u2 = [1.0_rk, 2.0_rk]
+   v2 = [3.0_rk, 4.0_rk]
+   K3 = [5.0_rk]
+   out = kron(u2, v2, K3)
+   w2  = kron(v2, K3)
+   A   = kron(u2, w2)
+   call ut%test(54)%check( &
+      name     = "kron3_associativity_vec", &
+      res      = all(abs(out - A) <= epsilon(0.0_rk)), &
+      expected = .true., &
+      msg      = "kron3 equals kron(u, kron(v,w))", &
+      group    = "kron")
+
+   ! another ordering/values case (|u|=2, |v|=1, |w|=3)
+   u2 = [2.0_rk, -1.0_rk]
+   v2 = [7.0_rk]
+   K3 = [1.0_rk, 0.0_rk, -2.0_rk]
+   out = kron(u2, v2, K3)
+   call ut%test(55)%check( &
+      name     = "kron3_values_ordering", &
+      res      = out, &
+      expected = [14.0_rk, 0.0_rk, -28.0_rk, -7.0_rk, 0.0_rk, 14.0_rk], &
+      msg      = "iterate i (u), then j (v), then k (w)", &
+      group    = "kron")
+
+   ! non-commutativity across arguments
+   u2 = [1.0_rk, 2.0_rk]
+   v2 = [3.0_rk, 4.0_rk]
+   K3 = [5.0_rk]     ! length-1 w is fine; non-commutativity comes from u vs v
+   call ut%test(56)%check( &
+      name     = "kron3_noncommutative", &
+      res      = all(kron(u2, v2, K3) == kron(v2, u2, K3)), &
+      expected = .false., &
+      msg      = "kron3(u,v,w) /= kron3(v,u,w)", &
+      group    = "kron")
+
 
    ! summary of tests
    call ut%summary( &
