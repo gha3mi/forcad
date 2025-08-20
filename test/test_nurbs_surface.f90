@@ -35,8 +35,8 @@ program test_nurbs_surface
     call nurbs%set(degree=nurbs%get_degree(), nc=nurbs%get_nc(), Xc=nurbs%get_Xc(), Wc=nurbs%get_Wc())
     call bsp%set(degree=nurbs%get_degree(), nc=nurbs%get_nc(), Xc=nurbs%get_Xc())
 
-    call nurbs%create(30, 30)
-    call bsp%create(30, 30)
+    call nurbs%create(20, 20)
+    call bsp%create(20, 20)
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")
@@ -223,22 +223,22 @@ program test_nurbs_surface
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 59")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 60")
 
-    call nurbs%basis(res1=30, res2=30, Tgc=Tgc)
-    call bsp%basis(res1=30, res2=30, Tgc=Tgc)
+    call nurbs%basis(res1=20, res2=20, Tgc=Tgc)
+    call bsp%basis(res1=20, res2=20, Tgc=Tgc)
 
     call nurbs%basis(Xt=[0.0_rk, 0.0_rk], Tgc=Tgc1)
     call bsp%basis(Xt=[0.0_rk, 0.0_rk], Tgc=Tgc1b)
 
-    call nurbs%basis(Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Tgc=Tgc)
-    call bsp%basis(Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Tgc=Tgc)
+    call nurbs%basis(Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Tgc=Tgc)
+    call bsp%basis(Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Tgc=Tgc)
 
-    call nurbs%derivative(res1=30, res2=30, dTgc=dTgc, Tgc=Tgc)
-    call bsp%derivative(res1=30, res2=30, dTgc=dTgcb, Tgc=Tgcb)
+    call nurbs%derivative(res1=20, res2=20, dTgc=dTgc, Tgc=Tgc)
+    call bsp%derivative(res1=20, res2=20, dTgc=dTgcb, Tgc=Tgcb)
 
     call nurbs%derivative(&
-        Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], dTgc=dTgc, Tgc=Tgc)
+        Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], dTgc=dTgc, Tgc=Tgc)
     call bsp%derivative(&
-        Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], dTgc=dTgcb, Tgc=Tgcb)
+        Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], dTgc=dTgcb, Tgc=Tgcb)
 
     call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1)
     call bsp%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b)
@@ -246,14 +246,14 @@ program test_nurbs_surface
     call nurbs%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1, Tgc=Tgc1, elem=[1,2,3])
     call bsp%derivative(Xt=[0.0_rk,0.0_rk], dTgc=dTgc1b, Tgc=Tgc1b, elem=[1,2,3])
 
-    call nurbs%derivative2(res1=30, res2=30, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)
-    call bsp%derivative2(res1=30, res2=30, d2Tgc=d2Tgcb, dTgc=dTgcb, Tgc=Tgcb)
+    call nurbs%derivative2(res1=20, res2=20, d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)
+    call bsp%derivative2(res1=20, res2=20, d2Tgc=d2Tgcb, dTgc=dTgcb, Tgc=Tgcb)
 
     call nurbs%derivative2(&
-        Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)],&
+        Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)],&
         d2Tgc=d2Tgc, dTgc=dTgc, Tgc=Tgc)
     call bsp%derivative2(&
-        Xt1=[(real(i-1, rk) / real(30-1, rk), i=1, 30)], Xt2=[(real(i-1, rk) / real(30-1, rk), i=1, 30)],&
+        Xt1=[(real(i-1, rk) / real(20-1, rk), i=1, 20)], Xt2=[(real(i-1, rk) / real(20-1, rk), i=1, 20)],&
         d2Tgc=d2Tgcb, dTgc=dTgcb, Tgc=Tgcb)
 
     call nurbs%derivative2(Xt=[0.0_rk,0.0_rk], d2Tgc=d2Tgc1, dTgc=dTgc1, Tgc=Tgc1)
