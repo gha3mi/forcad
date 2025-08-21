@@ -63,6 +63,8 @@ Below are some sample outputs from the `examples` directory:
 
 <img src="https://github.com/gha3mi/forcad/raw/main/vtk/4.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/5.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/6.png" width="30%">
 
+<img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe90.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe270.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe360.png" width="30%">
+
 <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="30%">
 
 <img src="https://github.com/gha3mi/forcad/raw/main/vtk/lsq_fit_bspline_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_2d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_3d.png" width="30%">
