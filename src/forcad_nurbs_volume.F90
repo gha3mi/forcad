@@ -3267,6 +3267,7 @@ contains
             "pv.global_theme.color = 'white'"//achar(10)//&
             "Xc = pv.read('"//trim(vtkfile_Xc)//"')"//achar(10)//&
             "Xg = pv.read('"//trim(vtkfile_Xg)//"')"//achar(10)//&
+            "Xg = Xg.clean(tolerance=1e-12)"//achar(10)//&
             "p = pv.Plotter(lighting='light kit')"//achar(10)//&
             "actor_Xcp = p.add_mesh("//achar(10)//&
             "    Xc,"//achar(10)//&
@@ -3291,6 +3292,7 @@ contains
             "    line_width=1,"//achar(10)//&
             "    metallic=0.6,"//achar(10)//&
             "    pbr=True,"//achar(10)//&
+            "    smooth_shading=True,"//achar(10)//&
             "    split_sharp_edges=True,"//achar(10)//&
             ")"//achar(10)//&
             "p.add_axes(interactive=False)"//achar(10)//&
