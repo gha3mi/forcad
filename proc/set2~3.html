@@ -93,20 +93,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 0.5% of total for procedures.">43 statements</a>
+                 title=" 0.4% of total for procedures.">37 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/forcad_nurbs_volume.F90"> Source File</a>
+              <a href="../src/forcad_nurbs_curve.F90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_volume.f90.html'>forcad_nurbs_volume.F90</a></li>
-                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li>
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_nurbs_curve.f90.html'>forcad_nurbs_curve.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li>
             <li class="breadcrumb-item active" aria-current="page">set2</li>
           </ol>
         </nav>
@@ -154,14 +154,14 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>private pure subroutine set2(this, Xth_dir1, Xth_dir2, Xth_dir3, degree, continuity1, continuity2, continuity3, Xc, Wc)  
+    <h2>private pure subroutine set2(this, Xth_dir, degree, continuity, Xc, Wc)  
 </h2>
     
 
-    <p>Set control points and weights for the NURBS volume object.</p>
+    <p>Set NURBS curve using nodes of parameter space (Xth), degree, continuity, control points and weights.</p>
 
     <h3>Type Bound</h3>
-    <p><a href='../type/nurbs_volume.html'>nurbs_volume</a></p>
+    <p><a href='../type/nurbs_curve.html'>nurbs_curve</a></p>
 
     <h3>Arguments</h3>
         <table class="table table-striped varlist">
@@ -176,8 +176,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-this~136"></span>
-              class(<a href='../type/nurbs_volume.html'>nurbs_volume</a>),
+              <span class="anchor" id="variable-this~146"></span>
+              class(<a href='../type/nurbs_curve.html'>nurbs_curve</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -191,7 +191,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth_dir1~2"></span>
+              <span class="anchor" id="variable-xth_dir~2"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -199,44 +199,29 @@
               contiguous
             </td>
             <td>::</td>
-            <td><strong>Xth_dir1</strong>(:)</td>
+            <td><strong>Xth_dir</strong>(:)</td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth_dir2~2"></span>
-              real(kind=rk),
+              <span class="anchor" id="variable-degree~61"></span>
+              integer,
             </td>
-<td>intent(in),</td>
+<td>intent(in)</td>
               <td></td>            <td>
-              contiguous
+              
             </td>
             <td>::</td>
-            <td><strong>Xth_dir2</strong>(:)</td>
+            <td><strong>degree</strong></td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-xth_dir3"></span>
-              real(kind=rk),
-            </td>
-<td>intent(in),</td>
-              <td></td>            <td>
-              contiguous
-            </td>
-            <td>::</td>
-            <td><strong>Xth_dir3</strong>(:)</td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-degree~46"></span>
+              <span class="anchor" id="variable-continuity~2"></span>
               integer,
             </td>
 <td>intent(in),</td>
@@ -244,59 +229,14 @@
               contiguous
             </td>
             <td>::</td>
-            <td><strong>degree</strong>(:)</td>
+            <td><strong>continuity</strong>(:)</td>
             <td>
                 
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-continuity1~2"></span>
-              integer,
-            </td>
-<td>intent(in),</td>
-              <td></td>            <td>
-              contiguous
-            </td>
-            <td>::</td>
-            <td><strong>continuity1</strong>(:)</td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-continuity2~2"></span>
-              integer,
-            </td>
-<td>intent(in),</td>
-              <td></td>            <td>
-              contiguous
-            </td>
-            <td>::</td>
-            <td><strong>continuity2</strong>(:)</td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-continuity3"></span>
-              integer,
-            </td>
-<td>intent(in),</td>
-              <td></td>            <td>
-              contiguous
-            </td>
-            <td>::</td>
-            <td><strong>continuity3</strong>(:)</td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td>
-              <span class="anchor" id="variable-xc~51"></span>
+              <span class="anchor" id="variable-xc~61"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -311,7 +251,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-wc~55"></span>
+              <span class="anchor" id="variable-wc~58"></span>
               real(kind=rk),
             </td>
 <td>intent(in),</td>
@@ -339,124 +279,118 @@
 <!-- Generated by graphviz version 13.1.2 (20250809.0930)
  -->
 <!-- Title: proc~~set2~3~~CallsGraph Pages: 1 -->
-<svg id="procset23CallsGraph" width="624pt" height="116pt"
- viewBox="0.00 0.00 624.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~set2~3~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 112.27)">
+<svg id="procset23CallsGraph" width="605pt" height="137pt"
+ viewBox="0.00 0.00 605.00 137.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~set2~3~~CallsGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 133.27)">
 <title>proc~~set2~3~~CallsGraph</title>
-<polygon fill="white" stroke="none" points="-4,4 -4,-112.27 620.08,-112.27 620.08,4 -4,4"/>
+<polygon fill="white" stroke="none" points="-4,4 -4,-133.27 600.58,-133.27 600.58,4 -4,4"/>
 <!-- proc~set2~3 -->
 <g id="proc~~set2~3~~CallsGraph_node1" class="node">
 <title>proc~set2~3</title>
-<polygon fill="none" stroke="black" points="118.77,-67.27 0,-67.27 0,-43 118.77,-43 118.77,-67.27"/>
-<text xml:space="preserve" text-anchor="middle" x="59.38" y="-51.53" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_volume%set2</text>
+<polygon fill="none" stroke="black" points="109.02,-66.27 0,-66.27 0,-42 109.02,-42 109.02,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="54.51" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_curve%set2</text>
 </g>
 <!-- proc~cmp_nc~3 -->
 <g id="proc~~set2~3~~CallsGraph_node2" class="node">
 <title>proc~cmp_nc~3</title>
-<g id="a_proc~~set2~3~~CallsGraph_node2"><a xlink:href="../proc/cmp_nc~3.html" xlink:title="nurbs_volume%cmp_nc">
-<polygon fill="#d9534f" stroke="#d9534f" points="292.29,-67.27 154.77,-67.27 154.77,-43 292.29,-43 292.29,-67.27"/>
-<text xml:space="preserve" text-anchor="middle" x="223.53" y="-51.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_nc</text>
+<g id="a_proc~~set2~3~~CallsGraph_node2"><a xlink:href="../proc/cmp_nc~3.html" xlink:title="nurbs_curve%cmp_nc">
+<polygon fill="#d9534f" stroke="#d9534f" points="272.79,-108.27 145.02,-108.27 145.02,-84 272.79,-84 272.79,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="208.9" y="-92.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_nc</text>
 </a>
 </g>
 </g>
 <!-- proc~set2~3&#45;&gt;proc~cmp_nc~3 -->
 <g id="proc~~set2~3~~CallsGraph_edge1" class="edge">
 <title>proc~set2~3&#45;&gt;proc~cmp_nc~3</title>
-<path fill="none" stroke="#ff0000" d="M118.92,-55.13C126.75,-55.13 134.89,-55.13 143,-55.13"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="142.91,-58.64 152.91,-55.14 142.91,-51.64 142.91,-58.64"/>
+<path fill="none" stroke="#ff0000" d="M101.23,-66.74C117.06,-71.1 134.98,-76.04 151.55,-80.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="150.18,-83.86 160.75,-83.14 152.04,-77.11 150.18,-83.86"/>
 </g>
 <!-- proc~compute_knot_vector -->
 <g id="proc~~set2~3~~CallsGraph_node3" class="node">
 <title>proc~compute_knot_vector</title>
 <g id="a_proc~~set2~3~~CallsGraph_node3"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="286.66,-25.27 160.39,-25.27 160.39,-1 286.66,-1 286.66,-25.27"/>
-<text xml:space="preserve" text-anchor="middle" x="223.53" y="-9.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="272.04,-66.27 145.77,-66.27 145.77,-42 272.04,-42 272.04,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="208.9" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
 </a>
 </g>
 </g>
 <!-- proc~set2~3&#45;&gt;proc~compute_knot_vector -->
 <g id="proc~~set2~3~~CallsGraph_edge2" class="edge">
 <title>proc~set2~3&#45;&gt;proc~compute_knot_vector</title>
-<path fill="none" stroke="#ff0000" d="M109.03,-42.53C125.95,-38.15 145.12,-33.19 162.82,-28.6"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="163.65,-32 172.45,-26.11 161.89,-25.23 163.65,-32"/>
+<path fill="none" stroke="#ff0000" d="M109.24,-54.13C117.25,-54.13 125.63,-54.13 133.97,-54.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="133.77,-57.64 143.77,-54.14 133.77,-50.64 133.77,-57.64"/>
 </g>
 <!-- set -->
 <g id="proc~~set2~3~~CallsGraph_node4" class="node">
 <title>set</title>
-<polygon fill="#777777" stroke="#777777" points="416.55,-108.27 362.55,-108.27 362.55,-84 416.55,-84 416.55,-108.27"/>
-<text xml:space="preserve" text-anchor="middle" x="389.55" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
+<polygon fill="#777777" stroke="#777777" points="235.9,-24.27 181.9,-24.27 181.9,0 235.9,0 235.9,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="208.9" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
 </g>
 <!-- proc~set2~3&#45;&gt;set -->
 <g id="proc~~set2~3~~CallsGraph_edge3" class="edge">
 <title>proc~set2~3&#45;&gt;set</title>
-<path fill="none" stroke="#ff0000" d="M111.09,-67.72C125.17,-70.86 140.5,-73.95 154.77,-76.14 223.48,-86.67 304.46,-92.05 350.83,-94.46"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="350.45,-97.95 360.61,-94.95 350.79,-90.95 350.45,-97.95"/>
-</g>
-<!-- proc~cmp_nc~3&#45;&gt;set -->
-<g id="proc~~set2~3~~CallsGraph_edge5" class="edge">
-<title>proc~cmp_nc~3&#45;&gt;set</title>
-<path fill="none" stroke="#ff0000" d="M274.63,-67.66C299.29,-73.82 328.52,-81.13 351.19,-86.8"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="350.05,-90.12 360.6,-89.15 351.75,-83.33 350.05,-90.12"/>
+<path fill="none" stroke="#ff0000" d="M101.23,-41.53C123.43,-35.42 149.75,-28.16 170.69,-22.39"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="171.54,-25.79 180.25,-19.76 169.68,-19.04 171.54,-25.79"/>
 </g>
 <!-- interface~compute_multiplicity -->
 <g id="proc~~set2~3~~CallsGraph_node5" class="node">
 <title>interface~compute_multiplicity</title>
 <g id="a_proc~~set2~3~~CallsGraph_node5"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
-<polygon fill="#a7506f" stroke="#a7506f" points="450.81,-66.27 328.29,-66.27 328.29,-42 450.81,-42 450.81,-66.27"/>
-<text xml:space="preserve" text-anchor="middle" x="389.55" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+<polygon fill="#a7506f" stroke="#a7506f" points="431.31,-108.27 308.79,-108.27 308.79,-84 431.31,-84 431.31,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="370.05" y="-92.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
 </a>
 </g>
 </g>
 <!-- proc~cmp_nc~3&#45;&gt;interface~compute_multiplicity -->
 <g id="proc~~set2~3~~CallsGraph_edge4" class="edge">
 <title>proc~cmp_nc~3&#45;&gt;interface~compute_multiplicity</title>
-<path fill="none" stroke="#ff0000" d="M292.66,-54.72C300.53,-54.67 308.57,-54.62 316.48,-54.57"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="316.46,-58.07 326.44,-54.51 316.42,-51.07 316.46,-58.07"/>
+<path fill="none" stroke="#ff0000" d="M273.26,-96.13C281.06,-96.13 289.09,-96.13 297.01,-96.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="296.99,-99.64 306.99,-96.14 296.99,-92.64 296.99,-99.64"/>
 </g>
 <!-- proc~repelem -->
 <g id="proc~~set2~3~~CallsGraph_node6" class="node">
 <title>proc~repelem</title>
 <g id="a_proc~~set2~3~~CallsGraph_node6"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="417.44,-24.27 361.67,-24.27 361.67,0 417.44,0 417.44,-24.27"/>
-<text xml:space="preserve" text-anchor="middle" x="389.55" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="397.93,-66.27 342.16,-66.27 342.16,-42 397.93,-42 397.93,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="370.05" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
 </a>
 </g>
 </g>
 <!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
-<g id="proc~~set2~3~~CallsGraph_edge6" class="edge">
+<g id="proc~~set2~3~~CallsGraph_edge5" class="edge">
 <title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
-<path fill="none" stroke="#00ff00" d="M287.01,-12.75C308.2,-12.62 331.24,-12.48 350,-12.37"/>
-<polygon fill="#00ff00" stroke="#00ff00" points="349.88,-15.87 359.86,-12.31 349.84,-8.87 349.88,-15.87"/>
+<path fill="none" stroke="#00ff00" d="M272.35,-54.13C291.87,-54.13 312.85,-54.13 330.25,-54.13"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="330.16,-57.64 340.16,-54.14 330.16,-50.64 330.16,-57.64"/>
 </g>
 <!-- proc~compute_multiplicity1 -->
 <g id="proc~~set2~3~~CallsGraph_node7" class="node">
 <title>proc~compute_multiplicity1</title>
 <g id="a_proc~~set2~3~~CallsGraph_node7"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="616.08,-87.27 486.81,-87.27 486.81,-63 616.08,-63 616.08,-87.27"/>
-<text xml:space="preserve" text-anchor="middle" x="551.45" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="596.58,-129.27 467.31,-129.27 467.31,-105 596.58,-105 596.58,-129.27"/>
+<text xml:space="preserve" text-anchor="middle" x="531.94" y="-113.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
 </a>
 </g>
 </g>
 <!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
-<g id="proc~~set2~3~~CallsGraph_edge7" class="edge">
+<g id="proc~~set2~3~~CallsGraph_edge6" class="edge">
 <title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M451,-62.07C458.87,-63.11 467.02,-64.18 475.1,-65.24"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="474.57,-68.7 484.94,-66.53 475.48,-61.76 474.57,-68.7"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M431.5,-104.07C439.37,-105.11 447.52,-106.18 455.6,-107.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="455.07,-110.7 465.44,-108.53 455.98,-103.76 455.07,-110.7"/>
 </g>
 <!-- proc~compute_multiplicity2 -->
 <g id="proc~~set2~3~~CallsGraph_node8" class="node">
 <title>proc~compute_multiplicity2</title>
 <g id="a_proc~~set2~3~~CallsGraph_node8"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
-<polygon fill="#d94e8f" stroke="#d94e8f" points="616.08,-45.27 486.81,-45.27 486.81,-21 616.08,-21 616.08,-45.27"/>
-<text xml:space="preserve" text-anchor="middle" x="551.45" y="-29.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="596.58,-87.27 467.31,-87.27 467.31,-63 596.58,-63 596.58,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="531.94" y="-71.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
 </a>
 </g>
 </g>
 <!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
-<g id="proc~~set2~3~~CallsGraph_edge8" class="edge">
+<g id="proc~~set2~3~~CallsGraph_edge7" class="edge">
 <title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
-<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M451,-46.2C458.87,-45.16 467.02,-44.09 475.1,-43.03"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="475.48,-46.51 484.94,-41.74 474.57,-39.57 475.48,-46.51"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M431.5,-88.2C439.37,-87.16 447.52,-86.09 455.6,-85.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="455.98,-88.51 465.44,-83.74 455.07,-81.57 455.98,-88.51"/>
 </g>
 </g>
 </svg>
@@ -552,523 +486,430 @@ large graphs.</div>
 <!-- Generated by graphviz version 13.1.2 (20250809.0930)
  -->
 <!-- Title: proc~~set2~3~~CalledByGraph Pages: 1 -->
-<svg id="procset23CalledByGraph" width="641pt" height="563pt"
- viewBox="0.00 0.00 641.00 563.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="proc~~set2~3~~CalledByGraph" class="graph" transform="scale(0.761418 0.761418) rotate(0) translate(4 735.88)">
+<svg id="procset23CalledByGraph" width="641pt" height="560pt"
+ viewBox="0.00 0.00 641.00 560.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~set2~3~~CalledByGraph" class="graph" transform="scale(0.804417 0.804417) rotate(0) translate(4 691.86)">
 <title>proc~~set2~3~~CalledByGraph</title>
-<polygon fill="white" stroke="none" points="-4,4 -4,-735.88 837.85,-735.88 837.85,4 -4,4"/>
+<polygon fill="white" stroke="none" points="-4,4 -4,-691.86 792.85,-691.86 792.85,4 -4,4"/>
 <!-- proc~set2~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node1" class="node">
 <title>proc~set2~3</title>
-<polygon fill="none" stroke="black" points="833.85,-407.54 715.08,-407.54 715.08,-383.27 833.85,-383.27 833.85,-407.54"/>
-<text xml:space="preserve" text-anchor="middle" x="774.46" y="-391.8" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_volume%set2</text>
+<polygon fill="none" stroke="black" points="788.85,-345.55 679.83,-345.55 679.83,-321.28 788.85,-321.28 788.85,-345.55"/>
+<text xml:space="preserve" text-anchor="middle" x="734.34" y="-329.82" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_curve%set2</text>
 </g>
 <!-- none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node2" class="node">
 <title>none~set~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node2"><a xlink:href="../type/nurbs_volume.html#boundprocedure-set~3" xlink:title="nurbs_volume%set">
-<polygon fill="#a7506f" stroke="#a7506f" points="679.08,-407.54 567.06,-407.54 567.06,-383.27 679.08,-383.27 679.08,-407.54"/>
-<text xml:space="preserve" text-anchor="middle" x="623.07" y="-391.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node2"><a xlink:href="../type/nurbs_curve.html#boundprocedure-set~3" xlink:title="nurbs_curve%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="643.83,-345.55 541.56,-345.55 541.56,-321.28 643.83,-321.28 643.83,-345.55"/>
+<text xml:space="preserve" text-anchor="middle" x="592.69" y="-329.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set</text>
 </a>
 </g>
 </g>
 <!-- none~set~3&#45;&gt;proc~set2~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge1" class="edge">
 <title>none~set~3&#45;&gt;proc~set2~3</title>
-<path fill="none" stroke="#ff0000" d="M679.27,-395.4C687.13,-395.4 695.29,-395.4 703.38,-395.4"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="703.21,-398.9 713.21,-395.4 703.21,-391.9 703.21,-398.9"/>
+<path fill="none" stroke="#ff0000" d="M644.11,-333.42C651.97,-333.42 660.18,-333.42 668.31,-333.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="668.19,-336.92 678.19,-333.42 668.19,-329.92 668.19,-336.92"/>
 </g>
 <!-- proc~ansatz~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node3" class="node">
 <title>proc~ansatz~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node3"><a xlink:href="../proc/ansatz~3.html" xlink:title="nurbs_volume%ansatz">
-<polygon fill="#d9534f" stroke="#d9534f" points="506.31,-386.54 375.54,-386.54 375.54,-362.27 506.31,-362.27 506.31,-386.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-370.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%ansatz</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node3"><a xlink:href="../proc/ansatz~3.html" xlink:title="nurbs_curve%ansatz">
+<polygon fill="#d9534f" stroke="#d9534f" points="481.56,-624.55 360.54,-624.55 360.54,-600.28 481.56,-600.28 481.56,-624.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-608.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%ansatz</text>
 </a>
 </g>
 </g>
 <!-- proc~ansatz~3&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge2" class="edge">
 <title>proc~ansatz~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M506.71,-381.95C522.54,-383.8 539.5,-385.78 555.41,-387.63"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="554.94,-391.1 565.28,-388.78 555.75,-384.15 554.94,-391.1"/>
-</g>
-<!-- proc~bend_pipe -->
-<g id="proc~~set2~3~~CalledByGraph_node4" class="node">
-<title>proc~bend_pipe</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node4"><a xlink:href="../proc/bend_pipe.html" xlink:title="bend_pipe">
-<polygon fill="#d9534f" stroke="#d9534f" points="474.43,-470.54 407.41,-470.54 407.41,-446.27 474.43,-446.27 474.43,-470.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-454.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">bend_pipe</text>
-</a>
-</g>
-</g>
-<!-- proc~bend_pipe&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge3" class="edge">
-<title>proc~bend_pipe&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M474.55,-452.36C491.62,-448.79 512.72,-443.72 531.06,-437.4 550.54,-430.69 571.48,-421.2 588.35,-412.94"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="589.54,-416.26 596.92,-408.66 586.41,-409.99 589.54,-416.26"/>
+<path fill="none" stroke="#ff0000" d="M481.63,-600.81C490.45,-597.04 498.82,-592.04 505.56,-585.42 570.45,-521.59 586.48,-406.91 590.42,-357.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="593.9,-357.66 591.09,-347.45 586.92,-357.18 593.9,-357.66"/>
 </g>
 <!-- proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_node5" class="node">
+<g id="proc~~set2~3~~CalledByGraph_node4" class="node">
 <title>proc~elevate_degree~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node5"><a xlink:href="../proc/elevate_degree~3.html" xlink:title="nurbs_volume%elevate_degree">
-<polygon fill="#d9534f" stroke="#d9534f" points="530.31,-630.54 351.54,-630.54 351.54,-606.27 530.31,-606.27 530.31,-630.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-614.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%elevate_degree</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node4"><a xlink:href="../proc/elevate_degree~3.html" xlink:title="nurbs_curve%elevate_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="505.56,-505.55 336.54,-505.55 336.54,-481.28 505.56,-481.28 505.56,-505.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-489.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%elevate_degree</text>
 </a>
 </g>
 </g>
 <!-- proc~elevate_degree~3&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge4" class="edge">
+<g id="proc~~set2~3~~CalledByGraph_edge3" class="edge">
 <title>proc~elevate_degree~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M508.97,-605.8C516.97,-602.36 524.59,-597.98 531.06,-592.4 585.25,-545.74 609.11,-459.97 617.83,-418.74"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="621.22,-419.66 619.73,-409.17 614.35,-418.3 621.22,-419.66"/>
+<path fill="none" stroke="#ff0000" d="M480.77,-480.91C489.59,-477.44 498.19,-473.03 505.56,-467.42 544.02,-438.13 570.12,-386.37 582.8,-356.47"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="586.04,-357.81 586.57,-347.23 579.56,-355.17 586.04,-357.81"/>
+</g>
+<!-- proc~insert_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_node5" class="node">
+<title>proc~insert_knots~3</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node5"><a xlink:href="../proc/insert_knots~3.html" xlink:title="nurbs_curve%insert_knots">
+<polygon fill="#d9534f" stroke="#d9534f" points="496.18,-425.55 345.91,-425.55 345.91,-401.28 496.18,-401.28 496.18,-425.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-409.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%insert_knots</text>
+</a>
+</g>
+</g>
+<!-- proc~insert_knots~3&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge4" class="edge">
+<title>proc~insert_knots~3&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M469.67,-400.92C481.61,-397.15 494.25,-392.62 505.56,-387.42 526.74,-377.68 548.99,-363.61 565.57,-352.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="567.18,-355.43 573.39,-346.84 563.18,-349.68 567.18,-355.43"/>
 </g>
 <!-- proc~modify_wc~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node6" class="node">
 <title>proc~modify_wc~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node6"><a xlink:href="../proc/modify_wc~3.html" xlink:title="nurbs_volume%modify_Wc">
-<polygon fill="#d9534f" stroke="#d9534f" points="518.31,-340.54 363.54,-340.54 363.54,-316.27 518.31,-316.27 518.31,-340.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-324.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%modify_Wc</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node6"><a xlink:href="../proc/modify_wc~3.html" xlink:title="nurbs_curve%modify_Wc">
+<polygon fill="#d9534f" stroke="#d9534f" points="292.29,-263.55 147.27,-263.55 147.27,-239.28 292.29,-239.28 292.29,-263.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-247.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%modify_Wc</text>
 </a>
 </g>
 </g>
 <!-- proc~modify_wc~3&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge5" class="edge">
 <title>proc~modify_wc~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M491.88,-340.91C504.77,-344.54 518.54,-348.79 531.06,-353.4 550.26,-360.47 571.03,-369.91 587.87,-378.05"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="585.92,-380.99 596.44,-382.25 589,-374.7 585.92,-380.99"/>
+<path fill="none" stroke="#ff0000" d="M292.68,-245.34C351.66,-242.89 436.41,-245.25 505.56,-270.42 530.83,-279.61 555.13,-298.63 571.44,-313.37"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="568.83,-315.73 578.53,-320 573.61,-310.62 568.83,-315.73"/>
 </g>
 <!-- proc~modify_xc~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node7" class="node">
 <title>proc~modify_xc~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node7"><a xlink:href="../proc/modify_xc~3.html" xlink:title="nurbs_volume%modify_Xc">
-<polygon fill="#d9534f" stroke="#d9534f" points="516.81,-249.54 365.04,-249.54 365.04,-225.27 516.81,-225.27 516.81,-249.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-233.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%modify_Xc</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node7"><a xlink:href="../proc/modify_xc~3.html" xlink:title="nurbs_curve%modify_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="290.79,-583.55 148.77,-583.55 148.77,-559.28 290.79,-559.28 290.79,-583.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-567.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%modify_Xc</text>
 </a>
 </g>
 </g>
 <!-- proc~modify_xc~3&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge6" class="edge">
 <title>proc~modify_xc~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M515.86,-250.03C521.22,-252.37 526.36,-255.13 531.06,-258.4 572.42,-287.18 600,-341.38 613.15,-372.28"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="609.89,-373.54 616.91,-381.48 616.37,-370.9 609.89,-373.54"/>
+<path fill="none" stroke="#ff0000" d="M286.3,-584.03C348.8,-592.21 442.5,-593.99 505.56,-547.42 567.84,-501.42 585.18,-402.85 589.93,-357.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="593.41,-357.79 590.83,-347.51 586.44,-357.15 593.41,-357.79"/>
 </g>
 <!-- proc~remove_knots~3 -->
 <g id="proc~~set2~3~~CalledByGraph_node8" class="node">
 <title>proc~remove_knots~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node8"><a xlink:href="../proc/remove_knots~3.html" xlink:title="nurbs_volume%remove_knots">
-<polygon fill="#d9534f" stroke="#d9534f" points="526.18,-550.54 355.66,-550.54 355.66,-526.27 526.18,-526.27 526.18,-550.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-534.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%remove_knots</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node8"><a xlink:href="../proc/remove_knots~3.html" xlink:title="nurbs_curve%remove_knots">
+<polygon fill="#d9534f" stroke="#d9534f" points="501.43,-345.55 340.66,-345.55 340.66,-321.28 501.43,-321.28 501.43,-345.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-329.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%remove_knots</text>
 </a>
 </g>
 </g>
 <!-- proc~remove_knots~3&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge7" class="edge">
 <title>proc~remove_knots~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M503.67,-525.91C513.3,-522.44 522.79,-518.02 531.06,-512.4 567.35,-487.74 595.68,-444.03 610.54,-417.58"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="613.48,-419.51 615.18,-409.06 607.33,-416.17 613.48,-419.51"/>
+<path fill="none" stroke="#ff0000" d="M501.9,-333.42C511.33,-333.42 520.84,-333.42 529.96,-333.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="529.76,-336.92 539.76,-333.42 529.76,-329.92 529.76,-336.92"/>
+</g>
+<!-- proc~set_circle -->
+<g id="proc~~set2~3~~CalledByGraph_node9" class="node">
+<title>proc~set_circle</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node9"><a xlink:href="../proc/set_circle.html" xlink:title="nurbs_curve%set_circle">
+<polygon fill="#d9534f" stroke="#d9534f" points="287.79,-202.55 151.77,-202.55 151.77,-178.28 287.79,-178.28 287.79,-202.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-186.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set_circle</text>
+</a>
+</g>
+</g>
+<!-- proc~set_circle&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge8" class="edge">
+<title>proc~set_circle&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M264.89,-177.81C323.91,-163.61 429.91,-147.67 505.56,-190.42 550.96,-216.07 575.09,-276.29 585.42,-309.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="582.05,-310.77 588.2,-319.4 588.78,-308.82 582.05,-310.77"/>
 </g>
 <!-- proc~set_c~3 -->
-<g id="proc~~set2~3~~CalledByGraph_node9" class="node">
+<g id="proc~~set2~3~~CalledByGraph_node10" class="node">
 <title>proc~set_c~3</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node9"><a xlink:href="../proc/set_c~3.html" xlink:title="nurbs_volume%set_C">
-<polygon fill="#d9534f" stroke="#d9534f" points="294.91,-68.54 170.14,-68.54 170.14,-44.27 294.91,-44.27 294.91,-68.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-52.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set_C</text>
+<g id="a_proc~~set2~3~~CalledByGraph_node10"><a xlink:href="../proc/set_c~3.html" xlink:title="nurbs_curve%set_C">
+<polygon fill="#d9534f" stroke="#d9534f" points="478.56,-303.55 363.54,-303.55 363.54,-279.28 478.56,-279.28 478.56,-303.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-287.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set_C</text>
 </a>
 </g>
 </g>
 <!-- proc~set_c~3&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge8" class="edge">
-<title>proc~set_c~3&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M294.02,-68.92C301.41,-71.96 308.55,-75.73 314.79,-80.4 338.46,-98.15 326.43,-119.61 350.79,-136.4 418.2,-182.88 468.12,-122.03 531.06,-174.4 592.73,-225.71 613.16,-325.56 619.46,-371.37"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="615.99,-371.79 620.7,-381.28 622.93,-370.92 615.99,-371.79"/>
-</g>
-<!-- proc~set_half_ring~2 -->
-<g id="proc~~set2~3~~CalledByGraph_node10" class="node">
-<title>proc~set_half_ring~2</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node10"><a xlink:href="../proc/set_half_ring~2.html" xlink:title="nurbs_volume%set_half_ring">
-<polygon fill="#d9534f" stroke="#d9534f" points="314.41,-26.54 150.64,-26.54 150.64,-2.27 314.41,-2.27 314.41,-26.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-10.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set_half_ring</text>
-</a>
-</g>
-</g>
-<!-- proc~set_half_ring~2&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge9" class="edge">
-<title>proc~set_half_ring~2&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M314.76,-2.03C380.86,3.23 472.49,-1.11 531.06,-52.4 580.03,-95.29 610.17,-301.08 619.2,-371.62"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="615.69,-371.8 620.4,-381.29 622.64,-370.94 615.69,-371.8"/>
+<title>proc~set_c~3&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M472.95,-304.02C490.9,-308.46 511.27,-313.5 530.01,-318.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="529.11,-321.53 539.66,-320.53 530.79,-314.73 529.11,-321.53"/>
 </g>
-<!-- proc~set_hexahedron -->
+<!-- proc~set_half_circle -->
 <g id="proc~~set2~3~~CalledByGraph_node11" class="node">
-<title>proc~set_hexahedron</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node11"><a xlink:href="../proc/set_hexahedron.html" xlink:title="nurbs_volume%set_hexahedron">
-<polygon fill="#d9534f" stroke="#d9534f" points="531.06,-291.54 350.79,-291.54 350.79,-267.27 531.06,-267.27 531.06,-291.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-275.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set_hexahedron</text>
+<title>proc~set_half_circle</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node11"><a xlink:href="../proc/set_half_circle.html" xlink:title="nurbs_curve%set_half_circle">
+<polygon fill="#d9534f" stroke="#d9534f" points="300.54,-80.55 139.02,-80.55 139.02,-56.28 300.54,-56.28 300.54,-80.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-64.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set_half_circle</text>
 </a>
 </g>
 </g>
-<!-- proc~set_hexahedron&#45;&gt;none~set~3 -->
+<!-- proc~set_half_circle&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge10" class="edge">
-<title>proc~set_hexahedron&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M495.97,-291.96C507.98,-295.94 520.32,-301.02 531.06,-307.4 560.9,-325.15 588.57,-354.5 605.39,-374.38"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="602.49,-376.38 611.56,-381.86 607.89,-371.92 602.49,-376.38"/>
+<title>proc~set_half_circle&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M241.95,-55.88C293.01,-27.45 424.71,34.87 505.56,-26.42 551.67,-61.37 579.91,-243.92 588.72,-309.73"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="585.22,-309.97 589.98,-319.43 592.16,-309.06 585.22,-309.97"/>
 </g>
-<!-- proc~set_ring~2 -->
+<!-- program~compute_length -->
 <g id="proc~~set2~3~~CalledByGraph_node12" class="node">
-<title>proc~set_ring~2</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node12"><a xlink:href="../proc/set_ring~2.html" xlink:title="nurbs_volume%set_ring">
-<polygon fill="#d9534f" stroke="#d9534f" points="510.06,-428.54 371.79,-428.54 371.79,-404.27 510.06,-404.27 510.06,-428.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-412.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set_ring</text>
+<title>program~compute_length</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node12"><a xlink:href="../program/compute_length.html" xlink:title="compute_length">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="100.39,-645.55 2.62,-645.55 2.62,-621.28 100.39,-621.28 100.39,-645.55"/>
+<text xml:space="preserve" text-anchor="middle" x="51.51" y="-629.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_length</text>
 </a>
 </g>
 </g>
-<!-- proc~set_ring~2&#45;&gt;none~set~3 -->
+<!-- program~compute_length&#45;&gt;none~set~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge11" class="edge">
-<title>proc~set_ring~2&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M510.54,-408.4C525.36,-406.68 541,-404.85 555.73,-403.14"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="555.75,-406.66 565.28,-402.02 554.94,-399.7 555.75,-406.66"/>
+<title>program~compute_length&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M86.96,-646.01C169.01,-673.6 378.57,-729.56 505.56,-633.42 550.61,-599.31 579.43,-421.66 588.56,-356.99"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="591.97,-357.85 589.87,-347.46 585.04,-356.89 591.97,-357.85"/>
 </g>
-<!-- program~compute_volume -->
-<g id="proc~~set2~3~~CalledByGraph_node13" class="node">
-<title>program~compute_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node13"><a xlink:href="../program/compute_volume.html" xlink:title="compute_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="109.02,-398.54 5.25,-398.54 5.25,-374.27 109.02,-374.27 109.02,-398.54"/>
-<text xml:space="preserve" text-anchor="middle" x="57.13" y="-382.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_volume</text>
-</a>
-</g>
-</g>
-<!-- program~compute_volume&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge12" class="edge">
-<title>program~compute_volume&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M59.58,-398.88C66.3,-454.68 96.54,-680.45 150.27,-721.4 180.18,-744.2 516.4,-722.02 531.06,-710.4 577.79,-673.37 608.99,-485.99 618.78,-419.14"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="622.24,-419.68 620.19,-409.29 615.31,-418.69 622.24,-419.68"/>
-</g>
-<!-- proc~cmp_volume -->
-<g id="proc~~set2~3~~CalledByGraph_node21" class="node">
-<title>proc~cmp_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node21"><a xlink:href="../proc/cmp_volume.html" xlink:title="nurbs_volume%cmp_volume">
-<polygon fill="#d9534f" stroke="#d9534f" points="314.79,-388.54 150.27,-388.54 150.27,-364.27 314.79,-364.27 314.79,-388.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-372.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_volume</text>
-</a>
-</g>
-</g>
-<!-- program~compute_volume&#45;&gt;proc~cmp_volume -->
-<g id="proc~~set2~3~~CalledByGraph_edge43" class="edge">
-<title>program~compute_volume&#45;&gt;proc~cmp_volume</title>
-<path fill="none" stroke="#ff0000" d="M109.22,-383.46C118.51,-382.92 128.46,-382.35 138.53,-381.77"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="138.62,-385.27 148.4,-381.2 138.21,-378.28 138.62,-385.27"/>
-</g>
-<!-- program~example3_volume -->
-<g id="proc~~set2~3~~CalledByGraph_node14" class="node">
-<title>program~example3_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node14"><a xlink:href="../program/example3_volume.html" xlink:title="example3_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="287.04,-590.54 178.02,-590.54 178.02,-566.27 287.04,-566.27 287.04,-590.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-574.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example3_volume</text>
-</a>
-</g>
-</g>
-<!-- program~example3_volume&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge13" class="edge">
-<title>program~example3_volume&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M287.37,-589.47C350.83,-599.44 457.02,-606.23 531.06,-559.4 581.99,-527.19 606.85,-455.83 616.71,-418.77"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="620.1,-419.64 619.13,-409.09 613.31,-417.94 620.1,-419.64"/>
-</g>
-<!-- program~example3_volume&#45;&gt;proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge23" class="edge">
-<title>program~example3_volume&#45;&gt;proc~elevate_degree~3</title>
-<path fill="none" stroke="#ffaa00" d="M287.49,-588.86C310.79,-593.38 338.48,-598.74 363.81,-603.65"/>
-<polygon fill="#ffaa00" stroke="#ffaa00" points="362.92,-607.04 373.4,-605.51 364.25,-600.17 362.92,-607.04"/>
-</g>
-<!-- program~example3_volume&#45;&gt;proc~remove_knots~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge30" class="edge">
-<title>program~example3_volume&#45;&gt;proc~remove_knots~3</title>
-<path fill="none" stroke="#54ff00" d="M287.49,-567.94C310.79,-563.43 338.48,-558.06 363.81,-553.15"/>
-<polygon fill="#54ff00" stroke="#54ff00" points="364.25,-556.63 373.4,-551.29 362.92,-549.76 364.25,-556.63"/>
-</g>
-<!-- program~example_nurbs_volume -->
-<g id="proc~~set2~3~~CalledByGraph_node15" class="node">
-<title>program~example_nurbs_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node15"><a xlink:href="../program/example_nurbs_volume.html" xlink:title="example_nurbs_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="301.29,-712.54 163.77,-712.54 163.77,-688.27 301.29,-688.27 301.29,-712.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-696.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_volume</text>
-</a>
-</g>
-</g>
-<!-- program~example_nurbs_volume&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge14" class="edge">
-<title>program~example_nurbs_volume&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M295.71,-713.02C361.44,-722.58 464.62,-726.31 531.06,-673.4 611.04,-609.72 621.51,-474.27 622.33,-419.32"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="625.83,-419.54 622.37,-409.53 618.83,-419.51 625.83,-419.54"/>
-</g>
-<!-- program~example_nurbs_volume&#45;&gt;proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge25" class="edge">
-<title>program~example_nurbs_volume&#45;&gt;proc~elevate_degree~3</title>
-<path fill="none" stroke="#ffaa00" d="M288.2,-687.88C297.18,-685.37 306.31,-682.53 314.79,-679.4 347.53,-667.33 383.14,-649.47 407.97,-636.2"/>
-<polygon fill="#ffaa00" stroke="#ffaa00" points="409.45,-639.37 416.58,-631.54 406.12,-633.22 409.45,-639.37"/>
-</g>
-<!-- program~example_put_to_nurbs -->
-<g id="proc~~set2~3~~CalledByGraph_node16" class="node">
-<title>program~example_put_to_nurbs</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node16"><a xlink:href="../program/example_put_to_nurbs.html" xlink:title="example_put_to_nurbs">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="506.31,-207.54 375.54,-207.54 375.54,-183.27 506.31,-183.27 506.31,-207.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-191.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_put_to_nurbs</text>
-</a>
-</g>
-</g>
-<!-- program~example_put_to_nurbs&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge15" class="edge">
-<title>program~example_put_to_nurbs&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M506.39,-203.43C515.27,-206.51 523.81,-210.71 531.06,-216.4 582.27,-256.63 607.2,-333.45 616.94,-372.04"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="613.51,-372.75 619.23,-381.67 620.32,-371.13 613.51,-372.75"/>
-</g>
-<!-- program~fdm_elevate_and_insert_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node17" class="node">
-<title>program~fdm_elevate_and_insert_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node17"><a xlink:href="../program/fdm_elevate_and_insert_3d.html" xlink:title="fdm_elevate_and_insert_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="311.04,-670.54 154.02,-670.54 154.02,-646.27 311.04,-646.27 311.04,-670.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-654.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fdm_elevate_and_insert_3d</text>
-</a>
-</g>
-</g>
-<!-- program~fdm_elevate_and_insert_3d&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge16" class="edge">
-<title>program~fdm_elevate_and_insert_3d&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M286.93,-671.01C351.44,-682.95 460.11,-692.1 531.06,-639.4 602.83,-586.1 618.03,-469.56 621.23,-419.28"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="624.71,-419.68 621.73,-409.51 617.72,-419.32 624.71,-419.68"/>
-</g>
-<!-- program~fdm_elevate_and_insert_3d&#45;&gt;proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge26" class="edge">
-<title>program~fdm_elevate_and_insert_3d&#45;&gt;proc~elevate_degree~3</title>
-<path fill="none" stroke="#ffaa00" d="M298.55,-645.8C319.28,-641.78 342.4,-637.3 363.84,-633.15"/>
-<polygon fill="#ffaa00" stroke="#ffaa00" points="364.24,-636.64 373.39,-631.3 362.91,-629.76 364.24,-636.64"/>
-</g>
-<!-- program~lsq_fit_bspline_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node18" class="node">
-<title>program~lsq_fit_bspline_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node18"><a xlink:href="../program/lsq_fit_bspline_3d.html" xlink:title="lsq_fit_bspline_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="493.18,-127.54 388.66,-127.54 388.66,-103.27 493.18,-103.27 493.18,-127.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-111.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">lsq_fit_bspline_3d</text>
-</a>
-</g>
-</g>
-<!-- program~lsq_fit_bspline_3d&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge17" class="edge">
-<title>program~lsq_fit_bspline_3d&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M493.36,-121.73C506.97,-125.57 520.73,-131.68 531.06,-141.4 598.5,-204.9 616.06,-321.85 620.55,-371.79"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="617.04,-371.77 621.32,-381.46 624.02,-371.22 617.04,-371.77"/>
-</g>
-<!-- program~nearest_point_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node19" class="node">
-<title>program~nearest_point_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node19"><a xlink:href="../program/nearest_point_3d.html" xlink:title="nearest_point_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="492.06,-85.54 389.79,-85.54 389.79,-61.27 492.06,-61.27 492.06,-85.54"/>
-<text xml:space="preserve" text-anchor="middle" x="440.92" y="-69.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nearest_point_3d</text>
-</a>
-</g>
-</g>
-<!-- program~nearest_point_3d&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge18" class="edge">
-<title>program~nearest_point_3d&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M492.14,-75.98C506.21,-78.98 520.52,-84.5 531.06,-94.4 611.69,-170.17 621.7,-314.63 622.36,-371.52"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="618.86,-371.35 622.38,-381.35 625.86,-371.34 618.86,-371.35"/>
-</g>
-<!-- program~test_nurbs_volume -->
+<!-- proc~cmp_length -->
 <g id="proc~~set2~3~~CalledByGraph_node20" class="node">
-<title>program~test_nurbs_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node20"><a xlink:href="../program/test_nurbs_volume.html" xlink:title="test_nurbs_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="112.77,-338.54 1.5,-338.54 1.5,-314.27 112.77,-314.27 112.77,-338.54"/>
-<text xml:space="preserve" text-anchor="middle" x="57.13" y="-322.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">test_nurbs_volume</text>
+<title>proc~cmp_length</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node20"><a xlink:href="../proc/cmp_length.html" xlink:title="nurbs_curve%cmp_length">
+<polygon fill="#d9534f" stroke="#d9534f" points="294.16,-625.55 145.39,-625.55 145.39,-601.28 294.16,-601.28 294.16,-625.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-609.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_length</text>
 </a>
 </g>
 </g>
-<!-- program~test_nurbs_volume&#45;&gt;none~set~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge19" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;none~set~3</title>
-<path fill="none" stroke="#ff0000" d="M83.41,-339.02C94.27,-345.56 106.28,-354.49 114.27,-365.4 146.17,-408.95 106.81,-449.38 150.27,-481.4 166.69,-493.5 499.38,-491.96 531.06,-479.4 562.98,-466.75 590.5,-437.19 606.68,-416.75"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="609.29,-419.1 612.57,-409.02 603.72,-414.85 609.29,-419.1"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge27" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~elevate_degree~3</title>
-<path fill="none" stroke="#ffaa00" d="M85.05,-339.01C95.81,-345.41 107.29,-354.23 114.27,-365.4 170,-454.66 72.7,-528.31 150.27,-599.4 177.29,-624.17 267.13,-626.92 339.67,-624.68"/>
-<polygon fill="#ffaa00" stroke="#ffaa00" points="339.77,-628.18 349.64,-624.34 339.53,-621.19 339.77,-628.18"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~modify_wc~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge28" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~modify_wc~3</title>
-<path fill="none" stroke="#ffff00" d="M113.18,-323.62C125.39,-323.11 138.26,-322.66 150.27,-322.4 223.37,-320.82 241.69,-320.65 314.79,-322.4 326.78,-322.69 339.4,-323.13 351.84,-323.65"/>
-<polygon fill="#ffff00" stroke="#ffff00" points="351.53,-327.14 361.67,-324.07 351.83,-320.14 351.53,-327.14"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~modify_xc~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge29" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~modify_xc~3</title>
-<path fill="none" stroke="#aaff00" d="M59.08,-313.96C62.71,-276.06 79.37,-161.81 150.27,-115.4 211.45,-75.36 255.03,-73.26 314.79,-115.4 353.74,-142.87 315.28,-184.63 350.79,-216.4 352.09,-217.56 353.43,-218.66 354.83,-219.7"/>
-<polygon fill="#aaff00" stroke="#aaff00" points="352.98,-222.67 363.32,-224.97 356.67,-216.72 352.98,-222.67"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~remove_knots~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge31" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~remove_knots~3</title>
-<path fill="none" stroke="#54ff00" d="M84.02,-338.96C94.87,-345.44 106.69,-354.34 114.27,-365.4 152.76,-421.62 98.52,-470.09 150.27,-514.4 178.66,-538.71 271.19,-542.93 344.12,-542.16"/>
-<polygon fill="#54ff00" stroke="#54ff00" points="343.72,-545.66 353.67,-542.02 343.63,-538.66 343.72,-545.66"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~set_c~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge33" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~set_c~3</title>
-<path fill="none" stroke="#00ff00" d="M59.11,-313.97C62.91,-274.22 80.18,-148.98 150.27,-82.4 153.5,-79.33 157.09,-76.63 160.92,-74.24"/>
-<polygon fill="#00ff00" stroke="#00ff00" points="162.33,-77.45 169.5,-69.65 159.03,-71.28 162.33,-77.45"/>
-</g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~set_half_ring~2 -->
+<!-- program~compute_length&#45;&gt;proc~cmp_length -->
 <g id="proc~~set2~3~~CalledByGraph_edge35" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~set_half_ring~2</title>
-<path fill="none" stroke="#00ff55" d="M58.08,-314.02C58.6,-269.3 66.61,-114.68 150.27,-35.4 151.03,-34.68 151.82,-33.98 152.62,-33.3"/>
-<polygon fill="#00ff55" stroke="#00ff55" points="154.41,-36.32 160.67,-27.77 150.45,-30.55 154.41,-36.32"/>
+<title>program~compute_length&#45;&gt;proc~cmp_length</title>
+<path fill="none" stroke="#ff0000" d="M100.6,-627.63C111.03,-626.38 122.36,-625.01 133.74,-623.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="134.09,-627.13 143.6,-622.46 133.26,-620.18 134.09,-627.13"/>
 </g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~set_hexahedron -->
-<g id="proc~~set2~3~~CalledByGraph_edge39" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~set_hexahedron</title>
-<path fill="none" stroke="#00ffa9" d="M62.35,-314.02C72.44,-286.57 100.92,-221.03 150.27,-195.4 215.16,-161.71 251.55,-158.7 314.79,-195.4 342.68,-211.59 324.95,-239.1 350.79,-258.4 352.32,-259.55 353.91,-260.63 355.54,-261.66"/>
-<polygon fill="#00ffa9" stroke="#00ffa9" points="353.5,-264.54 363.97,-266.2 356.83,-258.37 353.5,-264.54"/>
+<!-- program~example1_curve -->
+<g id="proc~~set2~3~~CalledByGraph_node13" class="node">
+<title>program~example1_curve</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node13"><a xlink:href="../program/example1_curve.html" xlink:title="example1_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="269.41,-385.55 170.14,-385.55 170.14,-361.28 269.41,-361.28 269.41,-385.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-369.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example1_curve</text>
+</a>
 </g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~set_ring~2 -->
-<g id="proc~~set2~3~~CalledByGraph_edge42" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~set_ring~2</title>
-<path fill="none" stroke="#00ffff" d="M113.24,-328.08C177.94,-330.83 280.75,-337.89 314.79,-355.4 336.06,-366.35 330.21,-383.21 350.79,-395.4 354.11,-397.37 357.59,-399.15 361.19,-400.76"/>
-<polygon fill="#00ffff" stroke="#00ffff" points="359.56,-403.88 370.15,-404.32 362.15,-397.37 359.56,-403.88"/>
 </g>
-<!-- program~test_nurbs_volume&#45;&gt;proc~cmp_volume -->
-<g id="proc~~set2~3~~CalledByGraph_edge44" class="edge">
-<title>program~test_nurbs_volume&#45;&gt;proc~cmp_volume</title>
-<path fill="none" stroke="#ff0000" d="M101.89,-339.02C124.68,-345.59 152.78,-353.69 176.98,-360.67"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="175.76,-363.96 186.33,-363.37 177.7,-357.24 175.76,-363.96"/>
+<!-- program~example1_curve&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge12" class="edge">
+<title>program~example1_curve&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M269.69,-372.71C326.64,-371.3 423.41,-367.07 505.56,-354.42 515.29,-352.92 525.53,-350.86 535.42,-348.61"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="535.99,-352.07 544.92,-346.36 534.38,-345.26 535.99,-352.07"/>
 </g>
-<!-- proc~cmp_volume&#45;&gt;proc~ansatz~3 -->
+<!-- program~example1_curve&#45;&gt;proc~elevate_degree~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge20" class="edge">
-<title>proc~cmp_volume&#45;&gt;proc~ansatz~3</title>
-<path fill="none" stroke="#ff0000" d="M315.1,-375.61C331.15,-375.46 347.93,-375.29 363.79,-375.14"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="363.68,-378.64 373.64,-375.04 363.61,-371.64 363.68,-378.64"/>
+<title>program~example1_curve&#45;&gt;proc~elevate_degree~3</title>
+<path fill="none" stroke="#ff5900" d="M241.73,-386.03C277.01,-407.28 348.43,-450.29 389.37,-474.94"/>
+<polygon fill="#ff5900" stroke="#ff5900" points="387.41,-477.85 397.79,-480.01 391.03,-471.85 387.41,-477.85"/>
 </g>
-<!-- program~example_bend_pipe -->
-<g id="proc~~set2~3~~CalledByGraph_node22" class="node">
-<title>program~example_bend_pipe</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node22"><a xlink:href="../program/example_bend_pipe.html" xlink:title="example_bend_pipe">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="291.54,-472.54 173.52,-472.54 173.52,-448.27 291.54,-448.27 291.54,-472.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-456.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_bend_pipe</text>
+<!-- program~example1_curve&#45;&gt;proc~insert_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge23" class="edge">
+<title>program~example1_curve&#45;&gt;proc~insert_knots~3</title>
+<path fill="none" stroke="#ffb300" d="M269.78,-383.25C292.77,-387.87 320.66,-393.46 346.13,-398.58"/>
+<polygon fill="#ffb300" stroke="#ffb300" points="345.28,-401.98 355.78,-400.51 346.66,-395.11 345.28,-401.98"/>
+</g>
+<!-- program~example1_curve&#45;&gt;proc~remove_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge28" class="edge">
+<title>program~example1_curve&#45;&gt;proc~remove_knots~3</title>
+<path fill="none" stroke="#3cff00" d="M269.78,-363.58C292.77,-358.96 320.66,-353.37 346.13,-348.25"/>
+<polygon fill="#3cff00" stroke="#3cff00" points="346.66,-351.72 355.78,-346.32 345.28,-344.85 346.66,-351.72"/>
+</g>
+<!-- program~example_nurbs_curve -->
+<g id="proc~~set2~3~~CalledByGraph_node14" class="node">
+<title>program~example_nurbs_curve</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node14"><a xlink:href="../program/example_nurbs_curve.html" xlink:title="example_nurbs_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="484.93,-223.55 357.16,-223.55 357.16,-199.28 484.93,-199.28 484.93,-223.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-207.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">example_nurbs_curve</text>
 </a>
 </g>
 </g>
-<!-- program~example_bend_pipe&#45;&gt;proc~bend_pipe -->
-<g id="proc~~set2~3~~CalledByGraph_edge22" class="edge">
-<title>program~example_bend_pipe&#45;&gt;proc~bend_pipe</title>
-<path fill="none" stroke="#ff5400" d="M291.85,-459.84C324.79,-459.52 365.3,-459.13 395.62,-458.83"/>
-<polygon fill="#ff5400" stroke="#ff5400" points="395.64,-462.33 405.6,-458.73 395.57,-455.33 395.64,-462.33"/>
+<!-- program~example_nurbs_curve&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge13" class="edge">
+<title>program~example_nurbs_curve&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M477.39,-224.02C487.2,-227.52 497,-231.92 505.56,-237.42 535.82,-256.84 562.01,-289.66 577.32,-311.44"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="574.37,-313.32 582.9,-319.6 580.15,-309.37 574.37,-313.32"/>
 </g>
-<!-- program~example_bend_pipe&#45;&gt;proc~elevate_degree~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge24" class="edge">
-<title>program~example_bend_pipe&#45;&gt;proc~elevate_degree~3</title>
-<path fill="none" stroke="#ffaa00" d="M247.18,-472.83C268.62,-492.14 311.77,-530.17 350.79,-559.4 369.91,-573.73 392.34,-588.56 409.92,-599.78"/>
-<polygon fill="#ffaa00" stroke="#ffaa00" points="408.04,-602.73 418.36,-605.12 411.78,-596.81 408.04,-602.73"/>
-</g>
-<!-- program~example_bend_pipe&#45;&gt;proc~set_ring~2 -->
-<g id="proc~~set2~3~~CalledByGraph_edge40" class="edge">
-<title>program~example_bend_pipe&#45;&gt;proc~set_ring~2</title>
-<path fill="none" stroke="#00ffff" d="M291.85,-447.97C316.04,-442.81 344.32,-436.78 369.65,-431.38"/>
-<polygon fill="#00ffff" stroke="#00ffff" points="370.15,-434.86 379.2,-429.35 368.69,-428.01 370.15,-434.86"/>
-</g>
-<!-- program~fdm_test_volume -->
-<g id="proc~~set2~3~~CalledByGraph_node23" class="node">
-<title>program~fdm_test_volume</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node23"><a xlink:href="../program/fdm_test_volume.html" xlink:title="fdm_test_volume">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="283.66,-148.54 181.39,-148.54 181.39,-124.27 283.66,-124.27 283.66,-148.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-132.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fdm_test_volume</text>
+<!-- program~fdm_elevate_and_insert_1d -->
+<g id="proc~~set2~3~~CalledByGraph_node15" class="node">
+<title>program~fdm_elevate_and_insert_1d</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node15"><a xlink:href="../program/fdm_elevate_and_insert_1d.html" xlink:title="fdm_elevate_and_insert_1d">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="298.29,-465.55 141.27,-465.55 141.27,-441.28 298.29,-441.28 298.29,-465.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-449.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fdm_elevate_and_insert_1d</text>
 </a>
 </g>
 </g>
-<!-- program~fdm_test_volume&#45;&gt;proc~set_hexahedron -->
-<g id="proc~~set2~3~~CalledByGraph_edge36" class="edge">
-<title>program~fdm_test_volume&#45;&gt;proc~set_hexahedron</title>
-<path fill="none" stroke="#00ffa9" d="M283.77,-144.79C295.05,-148.63 306.21,-154.23 314.79,-162.4 347.79,-193.82 316.58,-228.3 350.79,-258.4 351.71,-259.22 352.67,-260 353.64,-260.76"/>
-<polygon fill="#00ffa9" stroke="#00ffa9" points="351.4,-263.48 361.7,-265.97 355.21,-257.6 351.4,-263.48"/>
+<!-- program~fdm_elevate_and_insert_1d&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge14" class="edge">
+<title>program~fdm_elevate_and_insert_1d&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M298.76,-463.99C358.53,-468.49 441.36,-466.68 505.56,-434.42 539.82,-417.2 565.93,-379.7 580.01,-355.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="582.89,-357.58 584.72,-347.14 576.78,-354.16 582.89,-357.58"/>
 </g>
-<!-- program~poisson_iga_solver_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node24" class="node">
-<title>program~poisson_iga_solver_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node24"><a xlink:href="../program/poisson_iga_solver_3d.html" xlink:title="poisson_iga_solver_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="297.54,-270.54 167.52,-270.54 167.52,-246.27 297.54,-246.27 297.54,-270.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-254.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">poisson_iga_solver_3d</text>
-</a>
-</g>
-</g>
-<!-- program~poisson_iga_solver_3d&#45;&gt;proc~ansatz~3 -->
+<!-- program~fdm_elevate_and_insert_1d&#45;&gt;proc~elevate_degree~3 -->
 <g id="proc~~set2~3~~CalledByGraph_edge21" class="edge">
-<title>program~poisson_iga_solver_3d&#45;&gt;proc~ansatz~3</title>
-<path fill="none" stroke="#ff0000" d="M249.38,-270.96C280.08,-295.26 345.18,-346.58 350.79,-349.4 357.44,-352.75 364.61,-355.71 371.89,-358.31"/>
-<polygon fill="#ff0000" stroke="#ff0000" points="370.55,-361.55 381.14,-361.38 372.75,-354.91 370.55,-361.55"/>
+<title>program~fdm_elevate_and_insert_1d&#45;&gt;proc~elevate_degree~3</title>
+<path fill="none" stroke="#ff5900" d="M283.56,-466.02C303.39,-470 325.48,-474.43 346.02,-478.56"/>
+<polygon fill="#ff5900" stroke="#ff5900" points="345.27,-481.97 355.76,-480.51 346.65,-475.11 345.27,-481.97"/>
 </g>
-<!-- program~poisson_iga_solver_3d&#45;&gt;proc~set_hexahedron -->
-<g id="proc~~set2~3~~CalledByGraph_edge37" class="edge">
-<title>program~poisson_iga_solver_3d&#45;&gt;proc~set_hexahedron</title>
-<path fill="none" stroke="#00ffa9" d="M297.99,-264.96C311.15,-266.3 325.29,-267.74 339.36,-269.17"/>
-<polygon fill="#00ffa9" stroke="#00ffa9" points="338.81,-272.63 349.11,-270.16 339.52,-265.67 338.81,-272.63"/>
+<!-- program~fdm_elevate_and_insert_1d&#45;&gt;proc~insert_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge24" class="edge">
+<title>program~fdm_elevate_and_insert_1d&#45;&gt;proc~insert_knots~3</title>
+<path fill="none" stroke="#ffb300" d="M283.56,-440.81C303.39,-436.83 325.48,-432.4 346.02,-428.28"/>
+<polygon fill="#ffb300" stroke="#ffb300" points="346.65,-431.72 355.76,-426.32 345.27,-424.86 346.65,-431.72"/>
 </g>
-<!-- program~shape_c_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node25" class="node">
-<title>program~shape_c_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node25"><a xlink:href="../program/shape_c_3d.html" xlink:title="shape_C_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="94.77,-68.54 19.5,-68.54 19.5,-44.27 94.77,-44.27 94.77,-68.54"/>
-<text xml:space="preserve" text-anchor="middle" x="57.13" y="-52.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_C_3d</text>
+<!-- program~fdm_test_curve -->
+<g id="proc~~set2~3~~CalledByGraph_node16" class="node">
+<title>program~fdm_test_curve</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node16"><a xlink:href="../program/fdm_test_curve.html" xlink:title="fdm_test_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="467.31,-143.55 374.79,-143.55 374.79,-119.28 467.31,-119.28 467.31,-143.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-127.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fdm_test_curve</text>
 </a>
 </g>
 </g>
-<!-- program~shape_c_3d&#45;&gt;proc~set_c~3 -->
-<g id="proc~~set2~3~~CalledByGraph_edge32" class="edge">
-<title>program~shape_c_3d&#45;&gt;proc~set_c~3</title>
-<path fill="none" stroke="#00ff00" d="M94.91,-56.4C113.45,-56.4 136.61,-56.4 158.56,-56.4"/>
-<polygon fill="#00ff00" stroke="#00ff00" points="158.39,-59.9 168.39,-56.4 158.39,-52.9 158.39,-59.9"/>
+<!-- program~fdm_test_curve&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge15" class="edge">
+<title>program~fdm_test_curve&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M467.47,-138.44C480.89,-142.28 494.84,-148.22 505.56,-157.42 553.57,-198.57 577.27,-272.75 586.65,-310.3"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="583.16,-310.72 588.86,-319.64 589.97,-309.11 583.16,-310.72"/>
 </g>
-<!-- program~shape_half_ring_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node26" class="node">
-<title>program~shape_half_ring_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node26"><a xlink:href="../program/shape_half_ring_3d.html" xlink:title="shape_half_ring_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="114.27,-26.54 0,-26.54 0,-2.27 114.27,-2.27 114.27,-26.54"/>
-<text xml:space="preserve" text-anchor="middle" x="57.13" y="-10.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_half_ring_3d</text>
+<!-- program~lsq_fit_bspline_1d -->
+<g id="proc~~set2~3~~CalledByGraph_node17" class="node">
+<title>program~lsq_fit_bspline_1d</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node17"><a xlink:href="../program/lsq_fit_bspline_1d.html" xlink:title="lsq_fit_bspline_1d">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="473.31,-101.55 368.79,-101.55 368.79,-77.28 473.31,-77.28 473.31,-101.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-85.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">lsq_fit_bspline_1d</text>
 </a>
 </g>
 </g>
-<!-- program~shape_half_ring_3d&#45;&gt;proc~set_half_ring~2 -->
+<!-- program~lsq_fit_bspline_1d&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge16" class="edge">
+<title>program~lsq_fit_bspline_1d&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M473.49,-94.31C485.09,-97.47 496.6,-102.49 505.56,-110.42 565.65,-163.58 584.11,-263.62 589.54,-309.42"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="586.05,-309.74 590.59,-319.31 593.02,-309 586.05,-309.74"/>
+</g>
+<!-- program~nearest_point_1d -->
+<g id="proc~~set2~3~~CalledByGraph_node18" class="node">
+<title>program~nearest_point_1d</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node18"><a xlink:href="../program/nearest_point_1d.html" xlink:title="nearest_point_1d">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="472.18,-59.55 369.91,-59.55 369.91,-35.28 472.18,-35.28 472.18,-59.55"/>
+<text xml:space="preserve" text-anchor="middle" x="421.05" y="-43.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nearest_point_1d</text>
+</a>
+</g>
+</g>
+<!-- program~nearest_point_1d&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge17" class="edge">
+<title>program~nearest_point_1d&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M472.5,-51.62C484.53,-54.76 496.49,-59.94 505.56,-68.42 575.93,-134.17 588.94,-257.92 591.25,-309.69"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="587.74,-309.57 591.58,-319.45 594.74,-309.34 587.74,-309.57"/>
+</g>
+<!-- program~test_nurbs_curve -->
+<g id="proc~~set2~3~~CalledByGraph_node19" class="node">
+<title>program~test_nurbs_curve</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node19"><a xlink:href="../program/test_nurbs_curve.html" xlink:title="test_nurbs_curve">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="102.27,-425.55 0.75,-425.55 0.75,-401.28 102.27,-401.28 102.27,-425.55"/>
+<text xml:space="preserve" text-anchor="middle" x="51.51" y="-409.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">test_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;none~set~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge18" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;none~set~3</title>
+<path fill="none" stroke="#ff0000" d="M60.51,-425.99C73.97,-445.88 103.19,-484.01 139.02,-500.42 213.13,-534.36 436.64,-557.94 505.56,-514.42 561.02,-479.39 581.51,-397.81 588.46,-357.22"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="591.88,-357.96 589.97,-347.54 584.97,-356.88 591.88,-357.96"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~elevate_degree~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge22" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~elevate_degree~3</title>
+<path fill="none" stroke="#ff5900" d="M65.27,-425.91C81.09,-440.5 109.58,-463.97 139.02,-474.42 198.41,-495.48 269.23,-500.15 324.91,-499.6"/>
+<polygon fill="#ff5900" stroke="#ff5900" points="324.74,-503.1 334.68,-499.44 324.63,-496.1 324.74,-503.1"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~insert_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge25" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~insert_knots~3</title>
+<path fill="none" stroke="#ffb300" d="M102.46,-413.42C161.99,-413.42 262.42,-413.42 334.42,-413.42"/>
+<polygon fill="#ffb300" stroke="#ffb300" points="334.21,-416.92 344.21,-413.42 334.21,-409.92 334.21,-416.92"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~modify_wc~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge26" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~modify_wc~3</title>
+<path fill="none" stroke="#f0ff00" d="M56.5,-401.04C66.05,-373.46 92.91,-306.67 139.02,-272.42 140.56,-271.27 142.16,-270.19 143.8,-269.16"/>
+<polygon fill="#f0ff00" stroke="#f0ff00" points="145.15,-272.41 152.34,-264.63 141.86,-266.23 145.15,-272.41"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~modify_xc~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge27" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~modify_xc~3</title>
+<path fill="none" stroke="#96ff00" d="M57.34,-425.99C68.03,-452.13 96.14,-512.62 139.02,-545.42 143.35,-548.72 148.11,-551.62 153.1,-554.16"/>
+<polygon fill="#96ff00" stroke="#96ff00" points="151.63,-557.33 162.18,-558.25 154.5,-550.95 151.63,-557.33"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~remove_knots~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge29" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~remove_knots~3</title>
+<path fill="none" stroke="#3cff00" d="M65.27,-400.92C81.09,-386.33 109.58,-362.86 139.02,-352.42 199.82,-330.85 272.58,-326.47 328.83,-327.28"/>
+<polygon fill="#3cff00" stroke="#3cff00" points="328.62,-330.78 338.7,-327.49 328.77,-323.78 328.62,-330.78"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~set_circle -->
+<g id="proc~~set2~3~~CalledByGraph_edge31" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~set_circle</title>
+<path fill="none" stroke="#00ff1e" d="M55.33,-401.13C63.24,-369.14 88.43,-282.2 139.02,-230.42 148.15,-221.07 159.91,-213.55 171.59,-207.65"/>
+<polygon fill="#00ff1e" stroke="#00ff1e" points="172.82,-210.94 180.39,-203.53 169.85,-204.6 172.82,-210.94"/>
+</g>
+<!-- program~test_nurbs_curve&#45;&gt;proc~set_half_circle -->
 <g id="proc~~set2~3~~CalledByGraph_edge34" class="edge">
-<title>program~shape_half_ring_3d&#45;&gt;proc~set_half_ring~2</title>
-<path fill="none" stroke="#00ff55" d="M114.43,-14.4C122.32,-14.4 130.59,-14.4 138.93,-14.4"/>
-<polygon fill="#00ff55" stroke="#00ff55" points="138.81,-17.9 148.81,-14.4 138.81,-10.9 138.81,-17.9"/>
+<title>program~test_nurbs_curve&#45;&gt;proc~set_half_circle</title>
+<path fill="none" stroke="#00ffd1" d="M55.4,-400.88C64.27,-363.83 93.28,-252.23 139.02,-169.42 155.71,-139.19 181.31,-108.65 198.99,-89.2"/>
+<polygon fill="#00ffd1" stroke="#00ffd1" points="201.48,-91.66 205.69,-81.94 196.34,-86.91 201.48,-91.66"/>
 </g>
-<!-- program~shape_hexahedron -->
-<g id="proc~~set2~3~~CalledByGraph_node27" class="node">
-<title>program~shape_hexahedron</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node27"><a xlink:href="../program/shape_hexahedron.html" xlink:title="shape_hexahedron">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="288.54,-228.54 176.52,-228.54 176.52,-204.27 288.54,-204.27 288.54,-228.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-212.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_hexahedron</text>
+<!-- program~test_nurbs_curve&#45;&gt;proc~cmp_length -->
+<g id="proc~~set2~3~~CalledByGraph_edge36" class="edge">
+<title>program~test_nurbs_curve&#45;&gt;proc~cmp_length</title>
+<path fill="none" stroke="#ff0000" d="M54.74,-425.59C61.35,-457.99 83.87,-546.99 139.02,-592.42 140.14,-593.34 141.29,-594.22 142.48,-595.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="140.44,-597.92 150.82,-600.03 144.02,-591.91 140.44,-597.92"/>
+</g>
+<!-- proc~cmp_length&#45;&gt;proc~ansatz~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge19" class="edge">
+<title>proc~cmp_length&#45;&gt;proc~ansatz~3</title>
+<path fill="none" stroke="#ff0000" d="M294.41,-613.05C312.15,-612.96 331.07,-612.86 348.69,-612.77"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="348.57,-616.27 358.55,-612.72 348.54,-609.27 348.57,-616.27"/>
+</g>
+<!-- program~shape_c_1d -->
+<g id="proc~~set2~3~~CalledByGraph_node21" class="node">
+<title>program~shape_c_1d</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node21"><a xlink:href="../program/shape_c_1d.html" xlink:title="shape_C_1d">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="257.41,-305.55 182.14,-305.55 182.14,-281.28 257.41,-281.28 257.41,-305.55"/>
+<text xml:space="preserve" text-anchor="middle" x="219.78" y="-289.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_C_1d</text>
 </a>
 </g>
 </g>
-<!-- program~shape_hexahedron&#45;&gt;proc~set_hexahedron -->
-<g id="proc~~set2~3~~CalledByGraph_edge38" class="edge">
-<title>program~shape_hexahedron&#45;&gt;proc~set_hexahedron</title>
-<path fill="none" stroke="#00ffa9" d="M288.84,-228.5C297.65,-231.06 306.57,-234.02 314.79,-237.4 331.92,-244.45 333.59,-251.54 350.79,-258.4 355.49,-260.28 360.39,-262.01 365.38,-263.61"/>
-<polygon fill="#00ffa9" stroke="#00ffa9" points="364.35,-266.95 374.93,-266.46 366.35,-260.24 364.35,-266.95"/>
+<!-- program~shape_c_1d&#45;&gt;proc~set_c~3 -->
+<g id="proc~~set2~3~~CalledByGraph_edge32" class="edge">
+<title>program~shape_c_1d&#45;&gt;proc~set_c~3</title>
+<path fill="none" stroke="#00ff78" d="M257.79,-293.04C284.16,-292.78 320.36,-292.42 351.88,-292.1"/>
+<polygon fill="#00ff78" stroke="#00ff78" points="351.77,-295.6 361.74,-292 351.7,-288.6 351.77,-295.6"/>
 </g>
-<!-- program~shape_ring_3d -->
-<g id="proc~~set2~3~~CalledByGraph_node28" class="node">
-<title>program~shape_ring_3d</title>
-<g id="a_proc~~set2~3~~CalledByGraph_node28"><a xlink:href="../program/shape_ring_3d.html" xlink:title="shape_ring_3d">
-<polygon fill="#f0ad4e" stroke="#f0ad4e" points="276.91,-430.54 188.14,-430.54 188.14,-406.27 276.91,-406.27 276.91,-430.54"/>
-<text xml:space="preserve" text-anchor="middle" x="232.53" y="-414.8" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_ring_3d</text>
+<!-- program~shape_circle -->
+<g id="proc~~set2~3~~CalledByGraph_node22" class="node">
+<title>program~shape_circle</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node22"><a xlink:href="../program/shape_circle.html" xlink:title="shape_circle">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="90.27,-202.55 12.75,-202.55 12.75,-178.28 90.27,-178.28 90.27,-202.55"/>
+<text xml:space="preserve" text-anchor="middle" x="51.51" y="-186.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_circle</text>
 </a>
 </g>
 </g>
-<!-- program~shape_ring_3d&#45;&gt;proc~set_ring~2 -->
-<g id="proc~~set2~3~~CalledByGraph_edge41" class="edge">
-<title>program~shape_ring_3d&#45;&gt;proc~set_ring~2</title>
-<path fill="none" stroke="#00ffff" d="M277.3,-417.98C301.33,-417.75 331.87,-417.45 359.98,-417.18"/>
-<polygon fill="#00ffff" stroke="#00ffff" points="359.96,-420.68 369.93,-417.08 359.89,-413.68 359.96,-420.68"/>
+<!-- program~shape_circle&#45;&gt;proc~set_circle -->
+<g id="proc~~set2~3~~CalledByGraph_edge30" class="edge">
+<title>program~shape_circle&#45;&gt;proc~set_circle</title>
+<path fill="none" stroke="#00ff1e" d="M90.66,-190.42C105.44,-190.42 122.94,-190.42 140.19,-190.42"/>
+<polygon fill="#00ff1e" stroke="#00ff1e" points="139.93,-193.92 149.93,-190.42 139.93,-186.92 139.93,-193.92"/>
+</g>
+<!-- program~shape_half_circle -->
+<g id="proc~~set2~3~~CalledByGraph_node23" class="node">
+<title>program~shape_half_circle</title>
+<g id="a_proc~~set2~3~~CalledByGraph_node23"><a xlink:href="../program/shape_half_circle.html" xlink:title="shape_half_circle">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="103.02,-80.55 0,-80.55 0,-56.28 103.02,-56.28 103.02,-80.55"/>
+<text xml:space="preserve" text-anchor="middle" x="51.51" y="-64.82" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">shape_half_circle</text>
+</a>
+</g>
+</g>
+<!-- program~shape_half_circle&#45;&gt;proc~set_half_circle -->
+<g id="proc~~set2~3~~CalledByGraph_edge33" class="edge">
+<title>program~shape_half_circle&#45;&gt;proc~set_half_circle</title>
+<path fill="none" stroke="#00ffd1" d="M103.3,-68.42C110.98,-68.42 119.1,-68.42 127.33,-68.42"/>
+<polygon fill="#00ffd1" stroke="#00ffd1" points="127.07,-71.92 137.07,-68.42 127.07,-64.92 127.07,-71.92"/>
 </g>
 </g>
 </svg>
@@ -1188,7 +1029,7 @@ large graphs.</div>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-08-21T10:20:08.092275+0000             </p>
+ on 2025-08-21T11:37:30.862058+0000             </p>
           </div>
         </div>
         <br>
