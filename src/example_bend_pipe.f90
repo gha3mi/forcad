@@ -1,10 +1,10 @@
 !> Example program demonstrating how to bend a straight pipe-like NURBS volume into a circular arc.
 !>
 !> The program:
-!>   Creates a straight pipe segment (as a ring extruded in \(z\)), 
-!>   Refines the shape, 
-!>   Applies bending with different bend angles (90°, 270°, 360°), 
-!>   Exports the resulting NURBS volumes to VTK, 
+!>   Creates a straight pipe segment (as a ring extruded in \(z\)),
+!>   Refines the shape,
+!>   Applies bending with different bend angles (90°, 270°, 360°),
+!>   Exports the resulting NURBS volumes to VTK,
 !>   Displays the geometry.
 program example_bend_pipe
 
