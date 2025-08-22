@@ -36,7 +36,6 @@ program example_toroidal_pipe
    ! Refinement along z (dir=3)
    integer,  parameter :: Nref = 30
    integer :: i
-   real(rk) :: volume
 
    ! Make a straight pipe ring
    call ring%set_ring(center=center, radius1=r1, radius2=r2, length=length)
