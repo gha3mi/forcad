@@ -2761,7 +2761,7 @@ contains
         integer, intent(in), optional :: ng
         real(rk), intent(in), contiguous :: Wc(:)
         real(rk), allocatable :: Tgc(:,:)
-        real(rk), allocatable :: Tgci(:)
+        real(rk) :: Tgci(nc)
         integer :: i, ng_
 
         if (present(ng)) then
@@ -2770,11 +2770,11 @@ contains
             ng_ = size(Xt, 1)
         end if
 
-        allocate(Tgc(ng_, nc), Tgci(nc))
-#if defined(__NVCOMPILER)
+        allocate(Tgc(ng_, nc))
+#if defined(__NVCOMPILER) || defined(__GFORTRAN__)
         do i = 1, ng_
 #else
-        do concurrent (i = 1: ng_)
+        do concurrent (i = 1: ng_) local(Tgci)
 #endif
             Tgci = basis_bspline(Xt(i), knot, nc, degree)
             Tgc(i,:) = Tgci*(Wc/(dot_product(Tgci,Wc)))
