@@ -67,6 +67,8 @@ Below are some sample outputs from the `examples` directory:
 
 <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_helix_pipe.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_twist_taper.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_toroidal_pipe.png" width="30%">
 
+<img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_4_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_1_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_2_2d.png" width="30%">
+
 <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="30%">
 
 <img src="https://github.com/gha3mi/forcad/raw/main/vtk/lsq_fit_bspline_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_2d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_3d.png" width="30%">
