@@ -2137,13 +2137,11 @@ contains
         real(rk), allocatable :: knot_new(:)
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), H(:,:), Xc3(:,:,:)
         real(rk), allocatable :: Tdir(:,:)
-        integer :: nc_old(2), dim, ncp_old, mS, nS, c
+        integer :: nc_old(2), d, ncp_old, mS, nS, c
         real(rk), allocatable :: Wc_old(:), S_loc(:,:)
         integer :: i1, j1, i2, i2_old, i2_new, ii
 
         if (.not. this%err%ok) return
-
-        dim = size(this%Xc,2)
 
         if (present(B) .or. present(Bs)) then
             nc_old  = this%nc
@@ -2157,16 +2155,17 @@ contains
         select case (dir)
         case (1)
             if (this%is_rational()) then
-                allocate(Xcw(size(this%Xc,1), dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1), d+1))
                 do concurrent (i1=1:size(this%Xc,1))
-                    Xcw(i1,1:dim) = this%Xc(i1,1:dim) * this%Wc(i1)
+                    Xcw(i1,1:d) = this%Xc(i1,1:d) * this%Wc(i1)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
-                Xcw = reshape(Xcw, [ this%nc(1), this%nc(2)*(dim+1) ])
+                Xcw(:,d+1) = this%Wc(:)
+                Xcw = reshape(Xcw, [ this%nc(1), this%nc(2)*(d+1) ], order=[1,2])
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, n1_new, knot_new, Xcw_new, Tdir)
-                H = reshape(Xcw_new, [ n1_new*this%nc(2), dim+1 ])
-                associate (C => H(:,1:dim), W => H(:,dim+1))
-                    do i1=1,dim
+                H = reshape(Xcw_new, [ n1_new*this%nc(2), d+1 ], order=[1,2])
+                associate (C => H(:,1:d), W => H(:,d+1))
+                    do i1=1,d
                         C(:,i1) = C(:,i1) / W(:)
                     end do
                     call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=C, Wc=W)
@@ -2174,29 +2173,31 @@ contains
                 deallocate(H, Xcw, Xcw_new)
 
             else
-                Xc = reshape(this%Xc, [ this%nc(1), this%nc(2)*dim ])
+                d = size(this%Xc,2)
+                Xc = reshape(this%Xc, [ this%nc(1), this%nc(2)*d ], order=[1,2])
                 call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, n1_new, knot_new, Xcw_new, Tdir)
-                H = reshape(Xcw_new, [ n1_new*this%nc(2), dim ])
+                H = reshape(Xcw_new, [ n1_new*this%nc(2), d ], order=[1,2])
                 call this%set(knot1=knot_new, knot2=this%get_knot(2), Xc=H)
                 deallocate(H, Xc, Xcw_new)
             end if
 
         case (2)
             if (this%is_rational()) then
-                allocate(Xcw(size(this%Xc,1), dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1), d+1))
                 do concurrent (i1=1:size(this%Xc,1))
-                    Xcw(i1,1:dim) = this%Xc(i1,1:dim) * this%Wc(i1)
+                    Xcw(i1,1:d) = this%Xc(i1,1:d) * this%Wc(i1)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
-                Xc3 = reshape(Xcw, [ this%nc(1), this%nc(2), dim+1 ])
-                Xc3 = reshape(Xc3, [ this%nc(2), this%nc(1), dim+1 ], order=[2,1,3])
-                Xcw = reshape(Xc3, [ this%nc(2), this%nc(1)*(dim+1) ])
+                Xcw(:,d+1) = this%Wc(:)
+                Xc3 = reshape(Xcw, [ this%nc(1), this%nc(2), d+1 ], order=[1,2,3])
+                Xc3 = reshape(Xc3, [ this%nc(2), this%nc(1), d+1 ], order=[2,1,3])
+                Xcw = reshape(Xc3, [ this%nc(2), this%nc(1)*(d+1) ], order=[1,2])
                 call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, n1_new, knot_new, Xcw_new, Tdir)
-                Xc3 = reshape(Xcw_new, [ n1_new, this%nc(1), dim+1 ])
-                Xc3 = reshape(Xc3,     [ this%nc(1), n1_new, dim+1 ], order=[2,1,3])
-                H   = reshape(Xc3,     [ this%nc(1)*n1_new, dim+1 ])
-                associate (C => H(:,1:dim), W => H(:,dim+1))
-                    do i1=1,dim
+                Xc3 = reshape(Xcw_new, [ n1_new, this%nc(1), d+1 ], order=[1,2,3])
+                Xc3 = reshape(Xc3,     [ this%nc(1), n1_new, d+1 ], order=[2,1,3])
+                H   = reshape(Xc3,     [ this%nc(1)*n1_new, d+1 ], order=[1,2])
+                associate (C => H(:,1:d), W => H(:,d+1))
+                    do i1=1,d
                         C(:,i1) = C(:,i1) / W(:)
                     end do
                     call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=C, Wc=W)
@@ -2204,13 +2205,14 @@ contains
                 deallocate(H, Xcw, Xcw_new, Xc3)
 
             else
-                Xc3 = reshape(this%Xc, [ this%nc(1), this%nc(2), dim ])
-                Xc3 = reshape(Xc3,     [ this%nc(2), this%nc(1), dim ], order=[2,1,3])
-                Xc  = reshape(Xc3,     [ this%nc(2), this%nc(1)*dim ])
+                d = size(this%Xc,2)
+                Xc3 = reshape(this%Xc, [ this%nc(1), this%nc(2), d ], order=[1,2,3])
+                Xc3 = reshape(Xc3,     [ this%nc(2), this%nc(1), d ], order=[2,1,3])
+                Xc  = reshape(Xc3,     [ this%nc(2), this%nc(1)*d ], order=[1,2])
                 call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, n1_new, knot_new, Xcw_new, Tdir)
-                Xc3 = reshape(Xcw_new, [ n1_new, this%nc(1), dim ])
-                Xc3 = reshape(Xc3,     [ this%nc(1), n1_new, dim ], order=[2,1,3])
-                H   = reshape(Xc3,     [ this%nc(1)*n1_new, dim ])
+                Xc3 = reshape(Xcw_new, [ n1_new, this%nc(1), d ], order=[1,2,3])
+                Xc3 = reshape(Xc3,     [ this%nc(1), n1_new, d ], order=[2,1,3])
+                H   = reshape(Xc3,     [ this%nc(1)*n1_new, d ], order=[1,2])
                 call this%set(knot1=this%get_knot(1), knot2=knot_new, Xc=H)
                 deallocate(H, Xc, Xc3, Xcw_new)
             end if
@@ -2229,11 +2231,11 @@ contains
                 allocate(S_loc(mS,nS), source=0.0_rk)
                 if (this%is_rational()) then
                     do concurrent (i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk)
-                    S_loc(i2*this%nc(1) + i1,i2*nc_old(1)  + j1) = Tdir(i1,j1) * Wc_old(i2*nc_old(1)  + j1) / this%Wc(i2*this%nc(1) + i1)
+                        S_loc(i2*this%nc(1) + i1,i2*nc_old(1)  + j1) = Tdir(i1,j1) * Wc_old(i2*nc_old(1)  + j1) / this%Wc(i2*this%nc(1) + i1)
                     end do
                 else
                     do concurrent (i2=0:this%nc(2)-1, j1=1:nc_old(1), i1=1:this%nc(1), Tdir(i1,j1) /= 0.0_rk)
-                    S_loc(i2*this%nc(1) + i1,i2*nc_old(1)  + j1) = Tdir(i1,j1)
+                        S_loc(i2*this%nc(1) + i1,i2*nc_old(1)  + j1) = Tdir(i1,j1)
                     end do
                 end if
 
@@ -2243,11 +2245,11 @@ contains
                 allocate(S_loc(mS,nS), source=0.0_rk)
                 if (this%is_rational()) then
                     do concurrent (i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk)
-                    S_loc(ii + 1 + (i2_new-1)*this%nc(1),ii + 1 + (i2_old-1)*this%nc(1)) = Tdir(i2_new,i2_old) * Wc_old(ii + 1 + (i2_old-1)*this%nc(1)) / this%Wc(ii + 1 + (i2_new-1)*this%nc(1))
+                        S_loc(ii + 1 + (i2_new-1)*this%nc(1),ii + 1 + (i2_old-1)*this%nc(1)) = Tdir(i2_new,i2_old) * Wc_old(ii + 1 + (i2_old-1)*this%nc(1)) / this%Wc(ii + 1 + (i2_new-1)*this%nc(1))
                     end do
                 else
                     do concurrent (i2_old=1:nc_old(2), i2_new=1:this%nc(2), ii=0:this%nc(1)-1, Tdir(i2_new,i2_old) /= 0.0_rk)
-                    S_loc(ii + 1 + (i2_new-1)*this%nc(1),ii + 1 + (i2_old-1)*this%nc(1)) = Tdir(i2_new,i2_old)
+                        S_loc(ii + 1 + (i2_new-1)*this%nc(1),ii + 1 + (i2_old-1)*this%nc(1)) = Tdir(i2_new,i2_old)
                     end do
                 end if
             end select
@@ -2256,15 +2258,17 @@ contains
 
             if (present(B)) then
                 if (.not. present(Bs)) then
-                    allocate(B(mS*dim, nS*dim), source=0.0_rk)
-                    do c = 1, dim
-                    B(c:mS*dim:dim, c:nS*dim:dim) = S_loc
+                    d = size(this%Xc,2)
+                    allocate(B(mS*d, nS*d), source=0.0_rk)
+                    do c = 1, d
+                        B(c:mS*d:d, c:nS*d:d) = S_loc
                     end do
                     deallocate(S_loc)
                 else
-                    allocate(B(mS*dim, nS*dim), source=0.0_rk)
-                    do c = 1, dim
-                    B(c:mS*dim:dim, c:nS*dim:dim) = Bs
+                    d = size(this%Xc,2)
+                    allocate(B(mS*d, nS*d), source=0.0_rk)
+                    do c = 1, d
+                        B(c:mS*d:d, c:nS*d:d) = Bs
                     end do
                 end if
             end if

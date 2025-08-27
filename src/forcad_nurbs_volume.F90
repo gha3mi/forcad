@@ -2410,13 +2410,11 @@ contains
         real(rk), allocatable :: knot_new(:)
         real(rk), allocatable :: Xc(:,:), Xcw(:,:), Xcw_new(:,:), H(:,:), Xc4(:,:,:,:)
         real(rk), allocatable :: Tdir(:,:)
-        integer :: nc_old(3), dim, ncp_old, mS, nS, c
+        integer :: nc_old(3), d, ncp_old, mS, nS, c
         real(rk), allocatable :: Wc_old(:), S_loc(:,:)
         integer :: i1, j1, i2, i3, i2_old, i2_new, ii, i3_old, i3_new
 
         if (.not. this%err%ok) return
-
-        dim = size(this%Xc,2)
 
         if (present(B) .or. present(Bs)) then
             nc_old  = this%nc
@@ -2430,12 +2428,13 @@ contains
         select case(dir)
         case (1)
             if (this%is_rational()) then
-                allocate(Xcw(size(this%Xc,1), dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1), d+1))
                 do concurrent (i1=1:size(this%Xc,1))
-                    Xcw(i1,1:dim) = this%Xc(i1,1:dim) * this%Wc(i1)
+                    Xcw(i1,1:d) = this%Xc(i1,1:d) * this%Wc(i1)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
-                Xcw = reshape(Xcw, [ this%nc(1), this%nc(2)*this%nc(3)*(dim+1) ])
+                Xcw(:,d+1) = this%Wc(:)
+                Xcw = reshape(Xcw, [ this%nc(1), this%nc(2)*this%nc(3)*(d+1) ])
 
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, n1_new, knot_new, Xcw_new, Tdir)
@@ -2443,9 +2442,9 @@ contains
                     call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xcw, n1_new, knot_new, Xcw_new)
                 end if
 
-                H = reshape(Xcw_new, [ n1_new*this%nc(2)*this%nc(3), dim+1 ])
-                associate (C => H(:,1:dim), W => H(:,dim+1))
-                    do i1=1,dim
+                H = reshape(Xcw_new, [ n1_new*this%nc(2)*this%nc(3), d+1 ])
+                associate (C => H(:,1:d), W => H(:,d+1))
+                    do i1=1,d
                         C(:,i1) = C(:,i1) / W(:)
                     end do
                     call this%set(knot1=knot_new, knot2=this%get_knot(2), knot3=this%get_knot(3), Xc=C, Wc=W)
@@ -2453,28 +2452,30 @@ contains
                 deallocate(H, Xcw, Xcw_new)
 
             else
-                Xc = reshape(this%Xc, [ this%nc(1), this%nc(2)*this%nc(3)*dim ])
+                d = size(this%Xc,2)
+                Xc = reshape(this%Xc, [ this%nc(1), this%nc(2)*this%nc(3)*d ])
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, n1_new, knot_new, Xcw_new, Tdir)
                 else
                     call elevate_degree_A_5_9(t, this%knot1, this%degree(1), Xc, n1_new, knot_new, Xcw_new)
                 end if
-                H = reshape(Xcw_new, [ n1_new*this%nc(2)*this%nc(3), dim ])
+                H = reshape(Xcw_new, [ n1_new*this%nc(2)*this%nc(3), d ])
                 call this%set(knot1=knot_new, knot2=this%get_knot(2), knot3=this%get_knot(3), Xc=H)
                 deallocate(H, Xc, Xcw_new)
             end if
 
         case (2)
             if (this%is_rational()) then
-                allocate(Xcw(size(this%Xc,1), dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1), d+1))
                 do concurrent (i1=1:size(this%Xc,1))
-                    Xcw(i1,1:dim) = this%Xc(i1,1:dim) * this%Wc(i1)
+                    Xcw(i1,1:d) = this%Xc(i1,1:d) * this%Wc(i1)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
-                Xc4 = reshape(Xcw, [ this%nc(1), this%nc(2), this%nc(3), dim+1 ])
-                Xc4 = reshape(Xc4, [ this%nc(2), this%nc(1), this%nc(3), dim+1 ], order=[2,1,3,4])
-                Xcw = reshape(Xc4, [ this%nc(2), this%nc(1)*this%nc(3)*(dim+1) ])
+                Xc4 = reshape(Xcw, [ this%nc(1), this%nc(2), this%nc(3), d+1 ])
+                Xc4 = reshape(Xc4, [ this%nc(2), this%nc(1), this%nc(3), d+1 ], order=[2,1,3,4])
+                Xcw = reshape(Xc4, [ this%nc(2), this%nc(1)*this%nc(3)*(d+1) ])
 
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, n1_new, knot_new, Xcw_new, Tdir)
@@ -2482,11 +2483,11 @@ contains
                     call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xcw, n1_new, knot_new, Xcw_new)
                 end if
 
-                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(1), this%nc(3), dim+1 ])
-                Xc4 = reshape(Xc4,     [ this%nc(1), n1_new, this%nc(3), dim+1 ], order=[2,1,3,4])
-                H   = reshape(Xc4,     [ this%nc(1)*n1_new*this%nc(3), dim+1 ])
-                associate (C => H(:,1:dim), W => H(:,dim+1))
-                    do i1=1,dim
+                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(1), this%nc(3), d+1 ])
+                Xc4 = reshape(Xc4,     [ this%nc(1), n1_new, this%nc(3), d+1 ], order=[2,1,3,4])
+                H   = reshape(Xc4,     [ this%nc(1)*n1_new*this%nc(3), d+1 ])
+                associate (C => H(:,1:d), W => H(:,d+1))
+                    do i1=1,d
                         C(:,i1) = C(:,i1) / W(:)
                     end do
                     call this%set(knot1=this%get_knot(1), knot2=knot_new, knot3=this%get_knot(3), Xc=C, Wc=W)
@@ -2494,9 +2495,10 @@ contains
                 deallocate(H, Xcw, Xcw_new, Xc4)
 
             else
-                Xc4 = reshape(this%Xc, [ this%nc(1), this%nc(2), this%nc(3), dim ])
-                Xc4 = reshape(Xc4,     [ this%nc(2), this%nc(1), this%nc(3), dim ], order=[2,1,3,4])
-                Xc  = reshape(Xc4,     [ this%nc(2), this%nc(1)*this%nc(3)*dim ])
+                d = size(this%Xc,2)
+                Xc4 = reshape(this%Xc, [ this%nc(1), this%nc(2), this%nc(3), d ])
+                Xc4 = reshape(Xc4,     [ this%nc(2), this%nc(1), this%nc(3), d ], order=[2,1,3,4])
+                Xc  = reshape(Xc4,     [ this%nc(2), this%nc(1)*this%nc(3)*d ])
 
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, n1_new, knot_new, Xcw_new, Tdir)
@@ -2504,24 +2506,25 @@ contains
                     call elevate_degree_A_5_9(t, this%knot2, this%degree(2), Xc, n1_new, knot_new, Xcw_new)
                 end if
 
-                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(1), this%nc(3), dim ])
-                Xc4 = reshape(Xc4,     [ this%nc(1), n1_new, this%nc(3), dim ], order=[2,1,3,4])
-                H   = reshape(Xc4,     [ this%nc(1)*n1_new*this%nc(3), dim ])
+                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(1), this%nc(3), d ])
+                Xc4 = reshape(Xc4,     [ this%nc(1), n1_new, this%nc(3), d ], order=[2,1,3,4])
+                H   = reshape(Xc4,     [ this%nc(1)*n1_new*this%nc(3), d ])
                 call this%set(knot1=this%get_knot(1), knot2=knot_new, knot3=this%get_knot(3), Xc=H)
                 deallocate(H, Xc, Xc4, Xcw_new)
             end if
 
         case (3)
             if (this%is_rational()) then
-                allocate(Xcw(size(this%Xc,1), dim+1))
+                d = size(this%Xc,2)
+                allocate(Xcw(size(this%Xc,1), d+1))
                 do concurrent (i1=1:size(this%Xc,1))
-                    Xcw(i1,1:dim) = this%Xc(i1,1:dim) * this%Wc(i1)
+                    Xcw(i1,1:d) = this%Xc(i1,1:d) * this%Wc(i1)
                 end do
-                Xcw(:,dim+1) = this%Wc(:)
+                Xcw(:,d+1) = this%Wc(:)
 
-                Xc4 = reshape(Xcw, [ this%nc(1), this%nc(2), this%nc(3), dim+1 ])
-                Xc4 = reshape(Xc4, [ this%nc(3), this%nc(2), this%nc(1), dim+1 ], order=[3,2,1,4])
-                Xcw = reshape(Xc4, [ this%nc(3), this%nc(2)*this%nc(1)*(dim+1) ])
+                Xc4 = reshape(Xcw, [ this%nc(1), this%nc(2), this%nc(3), d+1 ])
+                Xc4 = reshape(Xc4, [ this%nc(3), this%nc(2), this%nc(1), d+1 ], order=[3,2,1,4])
+                Xcw = reshape(Xc4, [ this%nc(3), this%nc(2)*this%nc(1)*(d+1) ])
 
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xcw, n1_new, knot_new, Xcw_new, Tdir)
@@ -2529,11 +2532,11 @@ contains
                     call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xcw, n1_new, knot_new, Xcw_new)
                 end if
 
-                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(2), this%nc(1), dim+1 ])
-                Xc4 = reshape(Xc4,     [ this%nc(1), this%nc(2), n1_new, dim+1 ], order=[3,2,1,4])
-                H   = reshape(Xc4,     [ this%nc(1)*this%nc(2)*n1_new, dim+1 ])
-                associate (C => H(:,1:dim), W => H(:,dim+1))
-                    do i1=1,dim
+                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(2), this%nc(1), d+1 ])
+                Xc4 = reshape(Xc4,     [ this%nc(1), this%nc(2), n1_new, d+1 ], order=[3,2,1,4])
+                H   = reshape(Xc4,     [ this%nc(1)*this%nc(2)*n1_new, d+1 ])
+                associate (C => H(:,1:d), W => H(:,d+1))
+                    do i1=1,d
                         C(:,i1) = C(:,i1) / W(:)
                     end do
                     call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=knot_new, Xc=C, Wc=W)
@@ -2541,9 +2544,10 @@ contains
                 deallocate(H, Xcw, Xcw_new, Xc4)
 
             else
-                Xc4 = reshape(this%Xc, [ this%nc(1), this%nc(2), this%nc(3), dim ])
-                Xc4 = reshape(Xc4,     [ this%nc(3), this%nc(2), this%nc(1), dim ], order=[3,2,1,4])
-                Xc  = reshape(Xc4,     [ this%nc(3), this%nc(2)*this%nc(1)*dim ])
+                d = size(this%Xc,2)
+                Xc4 = reshape(this%Xc, [ this%nc(1), this%nc(2), this%nc(3), d ])
+                Xc4 = reshape(Xc4,     [ this%nc(3), this%nc(2), this%nc(1), d ], order=[3,2,1,4])
+                Xc  = reshape(Xc4,     [ this%nc(3), this%nc(2)*this%nc(1)*d ])
 
                 if (present(B) .or. present(Bs)) then
                     call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xc, n1_new, knot_new, Xcw_new, Tdir)
@@ -2551,9 +2555,9 @@ contains
                     call elevate_degree_A_5_9(t, this%knot3, this%degree(3), Xc, n1_new, knot_new, Xcw_new)
                 end if
 
-                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(2), this%nc(1), dim ])
-                Xc4 = reshape(Xc4,     [ this%nc(1), this%nc(2), n1_new, dim ], order=[3,2,1,4])
-                H   = reshape(Xc4,     [ this%nc(1)*this%nc(2)*n1_new, dim ])
+                Xc4 = reshape(Xcw_new, [ n1_new, this%nc(2), this%nc(1), d ])
+                Xc4 = reshape(Xc4,     [ this%nc(1), this%nc(2), n1_new, d ], order=[3,2,1,4])
+                H   = reshape(Xc4,     [ this%nc(1)*this%nc(2)*n1_new, d ])
                 call this%set(knot1=this%get_knot(1), knot2=this%get_knot(2), knot3=knot_new, Xc=H)
                 deallocate(H, Xc, Xc4, Xcw_new)
             end if
@@ -2623,15 +2627,17 @@ contains
 
             if (present(B)) then
                 if (.not. present(Bs)) then
-                    allocate(B(mS*dim, nS*dim), source=0.0_rk)
-                    do c = 1, dim
-                        B(c:mS*dim:dim, c:nS*dim:dim) = S_loc
+                    d = size(this%Xc,2)
+                    allocate(B(mS*d, nS*d), source=0.0_rk)
+                    do c = 1, d
+                        B(c:mS*d:d, c:nS*d:d) = S_loc
                     end do
                     deallocate(S_loc)
                 else
-                    allocate(B(mS*dim, nS*dim), source=0.0_rk)
-                    do c = 1, dim
-                        B(c:mS*dim:dim, c:nS*dim:dim) = Bs
+                    d = size(this%Xc,2)
+                    allocate(B(mS*d, nS*d), source=0.0_rk)
+                    do c = 1, d
+                        B(c:mS*d:d, c:nS*d:d) = Bs
                     end do
                 end if
             end if
