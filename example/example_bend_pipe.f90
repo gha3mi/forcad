@@ -35,7 +35,7 @@ program example_bend_pipe
    shape = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, r1, r2, l, rb, a(1))
+   call bend_pipe(shape, c, l, rb, a(1))
 
    ! Create the NURBS volume
    call shape%create(30,40,80)
@@ -55,7 +55,7 @@ program example_bend_pipe
    shape = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, r1, r2, l, rb, a(2))
+   call bend_pipe(shape, c, l, rb, a(2))
 
    ! Create the NURBS volume
    call shape%create(30,40,80)
@@ -75,7 +75,7 @@ program example_bend_pipe
    shape = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, r1, r2, l, rb, a(3))
+   call bend_pipe(shape, c, l, rb, a(3))
 
    ! Create the NURBS volume
    call shape%create(30,40,80)
@@ -115,11 +115,9 @@ contains
    !>   z' = c_z + \rho\sin\phi .
    !> \]
    !> Knots and weights are preserved; only the control lattice is updated.
-   pure subroutine bend_pipe(this, center, radius1, radius2, length, rbend, angle_deg)
+   pure subroutine bend_pipe(this, center, length, rbend, angle_deg)
       type(nurbs_volume), intent(inout) :: this !! NURBS volume to be bent.
       real(rk), intent(in) :: center(3)         !! Pipe center coordinates \((c_x,c_y,c_z)\).
-      real(rk), intent(in) :: radius1           !! Inner radius of the pipe (not used in bending).
-      real(rk), intent(in) :: radius2           !! Outer radius of the pipe (not used in bending).
       real(rk), intent(in) :: length            !! Length of the straight pipe segment before bending.
       real(rk), intent(in) :: rbend             !! Bend radius \(R_b\), i.e. distance from the bend centerline.
       real(rk), intent(in) :: angle_deg         !! Bend angle in degrees \(\alpha^\circ\).

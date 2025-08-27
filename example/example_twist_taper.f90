@@ -87,7 +87,7 @@ contains
       real(rk), intent(in) :: twist_deg         !! Total twist at top face (degrees).
       real(rk), intent(in) :: taper             !! In-plane scale at top face (0<`taper`≤1).
 
-      real(rk), allocatable :: Xc(:,:), X4(:,:,:,:), R(:,:)
+      real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
       real(rk), parameter :: pi = acos(-1.0_rk)
       real(rk) :: t, ang, sxy, ca, sa, x, y, cx, cy
       integer :: i, j, k, dim
