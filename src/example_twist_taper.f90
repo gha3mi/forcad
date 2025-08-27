@@ -90,11 +90,11 @@ contains
       real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
       real(rk), parameter :: pi = acos(-1.0_rk)
       real(rk) :: t, ang, sxy, ca, sa, x, y, cx, cy
-      integer :: i, j, k, dim
+      integer :: i, j, k, d
 
       Xc  = this%get_Xc()
-      dim = size(Xc,2)
-      X4  = reshape(Xc, shape=[nc(1), nc(2), nc(3), dim], order=[1,2,3,4])
+      d  = size(Xc,2)
+      X4 = reshape(Xc, shape=[nc(1), nc(2), nc(3), d], order=[1,2,3,4])
 
       cx = 0.5_rk*L(1)
       cy = 0.5_rk*L(2)
@@ -114,7 +114,7 @@ contains
          end do
       end do
 
-      Xc = reshape(X4, shape=[product(nc), dim], order=[1,2])
+      Xc = reshape(X4, shape=[product(nc), d], order=[1,2])
 
       if (this%is_rational()) then
          call this%set(this%get_knot(1), this%get_knot(2), this%get_knot(3), Xc, this%get_Wc())
