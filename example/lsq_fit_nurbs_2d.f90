@@ -1,11 +1,11 @@
-program lsq_fit_bspline_2d
+program lsq_fit_nurbs_2d
 
-   use forcad, only: rk, nurbs_surface
-   use forcad_utils, only: ndgrid
+   use forcad,        only: rk, nurbs_surface
+   use forcad_utils,  only: ndgrid
 
    implicit none
 
-   type(nurbs_surface) :: bsp
+   type(nurbs_surface) :: nrb
    integer :: n(2), ndata, i
    real(rk), parameter :: pi = acos(-1.0_rk)
    real(rk), allocatable :: Xdata(:,:)
@@ -13,7 +13,7 @@ program lsq_fit_bspline_2d
    real(rk), allocatable :: Xg_eval(:,:)
    real(rk) :: err1, err2, err3, rms
 
-   n = [14,14]
+   n = [60, 30]
 
    ! create parametric grid points
    allocate(Xt1(n(1)), Xt2(n(2)))
@@ -29,46 +29,51 @@ program lsq_fit_bspline_2d
    ndata = n(1)*n(2)
    allocate(Xdata(ndata, 3))
    do i = 1, ndata
-      Xdata(i,1) = Xt(i,1)
-      Xdata(i,2) = Xt(i,2)
-      Xdata(i,3) = 0.1_rk * sin(2.0_rk*pi*Xt(i,1)) * cos(2.0_rk*pi*Xt(i,2))
+      Xdata(i,1) = 0.0_rk + (1.0_rk + 0.35_rk*cos(2.0_rk*pi*Xt(i,2))) * cos(2.0_rk*pi*Xt(i,1))
+      Xdata(i,2) = 0.0_rk + (1.0_rk + 0.35_rk*cos(2.0_rk*pi*Xt(i,2))) * sin(2.0_rk*pi*Xt(i,1))
+      Xdata(i,3) = 0.0_rk +  0.35_rk*sin(2.0_rk*pi*Xt(i,2))
    end do
 
-   ! set up B-Spline surface
-   ! Xth_dir1(1) = minval(Xt1), Xth_dir1(2) = maxval(Xt1)
-   ! Xth_dir2(1) = minval(Xt2), Xth_dir2(2) = maxval(Xt2)
-   call bsp%set(&
+   ! set up NURBS surface
+   call nrb%set(&
       degree      = [4, 4],&
-      Xth_dir1    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
-      Xth_dir2    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
-      continuity1 = [ -1   ,   1    ,   1   ,   1    ,  -1   ],&
-      continuity2 = [ -1   ,   1    ,   1   ,   1    ,  -1   ])
+      Xth_dir1    = [0.0_rk, 0.1_rk, 0.2_rk, 0.3_rk, 0.4_rk, 0.5_rk, 0.6_rk, 0.7_rk, 0.8_rk, 0.9_rk, 1.0_rk],&
+      Xth_dir2    = [0.0_rk, 0.2_rk, 0.4_rk, 0.6_rk, 0.8_rk, 1.0_rk],&
+      continuity1 = [ -1   ,   1   ,   1   ,   1   ,   1   ,   1   ,   1   ,   1   ,   1   ,   1   ,  -1   ],&
+      continuity2 = [ -1   ,   1   ,   1   ,   1   ,   1   ,  -1   ])
 
    print'(a)', "========================================"
-   print'(a)', "B-Spline Surface Configuration"
+   print'(a)', "NURBS Surface Configuration"
    print'(a)', "----------------------------------------"
-   print'(a,2(i0,a))', "Degrees    : ", bsp%get_degree(1), ", ", bsp%get_degree(2)
-   print'(a,2(i0,a))', "Control pts: ", bsp%get_nc(1), " x ", bsp%get_nc(2)
+   print'(a,2(i0,a))', "Degrees    : ", nrb%get_degree(1), ", ", nrb%get_degree(2)
+   print'(a,2(i0,a))', "Control pts: ", nrb%get_nc(1), " x ", nrb%get_nc(2)
    print'(a,2(i0,a))', "Data grid  : ", n(1), " x ", n(2)
 
    print'(a)', "----------------------------------------"
    print'(a)', "Continuity"
-   print'(a,*(i3,1x))', "  dir1:", bsp%get_continuity(1)
-   print'(a,*(i3,1x))', "  dir2:", bsp%get_continuity(2)
+   print'(a,*(i3,1x))', "  dir1:", nrb%get_continuity(1)
+   print'(a,*(i3,1x))', "  dir2:", nrb%get_continuity(2)
 
    print'(a)', "----------------------------------------"
    print'(a)', "Knot vectors"
-   print'(a,*(f5.2,1x))', "  dir1:", bsp%get_knot(1)
-   print'(a,*(f5.2,1x))', "  dir2:", bsp%get_knot(2)
+   print'(a,*(f5.2,1x))', "  dir1:", nrb%get_knot(1)
+   print'(a,*(f5.2,1x))', "  dir2:", nrb%get_knot(2)
    print'(a)', "========================================"
 
    print'(a)', "Fitting least squares surface..."
-   call bsp%lsq_fit_bspline(Xt, Xdata, n)
+   call nrb%lsq_fit_nurbs(&
+      Xt        = Xt,     &
+      Xdata     = Xdata,  &
+      ndata     = n,      &
+      maxit     = 100,    &
+      tol       = sqrt(epsilon(0.0_rk)), &
+      lambda_xc = sqrt(epsilon(0.0_rk)), &
+      reg_logw  = sqrt(epsilon(0.0_rk)) )
    print'(a)', "Fitting complete."
 
-   ! create B-Spline surface
-   call bsp%create(Xt1=Xt1, Xt2=Xt2)
-   Xg_eval = bsp%get_Xg()
+   ! create NURBS surface
+   call nrb%create(Xt1=Xt1, Xt2=Xt2)
+   Xg_eval = nrb%get_Xg()
 
    ! Compute errors
    err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / max( norm2(Xdata(:,1)), epsilon(0.0_rk) )
@@ -86,9 +91,9 @@ program lsq_fit_bspline_2d
    print'(a)', "========================================"
 
    ! Export results
-   call bsp%export_Xc("vtk/lsq_fit_bspline_2d_Xc.vtk")
-   call bsp%export_Xg("vtk/lsq_fit_bspline_2d_Xg.vtk")
-   call bsp%export_Xth_in_Xg("vtk/lsq_fit_bspline_2d_Xth.vtk", res=20)
-   call bsp%show("vtk/lsq_fit_bspline_2d_Xc.vtk", "vtk/lsq_fit_bspline_2d_Xg.vtk", "vtk/lsq_fit_bspline_2d_Xth.vtk")
+   call nrb%export_Xc("vtk/lsq_fit_nurbs_2d_Xc.vtk")
+   call nrb%export_Xg("vtk/lsq_fit_nurbs_2d_Xg.vtk")
+   call nrb%export_Xth_in_Xg("vtk/lsq_fit_nurbs_2d_Xth.vtk", res=20)
+   call nrb%show("vtk/lsq_fit_nurbs_2d_Xc.vtk", "vtk/lsq_fit_nurbs_2d_Xg.vtk", "vtk/lsq_fit_nurbs_2d_Xth.vtk")
 
 end program

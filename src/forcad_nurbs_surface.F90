@@ -108,7 +108,8 @@ module forcad_nurbs_surface
         procedure :: nearest_point2         !!> Find the nearest point on the NURBS surface (Minimization - Newtons method)
         procedure :: ansatz                 !!> Compute the shape functions, derivative of shape functions and dA
         procedure :: cmp_area               !!> Compute the area of the NURBS surface
-        procedure :: lsq_fit_bspline        !!> Fit B-spline volume to structured data points using least squares
+        procedure :: lsq_fit_bspline        !!> Fit B-spline surface to structured data points using least squares
+        procedure :: lsq_fit_nurbs          !!> Fit NURBS surface to structured data points using least squares
 
         ! Shapes
         procedure :: set_tetragon           !!> Set a tetragon
@@ -3944,6 +3945,157 @@ contains
         TtT = matmul(Tt, T)
         TtX = matmul(Tt, Xdata)
         this%Xc = solve(TtT, TtX)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    pure subroutine lsq_fit_nurbs(this, Xt, Xdata, ndata, maxit, tol, lambda_xc, mu0, reg_logw)
+        use forcad_interface, only: solve
+        class(nurbs_surface), intent(inout) :: this
+        real(rk), intent(in), contiguous    :: Xt(:,:)
+        real(rk), intent(in), contiguous    :: Xdata(:,:)
+        integer,  intent(in)                :: ndata(2)
+        integer,  intent(in),  optional     :: maxit
+        real(rk), intent(in),  optional     :: tol
+        real(rk), intent(in),  optional     :: lambda_xc
+        real(rk), intent(in),  optional     :: mu0
+        real(rk), intent(in),  optional     :: reg_logw
+        real(rk), allocatable :: Bmat(:,:), S(:), T(:,:), TtT(:,:), TtX(:,:), C(:,:), R(:,:)
+        real(rk), allocatable :: Jacv(:,:), Jac_red(:,:), rvec(:), JtJ(:,:), Jtr(:,:), delta_u(:,:), delta_v(:), v(:)
+        real(rk) :: tol_, lamx_, mu, regw, epss, cost_prev, cost_now
+        integer  :: dim_, it, maxit_, n, ncp, nvar, i, j, k
+
+        if (.not. this%err%ok) return
+
+        dim_   = size(Xdata, 2)
+        n      = ndata(1) * ndata(2)
+        ncp    = this%nc(1) * this%nc(2)
+        nvar   = ncp - 1
+        maxit_ = 30
+        tol_   = epsilon(0.0_rk)
+        lamx_  = 0.0_rk
+        mu     = sqrt(epsilon(0.0_rk))
+        regw   = sqrt(epsilon(0.0_rk))
+        epss   = 10.0_rk*epsilon(0.0_rk)
+        if (present(maxit))     maxit_ = maxit
+        if (present(tol))       tol_   = tol
+        if (present(lambda_xc)) lamx_  = lambda_xc
+        if (present(mu0))       mu     = mu0
+        if (present(reg_logw))  regw   = reg_logw
+
+        if (this%nc(1) > ndata(1)) then
+            call this%err%set(code=106, severity=1, category='forcad_nurbs_surface', &
+                message='Too few data points in dir-1 for requested control points.', &
+                location='lsq_fit_nurbs', &
+                suggestion='Use nc(1) <= ndata(1).')
+            return
+        end if
+        if (this%nc(2) > ndata(2)) then
+            call this%err%set(code=106, severity=1, category='forcad_nurbs_surface', &
+                message='Too few data points in dir-2 for requested control points.', &
+                location='lsq_fit_nurbs', &
+                suggestion='Use nc(2) <= ndata(2).')
+            return
+        end if
+
+        if (n <= 0 .or. ncp < 2) then
+            call this%err%set(code=106, severity=1, category='forcad_nurbs_surface', &
+                message='Invalid sizes for LSQ fitting.', location='lsq_fit_nurbs', &
+                suggestion='Check ndata and nc.')
+            return
+        end if
+
+        allocate(Bmat(n, ncp))
+#if defined(__NVCOMPILER) || (defined(__GFORTRAN__) && (__GNUC__ < 15 || (__GNUC__ == 15 && __GNUC_MINOR__ < 1)))
+        do i = 1, n
+#else
+        do concurrent (i = 1:n)
+#endif
+            Bmat(i,:) = kron( &
+                basis_bspline(Xt(i,2), this%knot2, this%nc(2), this%degree(2)), &
+                basis_bspline(Xt(i,1), this%knot1, this%nc(1), this%degree(1)) )
+        end do
+
+        if (allocated(this%Wc) .and. size(this%Wc) == ncp) then
+            ! keep as is
+        else
+            allocate(this%Wc(ncp), source=1.0_rk)
+        end if
+
+        allocate(v(ncp))
+        v = log(max(this%Wc, epss))
+        this%Wc = exp(v-sum(v)/real(ncp, rk))
+
+        allocate(S(n), T(n, ncp), C(n, dim_), R(n, dim_))
+        allocate(TtT(ncp, ncp), TtX(ncp, dim_))
+        allocate(Jacv(n*dim_, ncp), rvec(n*dim_))
+        allocate(Jac_red(n*dim_, nvar))
+        allocate(JtJ(nvar, nvar), Jtr(nvar,1), delta_u(nvar,1), delta_v(ncp))
+
+        cost_prev = huge(1.0_rk)
+
+        do it = 1, maxit_
+#if defined(__NVCOMPILER)
+            do i = 1, n
+                S(i) = dot_product(Bmat(i,:), this%Wc)
+                if (abs(S(i)) < epss) S(i) = sign(epss, S(i))
+                T(i,:) = Bmat(i,:) * (this%Wc / S(i))
+            end do
+#else
+            do concurrent (i = 1:n)
+                S(i) = dot_product(Bmat(i,:), this%Wc)
+                if (abs(S(i)) < epss) S(i) = sign(epss, S(i))
+                T(i,:) = Bmat(i,:) * (this%Wc / S(i))
+            end do
+#endif
+
+            TtT = matmul(transpose(T), T)
+            if (lamx_ > 0.0_rk) then
+                do concurrent (j = 1:ncp)
+                    TtT(j,j) = TtT(j,j) + lamx_
+                end do
+            end if
+            TtX   = matmul(transpose(T), Xdata)
+            this%Xc = solve(TtT, TtX)
+
+            C = matmul(T, this%Xc)
+            R = C - Xdata
+            cost_now = norm2(R) / real(n*dim_, rk)
+
+            if (cost_prev - cost_now <= tol_ * max(1.0_rk, cost_prev)) exit
+            cost_prev = cost_now
+
+            do concurrent (k=1:dim_, i=1:n)
+                rvec((k-1)*n + i) = R(i,k)
+            end do
+
+            do concurrent (j=1:ncp, k=1:dim_, i=1:n)
+                Jacv((k-1)*n + i, j) = ( this%Wc(j) * Bmat(i,j) / S(i) ) * ( this%Xc(j,k) - C(i,k) )
+            end do
+
+            do concurrent (j = 1:nvar)
+                Jac_red(:, j) = Jacv(:, j) - Jacv(:, ncp)
+            end do
+
+            JtJ     = matmul(transpose(Jac_red), Jac_red)
+            Jtr(:,1)= matmul(transpose(Jac_red), rvec)
+
+            do concurrent (j = 1:nvar)
+                JtJ(j,j) = JtJ(j,j) + mu + regw
+            end do
+
+            delta_u = - solve(JtJ, Jtr)
+            delta_v(1:nvar) = delta_u(:,1)
+            delta_v(ncp)    = -sum(delta_u(:,1))
+
+            v = v + delta_v
+            this%Wc = exp(v-sum(v)/real(ncp, rk))
+
+            mu = max(epsilon(0.0_rk), 0.3_rk*mu)
+        end do
     end subroutine
     !===============================================================================
 

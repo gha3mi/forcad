@@ -1,11 +1,11 @@
-program lsq_fit_bspline_3d
+program lsq_fit_nurbs_3d
 
    use forcad, only: rk, nurbs_volume
    use forcad_utils, only: ndgrid
 
    implicit none
 
-   type(nurbs_volume) :: bsp
+   type(nurbs_volume) :: nrb
    integer :: n(3), ndata, i
    real(rk), parameter :: pi = acos(-1.0_rk)
    real(rk), allocatable :: Xdata(:,:)
@@ -13,7 +13,7 @@ program lsq_fit_bspline_3d
    real(rk), allocatable :: Xg_eval(:,:)
    real(rk) :: err1, err2, err3, rms
 
-   n = [10,10,10]
+   n = [36, 14, 12]
 
    ! create parametric grid points
    allocate(Xt1(n(1)), Xt2(n(2)), Xt3(n(3)))
@@ -32,57 +32,62 @@ program lsq_fit_bspline_3d
    ndata = n(1) * n(2) * n(3)
    allocate(Xdata(ndata, 3))
    do i = 1, ndata
-      Xdata(i,1) = Xt(i,1) + 0.1_rk * sin(2.0_rk * pi * Xt(i,2))
-      Xdata(i,2) = Xt(i,2) + 0.1_rk * sin(2.0_rk * pi * Xt(i,3))
-      Xdata(i,3) = Xt(i,3) + 0.1_rk * sin(2.0_rk * pi * Xt(i,1))
+      Xdata(i,1) = 0.0_rk + (1.0_rk + 0.35_rk*Xt(i,3)*cos(2.0_rk*pi*Xt(i,2))) * cos(2.0_rk*pi*Xt(i,1))
+      Xdata(i,2) = 0.0_rk + (1.0_rk + 0.35_rk*Xt(i,3)*cos(2.0_rk*pi*Xt(i,2))) * sin(2.0_rk*pi*Xt(i,1))
+      Xdata(i,3) = 0.0_rk + 0.35_rk*Xt(i,3)*sin(2.0_rk*pi*Xt(i,2))
    end do
 
-   ! set up B-Spline volume
-   call bsp%set(&
+   ! set up NURBS volume
+   call nrb%set(&
       degree      = [3, 3, 3],&
-      Xth_dir1    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
+      Xth_dir1    = [0.0_rk, 0.2_rk , 0.4_rk, 0.6_rk , 0.8_rk, 1.0_rk],&
       Xth_dir2    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
       Xth_dir3    = [0.0_rk, 0.25_rk, 0.5_rk, 0.75_rk, 1.0_rk],&
-      continuity1 = [ -1   ,   1    ,   1   ,   1    ,  -1   ],&
+      continuity1 = [ -1   ,   1    ,   1   ,   1    ,   1   ,  -1   ],&
       continuity2 = [ -1   ,   1    ,   1   ,   1    ,  -1   ],&
       continuity3 = [ -1   ,   1    ,   1   ,   1    ,  -1   ])
 
    print'(a)', "========================================"
-   print'(a)', "B-Spline Volume Configuration"
+   print'(a)', "NURBS Volume Configuration"
    print'(a)', "----------------------------------------"
-   print'(a,3(i0,a))', "Degrees    : ", bsp%get_degree(1), ", ", bsp%get_degree(2), ", ", bsp%get_degree(3)
-   print'(a,3(i0,a))', "Control pts: ", bsp%get_nc(1), " x ", bsp%get_nc(2), " x ", bsp%get_nc(3)
+   print'(a,3(i0,a))', "Degrees    : ", nrb%get_degree(1), ", ", nrb%get_degree(2), ", ", nrb%get_degree(3)
+   print'(a,3(i0,a))', "Control pts: ", nrb%get_nc(1), " x ", nrb%get_nc(2), " x ", nrb%get_nc(3)
    print'(a,3(i0,a))', "Data grid  : ", n(1), " x ", n(2), " x ", n(3)
 
    print'(a)', "----------------------------------------"
    print'(a)', "Continuity"
-   print'(a,*(i3,1x))', "  dir1:", bsp%get_continuity(1)
-   print'(a,*(i3,1x))', "  dir2:", bsp%get_continuity(2)
-   print'(a,*(i3,1x))', "  dir3:", bsp%get_continuity(3)
+   print'(a,*(i3,1x))', "  dir1:", nrb%get_continuity(1)
+   print'(a,*(i3,1x))', "  dir2:", nrb%get_continuity(2)
+   print'(a,*(i3,1x))', "  dir3:", nrb%get_continuity(3)
 
    print'(a)', "----------------------------------------"
    print'(a)', "Knot vectors"
-   print'(a,*(f5.2,1x))', "  dir1:", bsp%get_knot(1)
-   print'(a,*(f5.2,1x))', "  dir2:", bsp%get_knot(2)
-   print'(a,*(f5.2,1x))', "  dir3:", bsp%get_knot(3)
+   print'(a,*(f5.2,1x))', "  dir1:", nrb%get_knot(1)
+   print'(a,*(f5.2,1x))', "  dir2:", nrb%get_knot(2)
+   print'(a,*(f5.2,1x))', "  dir3:", nrb%get_knot(3)
    print'(a)', "========================================"
 
    print'(a)', "Fitting least squares volume..."
-   call bsp%lsq_fit_bspline(Xt, Xdata, n)
+   call nrb%lsq_fit_nurbs(&
+      Xt        = Xt,     &
+      Xdata     = Xdata,  &
+      ndata     = n,      &
+      maxit     = 30,     &
+      tol       = sqrt(epsilon(0.0_rk)), &
+      lambda_xc = sqrt(epsilon(0.0_rk)), &
+      reg_logw  = sqrt(epsilon(0.0_rk)) )
    print'(a)', "Fitting complete."
 
-   ! create B-Spline volume
-   ! call bsp%create(n(1), n(2), n(3))
-   call bsp%create(Xt1=Xt1, Xt2=Xt2, Xt3=Xt3)
-   Xg_eval = bsp%get_Xg()
+   ! create NURBS volume
+   call nrb%create(Xt1=Xt1, Xt2=Xt2, Xt3=Xt3)
+   Xg_eval = nrb%get_Xg()
 
-   ! Compute relative errors in each direction
+   ! Compute errors
    err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / max( norm2(Xdata(:,1)), epsilon(0.0_rk) )
    err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / max( norm2(Xdata(:,2)), epsilon(0.0_rk) )
    err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / max( norm2(Xdata(:,3)), epsilon(0.0_rk) )
-   rms  = sqrt((err1**2 + err2**2 + err3**2) / 3.0_rk)
+   rms  = sqrt((err1**2 + err2**2 + err3**2)/3.0_rk)
 
-   ! Report
    print'(a)', "========================================"
    print'(a)', "Fitting Error Report"
    print'(a)', "----------------------------------------"
@@ -92,10 +97,10 @@ program lsq_fit_bspline_3d
    print'(a,e13.6)', "Total RMS error  :", rms
    print'(a)', "========================================"
 
-   ! Export results and visualize
-   call bsp%export_Xc("vtk/lsq_fit_bspline_3d_Xc.vtk")
-   call bsp%export_Xg("vtk/lsq_fit_bspline_3d_Xg.vtk")
-   call bsp%export_Xth_in_Xg("vtk/lsq_fit_bspline_3d_Xth.vtk", res=20)
-   call bsp%show("vtk/lsq_fit_bspline_3d_Xc.vtk", "vtk/lsq_fit_bspline_3d_Xg.vtk", "vtk/lsq_fit_bspline_3d_Xth.vtk")
+   ! Export results
+   call nrb%export_Xc("vtk/lsq_fit_nurbs_3d_Xc.vtk")
+   call nrb%export_Xg("vtk/lsq_fit_nurbs_3d_Xg.vtk")
+   call nrb%export_Xth_in_Xg("vtk/lsq_fit_nurbs_3d_Xth.vtk", res=20)
+   call nrb%show("vtk/lsq_fit_nurbs_3d_Xc.vtk", "vtk/lsq_fit_nurbs_3d_Xg.vtk", "vtk/lsq_fit_nurbs_3d_Xth.vtk")
 
 end program
