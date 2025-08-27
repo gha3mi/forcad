@@ -12,7 +12,7 @@ program example_twist_taper
    use forcad, only: rk, nurbs_volume
 
    implicit none
-   type(nurbs_volume) :: shape, hexa
+   type(nurbs_volume) :: sh, hexa
    real(rk), parameter :: L(3) = [1.0_rk, 1.0_rk, 3.0_rk]  !! Domain extents in \(x,y,z\).
    integer,  parameter :: nc(3) = [7, 7, 9]                !! Control point counts per direction.
    real(rk), parameter :: twist_deg = 360.0_rk             !! Total twist angle (degrees) at the top face.
@@ -22,21 +22,21 @@ program example_twist_taper
    call hexa%set_hexahedron(L=L, nc=nc)
 
    ! Work on a copy
-   shape = hexa
+   sh = hexa
 
    ! Build the twisted and tapered shape
-   call build_twist_taper(shape, Length=L, nc=nc, twist_deg=twist_deg, taper=taper)
+   call build_twist_taper(sh, L, nc, twist_deg, taper)
 
    ! Create the NURBS volume sampling
-   call shape%create(30,30,80)
+   call sh%create(30,30,80)
 
    ! Export the NURBS volume to VTK files
-   call shape%export_Xc("vtk/example_twist_taper_Xc.vtk")
-   call shape%export_Xg("vtk/example_twist_taper_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/example_twist_taper_Xth_in_Xg.vtk", res=30)
+   call sh%export_Xc("vtk/example_twist_taper_Xc.vtk")
+   call sh%export_Xg("vtk/example_twist_taper_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/example_twist_taper_Xth_in_Xg.vtk", res=30)
 
    ! Show the NURBS volume
-   call shape%show("vtk/example_twist_taper_Xc.vtk","vtk/example_twist_taper_Xg.vtk", "vtk/example_twist_taper_Xth_in_Xg.vtk")
+   call sh%show("vtk/example_twist_taper_Xc.vtk","vtk/example_twist_taper_Xg.vtk", "vtk/example_twist_taper_Xth_in_Xg.vtk")
 
 contains
 
@@ -80,9 +80,9 @@ contains
    !> \]
    !>
    !>  Knots are preserved; only the control points are updated.
-   pure subroutine build_twist_taper(this, Length, nc, twist_deg, taper)
+   pure subroutine build_twist_taper(this, L, nc, twist_deg, taper)
       type(nurbs_volume), intent(inout) :: this !! Volume to be transformed.
-      real(rk), intent(in) :: Length(3)         !! Box lengths \((L_x,L_y,L_z)\).
+      real(rk), intent(in) :: L(3)              !! Box lengths \((L_x,L_y,L_z)\).
       integer,  intent(in) :: nc(3)             !! Control points sizes.
       real(rk), intent(in) :: twist_deg         !! Total twist at top face (degrees).
       real(rk), intent(in) :: taper             !! In-plane scale at top face (0<`taper`≤1).
@@ -90,14 +90,14 @@ contains
       real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
       real(rk), parameter :: pi = acos(-1.0_rk)
       real(rk) :: t, ang, sxy, ca, sa, x, y, cx, cy
-      integer :: i, j, k, dim
+      integer :: i, j, k, d
 
       Xc  = this%get_Xc()
-      dim = size(Xc,2)
-      X4  = reshape(Xc, [nc(1), nc(2), nc(3), dim])
+      d  = size(Xc,2)
+      X4 = reshape(Xc, shape=[nc(1), nc(2), nc(3), d], order=[1,2,3,4])
 
-      cx = 0.5_rk*Length(1)
-      cy = 0.5_rk*Length(2)
+      cx = 0.5_rk*L(1)
+      cy = 0.5_rk*L(2)
       do k=1,nc(3)
          t   = merge(real(k-1,rk)/real(max(1,nc(3)-1),rk), 0.0_rk, nc(3)>1)
          ang = (twist_deg*pi/180.0_rk) * t
@@ -114,7 +114,7 @@ contains
          end do
       end do
 
-      Xc = reshape(X4, [product(nc), dim])
+      Xc = reshape(X4, shape=[product(nc), d], order=[1,2])
 
       if (this%is_rational()) then
          call this%set(this%get_knot(1), this%get_knot(2), this%get_knot(3), Xc, this%get_Wc())
