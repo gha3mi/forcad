@@ -33,15 +33,15 @@ program example_plate_hole_4_3d
 contains
 
    !===============================================================================
-   pure subroutine set_Xc_Wc(type, params, X_c, W_c)
-      character(len=*), intent(in) :: type
+   pure subroutine set_Xc_Wc(tp, params, X_c, W_c)
+      character(len=*), intent(in) :: tp
       real(rk), intent(in), contiguous :: params(:)
       real(rk), allocatable, intent(out) :: X_c(:,:)
       real(rk), allocatable, intent(out) :: W_c(:)
 
       real(rk) :: r1, r2, l, w, h
 
-      select case (type)
+      select case (tp)
        case('circle')
 
          r1 = params(1)
