@@ -2905,7 +2905,7 @@ contains
         real(rk), allocatable :: Bmat(:,:), S(:), T(:,:), TtT(:,:), TtX(:,:), C(:,:), R(:,:), v(:)
         real(rk), allocatable :: Jacv(:,:), Jac_red(:,:), rvec(:), JtJ(:,:), Jtr(:,:), delta_u(:,:), delta_v(:)
         real(rk) :: tol_, lamx_, mu, regw, epss, cost_prev, cost_now
-        integer :: dim_, it, maxit_, nvar, jj, i, j, k
+        integer :: dim_, it, maxit_, nvar, i, j, k
 
         if (.not. this%err%ok) return
 
