@@ -1,0 +1,1567 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>lsq_fit_nurbs_1d &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>lsq_fit_nurbs_1d      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 1.2% of total for programs.">56 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/lsq_fit_nurbs_1d.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/lsq_fit_nurbs_1d.f90.html'>lsq_fit_nurbs_1d.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">lsq_fit_nurbs_1d</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-xdata~10">Xdata</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-xg_eval~4">Xg_eval</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-xt~96">Xt</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-err1~4">err1</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-err2~4">err2</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-err3~4">err3</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-i~112">i</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-n~31">n</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-nrb~2">nrb</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-pi~10">pi</a>
+            <a class="list-group-item" href="../program/lsq_fit_nurbs_1d.html#variable-rms~4">rms</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: program~~lsq_fit_nurbs_1d~~UsesGraph Pages: 1 -->
+<svg id="programlsq_fit_nurbs_1dUsesGraph" width="578pt" height="156pt"
+ viewBox="0.00 0.00 578.00 156.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 151.84)">
+<title>program~~lsq_fit_nurbs_1d~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-151.84 574.33,-151.84 574.33,4 -4,4"/>
+<!-- program~lsq_fit_nurbs_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node1" class="node">
+<title>program~lsq_fit_nurbs_1d</title>
+<polygon fill="none" stroke="black" points="570.33,-87.27 474.06,-87.27 474.06,-63 570.33,-63 570.33,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="522.19" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50">lsq_fit_nurbs_1d</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="438.06,-87.27 384.06,-87.27 384.06,-63 438.06,-63 438.06,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="411.06" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;module~forcad -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge1" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M473.64,-75.14C465.73,-75.14 457.61,-75.14 449.98,-75.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="449.99,-71.64 439.99,-75.14 449.99,-78.64 449.99,-71.64"/>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node3" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node3"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="78.27,-66.27 0,-66.27 0,-42 78.27,-42 78.27,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="39.13" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M396.41,-87.37C384.54,-97.24 366.41,-110.52 348.06,-117.14 265.45,-146.9 236.61,-157.34 151.4,-136.13"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node4" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node4"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="343.18,-108.27 227.41,-108.27 227.41,-84 343.18,-84 343.18,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M383.81,-79.59C375.16,-81.06 365.1,-82.76 354.8,-84.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="354.34,-81.04 345.06,-86.16 355.51,-87.94 354.34,-81.04"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node5" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node5"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="348.06,-66.27 222.54,-66.27 222.54,-42 348.06,-42 348.06,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M383.81,-70.68C376.48,-69.44 368.13,-68.02 359.48,-66.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="360.35,-63.15 349.9,-64.93 359.18,-70.05 360.35,-63.15"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node6" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node6"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="348.06,-24.27 222.54,-24.27 222.54,0 348.06,0 348.06,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M394.21,-62.65C382.1,-53.55 364.71,-41.42 348.06,-33.13 345.01,-31.62 341.83,-30.17 338.59,-28.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="340.11,-25.63 329.52,-25.21 337.53,-32.14 340.11,-25.63"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge7" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.24,-108.68C222.45,-122.16 171.1,-141.04 151.4,-136.13"/>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M149.4,-136.13C111.75,-126.76 77.59,-95.87 57.84,-74.8"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="60.61,-72.65 51.31,-67.58 55.42,-77.34 60.61,-72.65"/>
+</g>
+<!-- fordebug -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node7" class="node">
+<title>fordebug</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="180.54,-108.27 120.27,-108.27 120.27,-84 180.54,-84 180.54,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="150.4" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fordebug</text>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;fordebug -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge6" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M227.17,-96.14C215.49,-96.14 203.43,-96.14 192.45,-96.14"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="192.55,-92.64 182.55,-96.14 192.55,-99.64 192.55,-92.64"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_node8" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~UsesGraph_node8"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="186.54,-66.27 114.27,-66.27 114.27,-42 186.54,-42 186.54,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="150.4" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge8" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M244.43,-83.53C229.66,-78.87 212.8,-73.54 197.52,-68.71"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="198.77,-65.43 188.18,-65.76 196.66,-72.11 198.77,-65.43"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge10" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M247.63,-41.51C211.75,-29.42 161.11,-13.14 151.4,-14.13"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;fordebug -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge9" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M244.43,-66.74C227.62,-72.05 208.09,-78.22 191.29,-83.53"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="190.61,-80.07 182.13,-86.42 192.72,-86.75 190.61,-80.07"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge11" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M222.13,-54.13C214.06,-54.13 205.9,-54.13 198.13,-54.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="198.23,-50.64 188.23,-54.14 198.23,-57.64 198.23,-50.64"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge13" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M222.3,-10.82C199.91,-10.94 174.47,-11.76 151.4,-14.13"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M149.4,-14.13C123.05,-16.85 95.02,-27.28 73.95,-36.81"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="72.55,-33.6 64.98,-41.02 75.52,-39.94 72.55,-33.6"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;fordebug -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge12" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M238.12,-24.74C232.65,-27.12 227.32,-29.9 222.54,-33.13 202.18,-46.91 205.34,-59.29 186.54,-75.14 185.76,-75.8 184.95,-76.45 184.12,-77.09"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="182.25,-74.14 176.05,-82.73 186.26,-79.87 182.25,-74.14"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge14" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M244.43,-24.74C229.66,-29.4 212.8,-34.73 197.52,-39.56"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="196.66,-36.16 188.18,-42.51 198.77,-42.84 196.66,-36.16"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~lsq_fit_nurbs_1d~~UsesGraph_edge15" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M113.93,-54.13C106.22,-54.13 97.93,-54.13 89.79,-54.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="89.96,-50.64 79.96,-54.14 89.96,-57.64 89.96,-50.64"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: program~~lsq_fit_nurbs_1d~~CallsGraph Pages: 1 -->
+<svg id="programlsq_fit_nurbs_1dCallsGraph" width="641pt" height="477pt"
+ viewBox="0.00 0.00 641.00 477.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph" class="graph" transform="scale(0.51264 0.51264) rotate(0) translate(4 926.27)">
+<title>program~~lsq_fit_nurbs_1d~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-926.27 1246.39,-926.27 1246.39,4 -4,4"/>
+<!-- program~lsq_fit_nurbs_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node1" class="node">
+<title>program~lsq_fit_nurbs_1d</title>
+<polygon fill="none" stroke="black" points="96.27,-310.27 0,-310.27 0,-286 96.27,-286 96.27,-310.27"/>
+<text xml:space="preserve" text-anchor="middle" x="48.13" y="-294.53" font-family="Helvetica,sans-Serif" font-size="10.50">lsq_fit_nurbs_1d</text>
+</g>
+<!-- none~get_knot~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node2" class="node">
+<title>none~get_knot~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node2"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_knot~2" xlink:title="nurbs_curve%get_knot">
+<polygon fill="#a7506f" stroke="#a7506f" points="271.66,-880.27 139.39,-880.27 139.39,-856 271.66,-856 271.66,-880.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-864.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;none~get_knot~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge1" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;none~get_knot~2</title>
+<path fill="none" stroke="#ff0000" d="M48.88,-310.5C48.2,-367.59 50.43,-610.26 132.27,-784.13 143.99,-809.04 165.18,-832.34 181.59,-848.05"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="178.84,-850.28 188.55,-854.52 183.61,-845.15 178.84,-850.28"/>
+</g>
+<!-- none~get_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node3" class="node">
+<title>none~get_xg~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node3"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_xg~2" xlink:title="nurbs_curve%get_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="267.16,-775.27 143.89,-775.27 143.89,-751 267.16,-751 267.16,-775.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-759.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;none~get_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge2" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;none~get_xg~2</title>
+<path fill="none" stroke="#ff0000" d="M51.44,-310.54C59.65,-353.65 89.28,-500.62 132.27,-616.13 149.33,-661.98 176.09,-712.59 191.81,-740.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="188.56,-742.22 196.51,-749.22 194.67,-738.79 188.56,-742.22"/>
+</g>
+<!-- none~set~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node4" class="node">
+<title>none~set~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node4"><a xlink:href="../type/nurbs_curve.html#boundprocedure-set~2" xlink:title="nurbs_curve%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="256.66,-607.27 154.39,-607.27 154.39,-583 256.66,-583 256.66,-607.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-591.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;none~set~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge3" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;none~set~2</title>
+<path fill="none" stroke="#ff0000" d="M55.61,-310.52C79.36,-355.9 161.83,-513.52 192.72,-572.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="189.58,-574.12 197.32,-581.36 195.79,-570.87 189.58,-574.12"/>
+</g>
+<!-- proc~create~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node5" class="node">
+<title>proc~create~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node5"><a xlink:href="../proc/create~2.html" xlink:title="nurbs_curve%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="265.66,-426.27 145.39,-426.27 145.39,-402 265.66,-402 265.66,-426.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-410.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%create</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~create~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge4" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~create~2</title>
+<path fill="none" stroke="#ff0000" d="M66.06,-310.77C93.15,-330.99 146.44,-370.77 178.43,-394.65"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="176.3,-397.43 186.41,-400.61 180.49,-391.82 176.3,-397.43"/>
+</g>
+<!-- proc~export_xc~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node6" class="node">
+<title>proc~export_xc~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node6"><a xlink:href="../proc/export_xc~2.html" xlink:title="nurbs_curve%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="275.04,-270.27 136.02,-270.27 136.02,-246 275.04,-246 275.04,-270.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-254.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~export_xc~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge5" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~export_xc~2</title>
+<path fill="none" stroke="#ff0000" d="M96.6,-285.92C111.76,-282.01 128.73,-277.65 144.65,-273.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="145.19,-277.02 154.01,-271.14 143.45,-270.24 145.19,-277.02"/>
+</g>
+<!-- proc~export_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node7" class="node">
+<title>proc~export_xg~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node7"><a xlink:href="../proc/export_xg~2.html" xlink:title="nurbs_curve%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="275.41,-228.27 135.64,-228.27 135.64,-204 275.41,-204 275.41,-228.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-212.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~export_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge6" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~export_xg~2</title>
+<path fill="none" stroke="#ff0000" d="M62.85,-285.69C78.57,-272.02 105.61,-250.27 132.27,-237.13 135.49,-235.55 138.86,-234.06 142.29,-232.66"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="143.19,-236.06 151.34,-229.3 140.75,-229.5 143.19,-236.06"/>
+</g>
+<!-- proc~get_continuity~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node8" class="node">
+<title>proc~get_continuity~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node8"><a xlink:href="../proc/get_continuity~2.html" xlink:title="nurbs_curve%get_continuity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="909.6,-487.27 748.08,-487.27 748.08,-463 909.6,-463 909.6,-487.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-471.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_continuity</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~get_continuity~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge7" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~get_continuity~2</title>
+<path fill="none" stroke="#ff0000" d="M96.67,-308.94C229.96,-339.24 607.54,-425.06 761.37,-460.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="760.49,-463.42 771.02,-462.22 762.04,-456.59 760.49,-463.42"/>
+</g>
+<!-- proc~get_degree -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node9" class="node">
+<title>proc~get_degree</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node9"><a xlink:href="../proc/get_degree.html" xlink:title="nurbs_curve%get_degree">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="278.79,-186.27 132.27,-186.27 132.27,-162 278.79,-162 278.79,-186.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-170.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_degree</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~get_degree -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge8" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~get_degree</title>
+<path fill="none" stroke="#ff0000" d="M55.81,-285.61C68.03,-263.87 96.11,-219.2 132.27,-195.13 134.22,-193.83 136.26,-192.61 138.36,-191.47"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="139.64,-194.73 147.16,-187.27 136.63,-188.41 139.64,-194.73"/>
+</g>
+<!-- proc~get_nc -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node10" class="node">
+<title>proc~get_nc</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node10"><a xlink:href="../proc/get_nc.html" xlink:title="nurbs_curve%get_nc">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="266.41,-144.27 144.64,-144.27 144.64,-120 266.41,-120 266.41,-144.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-128.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_nc</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~get_nc -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge9" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~get_nc</title>
+<path fill="none" stroke="#ff0000" d="M52.78,-285.51C61.57,-257.33 86.66,-189.02 132.27,-153.13 133.59,-152.1 134.95,-151.12 136.36,-150.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="137.82,-153.37 144.83,-145.43 134.39,-147.27 137.82,-153.37"/>
+</g>
+<!-- proc~lsq_fit_nurbs~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node11" class="node">
+<title>proc~lsq_fit_nurbs~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node11"><a xlink:href="../proc/lsq_fit_nurbs~2.html" xlink:title="nurbs_curve%lsq_fit_nurbs">
+<polygon fill="#d9534f" stroke="#d9534f" points="481.56,-308.27 329.04,-308.27 329.04,-284 481.56,-284 481.56,-308.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-292.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%lsq_fit_nurbs</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~lsq_fit_nurbs~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge10" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~lsq_fit_nurbs~2</title>
+<path fill="none" stroke="#ff0000" d="M96.67,-297.87C152.98,-297.55 247.91,-297.02 317.46,-296.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="317.33,-300.12 327.31,-296.57 317.29,-293.12 317.33,-300.12"/>
+</g>
+<!-- proc~show~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node12" class="node">
+<title>proc~show~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node12"><a xlink:href="../proc/show~2.html" xlink:title="nurbs_curve%show">
+<polygon fill="#d9534f" stroke="#d9534f" points="262.29,-102.27 148.77,-102.27 148.77,-78 262.29,-78 262.29,-102.27"/>
+<text xml:space="preserve" text-anchor="middle" x="205.53" y="-86.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%show</text>
+</a>
+</g>
+</g>
+<!-- program~lsq_fit_nurbs_1d&#45;&gt;proc~show~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge11" class="edge">
+<title>program~lsq_fit_nurbs_1d&#45;&gt;proc~show~2</title>
+<path fill="none" stroke="#ff0000" d="M51.02,-285.52C56.7,-251.91 76.86,-159.5 132.27,-111.13 134.19,-109.46 136.24,-107.92 138.38,-106.5"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="139.9,-109.65 146.97,-101.76 136.52,-103.53 139.9,-109.65"/>
+</g>
+<!-- proc~get_knot_all~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node19" class="node">
+<title>proc~get_knot_all~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node19"><a xlink:href="../proc/get_knot_all~2.html" xlink:title="nurbs_curve%get_knot_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="480.44,-922.27 330.17,-922.27 330.17,-898 480.44,-898 480.44,-922.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-906.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~2&#45;&gt;proc~get_knot_all~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge12" class="edge">
+<title>none~get_knot~2&#45;&gt;proc~get_knot_all~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M265.87,-880.74C287.28,-885.28 311.66,-890.46 333.92,-895.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="333.01,-898.57 343.52,-897.23 334.47,-891.73 333.01,-898.57"/>
+</g>
+<!-- proc~get_knoti~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node20" class="node">
+<title>proc~get_knoti~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node20"><a xlink:href="../proc/get_knoti~2.html" xlink:title="nurbs_curve%get_knoti">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="472.94,-880.27 337.67,-880.27 337.67,-856 472.94,-856 472.94,-880.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-864.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knoti</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~2&#45;&gt;proc~get_knoti~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge13" class="edge">
+<title>none~get_knot~2&#45;&gt;proc~get_knoti~2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M272.11,-868.13C289.27,-868.13 307.94,-868.13 325.69,-868.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="325.69,-871.64 335.69,-868.14 325.69,-864.64 325.69,-871.64"/>
+</g>
+<!-- proc~get_xg_all~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node21" class="node">
+<title>proc~get_xg_all~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node21"><a xlink:href="../proc/get_xg_all~2.html" xlink:title="nurbs_curve%get_Xg_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="475.94,-838.27 334.67,-838.27 334.67,-814 475.94,-814 475.94,-838.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-822.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xg_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xg_all~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge14" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xg_all~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M235.55,-775.67C257.13,-784.67 287.44,-796.67 314.79,-805.13 321.04,-807.07 327.59,-808.92 334.17,-810.67"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="333.22,-814.04 343.78,-813.14 334.96,-807.26 333.22,-814.04"/>
+</g>
+<!-- proc~get_xgid~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node22" class="node">
+<title>proc~get_xgid~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node22"><a xlink:href="../proc/get_xgid~2.html" xlink:title="nurbs_curve%get_Xgid">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="471.81,-796.27 338.79,-796.27 338.79,-772 471.81,-772 471.81,-796.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-780.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xgid</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xgid~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge15" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xgid~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M267.48,-769.61C286.35,-771.61 307.4,-773.85 327.22,-775.95"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="326.58,-779.4 336.89,-776.98 327.32,-772.44 326.58,-779.4"/>
+</g>
+<!-- proc~get_xgi~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node23" class="node">
+<title>proc~get_xgi~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node23"><a xlink:href="../proc/get_xgi~2.html" xlink:title="nurbs_curve%get_Xgi">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="468.44,-754.27 342.17,-754.27 342.17,-730 468.44,-730 468.44,-754.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-738.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xgi</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg~2&#45;&gt;proc~get_xgi~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge16" class="edge">
+<title>none~get_xg~2&#45;&gt;proc~get_xgi~2</title>
+<path fill="none" stroke="#ff8b00" stroke-dasharray="5,2" d="M267.48,-756.66C287.4,-754.55 309.74,-752.18 330.5,-749.97"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="330.76,-753.46 340.34,-748.93 330.02,-746.5 330.76,-753.46"/>
+</g>
+<!-- proc~set1a -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node25" class="node">
+<title>proc~set1a</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node25"><a xlink:href="../proc/set1a.html" xlink:title="nurbs_curve%set1a">
+<polygon fill="#d9534f" stroke="#d9534f" points="463.19,-586.27 347.42,-586.27 347.42,-562 463.19,-562 463.19,-586.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-570.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1a</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1a -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge17" class="edge">
+<title>none~set~2&#45;&gt;proc~set1a</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M256.95,-589.78C280.87,-587.24 309.83,-584.17 335.72,-581.42"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="335.9,-584.92 345.48,-580.38 335.16,-577.96 335.9,-584.92"/>
+</g>
+<!-- proc~set1~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node26" class="node">
+<title>proc~set1~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node26"><a xlink:href="../proc/set1~2.html" xlink:title="nurbs_curve%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="459.81,-670.27 350.79,-670.27 350.79,-646 459.81,-646 459.81,-670.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-654.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set1~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge18" class="edge">
+<title>none~set~2&#45;&gt;proc~set1~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M235.55,-607.67C257.13,-616.67 287.44,-628.67 314.79,-637.13 322.74,-639.6 331.17,-641.93 339.55,-644.08"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="338.47,-647.42 349.02,-646.43 340.16,-640.62 338.47,-647.42"/>
+</g>
+<!-- proc~set2~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node27" class="node">
+<title>proc~set2~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node27"><a xlink:href="../proc/set2~2.html" xlink:title="nurbs_curve%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="459.81,-712.27 350.79,-712.27 350.79,-688 459.81,-688 459.81,-712.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-696.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set2~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge19" class="edge">
+<title>none~set~2&#45;&gt;proc~set2~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M218.95,-607.77C237.9,-626.28 275.93,-660.59 314.79,-679.13 322.59,-682.86 331.09,-685.94 339.66,-688.5"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="338.45,-691.8 349.02,-691.06 340.3,-685.04 338.45,-691.8"/>
+</g>
+<!-- proc~set3~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node28" class="node">
+<title>proc~set3~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node28"><a xlink:href="../proc/set3~2.html" xlink:title="nurbs_curve%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="459.81,-628.27 350.79,-628.27 350.79,-604 459.81,-604 459.81,-628.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-612.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set3~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge20" class="edge">
+<title>none~set~2&#45;&gt;proc~set3~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M256.95,-600.49C281.98,-603.15 312.52,-606.39 339.29,-609.23"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="338.69,-612.69 349,-610.26 339.43,-605.73 338.69,-612.69"/>
+</g>
+<!-- proc~set4~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node29" class="node">
+<title>proc~set4~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node29"><a xlink:href="../proc/set4~2.html" xlink:title="nurbs_curve%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="459.81,-544.27 350.79,-544.27 350.79,-520 459.81,-520 459.81,-544.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-528.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set~2&#45;&gt;proc~set4~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge21" class="edge">
+<title>none~set~2&#45;&gt;proc~set4~2</title>
+<path fill="none" stroke="#e7ff00" stroke-dasharray="5,2" d="M235.55,-582.6C257.13,-573.6 287.44,-561.6 314.79,-553.13 322.74,-550.67 331.17,-548.34 339.55,-546.19"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="340.16,-549.65 349.02,-543.84 338.47,-542.85 340.16,-549.65"/>
+</g>
+<!-- interface~compute_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node14" class="node">
+<title>interface~compute_xg~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node14"><a xlink:href="../interface/compute_xg~2.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="444.44,-266.27 366.17,-266.27 366.17,-242 444.44,-242 444.44,-266.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-250.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;interface~compute_xg~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge22" class="edge">
+<title>proc~create~2&#45;&gt;interface~compute_xg~2</title>
+<path fill="none" stroke="#5cff00" d="M212.41,-401.83C226.18,-374.41 263.28,-308.14 314.79,-275.13 326.66,-267.53 340.98,-262.68 354.66,-259.58"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="355.31,-263.02 364.45,-257.66 353.96,-256.15 355.31,-263.02"/>
+</g>
+<!-- proc~is_rational~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node24" class="node">
+<title>proc~is_rational~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node24"><a xlink:href="../proc/is_rational~2.html" xlink:title="nurbs_curve%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="475.94,-464.27 334.67,-464.27 334.67,-440 475.94,-440 475.94,-464.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-448.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create~2&#45;&gt;proc~is_rational~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge23" class="edge">
+<title>proc~create~2&#45;&gt;proc~is_rational~2</title>
+<path fill="none" stroke="#5cff00" d="M266.14,-425.59C285.42,-429.29 307.09,-433.46 327.45,-437.37"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="326.63,-440.78 337.12,-439.23 327.96,-433.9 326.63,-440.78"/>
+</g>
+<!-- set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node31" class="node">
+<title>set</title>
+<polygon fill="#777777" stroke="#777777" points="644.45,-544.27 590.45,-544.27 590.45,-520 644.45,-520 644.45,-544.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-528.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
+</g>
+<!-- proc~create~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge24" class="edge">
+<title>proc~create~2&#45;&gt;set</title>
+<path fill="none" stroke="#5cff00" d="M225.25,-426.66C246.2,-440.11 281.57,-461.15 314.79,-473.13 339.45,-482.03 503.96,-512.03 579.12,-525.49"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="578.43,-528.93 588.89,-527.24 579.66,-522.03 578.43,-528.93"/>
+</g>
+<!-- proc~cmp_elem_xc_vis~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node16" class="node">
+<title>proc~cmp_elem_xc_vis~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node16"><a xlink:href="../proc/cmp_elem_xc_vis~2.html" xlink:title="nurbs_curve%cmp_elem_Xc_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="495.44,-224.27 315.17,-224.27 315.17,-200 495.44,-200 495.44,-224.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-208.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xc_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc~2&#45;&gt;proc~cmp_elem_xc_vis~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge25" class="edge">
+<title>proc~export_xc~2&#45;&gt;proc~cmp_elem_xc_vis~2</title>
+<path fill="none" stroke="#00ff2e" d="M260.83,-245.5C285.04,-239.87 313.75,-233.2 339.11,-227.3"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="339.7,-230.75 348.64,-225.08 338.11,-223.94 339.7,-230.75"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node18" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node18"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="458.69,-182.27 351.92,-182.27 351.92,-158 458.69,-158 458.69,-182.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-166.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc~2&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge26" class="edge">
+<title>proc~export_xc~2&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ff2e" d="M262.95,-245.57C268.53,-243.21 273.92,-240.43 278.79,-237.13 300.29,-222.59 292.91,-205.11 314.79,-191.13 322.72,-186.07 331.74,-182.22 340.93,-179.3"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="341.6,-182.75 350.29,-176.69 339.71,-176.01 341.6,-182.75"/>
+</g>
+<!-- proc~export_xc~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge27" class="edge">
+<title>proc~export_xc~2&#45;&gt;set</title>
+<path fill="none" stroke="#00ff2e" d="M213.07,-270.41C227.63,-296.49 265.36,-357.5 314.79,-388.13 385.08,-431.7 421.9,-394.04 495.81,-431.13 536.72,-451.67 575.77,-488.6 597.86,-511.66"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="595.03,-513.76 604.43,-518.66 600.13,-508.97 595.03,-513.76"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node17" class="node">
+<title>proc~cmp_elem_xg_vis~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node17"><a xlink:href="../proc/cmp_elem_xg_vis~2.html" xlink:title="nurbs_curve%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="495.81,-123.27 314.79,-123.27 314.79,-99 495.81,-99 495.81,-123.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.3" y="-107.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xg_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xg~2&#45;&gt;proc~cmp_elem_xg_vis~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge28" class="edge">
+<title>proc~export_xg~2&#45;&gt;proc~cmp_elem_xg_vis~2</title>
+<path fill="none" stroke="#00ffb9" d="M262.95,-203.57C268.53,-201.21 273.92,-198.43 278.79,-195.13 300.29,-180.59 294.19,-164.93 314.79,-149.13 326.1,-140.46 339.69,-133.38 352.82,-127.78"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="353.82,-131.14 361.79,-124.16 351.21,-124.65 353.82,-131.14"/>
+</g>
+<!-- proc~export_xg~2&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge29" class="edge">
+<title>proc~export_xg~2&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ffb9" d="M260.83,-203.5C285.44,-197.78 314.7,-190.98 340.36,-185.01"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="341.06,-188.44 350.01,-182.76 339.48,-181.62 341.06,-188.44"/>
+</g>
+<!-- proc~export_xg~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge30" class="edge">
+<title>proc~export_xg~2&#45;&gt;set</title>
+<path fill="none" stroke="#00ffb9" d="M265.98,-228.62C270.59,-230.98 274.94,-233.79 278.79,-237.13 308.22,-262.71 286.55,-290.25 314.79,-317.13 377.38,-376.73 425.66,-337.67 495.81,-388.13 543.14,-422.19 583.2,-478.91 603.06,-510.03"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="599.93,-511.63 608.2,-518.25 605.87,-507.92 599.93,-511.63"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node13" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node13"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1077.12,-628.27 954.6,-628.27 954.6,-604 1077.12,-604 1077.12,-628.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1015.86" y="-612.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~get_continuity~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge31" class="edge">
+<title>proc~get_continuity~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#00b9ff" d="M846.26,-487.65C878.63,-512.31 950.87,-567.37 989.44,-596.76"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="987.2,-599.46 997.27,-602.73 991.44,-593.89 987.2,-599.46"/>
+</g>
+<!-- proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node15" class="node">
+<title>proc~basis_bspline</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node15"><a xlink:href="../proc/basis_bspline.html" xlink:title="basis_bspline">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1056.87,-230.27 974.85,-230.27 974.85,-206 1056.87,-206 1056.87,-230.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1015.86" y="-214.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_nurbs~2&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge32" class="edge">
+<title>proc~lsq_fit_nurbs~2&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#e700ff" d="M469.25,-308.77C489.17,-312.2 511.33,-315.43 531.81,-317.13 703.87,-331.43 757.79,-343.97 918.6,-281.13 945.37,-270.67 972.46,-252.06 991.06,-237.77"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="993.08,-240.64 998.77,-231.7 988.75,-235.14 993.08,-240.64"/>
+</g>
+<!-- proc~solve -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node30" class="node">
+<title>proc~solve</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node30"><a xlink:href="../proc/solve.html" xlink:title="solve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="644.45,-308.27 590.45,-308.27 590.45,-284 644.45,-284 644.45,-308.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-292.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_nurbs~2&#45;&gt;proc~solve -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge33" class="edge">
+<title>proc~lsq_fit_nurbs~2&#45;&gt;proc~solve</title>
+<path fill="none" stroke="#e700ff" d="M481.87,-296.13C514.77,-296.13 551.88,-296.13 578.78,-296.13"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="578.49,-299.64 588.49,-296.14 578.49,-292.64 578.49,-299.64"/>
+</g>
+<!-- proc~lsq_fit_nurbs~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge34" class="edge">
+<title>proc~lsq_fit_nurbs~2&#45;&gt;set</title>
+<path fill="none" stroke="#e700ff" d="M427.74,-308.57C446.92,-320.32 475.1,-339.24 495.81,-360.13 542.84,-407.59 584.33,-475.2 604.13,-509.82"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="601.07,-511.52 609.03,-518.51 607.17,-508.09 601.07,-511.52"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node36" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node36"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1242.39,-649.27 1113.12,-649.27 1113.12,-625 1242.39,-625 1242.39,-649.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1177.76" y="-633.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge35" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1077.31,-624.07C1085.18,-625.11 1093.33,-626.18 1101.41,-627.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1100.88,-630.7 1111.25,-628.53 1101.79,-623.76 1100.88,-630.7"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node37" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node37"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1242.39,-607.27 1113.12,-607.27 1113.12,-583 1242.39,-583 1242.39,-607.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1177.76" y="-591.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge36" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1077.31,-608.2C1085.18,-607.16 1093.33,-606.09 1101.41,-605.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1101.79,-608.51 1111.25,-603.74 1100.88,-601.57 1101.79,-608.51"/>
+</g>
+<!-- proc~compute_xg_bspline_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node38" class="node">
+<title>proc~compute_xg_bspline_1d</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node38"><a xlink:href="../proc/compute_xg_bspline_1d.html" xlink:title="compute_Xg_bspline_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="899.1,-272.27 758.58,-272.27 758.58,-248 899.1,-248 899.1,-272.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-256.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge37" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M444.83,-254.68C513.04,-255.65 656.42,-257.7 747.1,-258.99"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="746.87,-262.48 756.92,-259.13 746.97,-255.48 746.87,-262.48"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node39" class="node">
+<title>proc~compute_xg_bspline_1d_1point</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node39"><a xlink:href="../proc/compute_xg_bspline_1d_1point.html" xlink:title="compute_Xg_bspline_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="918.6,-230.27 739.08,-230.27 739.08,-206 918.6,-206 918.6,-230.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-214.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d_1point -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge38" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_bspline_1d_1point</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M444.83,-250.84C508.27,-245.43 636.72,-234.46 727.33,-226.72"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="727.56,-230.21 737.23,-225.87 726.97,-223.24 727.56,-230.21"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node40" class="node">
+<title>proc~compute_xg_nurbs_1d</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node40"><a xlink:href="../proc/compute_xg_nurbs_1d.html" xlink:title="compute_Xg_nurbs_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="683.58,-148.27 551.31,-148.27 551.31,-124 683.58,-124 683.58,-148.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-132.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge39" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M444.85,-252.54C462.02,-250.08 481.53,-244.67 495.81,-233.13 524.89,-209.65 502.88,-180.81 531.81,-157.13 534.68,-154.79 537.78,-152.69 541.03,-150.83"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="542.35,-154.08 549.82,-146.57 539.3,-147.78 542.35,-154.08"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node41" class="node">
+<title>proc~compute_xg_nurbs_1d_1point</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node41"><a xlink:href="../proc/compute_xg_nurbs_1d_1point.html" xlink:title="compute_Xg_nurbs_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="703.08,-190.27 531.81,-190.27 531.81,-166 703.08,-166 703.08,-190.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-174.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge40" class="edge">
+<title>interface~compute_xg~2&#45;&gt;proc~compute_xg_nurbs_1d_1point</title>
+<path fill="none" stroke="#ff5000" stroke-dasharray="5,2" d="M444.6,-249.04C460.95,-245.89 479.89,-240.91 495.81,-233.13 514.27,-224.12 513.66,-213.77 531.81,-204.13 538.73,-200.46 546.25,-197.22 553.86,-194.38"/>
+<polygon fill="#ff5000" stroke="#ff5000" points="554.89,-197.73 563.19,-191.14 552.59,-191.12 554.89,-197.73"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node32" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node32"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="660.33,-106.27 574.56,-106.27 574.56,-82 660.33,-82 660.33,-106.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-90.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xc_vis~2&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge41" class="edge">
+<title>proc~cmp_elem_xc_vis~2&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#fff100" d="M482.4,-199.63C487.18,-197.25 491.71,-194.44 495.81,-191.13 524.89,-167.65 502.88,-138.81 531.81,-115.13 540.77,-107.8 551.94,-102.97 563.19,-99.81"/>
+<polygon fill="#fff100" stroke="#fff100" points="563.98,-103.22 572.91,-97.52 562.38,-96.41 563.98,-103.22"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~2&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge42" class="edge">
+<title>proc~cmp_elem_xg_vis~2&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#bbff00" d="M496.03,-103.88C518.8,-102.03 542.55,-100.11 562.88,-98.47"/>
+<polygon fill="#bbff00" stroke="#bbff00" points="562.91,-101.98 572.6,-97.68 562.35,-95 562.91,-101.98"/>
+</g>
+<!-- proc~set1a&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge44" class="edge">
+<title>proc~set1a&#45;&gt;set</title>
+<path fill="none" stroke="#0035ff" d="M463.45,-562.71C500.14,-555.38 546.76,-546.06 578.84,-539.65"/>
+<polygon fill="#0035ff" stroke="#0035ff" points="579.35,-543.12 588.47,-537.73 577.98,-536.25 579.35,-543.12"/>
+</g>
+<!-- proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node33" class="node">
+<title>proc~cmp_degree~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node33"><a xlink:href="../proc/cmp_degree~2.html" xlink:title="nurbs_curve%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="693.71,-628.27 541.19,-628.27 541.19,-604 693.71,-604 693.71,-628.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-612.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set1a&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge43" class="edge">
+<title>proc~set1a&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#0035ff" d="M463.45,-585.56C487.69,-590.4 516.27,-596.11 542.12,-601.28"/>
+<polygon fill="#0035ff" stroke="#0035ff" points="541.42,-604.71 551.91,-603.24 542.79,-597.85 541.42,-604.71"/>
+</g>
+<!-- proc~set1~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge46" class="edge">
+<title>proc~set1~2&#45;&gt;set</title>
+<path fill="none" stroke="#1a00ff" d="M460.05,-651.3C472.39,-648.19 485.04,-643.69 495.81,-637.13 516.82,-624.36 513.84,-611.91 531.81,-595.13 549.16,-578.94 570.63,-563 587.6,-551.2"/>
+<polygon fill="#1a00ff" stroke="#1a00ff" points="589.48,-554.16 595.76,-545.62 585.53,-548.38 589.48,-554.16"/>
+</g>
+<!-- proc~set1~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge45" class="edge">
+<title>proc~set1~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#1a00ff" d="M460.14,-647.37C485.15,-642.37 515.29,-636.35 542.4,-630.93"/>
+<polygon fill="#1a00ff" stroke="#1a00ff" points="542.81,-634.42 551.93,-629.03 541.44,-627.56 542.81,-634.42"/>
+</g>
+<!-- proc~set2~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge49" class="edge">
+<title>proc~set2~2&#45;&gt;set</title>
+<path fill="none" stroke="#6b00ff" d="M460.25,-695.88C473,-692.73 485.78,-687.55 495.81,-679.13 526.92,-653.03 506.65,-627.02 531.81,-595.13 545.94,-577.22 566.36,-561.83 583.6,-550.74"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="585.36,-553.76 592.02,-545.52 581.68,-547.81 585.36,-553.76"/>
+</g>
+<!-- proc~cmp_nc~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node34" class="node">
+<title>proc~cmp_nc~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node34"><a xlink:href="../proc/cmp_nc~2.html" xlink:title="nurbs_curve%cmp_nc">
+<polygon fill="#d9534f" stroke="#d9534f" points="681.33,-712.27 553.56,-712.27 553.56,-688 681.33,-688 681.33,-712.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-696.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_nc</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~2&#45;&gt;proc~cmp_nc~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge47" class="edge">
+<title>proc~set2~2&#45;&gt;proc~cmp_nc~2</title>
+<path fill="none" stroke="#6b00ff" d="M460.14,-700.13C485.04,-700.13 515.02,-700.13 542.04,-700.13"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="541.9,-703.64 551.9,-700.14 541.9,-696.64 541.9,-703.64"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node35" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node35"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="680.58,-670.27 554.31,-670.27 554.31,-646 680.58,-646 680.58,-670.27"/>
+<text xml:space="preserve" text-anchor="middle" x="617.45" y="-654.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~2&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge48" class="edge">
+<title>proc~set2~2&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#6b00ff" d="M460.14,-689.37C485.37,-684.33 515.81,-678.25 543.1,-672.79"/>
+<polygon fill="#6b00ff" stroke="#6b00ff" points="543.57,-676.27 552.69,-670.88 542.2,-669.4 543.57,-676.27"/>
+</g>
+<!-- proc~set3~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge51" class="edge">
+<title>proc~set3~2&#45;&gt;set</title>
+<path fill="none" stroke="#bb00ff" d="M459.96,-605.86C471.93,-602.93 484.44,-599.36 495.81,-595.13 528.03,-583.16 562.58,-564.45 586.42,-550.53"/>
+<polygon fill="#bb00ff" stroke="#bb00ff" points="588.13,-553.58 594.95,-545.47 584.56,-547.56 588.13,-553.58"/>
+</g>
+<!-- proc~set3~2&#45;&gt;proc~cmp_degree~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge50" class="edge">
+<title>proc~set3~2&#45;&gt;proc~cmp_degree~2</title>
+<path fill="none" stroke="#bb00ff" d="M460.14,-616.13C481.25,-616.13 506.02,-616.13 529.53,-616.13"/>
+<polygon fill="#bb00ff" stroke="#bb00ff" points="529.44,-619.64 539.44,-616.14 529.44,-612.64 529.44,-619.64"/>
+</g>
+<!-- proc~set4~2&#45;&gt;set -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge52" class="edge">
+<title>proc~set4~2&#45;&gt;set</title>
+<path fill="none" stroke="#ff00f1" d="M460.14,-532.13C497.19,-532.13 545.47,-532.13 578.51,-532.13"/>
+<polygon fill="#ff00f1" stroke="#ff00f1" points="578.44,-535.64 588.44,-532.14 578.44,-528.64 578.44,-535.64"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node42" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node42"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="891.6,-66.27 766.08,-66.27 766.08,-42 891.6,-42 891.6,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge53" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M660.82,-86.04C687.76,-80.89 723.35,-74.1 754.76,-68.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="755.02,-71.61 764.18,-66.3 753.7,-64.73 755.02,-71.61"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node43" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node43"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="891.98,-24.27 765.71,-24.27 765.71,0 891.98,0 891.98,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge54" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M639.55,-81.53C663.11,-67.92 702.71,-46.42 739.08,-33.13 744.34,-31.21 749.83,-29.42 755.41,-27.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="756.03,-31.22 764.71,-25.14 754.13,-24.49 756.03,-31.22"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node44" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node44"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="892.35,-108.27 765.33,-108.27 765.33,-84 892.35,-84 892.35,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-92.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge55" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M660.82,-94.54C687.43,-94.79 722.48,-95.13 753.6,-95.43"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="753.32,-98.92 763.35,-95.52 753.38,-91.92 753.32,-98.92"/>
+</g>
+<!-- proc~get_multiplicity~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node46" class="node">
+<title>proc~get_multiplicity~2</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node46"><a xlink:href="../proc/get_multiplicity~2.html" xlink:title="nurbs_curve%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="912.6,-628.27 745.08,-628.27 745.08,-604 912.6,-604 912.6,-628.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-612.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2 -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge56" class="edge">
+<title>proc~cmp_degree~2&#45;&gt;proc~get_multiplicity~2</title>
+<path fill="none" stroke="#ff9900" d="M694.04,-616.13C706.82,-616.13 720.22,-616.13 733.4,-616.13"/>
+<polygon fill="#ff9900" stroke="#ff9900" points="733.4,-619.64 743.4,-616.14 733.4,-612.64 733.4,-619.64"/>
+</g>
+<!-- proc~cmp_nc~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge57" class="edge">
+<title>proc~cmp_nc~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#cbff00" d="M681.75,-704.81C743.77,-707.3 840.13,-705.55 918.6,-679.13 946.16,-669.86 973.52,-650.75 991.98,-636"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="994.11,-638.78 999.61,-629.72 989.66,-633.37 994.11,-638.78"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node47" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node47"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="856.73,-670.27 800.96,-670.27 800.96,-646 856.73,-646 856.73,-670.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-654.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge58" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#33ff00" d="M680.99,-658.13C716.2,-658.13 759.05,-658.13 789.36,-658.13"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="789.2,-661.64 799.2,-658.14 789.2,-654.64 789.2,-661.64"/>
+</g>
+<!-- proc~compute_xg_bspline_1d&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge59" class="edge">
+<title>proc~compute_xg_bspline_1d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#0066ff" d="M885.35,-247.53C910.07,-241.92 939.01,-235.35 963.25,-229.85"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="963.93,-233.29 972.91,-227.66 962.38,-226.46 963.93,-233.29"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge60" class="edge">
+<title>proc~compute_xg_bspline_1d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#3200ff" d="M919.1,-218.13C934.26,-218.13 949.54,-218.13 963.3,-218.13"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="962.95,-221.64 972.95,-218.14 962.95,-214.64 962.95,-221.64"/>
+</g>
+<!-- proc~cmp_tgc_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_node45" class="node">
+<title>proc~cmp_tgc_1d</title>
+<g id="a_program~~lsq_fit_nurbs_1d~~CallsGraph_node45"><a xlink:href="../proc/cmp_tgc_1d.html" xlink:title="cmp_Tgc_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="867.98,-150.27 789.71,-150.27 789.71,-126 867.98,-126 867.98,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="828.84" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_Tgc_1d</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_nurbs_1d&#45;&gt;proc~cmp_tgc_1d -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge61" class="edge">
+<title>proc~compute_xg_nurbs_1d&#45;&gt;proc~cmp_tgc_1d</title>
+<path fill="none" stroke="#cc00ff" d="M683.84,-136.76C714.32,-137.05 750,-137.39 778.21,-137.66"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="777.87,-141.16 787.91,-137.75 777.94,-134.16 777.87,-141.16"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge62" class="edge">
+<title>proc~compute_xg_nurbs_1d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#ff0098" d="M703.53,-180.09C763.82,-182.31 846.46,-187.04 918.6,-197.13 933.17,-199.17 948.81,-202.21 963.17,-205.35"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="962.36,-208.75 972.88,-207.54 963.89,-201.93 962.36,-208.75"/>
+</g>
+<!-- proc~cmp_tgc_1d&#45;&gt;proc~basis_bspline -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge63" class="edge">
+<title>proc~cmp_tgc_1d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#00ffff" d="M868.07,-147.3C883.98,-151.63 902.47,-157.35 918.6,-164.13 942.15,-174.04 967.27,-188.27 985.95,-199.64"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="983.98,-202.53 994.32,-204.82 987.66,-196.58 983.98,-202.53"/>
+</g>
+<!-- proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~lsq_fit_nurbs_1d~~CallsGraph_edge64" class="edge">
+<title>proc~get_multiplicity~2&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#0000ff" d="M912.88,-616.13C922.89,-616.13 933.05,-616.13 942.89,-616.13"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="942.74,-619.64 952.74,-616.14 942.74,-612.64 942.74,-619.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramlsq_fit_nurbs_1dCallsGraph = svgPanZoom('#programlsq_fit_nurbs_1dCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 13.1.2 (20250809.0930)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xdata~10"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xdata</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xg_eval~4"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xg_eval</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt~96"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err1~4"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err2~4"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err3~4"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i~112"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n~31"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-nrb~2"></span>
+              type(<a href='../type/nurbs_curve.html'>nurbs_curve</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>nrb</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi~10"></span>
+              real(kind=rk),
+            </td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+<td> =</td>
+                <td>acos(-1.0_rk)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rms~4"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rms</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2025-08-27T18:21:28.822236+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

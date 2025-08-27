@@ -67,13 +67,13 @@ program lsq_fit_bspline_2d
    print'(a)', "Fitting complete."
 
    ! create B-Spline surface
-   call bsp%create(n(1), n(2))
+   call bsp%create(Xt1=Xt1, Xt2=Xt2)
    Xg_eval = bsp%get_Xg()
 
    ! Compute errors
-   err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / norm2(Xdata(:,1))
-   err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / norm2(Xdata(:,2))
-   err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / norm2(Xdata(:,3))
+   err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / max( norm2(Xdata(:,1)), epsilon(0.0_rk) )
+   err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / max( norm2(Xdata(:,2)), epsilon(0.0_rk) )
+   err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / max( norm2(Xdata(:,3)), epsilon(0.0_rk) )
    rms  = sqrt((err1**2 + err2**2 + err3**2)/3.0_rk)
 
    print'(a)', "========================================"
@@ -88,6 +88,7 @@ program lsq_fit_bspline_2d
    ! Export results
    call bsp%export_Xc("vtk/lsq_fit_bspline_2d_Xc.vtk")
    call bsp%export_Xg("vtk/lsq_fit_bspline_2d_Xg.vtk")
-   call bsp%show("vtk/lsq_fit_bspline_2d_Xc.vtk", "vtk/lsq_fit_bspline_2d_Xg.vtk")
+   call bsp%export_Xth_in_Xg("vtk/lsq_fit_bspline_2d_Xth.vtk", res=20)
+   call bsp%show("vtk/lsq_fit_bspline_2d_Xc.vtk", "vtk/lsq_fit_bspline_2d_Xg.vtk", "vtk/lsq_fit_bspline_2d_Xth.vtk")
 
 end program

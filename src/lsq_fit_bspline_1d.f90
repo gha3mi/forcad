@@ -1,12 +1,11 @@
 program lsq_fit_bspline_1d
 
    use forcad, only: rk, nurbs_curve
-   use forcad_utils, only: ndgrid
 
    implicit none
 
    type(nurbs_curve) :: bsp
-   integer :: n, ndata, i
+   integer :: n, i
    real(rk), parameter :: pi = acos(-1.0_rk)
    real(rk), allocatable :: Xdata(:,:)
    real(rk), allocatable :: Xt(:)
@@ -22,9 +21,8 @@ program lsq_fit_bspline_1d
    end do
 
    ! data points to be fitted
-   ndata = n
-   allocate(Xdata(ndata, 3))
-   do i = 1, ndata
+   allocate(Xdata(n, 3))
+   do i = 1, n
       Xdata(i,1) = Xt(i)
       Xdata(i,2) = 0.3_rk * sin(4.0_rk * pi * Xt(i))
       Xdata(i,3) = 0.3_rk * cos(4.0_rk * pi * Xt(i))
@@ -58,13 +56,13 @@ program lsq_fit_bspline_1d
    print'(a)', "Fitting complete."
 
    ! create B-Spline curve
-   call bsp%create(res=n)
+   call bsp%create(Xt=Xt)
    Xg_eval = bsp%get_Xg()
 
    ! Compute errors
-   err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / norm2(Xdata(:,1))
-   err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / norm2(Xdata(:,2))
-   err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / norm2(Xdata(:,3))
+   err1 = norm2(Xg_eval(:,1) - Xdata(:,1)) / max( norm2(Xdata(:,1)), epsilon(0.0_rk) )
+   err2 = norm2(Xg_eval(:,2) - Xdata(:,2)) / max( norm2(Xdata(:,2)), epsilon(0.0_rk) )
+   err3 = norm2(Xg_eval(:,3) - Xdata(:,3)) / max( norm2(Xdata(:,3)), epsilon(0.0_rk) )
    rms  = sqrt((err1**2 + err2**2 + err3**2)/3.0_rk)
 
    print'(a)', "========================================"
