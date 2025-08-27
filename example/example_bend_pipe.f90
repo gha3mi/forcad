@@ -12,7 +12,7 @@ program example_bend_pipe
 
    implicit none
    type(nurbs_volume) :: ring                                    !! Straight pipe ring
-   type(nurbs_volume) :: shape                                   !! Bent pipe shape
+   type(nurbs_volume) :: sh                                      !! Bent pipe shape
    real(rk), parameter :: c(3)  = [0.0_rk, 0.0_rk, 0.0_rk]       !! Center of the ring.
    real(rk), parameter :: r1    = 0.3_rk                         !! Inner radius of the pipe.
    real(rk), parameter :: r2    = 0.5_rk                         !! Outer radius of the pipe.
@@ -32,61 +32,61 @@ program example_bend_pipe
    ! Apply bending with angle 90°
 
    ! Set the shape
-   shape = ring
+   sh = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, l, rb, a(1))
+   call bend_pipe(sh, c, l, rb, a(1))
 
    ! Create the NURBS volume
-   call shape%create(30,40,80)
+   call sh%create(30,40,80)
 
    ! Export the NURBS volume to VTK files
-   call shape%export_Xc("vtk/bend_pipe_pipe90_Xc.vtk")
-   call shape%export_Xg("vtk/bend_pipe_pipe90_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/bend_pipe_pipe90_Xth.vtk")
+   call sh%export_Xc("vtk/bend_pipe_pipe90_Xc.vtk")
+   call sh%export_Xg("vtk/bend_pipe_pipe90_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe90_Xth.vtk")
 
    ! Show the NURBS volume
-   call shape%show("vtk/bend_pipe_pipe90_Xc.vtk", "vtk/bend_pipe_pipe90_Xg.vtk", "vtk/bend_pipe_pipe90_Xth.vtk")
+   call sh%show("vtk/bend_pipe_pipe90_Xc.vtk", "vtk/bend_pipe_pipe90_Xg.vtk", "vtk/bend_pipe_pipe90_Xth.vtk")
 
    !===============================================================================
    ! Apply bending with angle 270°
 
    ! Set the shape
-   shape = ring
+   sh = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, l, rb, a(2))
+   call bend_pipe(sh, c, l, rb, a(2))
 
    ! Create the NURBS volume
-   call shape%create(30,40,80)
+   call sh%create(30,40,80)
 
    ! Export the NURBS volume to VTK files
-   call shape%export_Xc("vtk/bend_pipe_pipe270_Xc.vtk")
-   call shape%export_Xg("vtk/bend_pipe_pipe270_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/bend_pipe_pipe270_Xth.vtk")
+   call sh%export_Xc("vtk/bend_pipe_pipe270_Xc.vtk")
+   call sh%export_Xg("vtk/bend_pipe_pipe270_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe270_Xth.vtk")
 
    ! Show the NURBS volume
-   call shape%show("vtk/bend_pipe_pipe270_Xc.vtk", "vtk/bend_pipe_pipe270_Xg.vtk", "vtk/bend_pipe_pipe270_Xth.vtk")
+   call sh%show("vtk/bend_pipe_pipe270_Xc.vtk", "vtk/bend_pipe_pipe270_Xg.vtk", "vtk/bend_pipe_pipe270_Xth.vtk")
 
    !===============================================================================
    ! Apply bending with angle 360°
 
    ! Set the shape
-   shape = ring
+   sh = ring
 
    ! Build the bend pipe shape
-   call bend_pipe(shape, c, l, rb, a(3))
+   call bend_pipe(sh, c, l, rb, a(3))
 
    ! Create the NURBS volume
-   call shape%create(30,40,80)
+   call sh%create(30,40,80)
 
    ! Export the NURBS volume to VTK files
-   call shape%export_Xc("vtk/bend_pipe_pipe360_Xc.vtk")
-   call shape%export_Xg("vtk/bend_pipe_pipe360_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/bend_pipe_pipe360_Xth.vtk")
+   call sh%export_Xc("vtk/bend_pipe_pipe360_Xc.vtk")
+   call sh%export_Xg("vtk/bend_pipe_pipe360_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe360_Xth.vtk")
 
    ! Show the NURBS volume
-   call shape%show("vtk/bend_pipe_pipe360_Xc.vtk", "vtk/bend_pipe_pipe360_Xg.vtk", "vtk/bend_pipe_pipe360_Xth.vtk")
+   call sh%show("vtk/bend_pipe_pipe360_Xc.vtk", "vtk/bend_pipe_pipe360_Xg.vtk", "vtk/bend_pipe_pipe360_Xth.vtk")
 
 contains
 
@@ -123,14 +123,14 @@ contains
       real(rk), intent(in) :: angle_deg         !! Bend angle in degrees \(\alpha^\circ\).
 
       real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
-      integer :: nc(3), i,j,k, dim
+      integer :: nc(3), i,j,k, d
       real(rk) :: x0, y0, z0, theta, cth, sth, rho, phi, ang_tot
       real(rk), parameter :: pi = acos(-1.0_rk)
 
       Xc  = this%get_Xc()
-      dim = size(Xc,2)
+      d   = size(Xc,2)
       nc  = this%get_nc()
-      X4  = reshape(Xc, [nc(1), nc(2), nc(3), dim])
+      X4  = reshape(Xc, shape=[nc(1), nc(2), nc(3), d], order=[1,2,3,4])
 
       ang_tot = angle_deg*pi/180.0_rk
 
@@ -153,7 +153,7 @@ contains
          end do
       end do
 
-      Xc = reshape(X4, [product(nc), dim])
+      Xc = reshape(X4, shape=[product(nc), d], order=[1,2])
 
       if (this%is_rational()) then
          call this%set(this%get_knot(1), this%get_knot(2), this%get_knot(3), Xc, this%get_Wc())
