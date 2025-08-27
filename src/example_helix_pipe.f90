@@ -14,7 +14,7 @@ program example_helix_pipe
    implicit none
 
    type(nurbs_volume) :: ring                                   !! Straight pipe ring.
-   type(nurbs_volume) :: shape                                  !! Helical pipe shape.
+   type(nurbs_volume) :: sh                                     !! Helical pipe shape.
    real(rk), parameter :: center(3) = [0.0_rk, 0.0_rk, 0.0_rk]  !! Pipe center \((c_x,c_y,c_z)\).
    real(rk), parameter :: r1 = 0.1_rk                           !! Inner radius of the pipe.
    real(rk), parameter :: r2 = 0.2_rk                           !! Outer radius of the pipe.
@@ -36,19 +36,19 @@ program example_helix_pipe
    call ring%elevate_degree(3,5)
 
    ! Build the helical shape
-   shape = ring
-   call build_helix(shape, c=center, rh=rh, p=pitch, n=nturns)
+   sh = ring
+   call build_helix(sh, center, rh, pitch, nturns)
 
    ! Create the NURBS volume sampling
-   call shape%create(50,50,250)
+   call sh%create(50,50,250)
 
    ! Export the NURBS volume to VTK files
-   call shape%export_Xc("vtk/helix_pipe_Xc.vtk")
-   call shape%export_Xg("vtk/helix_pipe_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/helix_pipe_Xth.vtk", res=20)
+   call sh%export_Xc("vtk/helix_pipe_Xc.vtk")
+   call sh%export_Xg("vtk/helix_pipe_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/helix_pipe_Xth.vtk", res=20)
 
    ! Show the NURBS volume
-   call shape%show("vtk/helix_pipe_Xc.vtk","vtk/helix_pipe_Xg.vtk","vtk/helix_pipe_Xth.vtk")
+   call sh%show("vtk/helix_pipe_Xc.vtk","vtk/helix_pipe_Xg.vtk","vtk/helix_pipe_Xth.vtk")
 
 contains
 
@@ -87,13 +87,14 @@ contains
       real(rk), intent(in) :: c(3), rh, p              !! Center \(\mathbf{c}\), helix radius \(r_h\), pitch \(p\).
       integer,  intent(in) :: n                        !! Number of turns.
       real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
-      integer :: nc(3), i,j,k, dim
+      integer :: nc(3), i,j,k, d
       real(rk) :: s, theta, x0,y0,rho,phi, X,Y,Z
       real(rk), parameter :: pi = acos(-1.0_rk)
 
-      Xc  = this%get_Xc();  dim = size(Xc,2)
+      Xc  = this%get_Xc()
+      d = size(Xc,2)
       nc  = this%get_nc()
-      X4  = reshape(Xc, [nc(1),nc(2),nc(3),dim])
+      X4  = reshape(Xc, shape=[nc(1),nc(2),nc(3),d], order=[1,2,3,4])
 
       do k=1,nc(3)
          s = merge( real(k-1,rk)/real(max(1,nc(3)-1),rk), 0._rk, nc(3)>1 )
@@ -115,7 +116,7 @@ contains
          end do
       end do
 
-      Xc = reshape(X4, [product(nc),dim])
+      Xc = reshape(X4, shape=[product(nc),d], order=[1,2])
 
       if (this%is_rational()) then
          call this%set(this%get_knot(1), this%get_knot(2), this%get_knot(3), Xc, this%get_Wc())

@@ -16,7 +16,7 @@ program example_toroidal_pipe
 
    implicit none
    type(nurbs_volume) :: ring  !! straight pipe segment
-   type(nurbs_volume) :: shape !! toroidal pipe shape
+   type(nurbs_volume) :: sh    !! toroidal pipe shape
 
    ! Straight ring (pipe) parameters
    real(rk), parameter :: center(3)   = [0.0_rk, 0.0_rk, 0.0_rk] !! center of the ring
@@ -45,17 +45,17 @@ program example_toroidal_pipe
    call ring%elevate_degree(3, 5)
 
    ! Map onto a torus with twist + z-sine wobble
-   shape = ring
-   call map_to_torus_sineZ(shape, c=center, R=R, twist_turns=twist_turns, Az=Az, nwaves_z=nwaves_z, phase_z=phase_z)
+   sh = ring
+   call map_to_torus_sineZ(sh, center, R, twist_turns, Az, nwaves_z, phase_z)
 
    ! Export the NURBS volume to VTK files
-   call shape%create(30, 30, 120)
-   call shape%export_Xc("vtk/example_toroidal_pipe_Xc.vtk")
-   call shape%export_Xg("vtk/example_toroidal_pipe_Xg.vtk")
-   call shape%export_Xth_in_Xg("vtk/example_toroidal_pipe_Xth.vtk", res=24)
+   call sh%create(30, 30, 120)
+   call sh%export_Xc("vtk/example_toroidal_pipe_Xc.vtk")
+   call sh%export_Xg("vtk/example_toroidal_pipe_Xg.vtk")
+   call sh%export_Xth_in_Xg("vtk/example_toroidal_pipe_Xth.vtk", res=24)
 
    ! Show the resulting VTK files
-   call shape%show("vtk/example_toroidal_pipe_Xc.vtk","vtk/example_toroidal_pipe_Xg.vtk","vtk/example_toroidal_pipe_Xth.vtk")
+   call sh%show("vtk/example_toroidal_pipe_Xc.vtk","vtk/example_toroidal_pipe_Xg.vtk","vtk/example_toroidal_pipe_Xth.vtk")
 
 contains
 
@@ -99,13 +99,14 @@ contains
       real(rk), intent(in) :: twist_turns, Az, phase_z
 
       real(rk), allocatable :: Xc(:,:), X4(:,:,:,:)
-      integer :: nc(3), i, j, k, dim
+      integer :: nc(3), i, j, k, d
       real(rk) :: s, theta, x0, y0, rho, phi, phip, X, Y, Z, z_off
       real(rk), parameter :: pi = acos(-1.0_rk)
 
-      Xc  = this%get_Xc();   dim = size(Xc,2)
-      nc  = this%get_nc()
-      X4  = reshape(Xc, [nc(1), nc(2), nc(3), dim])
+      Xc = this%get_Xc()
+      d  = size(Xc,2)
+      nc = this%get_nc()
+      X4 = reshape(Xc, shape=[nc(1), nc(2), nc(3), d], order=[1,2,3,4])
 
       do k = 1, nc(3)
          s     = merge( real(k-1,rk)/real(max(1,nc(3)-1),rk), 0._rk, nc(3)>1 )
@@ -131,7 +132,7 @@ contains
          end do
       end do
 
-      Xc = reshape(X4, [product(nc), dim])
+      Xc = reshape(X4, shape=[product(nc), d], order=[1,2])
       if (this%is_rational()) then
          call this%set(this%get_knot(1), this%get_knot(2), this%get_knot(3), Xc, this%get_Wc())
       else
