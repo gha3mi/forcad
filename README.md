@@ -52,7 +52,7 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 - Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
 - Rotate and translate NURBS objects.
 - Visualization using provided python PyVista scripts.
-- Least squares fitting for B-Spline curves, surfaces and volumes.
+- Least squares fitting for NURBS curves, surfaces and volumes.
 - Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.
 
 ## Examples
