@@ -589,10 +589,8 @@ contains
         integer :: i, j, r
 
         B = 0.0_rk
-        do concurrent (i = 1:size(A,1), j = 1:size(A,2))
-            do r = 1, dim
+        do concurrent (r = 1:dim, i = 1:size(A,1), j = 1:size(A,2))
                 B((i-1)*dim + r, (j-1)*dim + r) = A(i,j)
-            end do
         end do
     end function
     !===============================================================================
