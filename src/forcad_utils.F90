@@ -589,10 +589,8 @@ contains
         integer :: i, j, r
 
         B = 0.0_rk
-        do concurrent (i = 1:size(A,1), j = 1:size(A,2))
-            do r = 1, dim
-                B((i-1)*dim + r, (j-1)*dim + r) = A(i,j)
-            end do
+        do concurrent (r = 1:dim, i = 1:size(A,1), j = 1:size(A,2))
+            B((i-1)*dim + r, (j-1)*dim + r) = A(i,j)
         end do
     end function
     !===============================================================================
@@ -684,19 +682,18 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure function cmp_elemConn_C0_L(nnode,p) result(elemConn)
-        integer, intent(in) :: nnode
-        integer, intent(in) :: p
-        integer, allocatable :: elemConn(:,:)
-        integer :: i
-        integer, allocatable :: nodes(:)
+      integer, intent(in) :: nnode, p
+      integer, allocatable :: elemConn(:,:)
+      integer :: nelem, e, j
 
-        if (mod(nnode-1,p) /= 0) error stop 'cmp_elemConn_C0_L: nnode-1 must be divisible by p'
+      if (mod(nnode-1,p) /= 0) error stop 'cmp_elemConn_C0_L: nnode-1 must be divisible by p'
 
-        allocate(elemConn( (nnode-1) / p ,p+1))
-        nodes = [(i, i=1,nnode)]
-        do concurrent (i = 1:nnode-p:p)
-            elemConn((i-1)/p+1, :) = reshape(nodes(i:i+p), [p + 1])
-        end do
+      nelem = (nnode-1)/p
+
+      allocate(elemConn(nelem, p+1))
+      do concurrent (e = 1:nelem, j = 0:p)
+         elemConn(e, j+1) = (e-1)*p + 1 + j
+      end do
     end function
     !===============================================================================
 
@@ -707,30 +704,20 @@ contains
     pure function cmp_elemConn_C0_S(nnode1, nnode2, p1, p2) result(elemConn)
         integer, intent(in) :: nnode1, nnode2, p1, p2
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j, nelem1, nelem2, nnel
-        integer, allocatable :: nodes(:,:)
+        integer :: nelem1, nelem2
+        integer :: e1, e2, i, j
 
-        if (mod(nnode1 - 1, p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
-        if (mod(nnode2 - 1, p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
+        if (mod(nnode1-1, p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
+        if (mod(nnode2-1, p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
 
-        nelem1 = (nnode1 - 1) / p1
-        nelem2 = (nnode2 - 1) / p2
-        nnel   = (p1 + 1) * (p2 + 1)
+        nelem1 = (nnode1-1)/p1
+        nelem2 = (nnode2-1)/p2
 
-        allocate(elemConn(nelem1 * nelem2, nnel))
-        nodes = reshape([(i, i = 1, nnode1 * nnode2)], [nnode1, nnode2])
+        allocate(elemConn(nelem1*nelem2, (p1+1)*(p2+1)))
 
-#if defined(__NVCOMPILER)
-        do i = 1,nnode1 - p1,p1
-            do j = 1,nnode2 - p2,p2
-            elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
-            end do
+        do concurrent (e2 = 1:nelem2, e1 = 1:nelem1, j = 0:p2, i = 0:p1)
+            elemConn((e2-1)*nelem1+e1, j*(p1+1)+(i+1)) = ((1+(e2-1)*p2+j)-1)*nnode1 + (1+(e1-1)*p1+i)
         end do
-#else
-        do concurrent (j = 1:nnode2 - p2:p2, i = 1:nnode1 - p1:p1)
-            elemConn(((j-1)/p2)*nelem1+(i-1)/p1+1, :) = reshape(nodes(i:i+p1, j:j+p2), [nnel])
-        end do
-#endif
     end function
     !===============================================================================
 
@@ -741,33 +728,22 @@ contains
     pure function cmp_elemConn_C0_V(nnode1,nnode2,nnode3,p1,p2,p3) result(elemConn)
         integer, intent(in) :: nnode1, nnode2, nnode3, p1, p2, p3
         integer, allocatable :: elemConn(:,:)
-        integer :: i, j, k, nnel, nelem1, nelem2, nelem3
-        integer, allocatable :: nodes(:,:,:)
+        integer :: nelem1, nelem2, nelem3, e1, e2, e3, i, j, k
 
         if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_V: nnode1-1 must be divisible by p1'
         if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_V: nnode2-1 must be divisible by p2'
         if (mod(nnode3-1,p3) /= 0) error stop 'cmp_elemConn_C0_V: nnode3-1 must be divisible by p3'
 
-        nelem1 = (nnode1 - 1) / p1
-        nelem2 = (nnode2 - 1) / p2
-        nelem3 = (nnode3 - 1) / p3
+        nelem1 = (nnode1-1)/p1
+        nelem2 = (nnode2-1)/p2
+        nelem3 = (nnode3-1)/p3
 
-        nnel = (p1 + 1) * (p2 + 1) * (p3 + 1)
-        allocate(elemConn(nelem1 * nelem2 * nelem3, nnel))
-        nodes = reshape([(i, i=1, nnode1 * nnode2 * nnode3)], [nnode1, nnode2, nnode3])
-#if defined(__NVCOMPILER)
-        do k = 1,nnode3 - p3,p3
-            do j = 1,nnode2 - p2,p2
-                do i = 1,nnode1 - p1,p1
-                    elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
-                end do
-            end do
+        allocate(elemConn(nelem1*nelem2*nelem3, (p1+1)*(p2+1)*(p3+1)))
+
+        do concurrent (e3 = 1:nelem3, e2 = 1:nelem2, e1 = 1:nelem1, k = 0:p3, j = 0:p2, i = 0:p1)
+            elemConn((e3-1)*nelem1*nelem2+(e2-1)*nelem1+e1, k*(p2+1)*(p1+1)+j*(p1+1)+(i+1))&
+                = ((1+(e3-1)*p3+k)-1)*nnode1*nnode2 + ((1+(e2-1)*p2+j)-1)*nnode1 + (1+(e1-1)*p1+i)
         end do
-#else
-        do concurrent (k = 1:nnode3-p3:p3, j = 1:nnode2-p2:p2, i = 1:nnode1-p1:p1)
-            elemConn(((k-1)/p3)*(nelem1*nelem2)+((j-1)/p2)*nelem1+((i-1)/p1)+1, :) = reshape(nodes(i:i+p1, j:j+p2, k:k+p3), [nnel])
-        end do
-#endif
     end function
     !===============================================================================
 
@@ -776,24 +752,25 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     pure subroutine cmp_elemConn_Cn_L(nnode, p, Xth, vecKnot_mul, elemConn)
-        integer, intent(in) :: p, nnode
-        integer, intent(in), contiguous :: vecKnot_mul(:)
-        real(rk), intent(in), contiguous :: Xth(:)
-        integer, allocatable, intent(out) :: elemConn(:,:)
-        integer, allocatable :: nodes(:)
-        integer :: i, m, nnel, nelem
+        integer,  intent(in)              :: nnode, p
+        real(rk), intent(in), contiguous  :: Xth(:)
+        integer,  intent(in), contiguous  :: vecKnot_mul(:)
+        integer,  allocatable, intent(out):: elemConn(:,:)
 
-        nnel  = p + 1
-        nelem = size(Xth) - 1
+        integer :: nelem, i, j
+        integer, allocatable :: pref(:)
 
-        allocate(nodes(nnode))
-        nodes = [(i, i=1, nnode)]
+        nelem = size(Xth)-1
 
-        allocate(elemConn(nelem, nnel))
+        allocate(elemConn(nelem, p + 1))
+        allocate(pref(nelem))
+        pref(1) = vecKnot_mul(1)
+        do i = 2, nelem
+            pref(i) = pref(i-1) + vecKnot_mul(i)
+        end do
 
-        do concurrent (i = 1:nelem)
-            m = -p + sum(vecKnot_mul(1:i))
-            elemConn(i,:) = nodes(m:m+p)
+        do concurrent (i = 1:nelem, j = 0:p)
+            elemConn(i, j+1) = pref(i)-p+j
         end do
     end subroutine
     !===============================================================================
@@ -804,43 +781,31 @@ contains
     !> license: BSD 3-Clause
     pure subroutine cmp_elemConn_Cn_S(nnode1, nnode2, p1, p2, &
         Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)
-        integer, intent(in) :: p1, p2, nnode1, nnode2
-        integer, intent(in), contiguous :: vecKnot_mul1(:), vecKnot_mul2(:)
-        real(rk), intent(in), contiguous :: Xth1(:), Xth2(:)
-        integer, allocatable, intent(out) :: elemConn(:,:)
-        integer, allocatable :: nodes(:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, l, m, n, nnel1, nnel2, nelem1, nelem2, nelem
+        integer,  intent(in)              :: nnode1, nnode2, p1, p2
+        real(rk), intent(in), contiguous  :: Xth1(:), Xth2(:)
+        integer,  intent(in), contiguous  :: vecKnot_mul1(:), vecKnot_mul2(:)
+        integer,  allocatable, intent(out):: elemConn(:,:)
 
-        nnel1 = p1 + 1
-        nnel2 = p2 + 1
-        nelem1 = size(Xth1) - 1
-        nelem2 = size(Xth2) - 1
-        nelem  = nelem1 * nelem2
+        integer, allocatable :: pref1(:), pref2(:)
+        integer :: nelem1, nelem2, i, j, i2, j2
 
-        nnd_total = nnode1 * nnode2
-        allocate(nodes_vec(nnd_total))
-        nodes_vec = [(i, i=1, nnd_total)]
-        nodes = reshape(nodes_vec, [nnode1, nnode2])
+        nelem1 = size(Xth1)-1
+        nelem2 = size(Xth2)-1
 
-        allocate(elemConn(nelem, nnel1 * nnel2))
-
-#if defined(__NVCOMPILER)
-        do j = 1, nelem2
-            do i = 1, nelem1
-                m = -p1 + sum(vecKnot_mul1(1:i))
-                n = -p2 + sum(vecKnot_mul2(1:j))
-                l = (j - 1) * nelem1 + i
-                elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
-            end do
+        allocate(pref1(nelem1), pref2(nelem2))
+        pref1(1) = vecKnot_mul1(1)
+        do i = 2, nelem1
+            pref1(i) = pref1(i-1) + vecKnot_mul1(i)
         end do
-#else
-        do concurrent (j = 1:nelem2, i = 1:nelem1)
-            m = -p1 + sum(vecKnot_mul1(1:i))
-            n = -p2 + sum(vecKnot_mul2(1:j))
-            l = (j - 1) * nelem1 + i
-            elemConn(l,:) = reshape(nodes(m:m+p1, n:n+p2), [nnel1 * nnel2])
+        pref2(1) = vecKnot_mul2(1)
+        do j = 2, nelem2
+            pref2(j) = pref2(j-1) + vecKnot_mul2(j)
         end do
-#endif
+
+        allocate(elemConn(nelem1*nelem2, (p1+1)*(p2+1)))
+        do concurrent (j = 1:nelem2, i = 1:nelem1, j2 = 0:p2, i2 = 0:p1)
+            elemConn((j-1)*nelem1+i, j2*(p1+1)+(i2+1)) = ((pref2(j)-p2+j2)-1)*nnode1+(pref1(i)-p1+i2)
+        end do
     end subroutine
     !===============================================================================
 
@@ -848,54 +813,39 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine cmp_elemConn_Cn_V(nnode1,nnode2,nnode3,p1,p2,p3,&
+    pure subroutine cmp_elemConn_Cn_V(nnode1,nnode2,nnode3,p1,p2,p3, &
         Xth1,Xth2,Xth3,vecKnot_mul1,vecKnot_mul2,vecKnot_mul3, elemConn)
-        integer, intent(in) :: p1, p2, p3, nnode1, nnode2, nnode3
-        integer, intent(in), contiguous :: vecKnot_mul1(:), vecKnot_mul2(:), vecKnot_mul3(:)
-        real(rk), intent(in), contiguous :: Xth1(:), Xth2(:), Xth3(:)
-        integer, allocatable, intent(out) :: elemConn(:,:)
-        integer, allocatable :: nodes(:,:,:), nodes_vec(:)
-        integer :: nnd_total, i, j, k, l, nnel1, nnel2, nnel3, nnel, m, n, o, nelem1, nelem2, nelem3, nelem
+        integer,  intent(in)              :: nnode1, nnode2, nnode3, p1, p2, p3
+        real(rk), intent(in), contiguous  :: Xth1(:), Xth2(:), Xth3(:)
+        integer,  intent(in), contiguous  :: vecKnot_mul1(:), vecKnot_mul2(:), vecKnot_mul3(:)
+        integer,  allocatable, intent(out):: elemConn(:,:)
 
-        nnel1 = p1 + 1
-        nnel2 = p2 + 1
-        nnel3 = p3 + 1
+        integer, allocatable :: pref1(:), pref2(:), pref3(:)
+        integer :: nelem1, nelem2, nelem3, i, j, k, i2, j2, k2
 
-        nnd_total = nnode1*nnode2*nnode3
-        allocate(nodes_vec(nnd_total))
+        nelem1 = size(Xth1)-1
+        nelem2 = size(Xth2)-1
+        nelem3 = size(Xth3)-1
 
-        nodes_vec = [(i, i=1, nnd_total)]
-        nodes = reshape(nodes_vec,[nnode1,nnode2,nnode3])
-
-        nelem1 = size(Xth1) - 1
-        nelem2 = size(Xth2) - 1
-        nelem3 = size(Xth3) - 1
-
-        nelem = nelem1*nelem2*nelem3
-
-        nnel = nnel1*nnel2*nnel3
-        allocate(elemConn(nelem,nnel))
-#if defined(__NVCOMPILER)
-        do k = 1, nelem3
-            do j = 1, nelem2
-                do i = 1, nelem1
-                    o = -p3 + sum(vecKnot_mul3(1:k))
-                    n = -p2 + sum(vecKnot_mul2(1:j))
-                    m = -p1 + sum(vecKnot_mul1(1:i))
-                    l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
-                    elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
-                end do
-            end do
+        allocate(pref1(nelem1), pref2(nelem2), pref3(nelem3))
+        pref1(1) = vecKnot_mul1(1)
+        do i = 2, nelem1
+            pref1(i) = pref1(i-1) + vecKnot_mul1(i)
         end do
-#else
-        do concurrent (k = 1:nelem3, j = 1:nelem2, i = 1:nelem1)
-            o = -p3 + sum(vecKnot_mul3(1:k))
-            n = -p2 + sum(vecKnot_mul2(1:j))
-            m = -p1 + sum(vecKnot_mul1(1:i))
-            l = (k - 1) * nelem1 * nelem2 + (j - 1) * nelem1 + i
-            elemConn(l, :) = reshape( nodes(m:m+p1, n:n+p2, o:o+p3), [nnel] )
+        pref2(1) = vecKnot_mul2(1)
+        do j = 2, nelem2
+            pref2(j) = pref2(j-1) + vecKnot_mul2(j)
         end do
-#endif
+        pref3(1) = vecKnot_mul3(1)
+        do k = 2, nelem3
+            pref3(k) = pref3(k-1) + vecKnot_mul3(k)
+        end do
+
+        allocate(elemConn(nelem1*nelem2*nelem3, (p1+1)*(p2+1)*(p3+1)))
+        do concurrent (k = 1:nelem3, j = 1:nelem2, i = 1:nelem1, k2 = 0:p3, j2 = 0:p2, i2 = 0:p1)
+            elemConn((k-1)*nelem1*nelem2+(j-1)*nelem1+i, k2*(p2+1)*(p1+1)+j2*(p1+1)+(i2+1)) =&
+            ((pref3(k)-p3+k2)-1)*nnode1*nnode2+((pref2(j)-p2+j2)-1)*nnode1+(pref1(i)-p1+i2)
+        end do
     end subroutine
     !===============================================================================
 
