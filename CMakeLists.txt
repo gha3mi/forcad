@@ -70,6 +70,11 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LFortran")
     endif()
 endif()
 
+# shared libs on Windows
+if(WIN32 AND BUILD_SHARED_LIBS)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON CACHE BOOL "Auto-export symbols in DLLs" FORCE)
+endif()
+
 # dependencies
 set(FETCHCONTENT_BASE_DIR ${CMAKE_BINARY_DIR}/dependencies CACHE PATH "Base directory for dependencies")
 include(FetchContent)
@@ -229,6 +234,10 @@ if(${PROJECT_NAME_UPPER}_BUILD_EXAMPLES)
         GIT_TAG main
     )
     FetchContent_MakeAvailable(forimage forcolormap fortime)
+
+    if(TARGET fortime AND TARGET FACE)
+        add_dependencies(fortime FACE)
+    endif()
 
     file(GLOB EXAMPLES CONFIGURE_DEPENDS example/*.f90 example/*.F90)
     foreach(example_file ${EXAMPLES})
