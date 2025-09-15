@@ -57,22 +57,28 @@ program example_nurbs_curve
 contains
 
     !-----------------------------------------------------------------------------
-    function generate_Xc(num_coils, radius, height, num_points_per_coil) result(control_points)
-        integer, intent(in) :: num_coils, num_points_per_coil
+    pure function generate_Xc(num_coils, radius, height, num_points_per_coil) result(control_points)
+        integer,  intent(in) :: num_coils, num_points_per_coil
         real(rk), intent(in) :: radius, height
         real(rk), allocatable :: control_points(:,:)
-        integer :: coil, i
-        real(rk) :: theta, coil_height
-        allocate(control_points(num_coils * num_points_per_coil, 3))
-        do coil = 1, num_coils
-            coil_height = height * real(coil-1, rk) / real(num_coils-1, rk)
-            theta = 0.0_rk
-            do i = 1, num_points_per_coil
-                theta = theta + 2.0_rk * acos(-1.0_rk) / real(num_points_per_coil, rk)
-                control_points((coil - 1) * num_points_per_coil + i, 1) = radius * cos(theta)
-                control_points((coil - 1) * num_points_per_coil + i, 2) = radius * sin(theta)
-                control_points((coil - 1) * num_points_per_coil + i, 3) = coil_height
-            end do
+
+        integer  :: i, coil, idx
+        real(rk) :: pi, delta, theta, coil_height
+
+        if (num_coils == 1) coil_height = 0.0_rk
+
+        allocate(control_points(num_coils*num_points_per_coil, 3))
+
+        pi    = acos(-1.0_rk)
+        delta = 2.0_rk * pi / real(num_points_per_coil, rk)
+
+        do concurrent (coil = 1:num_coils, i = 1:num_points_per_coil) local(idx, theta, coil_height)
+            idx = (coil-1)*num_points_per_coil + i
+            theta = real(i, rk)*delta
+            coil_height = height*real(coil-1, rk)/real(num_coils-1, rk)
+            control_points(idx, 1) = radius*cos(theta)
+            control_points(idx, 2) = radius*sin(theta)
+            control_points(idx, 3) = coil_height
         end do
     end function
     !-----------------------------------------------------------------------------

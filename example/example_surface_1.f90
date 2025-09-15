@@ -1,7 +1,7 @@
 !> This program demonstrates the usage of a NURBS (Non-Uniform Rational B-Spline) surface object to create  and finalize a NURBS surface.
 !> It sets up control points, weights, and knot vectors for all three dimensions, generates the surface, and exports the control points and the surface to VTK files.
 
-program example3_surface
+program example_surface_1
 
     use forcad, only: rk, nurbs_surface
 
@@ -167,27 +167,35 @@ program example3_surface
 contains
 
     !-----------------------------------------------------------------------------
-    function generate_Xc(num_rows, num_cols, peak_height) result(control_points)
-        integer, intent(in) :: num_rows, num_cols
+    pure function generate_Xc(num_rows, num_cols, peak_height) result(control_points)
+        integer,  intent(in) :: num_rows, num_cols
         real(rk), intent(in) :: peak_height
         real(rk), allocatable :: control_points(:,:)
-        integer :: i, j
+
+        integer  :: i, j, idx
         real(rk) :: x_spacing, y_spacing, x_offset, y_offset
-        x_spacing = 1.0_rk / real(num_cols - 1, rk)
-        y_spacing = 1.0_rk / real(num_rows - 1, rk)
+        real(rk) :: x, y, z
+
+        x_spacing = merge(0.0_rk, 1.0_rk/real(num_cols-1, rk), num_cols == 1)
+        y_spacing = merge(0.0_rk, 1.0_rk/real(num_rows-1, rk), num_rows == 1)
+
         x_offset = -0.5_rk
         y_offset = -0.5_rk
-        allocate(control_points(num_rows * num_cols, 3))
-        do i = 1, num_rows
-            do j = 1, num_cols
-                control_points((i - 1) * num_cols + j, 1) = x_offset + real(j - 1, rk) * x_spacing
-                control_points((i - 1) * num_cols + j, 2) = y_offset + real(i - 1, rk) * y_spacing
-                control_points((i - 1) * num_cols + j, 3) = &
-                    peak_height * exp(-((control_points((i - 1) * num_cols + j, 1) ** 2) &
-                    + (control_points((i - 1) * num_cols + j, 2) ** 2))) + 0.5_rk * peak_height * 0.2_rk
-            end do
+
+        allocate(control_points(num_rows*num_cols, 3))
+
+        do concurrent (i = 1:num_rows, j = 1:num_cols) local(idx, x, y, z)
+            idx = (i-1)*num_cols+j
+
+            x = x_offset+real(j-1, rk)*x_spacing
+            y = y_offset+real(i-1, rk)*y_spacing
+            z = peak_height*exp(-(x**2+y**2))+0.1_rk*peak_height
+
+            control_points(idx, 1) = x
+            control_points(idx, 2) = y
+            control_points(idx, 3) = z
         end do
     end function
     !-----------------------------------------------------------------------------
 
-end program example3_surface
+end program example_surface_1
