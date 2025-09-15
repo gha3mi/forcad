@@ -1,3 +1,48 @@
+## [v0.16.0](https://github.com/gha3mi/forcad/compare/v0.15.0...v0.16.0) - 2025-09-15
+
+
+### Features
+
+* feat: add optional analytic maps to insert_knots and elevate_degree (#69) ([7a4a4f371](https://github.com/gha3mi/forcad/commit/7a4a4f3719e8b1db5473fc80f5a820221c6ac9fb)) by [@gha3mi](https://github.com/gha3mi)
+* feat: show NURBS parameter space for surfaces/volumes (#70) ([1beea995b](https://github.com/gha3mi/forcad/commit/1beea995bb33b3b964d0ee9d7380297744a91c4f)) by [@gha3mi](https://github.com/gha3mi)
+* feat: add NURBS least-squares fitting (1D, 2D, 3D) with examples ([cdf98857c](https://github.com/gha3mi/forcad/commit/cdf98857c1ec443af713931729797ea0b6c7519f)) by [@gha3mi](https://github.com/gha3mi)
+* feat: make finalize subroutines elemental ([3fbe9dd7e](https://github.com/gha3mi/forcad/commit/3fbe9dd7ef3d2e4c715d8d7dbe3616be437aa570)) by [@gha3mi](https://github.com/gha3mi)
+
+### Fixes
+
+* fix: add mesh cleaning and smooth shading for PyVista ([67b102ac6](https://github.com/gha3mi/forcad/commit/67b102ac6619601349af6a094626dcb0759bc98b)) by [@gha3mi](https://github.com/gha3mi)
+* fix: resolve regression causing incorrect degree elevation with nvfortran ([c05d1c341](https://github.com/gha3mi/forcad/commit/c05d1c341abc8f83f02e9b343cb3e42e940a7f7f)) by [@gha3mi](https://github.com/gha3mi)
+* fix: correct index check in lsq_fit_bspline (nurbs_surface) ([337dd6cfb](https://github.com/gha3mi/forcad/commit/337dd6cfbca8d40ce72dcade24f456da011443c4)) by [@gha3mi](https://github.com/gha3mi)
+* fix: correct variable from Xc to Xg in set_elem_Xg_vis (nurbs_surface) ([968b6890f](https://github.com/gha3mi/forcad/commit/968b6890f217587e60f441b0b0e36fc5bd86a533)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* chore: fix comments and variable naming ([591c46ed6](https://github.com/gha3mi/forcad/commit/591c46ed6121e07c3f8e38f6826a6e0ac97cfa1e)) by [@gha3mi](https://github.com/gha3mi)
+* chore: update unit tests ([ad51a61cb](https://github.com/gha3mi/forcad/commit/ad51a61cbb8e732924a42bd1e3f0cb5f4107f377)) by [@gha3mi](https://github.com/gha3mi)
+* chore: add example_bend_pipe.f90 ([797a22fa3](https://github.com/gha3mi/forcad/commit/797a22fa3ff442782422b46ed7d7cd0553c40ae3)) by [@gha3mi](https://github.com/gha3mi)
+* chore: add test dir to ignore list of codecov.yml ([e37bb244a](https://github.com/gha3mi/forcad/commit/e37bb244aac42762c6b811150873328c51027e2c)) by [@gha3mi](https://github.com/gha3mi)
+* chore: add example_helix_pipe.f90, example_twist_taper.f90, example_toroidal_pipe.f90 ([fde234ec6](https://github.com/gha3mi/forcad/commit/fde234ec64efade0ab35971a08b56e85cfaebfbf)) by [@gha3mi](https://github.com/gha3mi)
+* chore: add examples for plate with circular/elliptical hole (2D/3D) ([b7ccf1532](https://github.com/gha3mi/forcad/commit/b7ccf1532b10d836b299085ede8b6c7df1d98745)) by [@gha3mi](https://github.com/gha3mi)
+* chore: remove unused variable ([597cda12d](https://github.com/gha3mi/forcad/commit/597cda12dd9a47457416f0b61e35291c19ddbd23)) by [@gha3mi](https://github.com/gha3mi)
+* chore: remove unused variables ([b1a7f7375](https://github.com/gha3mi/forcad/commit/b1a7f73753865a642cd34eb48a244fb0a197eda8)) by [@gha3mi](https://github.com/gha3mi)
+* docs: update README ([b6d7de47d](https://github.com/gha3mi/forcad/commit/b6d7de47dbb1fb2f1ad950bdc3673691711819fb)) by [@gha3mi](https://github.com/gha3mi)
+* chore: rename variable 'type' to 'tp' ([c72a06782](https://github.com/gha3mi/forcad/commit/c72a067824bd794ce848b34baa60957111f059be)) by [@gha3mi](https://github.com/gha3mi)
+* chore: update optimization flag for nvfortran release profile ([151ff52e9](https://github.com/gha3mi/forcad/commit/151ff52e92e5fbfdb6651f308fc6ccfbc46de9f0)) by [@gha3mi](https://github.com/gha3mi)
+* chore: rename variable 'Length' to 'L' and add 'shape=' and 'order=' to reshape calls ([b734b7b34](https://github.com/gha3mi/forcad/commit/b734b7b344bff6bb60bcb4d485e287632785a50d)) by [@gha3mi](https://github.com/gha3mi)
+* chore: rename variables and add order to reshape calls ([e69a548f0](https://github.com/gha3mi/forcad/commit/e69a548f0a97229946b3ff44bd2bbced4ff29e99)) by [@gha3mi](https://github.com/gha3mi)
+* perf: improve performance of cmp_elemConn_* and  kron_eye subroutines (#73) ([f5c6f40f9](https://github.com/gha3mi/forcad/commit/f5c6f40f9b9b986fa19e5d1682792fb879468693)) by [@gha3mi](https://github.com/gha3mi)
+* perf: use do concurrent for control point generation in demo_curve, demo_surface and example_surface_1 ([3d12e2162](https://github.com/gha3mi/forcad/commit/3d12e216277fc543e09358b04a2ac8aee4b0d118)) by [@gha3mi](https://github.com/gha3mi)
+* perf: use idx variable in do concurrent loops in hexahedron_Xc and tetragon_Xc ([d9f3481c5](https://github.com/gha3mi/forcad/commit/d9f3481c5dd2a60c8f699bed394fa208d96b09ee)) by [@gha3mi](https://github.com/gha3mi)
+* docs: add dependencies section in README.md ([3edd632a5](https://github.com/gha3mi/forcad/commit/3edd632a5d9be30640d4bf2c498f869b5d78277b)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.15.0...v0.16.0](https://github.com/gha3mi/forcad/compare/v0.15.0...v0.16.0)
+
 ## [v0.15.0](https://github.com/gha3mi/forcad/compare/v0.14.0...v0.15.0) - 2025-08-16
 
 
