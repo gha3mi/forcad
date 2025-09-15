@@ -30,9 +30,9 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 - [Configuration](#configuration)
   - [Do Concurrent Support](#do-concurrent-support)
   - [Precision Configuration](#precision-configuration)
+- [Dependencies](#dependencies)
 - [CI Status](#ci-status)
 - [API documentation](#api-documentation)
-- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Citation](#citation)
 - [References](#references)
@@ -200,6 +200,44 @@ Example: Building with double precision
 ```bash
 fpm build --profile release --flag "-DREAL64"
 ```
+
+## Dependencies
+
+```mermaid
+flowchart LR
+  N1[forcad]
+  N2[forIGES]
+  N3[fordebug]
+  N4[forunittest]
+  N5[forimage]
+  N6[forcolormap]
+  N7[fortime]
+  N8[FACE]
+
+  click N1 href "https://github.com/gha3mi/forcad" "A parallel Fortran library for geometric modeling using NURBS"
+  click N2 href "https://github.com/rweed/forIGES" "Modern Fortran Library for Reading and Writing IGES CAD Files"
+  click N3 href "https://github.com/gha3mi/fordebug" "A Fortran library for handling errors, warnings and info messages with debugging support in pure procedures"
+  click N4 href "https://github.com/gha3mi/forunittest" "A Fortran library for unit testing"
+  click N5 href "https://github.com/gha3mi/forimage" "A Fortran library for processing and editing images and managing colors"
+  click N6 href "https://github.com/vmagnin/forcolormap" "A Fortran colormap library"
+  click N7 href "https://github.com/gha3mi/fortime" "A Fortran library for measuring elapsed time, DATE_AND_TIME time, CPU time, OMP time and MPI time"
+  click N8 href "https://github.com/szaghi/FACE" "Fortran Ansi Colors (and Styles) Environment"
+
+  %% core dependencies
+  N1 --> N2
+  N1 --> N3
+  N3 --> N7
+  N7 --> N8
+
+  %% example dependency (dashed line)
+  N1 -.->|example| N6
+  N6 --> N5
+
+  %% test dependency (dotted line)
+  N1 ...->|test| N4
+  N4 --> N8
+```
+Graph generated with [fpm-deps](https://github.com/ivan-pi/fpm-deps), modified to include example and test dependencies.
 
 ## CI Status
 
