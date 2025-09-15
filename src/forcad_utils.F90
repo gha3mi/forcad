@@ -1247,18 +1247,17 @@ contains
         real(rk), intent(in), contiguous :: L(:)
         integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
-        real(rk) :: dx, dy, dz
-        integer :: i, j, k
+        real(rk) :: d(3)
+        integer :: i, j, k, idx
 
-        dx = L(1) / real(nc(1)-1, rk)
-        dy = L(2) / real(nc(2)-1, rk)
-        dz = L(3) / real(nc(3)-1, rk)
+        d = L/real(nc-1, rk)
 
         allocate(Xc(nc(1) * nc(2) * nc(3), 3))
-        do concurrent (k = 0:nc(3)-1, j = 0:nc(2)-1, i = 0:nc(1)-1)
-            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 1) = real(i, rk) * dx
-            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 2) = real(j, rk) * dy
-            Xc(i + j * nc(1) + k * nc(1) * nc(2) + 1, 3) = real(k, rk) * dz
+        do concurrent (k = 0:nc(3)-1, j = 0:nc(2)-1, i = 0:nc(1)-1) local(idx)
+            idx = i+nc(1)*(j+k*nc(2))+1
+            Xc(idx, 1) = real(i, rk)*d(1)
+            Xc(idx, 2) = real(j, rk)*d(2)
+            Xc(idx, 3) = real(k, rk)*d(3)
         end do
     end function
     !===============================================================================
@@ -1271,17 +1270,17 @@ contains
         real(rk), intent(in), contiguous :: L(:)
         integer, intent(in), contiguous :: nc(:)
         real(rk), allocatable :: Xc(:,:)
-        real(rk) :: dx, dy
-        integer :: i, j
+        real(rk) :: d(2)
+        integer :: i, j, idx
 
-        dx = L(1) / real(nc(1)-1, rk)
-        dy = L(2) / real(nc(2)-1, rk)
+        d = L/real(nc-1, rk)
 
         allocate(Xc(nc(1) * nc(2), 3))
-        do concurrent (j = 0:nc(2)-1, i = 0:nc(1)-1)
-            Xc(i + j * nc(1) + 1, 1) = real(i, rk) * dx
-            Xc(i + j * nc(1) + 1, 2) = real(j, rk) * dy
-            Xc(i + j * nc(1) + 1, 3) = 0.0_rk
+        do concurrent (j = 0:nc(2)-1, i = 0:nc(1)-1) local(idx)
+            idx = i+j*nc(1)+1
+            Xc(idx, 1) = real(i, rk)*d(1)
+            Xc(idx, 2) = real(j, rk)*d(2)
+            Xc(idx, 3) = 0.0_rk
         end do
     end function
     !===============================================================================
