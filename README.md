@@ -166,13 +166,13 @@ target_link_libraries(app PRIVATE forcad::forcad)
 
 Compiler flags for enabling `do concurrent` parallelism:
 
-| Compiler    | Flag(s)                                                   |
-| ----------- | --------------------------------------------------------- |
-| `gfortran`  | `-fopenmp -ftree-parallelize-loops=n`                     |
-| `ifx`       | `-qopenmp -fopenmp-target-do-concurrent`                  |
-| `nvfortran` | `-stdpar=multicore,gpu -Minfo=stdpar,accel`               |
-| `flang-new` | `-fopenmp -fdo-concurrent-to-openmp=[host\|device]` |
-| `lfortran`  | ?                                                         |
+| Compiler      | Flag(s)                                             |
+| ------------- | --------------------------------------------------- |
+| `gfortran`    | `-fopenmp -ftree-parallelize-loops=n`               |
+| `ifx`         | `-qopenmp -fopenmp-target-do-concurrent`            |
+| `nvfortran`   | `-stdpar=multicore,gpu -Minfo=stdpar,accel`         |
+| `flang(-new)` | `-fopenmp -fdo-concurrent-to-openmp=[host\|device]` |
+| `lfortran`    | ?                                                   |
 
 *flang-new 21.1.0: warning: Mapping `do concurrent` to OpenMP is still experimental.*
 
