@@ -784,7 +784,7 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine finalize(this)
+    pure elemental subroutine finalize(this)
         class(nurbs_curve), intent(inout) :: this
         if (allocated(this%Xc)) deallocate(this%Xc)
         if (allocated(this%Xg)) deallocate(this%Xg)
