@@ -3922,7 +3922,7 @@ contains
             return
         end if
 
-        if (this%nc(1) > ndata(1)) then
+        if (this%nc(2) > ndata(2)) then
             call this%err%set(&
                 code       = 106,&
                 severity   = 1,&
