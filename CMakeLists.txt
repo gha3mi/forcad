@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_TRY_COMPILE_CONFIGURATION "Release")
+endif()
+
 project(ForCAD LANGUAGES Fortran)
 set(PROJECT_AUTHOR "Seyed Ali Ghasemi")
 set(PROJECT_MAINTAINER "info@gha3mi.com")
