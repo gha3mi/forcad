@@ -2327,9 +2327,9 @@ contains
 
         if (.not. this%err%ok) return
 
-        if (allocated(this%elemConn_Xc_vis)) then
-            if (size(this%elemConn_Xc_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xc_vis,2) /= size(elemConn,2)) then
-                deallocate(this%elemConn_Xc_vis)
+        if (allocated(this%elemConn_Xg_vis)) then
+            if (size(this%elemConn_Xg_vis,1) /= size(elemConn,1) .or. size(this%elemConn_Xg_vis,2) /= size(elemConn,2)) then
+                deallocate(this%elemConn_Xg_vis)
             end if
         end if
         this%elemConn_Xg_vis = elemConn
