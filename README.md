@@ -246,7 +246,7 @@ Graph generated with [fpm-deps](https://github.com/ivan-pi/fpm-deps), modified t
 |------------|----------------------|----------------------|----------------------|
 | `flang-new` | - | fpm ✅  cmake ✅ | fpm ✅  cmake ❌ |
 | `gfortran` | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ |
-| `ifx` | - | fpm ✅  cmake ✅ | fpm ✅  cmake ❌ |
+| `ifx` | - | fpm ✅  cmake ✅ | fpm ✅  cmake ✅ |
 | `lfortran` | fpm ❌  cmake ❌ | fpm ❌  cmake ❌ | fpm ❌  cmake ❌ |
 | `nvfortran` | - | fpm ✅  cmake ✅ | - |
 <!-- STATUS:setup-fortran-conda:END -->
