@@ -1559,11 +1559,11 @@ contains
         real(rk), intent(in), contiguous :: a(:)
         real(rk), intent(in), contiguous :: b(:)
         real(rk), allocatable :: c(:,:)
-        integer :: i
+        integer :: j
 
         allocate(c(size(a), size(b)))
-        do concurrent(i = 1:size(c,1))
-            c(i, :) = a(i) * b(:)
+        do concurrent(j = 1:size(c,2))
+            c(:, j) = a(:) * b(j)
         end do
     end function
     !===============================================================================
