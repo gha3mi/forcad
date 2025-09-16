@@ -1,3 +1,33 @@
+## [v0.16.1](https://github.com/gha3mi/forcad/compare/v0.16.0...v0.16.1) - 2025-09-16
+
+
+### Fixes
+
+* fix: make Tgci local in compute_Tgc_nurbs_1d_vector ([f73d9c05d](https://github.com/gha3mi/forcad/commit/f73d9c05d5f2dcefe37c78b2bbbc74710554f799)) by [@gha3mi](https://github.com/gha3mi)
+* fix: update cmake flags ([a13fcfd99](https://github.com/gha3mi/forcad/commit/a13fcfd993a8fe4391d44c87b84c7ebd77845466)) by [@gha3mi](https://github.com/gha3mi)
+
+### Others
+
+* chore: fix cmake ([c38b9c89d](https://github.com/gha3mi/forcad/commit/c38b9c89dfbdf8c141f63686760ca9328d121d76)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#75) ([6c277d299](https://github.com/gha3mi/forcad/commit/6c277d299d071430f717b2562fd7c1cce86fe237)) by [@gha3mi](https://github.com/gha3mi)
+* chore: fix cmake issues with flang on win ([dab6c80fd](https://github.com/gha3mi/forcad/commit/dab6c80fd1868f30452b4332ef2d2f6c64cb8a7d)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#76) ([82736d6f3](https://github.com/gha3mi/forcad/commit/82736d6f37b6e9a7a68b9037f377ecea49238f4e)) by [@gha3mi](https://github.com/gha3mi)
+* docs: update compiler flags for flang in README.md ([63aad37ce](https://github.com/gha3mi/forcad/commit/63aad37ce930b997f0d7a135f1522608a01cb611)) by [@gha3mi](https://github.com/gha3mi)
+* docs: update README ([ad6954319](https://github.com/gha3mi/forcad/commit/ad69543194e01e35a58d76bf5cdeabf6ef54e275)) by [@gha3mi](https://github.com/gha3mi)
+* chore: remove lfortran from CI/CD compiler matrix ([de70dca1c](https://github.com/gha3mi/forcad/commit/de70dca1ca69e810cede642edeceb778c6ce4981)) by [@gha3mi](https://github.com/gha3mi)
+* Update README.md status table [ci skip] (#77) ([4c9e5d37f](https://github.com/gha3mi/forcad/commit/4c9e5d37fe19ea0d9bd3026436253e5aaa623334)) by [@gha3mi](https://github.com/gha3mi)
+* chore: remove master references (CI/CD) ([2ecad4165](https://github.com/gha3mi/forcad/commit/2ecad4165af935500e0a02a8835f6e7e29e9d365)) by [@gha3mi](https://github.com/gha3mi)
+* chore: update fortitude-pre-commit version to v0.7.5 ([96cc2f8e0](https://github.com/gha3mi/forcad/commit/96cc2f8e00663593c9894cf8473068dd4397b29a)) by [@gha3mi](https://github.com/gha3mi)
+* chore: update release flags for nvfortran ([78fc484d0](https://github.com/gha3mi/forcad/commit/78fc484d08f5aa33f8c6986fe188a7e8d68d83de)) by [@gha3mi](https://github.com/gha3mi)
+
+
+### Contributors
+- [@gha3mi](https://github.com/gha3mi)
+
+
+
+Full Changelog: [v0.16.0...v0.16.1](https://github.com/gha3mi/forcad/compare/v0.16.0...v0.16.1)
+
 ## [v0.16.0](https://github.com/gha3mi/forcad/compare/v0.15.0...v0.16.0) - 2025-09-15
 
 
