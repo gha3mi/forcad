@@ -602,14 +602,17 @@ contains
     pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, i, j
+        integer :: s1, s2, j, off, s, e
 
         s1 = size(X_dir1)
         s2 = size(X_dir2)
         allocate(Xt(s1*s2,2))
-        do concurrent (j = 1:s2, i = 1: s1)
-            Xt((j - 1) * s1 + i,1) = X_dir1(i)
-            Xt((j - 1) * s1 + i,2) = X_dir2(j)
+        do concurrent (j = 1:s2) local(off, s, e)
+            off = (j-1)*s1
+            s = off + 1
+            e = off + s1
+            Xt(s:e, 1) = X_dir1(:)
+            Xt(s:e, 2) = X_dir2(j)
         end do
     end subroutine
     !===============================================================================
@@ -621,16 +624,19 @@ contains
     pure subroutine ndgrid3(X_dir1,X_dir2,X_dir3, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:), X_dir3(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, s3, i, j, k
+        integer :: s1, s2, s3, j, k, off, s, e
 
         s1 = size(X_dir1)
         s2 = size(X_dir2)
         s3 = size(X_dir3)
         allocate(Xt(s1*s2*s3,3))
-        do concurrent (k = 1:s3, j = 1:s2, i = 1: s1)
-            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,1) = X_dir1(i)
-            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,2) = X_dir2(j)
-            Xt(((k - 1) * s2 + (j - 1)) * s1 + i,3) = X_dir3(k)
+        do concurrent (k=1:s3, j=1:s2) local(off, s, e)
+            off = ((k-1)*s2 + (j-1)) * s1
+            s = off + 1
+            e = off + s1
+            Xt(s:e, 1) = X_dir1(:)
+            Xt(s:e, 2) = X_dir2(j)
+            Xt(s:e, 3) = X_dir3(k)
         end do
     end subroutine
     !===============================================================================
@@ -1559,11 +1565,11 @@ contains
         real(rk), intent(in), contiguous :: a(:)
         real(rk), intent(in), contiguous :: b(:)
         real(rk), allocatable :: c(:,:)
-        integer :: i
+        integer :: j
 
         allocate(c(size(a), size(b)))
-        do concurrent(i = 1:size(c,1))
-            c(i, :) = a(i) * b(:)
+        do concurrent(j = 1:size(c,2))
+            c(:, j) = a(:) * b(j)
         end do
     end function
     !===============================================================================
