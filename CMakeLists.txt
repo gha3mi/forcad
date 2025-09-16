@@ -46,7 +46,7 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "NVHPC")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Minform=inform -Mbackslash -Mbounds -Mchkptr -Mchkstk -traceback -fPIC -mp -Mfree -stdpar=multicore,gpu -Minfo=stdpar,accel")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O3 -fPIC -stdpar=multicore,gpu -Mbackslash -mp -Mfree")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O4 -fPIC -stdpar=multicore,gpu -Mbackslash -Mvect=simd -Mcache_align -Mvect -Minline -Mconcur -Mlre -Mflushz -Mdaz -mp -Mfree")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")
