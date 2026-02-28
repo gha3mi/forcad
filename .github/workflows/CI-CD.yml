@@ -3,19 +3,12 @@ name: Setup Fortran Conda CI/CD
 on:
   push:
     branches: [main, dev]
-    paths-ignore:
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'VERSION'
-      - 'LICENSE'
+    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
   pull_request:
     branches: [main]
-    paths-ignore:
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'VERSION'
-      - 'LICENSE'
+    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
   workflow_dispatch:
+
 permissions:
   contents: write
   pull-requests: write
@@ -28,31 +21,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [gfortran, ifx, flang-new, nvfortran]
         include:
-          - os: ubuntu-latest
-            extra-packages: ""
-          - os: windows-latest
-            extra-packages: ""
-          - os: macos-latest
-            extra-packages: ""
-        exclude:
-          - os: macos-latest
-            compiler: flang-new
-          - os: macos-latest
-            compiler: ifx
-          - os: macos-latest
-            compiler: nvfortran
-          - os: windows-latest
-            compiler: nvfortran
-  
+        - {os: ubuntu-latest,  compiler: gfortran }
+        - {os: ubuntu-latest,  compiler: ifx      }
+        - {os: ubuntu-latest,  compiler: flang-new}
+        - {os: ubuntu-latest,  compiler: nvfortran}
+        - {os: windows-latest, compiler: gfortran }
+        - {os: windows-latest, compiler: ifx,      fpm-version: "0.12.0"}
+        - {os: macos-latest,   compiler: gfortran }
+
     steps:
       - name: Setup Fortran
         uses: gha3mi/setup-fortran-conda@latest
         with:
           compiler: ${{ matrix.compiler }}
-          platform: ${{ matrix.os }}
+          fpm-version: ${{ matrix.fpm-version }}
 
       - name: fpm test (debug)
         if: always()
@@ -62,23 +45,6 @@ jobs:
         if: always()
         run: fpm @${{ matrix.os }}_${{ matrix.compiler }}_release --verbose
 
-  doc_ford:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: Generate FORD Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup and Generate FORD Documentation
-        uses: gha3mi/setup-fortran-conda@latest
-        with:
-          compiler: gfortran
-          platform: ubuntu-latest
-          generate-doc-ford: true
-          ford-working-directory: .
-          ford-config: README.md
-          ford-output-directory: doc
-          ford-branch: gh-pages
-          ford-target-folder: .
-
   test_cmake:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: ${{ matrix.os }}_${{ matrix.compiler }}_cmake
@@ -86,31 +52,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [gfortran, ifx, flang-new, nvfortran]
         include:
-          - os: ubuntu-latest
-            extra-packages: ""
-          - os: windows-latest
-            extra-packages: ""
-          - os: macos-latest
-            extra-packages: ""
-        exclude:
-          - os: macos-latest
-            compiler: flang-new
-          - os: macos-latest
-            compiler: ifx
-          - os: macos-latest
-            compiler: nvfortran
-          - os: windows-latest
-            compiler: nvfortran
-  
+        - {os: ubuntu-latest,  compiler: gfortran }
+        - {os: ubuntu-latest,  compiler: ifx      }
+        - {os: ubuntu-latest,  compiler: flang-new}
+        - {os: ubuntu-latest,  compiler: nvfortran}
+        - {os: windows-latest, compiler: gfortran }
+        - {os: windows-latest, compiler: ifx      }
+        - {os: macos-latest,   compiler: gfortran }
+
     steps:
       - name: Setup Fortran
         uses: gha3mi/setup-fortran-conda@latest
         with:
           compiler: ${{ matrix.compiler }}
-          platform: ${{ matrix.os }}
 
       - name: cmake test (debug)
         if: always()
@@ -125,7 +80,7 @@ jobs:
           cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
           cmake --build build/cmake/release --config Release --verbose
           ctest --test-dir build/cmake/release --output-on-failure -VV
-      
+
       - name: cmake install (static)
         if: always()
         run: |
@@ -148,32 +103,26 @@ jobs:
         if: always()
         run: cmake --build build/cmake/shared --target uninstall
 
-  status_fpm:
-    if: ${{ always() && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: Generate STATUS.md
-    needs: [test_fpm]
+  doc_ford:
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && !contains(github.event.head_commit.message, '[skip ci]') }}
+    name: Generate FORD Documentation
     runs-on: ubuntu-latest
     steps:
-      - name: Generate summary
+      - name: Setup and Generate FORD Documentation
         uses: gha3mi/setup-fortran-conda@latest
         with:
-          generate-status-fpm: true
-
-  status_cmake:
-    if: ${{ always() && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: Generate STATUS.md
-    needs: [test_cmake]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Generate summary
-        uses: gha3mi/setup-fortran-conda@latest
-        with:
-          generate-status-cmake: true
+          compiler: gfortran
+          generate-doc-ford: true
+          ford-working-directory: .
+          ford-config: README.md
+          ford-output-directory: doc
+          ford-branch: gh-pages
+          ford-target-folder: .
 
   update_readme_table:
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
+    if: ${{ always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Update README.md status table
-    needs: [status_fpm, status_cmake]
+    needs: [test_fpm, test_cmake]
     runs-on: ubuntu-latest
     steps:
       - name: Update README status
