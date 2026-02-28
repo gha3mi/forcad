@@ -2376,6 +2376,15 @@ contains
                             S_loc(ii + 1 + i2*nc1 + (i3_new-1)*nc1*nc2,ii + 1 + i2*nc1 + (i3_old-1)*nc1*nc2) = A1(i3_new,i3_old)
                         end do
                     end if
+                case default
+                    call this%err%set(&
+                        code       = 100,&
+                        severity   = 1,&
+                        category   = 'forcad_nurbs_volume',&
+                        message    = 'Invalid direction for inserting knots.',&
+                        location   = 'insert_knots',&
+                        suggestion = 'Use dir=1 or dir=2 or dir=3 to specify the direction.')
+                    return
                 end select
 
                 if (present(B)) then
@@ -2619,6 +2628,15 @@ contains
                         S_loc(ii + 1 + i2*this%nc(1) + (i3_new-1)*this%nc(1)*this%nc(2),ii + 1 + i2*this%nc(1) + (i3_old-1)*this%nc(1)*this%nc(2)) = Tdir(i3_new,i3_old)
                     end do
                 end if
+            case default
+                call this%err%set(&
+                    code       = 100,&
+                    severity   = 1,&
+                    category   = 'forcad_nurbs_volume',&
+                    message    = 'Invalid direction for elevating degree.',&
+                    location   = 'elevate_degree',&
+                    suggestion = 'Use dir=1 or dir=2 or dir=3 to specify the direction.')
+                return
             end select
 
             if (present(Bs)) then
@@ -3813,6 +3831,8 @@ contains
             do ii = 1, n(2)*n(3)
                 elemConn(ii) = this%elemConn(elem, n(1)*ii)
             end do
+        case default
+            error stop 'Invalid face number'
         end select
     end function
     !===============================================================================
@@ -3868,6 +3888,8 @@ contains
             do ii = 1, n(2)*n(3)
                 elemConn(ii) = this%elemConn_Xc_vis(elem, n(1)*ii)
             end do
+        case default
+            error stop 'Invalid face number'
         end select
     end function
     !===============================================================================
@@ -3923,6 +3945,8 @@ contains
             do ii = 1, n(2)*n(3)
                 elemConn(ii) = this%elemConn_Xg_vis(elem, n(1)*ii)
             end do
+        case default
+            error stop 'Invalid face number'
         end select
     end function
     !===============================================================================
