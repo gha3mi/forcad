@@ -195,38 +195,38 @@
 </ul>
 <h3>Clone the repository</h3>
 <p>Clone the ForCAD repository from GitHub:</p>
-<div class="codehilite"><pre><span></span><code>git clone https://github.com/gha3mi/forcad.git
-<span class="nb">cd</span> forcad
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gha3mi/forcad.git
+<span class="nb">cd</span><span class="w"> </span>forcad
 </code></pre></div>
 
 <h3>Install PyVista (Optional)</h3>
 <p>To install PyVista, run the following command:</p>
-<div class="codehilite"><pre><span></span><code>pip install pyvista
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pyvista
 </code></pre></div>
 
 <p>By default PyVista visualization is enabled. To disable it, define the preprocessor flag <code>NOSHOW_PYVISTA</code> in the <code>fpm.toml</code> file or pass it as a compiler flag.</p>
 <h3>Using fpm</h3>
 <h4>Running Examples with fpm</h4>
-<div class="codehilite"><pre><span></span><code>fpm run --example &lt;file name excluding the .f90 extension&gt; --compiler gfortran --profile release --flag <span class="s2">&quot;-ftree-parallelize-loops=8 -march=native&quot;</span>
+<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>run<span class="w"> </span>--example<span class="w"> </span>&lt;file<span class="w"> </span>name<span class="w"> </span>excluding<span class="w"> </span>the<span class="w"> </span>.f90<span class="w"> </span>extension&gt;<span class="w"> </span>--compiler<span class="w"> </span>gfortran<span class="w"> </span>--profile<span class="w"> </span>release<span class="w"> </span>--flag<span class="w"> </span><span class="s2">&quot;-ftree-parallelize-loops=8 -march=native&quot;</span>
 </code></pre></div>
 
 <p>After executing the examples, <code>.vtk</code> files will be generated in the <code>vtk</code> directory. To visualize these files, a <code>show()</code> method is provided which utilizes PyVista. Alternatively, other visualization tools like ParaView can also be used.</p>
 <h4>Using ForCAD as a fpm Dependency</h4>
 <p>If you want to use ForCAD as a dependency in your own fpm project,
 you can easily include it by adding the following line to your <code>fpm.toml</code> file:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">[dependencies]</span><span class="w"></span>
-<span class="n">forcad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">git</span><span class="o">=</span><span class="s">&quot;https://github.com/gha3mi/forcad.git&quot;</span><span class="p">}</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="k">[dependencies]</span>
+<span class="n">forcad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">git</span><span class="p">=</span><span class="s2">&quot;https://github.com/gha3mi/forcad.git&quot;</span><span class="p">}</span>
 </code></pre></div>
 
 <h3>Using CMake</h3>
 <h4>Install</h4>
-<div class="codehilite"><pre><span></span><code>cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DBUILD_SHARED_LIBS<span class="o">=</span>ON -DCMAKE_INSTALL_PREFIX<span class="o">=</span>. -G Ninja
-cmake --build build/cmake --config Release
-cmake --install build/cmake --config Release --verbose
+<div class="codehilite"><pre><span></span><code>cmake<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>-B<span class="w"> </span>build/cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DBUILD_SHARED_LIBS<span class="o">=</span>ON<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>.<span class="w"> </span>-G<span class="w"> </span>Ninja
+cmake<span class="w"> </span>--build<span class="w"> </span>build/cmake<span class="w"> </span>--config<span class="w"> </span>Release
+cmake<span class="w"> </span>--install<span class="w"> </span>build/cmake<span class="w"> </span>--config<span class="w"> </span>Release<span class="w"> </span>--verbose
 </code></pre></div>
 
 <h4>Uninstall</h4>
-<div class="codehilite"><pre><span></span><code>cmake --build build/cmake --target uninstall
+<div class="codehilite"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>build/cmake<span class="w"> </span>--target<span class="w"> </span>uninstall
 </code></pre></div>
 
 <h4>Using ForCAD with CMake</h4>
@@ -270,7 +270,7 @@ cmake --install build/cmake --config Release --verbose
 </table>
 <p><em>flang-new 21.1.0: warning: Mapping <code>do concurrent</code> to OpenMP is still experimental.</em></p>
 <p>Compiler flags can be passed to fpm using the <code>--flag</code> option, for example:</p>
-<div class="codehilite"><pre><span></span><code>fpm build --flag <span class="s2">&quot;-stdpar=multicore,gpu -Minfo=stdpar,accel&quot;</span>
+<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>build<span class="w"> </span>--flag<span class="w"> </span><span class="s2">&quot;-stdpar=multicore,gpu -Minfo=stdpar,accel&quot;</span>
 </code></pre></div>
 
 <p>Alternatively, flags can be added to a <code>fpm.rsp</code> file in the root directory of the project.</p>
@@ -309,41 +309,41 @@ cmake --install build/cmake --config Release --verbose
 </table>
 <p><strong>Note</strong>: The examples <code>example_ppm1.f90</code>, <code>example_ppm2.f90</code> and <code>example_ppm3.f90</code> use the <code>ForColormap</code> library, which only supports <code>REAL64</code> precision.</p>
 <p>Example: Building with double precision</p>
-<div class="codehilite"><pre><span></span><code>fpm build --profile release --flag <span class="s2">&quot;-DREAL64&quot;</span>
+<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span>build<span class="w"> </span>--profile<span class="w"> </span>release<span class="w"> </span>--flag<span class="w"> </span><span class="s2">&quot;-DREAL64&quot;</span>
 </code></pre></div>
 
 <h2>Dependencies</h2>
-<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">LR</span><span class="w"></span>
-<span class="w">  </span><span class="n">N1</span><span class="o">[</span><span class="n">forcad</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N2</span><span class="o">[</span><span class="n">forIGES</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N3</span><span class="o">[</span><span class="n">fordebug</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N4</span><span class="o">[</span><span class="n">forunittest</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N5</span><span class="o">[</span><span class="n">forimage</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N6</span><span class="o">[</span><span class="n">forcolormap</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N7</span><span class="o">[</span><span class="n">fortime</span><span class="o">]</span><span class="w"></span>
-<span class="w">  </span><span class="n">N8</span><span class="o">[</span><span class="n">FACE</span><span class="o">]</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">LR</span>
+<span class="w">  </span><span class="n">N1</span><span class="o">[</span><span class="n">forcad</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N2</span><span class="o">[</span><span class="n">forIGES</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N3</span><span class="o">[</span><span class="n">fordebug</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N4</span><span class="o">[</span><span class="n">forunittest</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N5</span><span class="o">[</span><span class="n">forimage</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N6</span><span class="o">[</span><span class="n">forcolormap</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N7</span><span class="o">[</span><span class="n">fortime</span><span class="o">]</span>
+<span class="w">  </span><span class="n">N8</span><span class="o">[</span><span class="n">FACE</span><span class="o">]</span>
 
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N1</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forcad&quot;</span><span class="w"> </span><span class="ss">&quot;A parallel Fortran library for geometric modeling using NURBS&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N2</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/rweed/forIGES&quot;</span><span class="w"> </span><span class="ss">&quot;Modern Fortran Library for Reading and Writing IGES CAD Files&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N3</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/fordebug&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for handling errors, warnings and info messages with debugging support in pure procedures&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N4</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forunittest&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for unit testing&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N5</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forimage&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for processing and editing images and managing colors&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N6</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/vmagnin/forcolormap&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran colormap library&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N7</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/fortime&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for measuring elapsed time, DATE_AND_TIME time, CPU time, OMP time and MPI time&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N8</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/szaghi/FACE&quot;</span><span class="w"> </span><span class="ss">&quot;Fortran Ansi Colors (and Styles) Environment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N1</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forcad&quot;</span><span class="w"> </span><span class="ss">&quot;A parallel Fortran library for geometric modeling using NURBS&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N2</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/rweed/forIGES&quot;</span><span class="w"> </span><span class="ss">&quot;Modern Fortran Library for Reading and Writing IGES CAD Files&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N3</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/fordebug&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for handling errors, warnings and info messages with debugging support in pure procedures&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N4</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forunittest&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for unit testing&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N5</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/forimage&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for processing and editing images and managing colors&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N6</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/vmagnin/forcolormap&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran colormap library&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N7</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/gha3mi/fortime&quot;</span><span class="w"> </span><span class="ss">&quot;A Fortran library for measuring elapsed time, DATE_AND_TIME time, CPU time, OMP time and MPI time&quot;</span>
+<span class="w">  </span><span class="n">click</span><span class="w"> </span><span class="n">N8</span><span class="w"> </span><span class="n">href</span><span class="w"> </span><span class="ss">&quot;https://github.com/szaghi/FACE&quot;</span><span class="w"> </span><span class="ss">&quot;Fortran Ansi Colors (and Styles) Environment&quot;</span>
 
-<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">core</span><span class="w"> </span><span class="n">dependencies</span><span class="w"></span>
-<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">N2</span><span class="w"></span>
-<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">N3</span><span class="w"></span>
-<span class="w">  </span><span class="n">N3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">N7</span><span class="w"></span>
-<span class="w">  </span><span class="n">N7</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">N8</span><span class="w"></span>
+<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">core</span><span class="w"> </span><span class="n">dependencies</span>
+<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="c1">--&gt; N2</span>
+<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="c1">--&gt; N3</span>
+<span class="w">  </span><span class="n">N3</span><span class="w"> </span><span class="c1">--&gt; N7</span>
+<span class="w">  </span><span class="n">N7</span><span class="w"> </span><span class="c1">--&gt; N8</span>
 
-<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="n">dependency</span><span class="w"> </span><span class="p">(</span><span class="n">dashed</span><span class="w"> </span><span class="n">line</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="o">-</span><span class="p">.</span><span class="o">-&gt;|</span><span class="n">example</span><span class="o">|</span><span class="w"> </span><span class="n">N6</span><span class="w"></span>
-<span class="w">  </span><span class="n">N6</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">N5</span><span class="w"></span>
+<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="n">dependency</span><span class="w"> </span><span class="p">(</span><span class="n">dashed</span><span class="w"> </span><span class="n">line</span><span class="p">)</span>
+<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="o">-</span><span class="p">.</span><span class="o">-&gt;|</span><span class="n">example</span><span class="o">|</span><span class="w"> </span><span class="n">N6</span>
+<span class="w">  </span><span class="n">N6</span><span class="w"> </span><span class="c1">--&gt; N5</span>
 
-<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">dependency</span><span class="w"> </span><span class="p">(</span><span class="n">dotted</span><span class="w"> </span><span class="n">line</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="p">...</span><span class="o">-&gt;|</span><span class="n">test</span><span class="o">|</span><span class="w"> </span><span class="n">N4</span><span class="w"></span>
+<span class="w">  </span><span class="o">%%</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">dependency</span><span class="w"> </span><span class="p">(</span><span class="n">dotted</span><span class="w"> </span><span class="n">line</span><span class="p">)</span>
+<span class="w">  </span><span class="n">N1</span><span class="w"> </span><span class="p">...</span><span class="o">-&gt;|</span><span class="n">test</span><span class="o">|</span><span class="w"> </span><span class="n">N4</span>
 <span class="w">  </span><span class="n">N4</span><span class="w"> </span><span class="c1">--&gt; N8</span>
 </code></pre></div>
 
@@ -395,21 +395,21 @@ cmake --install build/cmake --config Release --verbose
 To generate the API documentation for ForCAD using
 <a href="https://github.com/Fortran-FOSS-Programmers/ford">ford</a> run the following
 command:</p>
-<div class="codehilite"><pre><span></span><code>ford README.md
+<div class="codehilite"><pre><span></span><code>ford<span class="w"> </span>README.md
 </code></pre></div>
 
 <h2>Contributing</h2>
 <p>To contribute to ForCAD, please review the <a href="https://github.com/gha3mi/forcad/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
 <h2>Citation</h2>
 <p>If you use ForCAD in your research, please cite it as follows:</p>
-<div class="codehilite"><pre><span></span><code><span class="nc">@software</span><span class="p">{</span><span class="nl">seyed_ali_ghasemi_2025_10904447</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">author</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">{Ghasemi, S. A.}</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">title</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="s">{gha3mi/ForCAD}</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">year</span><span class="w">         </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">publisher</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{Zenodo}</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">doi</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{10.5281/zenodo.10904447}</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="na">url</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.5281/zenodo.10904447}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="codehilite"><pre><span></span><code><span class="nc">@software</span><span class="p">{</span><span class="nl">seyed_ali_ghasemi_2025_10904447</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">{Ghasemi, S. A.}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="s">{gha3mi/ForCAD}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w">         </span><span class="p">=</span><span class="w"> </span><span class="s">{2025}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">publisher</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{Zenodo}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{10.5281/zenodo.10904447}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.5281/zenodo.10904447}</span>
+<span class="p">}</span>
 </code></pre></div>
 
 <h2>References</h2>
@@ -509,7 +509,7 @@ command:</p>
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-09-16T22:57:15.314048+0000             </p>
+ on 2026-02-28T20:54:37.734285+0000             </p>
           </div>
         </div>
         <br>
