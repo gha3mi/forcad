@@ -1480,6 +1480,8 @@ contains
                     + A(1,1)*( A(2,2)*A(3,3) - A(2,3)*A(3,2) )&
                     - A(1,2)*( A(2,1)*A(3,3) - A(2,3)*A(3,1) )&
                     + A(1,3)*( A(2,1)*A(3,2) - A(2,2)*A(3,1) )
+                case default
+                    error stop "det: not defined for this size"
             end select
         elseif (size(A,1) == 3 .and. size(A,2) == 2) then
             detA = &

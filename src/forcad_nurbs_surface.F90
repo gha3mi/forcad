@@ -2103,6 +2103,10 @@ contains
                         S_loc(ii + 1 + (i2_new-1)*nc1,ii + 1 + (i2_old-1)*nc1) = A1(i2_new,i2_old)
                     end do
                     end if
+                case default
+                    call this%err%set(100,1,'forcad_nurbs_surface','Invalid direction for inserting knots.', &
+                                        'insert_knots','Use dir=1 or dir=2.')
+                    return
                 end select
 
                 if (present(B)) then
@@ -2252,6 +2256,10 @@ contains
                         S_loc(ii + 1 + (i2_new-1)*this%nc(1),ii + 1 + (i2_old-1)*this%nc(1)) = Tdir(i2_new,i2_old)
                     end do
                 end if
+            case default
+                call this%err%set(100,1,'forcad_nurbs_surface','Invalid direction for elevating degree.', &
+                                'elevate_degree','Use dir=1 or dir=2.')
+                return
             end select
 
             if (present(Bs)) call move_alloc(S_loc, Bs)
