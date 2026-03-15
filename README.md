@@ -247,7 +247,7 @@ Graph generated with [fpm-deps](https://github.com/ivan-pi/fpm-deps), modified t
 
 | OS | Compiler | Version | fpm | cmake |
 | --- | --- | ---: | :---: | :---: |
-| ubuntu 24.04 | `flang-new` | 21.1.8 | 0.13.0 ✅ | 4.2.3 ✅ |
+| ubuntu 24.04 | `flang-new` | 22.1.0 | 0.13.0 ✅ | 4.2.3 ✅ |
 | ubuntu 24.04 | `gfortran` | 15.2.0 | 0.13.0 ✅ | 4.2.3 ✅ |
 | ubuntu 24.04 | `ifx` | 2025.3.2 | 0.13.0 ✅ | 4.2.3 ✅ |
 | ubuntu 24.04 | `nvfortran` | 26.1 | 0.13.0 ✅ | 4.2.3 ✅ |
