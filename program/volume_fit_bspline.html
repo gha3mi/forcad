@@ -1,0 +1,2556 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>volume_fit_bspline &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">NURBS Theory and ForCAD Usage</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>volume_fit_bspline      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-author"><i class="fa fa-pencil"></i> Seyed Ali Ghasemi</li>
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.9% of total for programs.">69 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/volume_fit_bspline.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/volume_fit_bspline.f90.html'>volume_fit_bspline.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">volume_fit_bspline</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xdata">Xdata</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xg_eval">Xg_eval</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xt">Xt</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xt1">Xt1</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xt2">Xt2</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-xt3">Xt3</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-bsp">bsp</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-err1">err1</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-err2">err2</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-err3">err3</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-i">i</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-n">n</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-ndata">ndata</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-pi">pi</a>
+            <a class="list-group-item" href="../program/volume_fit_bspline.html#variable-rms">rms</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/volume_fit_bspline.html#src">volume_fit_bspline</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~volume_fit_bspline~~UsesGraph Pages: 1 -->
+<svg id="programvolume_fit_bsplineUsesGraph" width="641pt" height="447pt"
+ viewBox="0.00 0.00 641.00 447.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~volume_fit_bspline~~UsesGraph" class="graph" transform="scale(0.803661 0.803661) rotate(0) translate(4 552.16)">
+<title>program~~volume_fit_bspline~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-552.16 793.6,-552.16 793.6,4 -4,4"/>
+<!-- program~volume_fit_bspline -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node1" class="node">
+<title>program~volume_fit_bspline</title>
+<polygon fill="none" stroke="black" points="789.6,-347.65 679.08,-347.65 679.08,-323.38 789.6,-323.38 789.6,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="734.34" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50">volume_fit_bspline</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="643.08,-347.65 589.08,-347.65 589.08,-323.38 643.08,-323.38 643.08,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="616.08" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;module~forcad -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge1" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M678.61,-335.52C670.58,-335.52 662.45,-335.52 654.85,-335.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="654.96,-332.02 644.96,-335.52 654.96,-339.02 654.96,-332.02"/>
+</g>
+<!-- module~forcad_geometry -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node3" class="node">
+<title>module~forcad_geometry</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node3"><a xlink:href="../module/forcad_geometry.html" xlink:title="forcad_geometry">
+<polygon fill="#337ab7" stroke="#337ab7" points="527.95,-191.65 425.68,-191.65 425.68,-167.38 527.95,-167.38 527.95,-191.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-175.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_geometry</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_geometry -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_geometry</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M604.08,-323.01C580.59,-296.31 525.3,-233.48 496.31,-200.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="499.11,-198.41 489.87,-193.21 493.85,-203.03 499.11,-198.41"/>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node4" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node4"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="86.52,-318.65 8.25,-318.65 8.25,-294.38 86.52,-294.38 86.52,-318.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-302.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-533.52C405.67,-565.01 379.7,-532.98 302.8,-533.52"/>
+</g>
+<!-- module~forcad_multipatch -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node5" class="node">
+<title>module~forcad_multipatch</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node5"><a xlink:href="../module/forcad_multipatch.html" xlink:title="forcad_multipatch">
+<polygon fill="#337ab7" stroke="#337ab7" points="355.56,-505.65 248.04,-505.65 248.04,-481.38 355.56,-481.38 355.56,-505.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-489.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M614.62,-348.09C612.73,-380.72 603,-468.72 553.08,-514.52 527.66,-537.84 509.29,-519.39 477.82,-533.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-533.52C453.05,-543.74 389.88,-525.03 346.51,-509.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="347.7,-506.61 337.1,-506.56 345.36,-513.2 347.7,-506.61"/>
+</g>
+<!-- module~forcad_multipatch_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node6" class="node">
+<title>module~forcad_multipatch_curve</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node6"><a xlink:href="../module/forcad_multipatch_curve.html" xlink:title="forcad_multipatch_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="548.2,-347.65 405.43,-347.65 405.43,-323.38 548.2,-323.38 548.2,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.61,-335.52C580.09,-335.52 570.15,-335.52 559.79,-335.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="559.94,-332.02 549.94,-335.52 559.94,-339.02 559.94,-332.02"/>
+</g>
+<!-- module~forcad_multipatch_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node7" class="node">
+<title>module~forcad_multipatch_surface</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node7"><a xlink:href="../module/forcad_multipatch_surface.html" xlink:title="forcad_multipatch_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="553.08,-389.65 400.56,-389.65 400.56,-365.38 553.08,-365.38 553.08,-389.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-373.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge6" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.63,-344.83C577.68,-348.59 564.81,-352.9 553.08,-356.52 547.33,-358.29 541.31,-360.08 535.29,-361.83"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="534.61,-358.38 525.96,-364.5 536.54,-365.11 534.61,-358.38"/>
+</g>
+<!-- module~forcad_multipatch_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node8" class="node">
+<title>module~forcad_multipatch_volume</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node8"><a xlink:href="../module/forcad_multipatch_volume.html" xlink:title="forcad_multipatch_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="553.08,-505.65 400.56,-505.65 400.56,-481.38 553.08,-481.38 553.08,-505.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-489.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge7" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M604.31,-347.91C580.86,-374.91 524.95,-439.27 495.96,-472.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="493.45,-470.19 489.53,-480.03 498.73,-474.78 493.45,-470.19"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node9" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node9"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="359.68,-113.65 243.91,-113.65 243.91,-89.38 359.68,-89.38 359.68,-113.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-97.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge8" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-23.52C420.96,4.06 354.29,-49.84 322.07,-81.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.95,-78.38 315.36,-87.94 324.9,-83.33 319.95,-78.38"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node10" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node10"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="364.56,-269.65 239.04,-269.65 239.04,-245.38 364.56,-245.38 364.56,-269.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-253.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge9" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.76,-325.29C561.5,-315.3 517.42,-300.86 477.82,-295.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-295.52C437.21,-290.31 394.45,-280.95 361.09,-272.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="362.18,-269.48 351.63,-270.48 360.5,-276.28 362.18,-269.48"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node11" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node11"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="364.56,-349.65 239.04,-349.65 239.04,-325.38 364.56,-325.38 364.56,-349.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-333.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge10" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-295.52C427.86,-289.04 373.85,-306.2 339.13,-320.5"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="337.78,-317.27 329.96,-324.41 340.53,-323.71 337.78,-317.27"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node12" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node12"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="203.04,-229.65 130.77,-229.65 130.77,-205.38 203.04,-205.38 203.04,-229.65"/>
+<text xml:space="preserve" text-anchor="middle" x="166.91" y="-213.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge11" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M614.64,-322.91C612.06,-272.1 594.66,-82.26 477.82,-23.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-23.52C379.11,25.11 318.48,-7 239.04,-80.52 200.98,-115.74 233.33,-149.42 203.04,-191.52 201.41,-193.78 199.53,-195.93 197.49,-197.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="195.62,-194.95 190.28,-204.1 200.16,-200.27 195.62,-194.95"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge13" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M425.43,-183.83C375.48,-189.85 298.1,-203.96 239.04,-236.52 203.07,-256.34 208.31,-288.13 167.91,-295.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M165.91,-295.52C143.73,-298.62 119.08,-301.08 98.1,-302.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="98.05,-299.37 88.37,-303.68 98.62,-306.35 98.05,-299.37"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge14" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M449.87,-167.04C427.41,-156.32 393.99,-140.58 364.56,-127.52 357.93,-124.57 350.87,-121.52 343.98,-118.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="345.34,-115.37 334.77,-114.7 342.62,-121.81 345.34,-115.37"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge15" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M448.02,-192.05C419.1,-205.09 373.6,-225.6 341.24,-240.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="339.87,-236.96 332.2,-244.26 342.75,-243.34 339.87,-236.96"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge16" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M462.24,-191.91C432.43,-219.14 361,-284.37 324.73,-317.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="322.46,-314.83 317.43,-324.16 327.18,-320 322.46,-314.83"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge17" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M437.51,-166.94C402.78,-156.54 349.98,-143.22 302.8,-141.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M300.8,-141.52C271.37,-140.45 264.87,-151.37 239.04,-165.52 236.56,-166.87 213.23,-184 193.95,-198.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="192.1,-195.25 186.14,-204.01 196.26,-200.88 192.1,-195.25"/>
+</g>
+<!-- ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node14" class="node">
+<title>ieee_arithmetic</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node14"><a xlink:href="http://fortranwiki.org/fortran/show/ieee_arithmetic" xlink:title="ieee_arithmetic">
+<polygon fill="#337ab7" stroke="#337ab7" points="94.77,-258.65 0,-258.65 0,-234.38 94.77,-234.38 94.77,-258.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-242.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ieee_arithmetic</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_geometry&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge12" class="edge">
+<title>module~forcad_geometry&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M466.87,-167.01C449.93,-144.54 410.72,-98.08 364.56,-80.52 312.42,-60.68 291.87,-62.6 239.04,-80.52 181.62,-99.99 170.81,-117.99 130.77,-163.52 109.73,-187.44 118.41,-204.15 94.77,-225.52 94,-226.22 93.19,-226.9 92.37,-227.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="90.48,-224.61 84.09,-233.07 94.36,-230.44 90.48,-224.61"/>
+</g>
+<!-- module~forcad_multipatch&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge19" class="edge">
+<title>module~forcad_multipatch&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M165.91,-453.52C150.65,-442.34 144.08,-442.95 130.77,-429.52 100.22,-398.69 74.12,-355.01 59.9,-328.85"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="63.05,-327.32 55.26,-320.13 56.87,-330.6 63.05,-327.32"/>
+</g>
+<!-- module~forcad_multipatch&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge18" class="edge">
+<title>module~forcad_multipatch&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M247.55,-486.05C221.63,-480.39 191.13,-470.54 167.91,-453.52"/>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M165.91,-453.52C100.51,-405.58 142.94,-350.74 94.77,-285.52 89.41,-278.26 82.43,-271.48 75.52,-265.68"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="78.14,-263.29 68.13,-259.84 73.8,-268.78 78.14,-263.29"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge21" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M419.08,-348.01C412.64,-350.39 406.32,-353.2 400.56,-356.52 381.21,-367.64 385.24,-383.12 364.56,-391.52 312.87,-412.5 294.22,-399.74 239.04,-391.52 189.28,-384.1 176.51,-379.46 130.77,-358.52 110.9,-349.42 90.11,-336.26 74.38,-325.46"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="76.73,-322.83 66.53,-319.96 72.72,-328.57 76.73,-322.83"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_multipatch -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge22" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M413.67,-348.11C408.98,-350.45 404.53,-353.23 400.56,-356.52 372.71,-379.61 385.37,-399.93 364.56,-429.52 353.23,-445.63 337.86,-461.57 325.28,-473.52"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="323.17,-470.71 318.22,-480.07 327.93,-475.84 323.17,-470.71"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge23" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M418.35,-323.01C411.65,-319.56 405.46,-315.14 400.56,-309.52 346.39,-247.35 416.65,-191.43 364.56,-127.52 362.35,-124.81 359.81,-122.38 357.05,-120.2"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="359.16,-117.39 348.87,-114.87 355.34,-123.26 359.16,-117.39"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge24" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M420.17,-322.94C412.93,-319.49 406.12,-315.1 400.56,-309.52 365.47,-274.24 390.8,-245.79 364.56,-203.52 344.05,-170.47 341.67,-142.92 302.8,-141.52"/>
+</g>
+<!-- fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node13" class="node">
+<title>fordebug</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="197.04,-349.65 136.77,-349.65 136.77,-325.38 197.04,-325.38 197.04,-349.65"/>
+<text xml:space="preserve" text-anchor="middle" x="166.91" y="-333.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fordebug</text>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge20" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M430.59,-348.07C383.71,-360.83 315.51,-378.59 302.8,-377.52"/>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M300.8,-377.52C268.55,-374.79 233.56,-363.91 207.58,-354.19"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="209.04,-351 198.45,-350.66 206.52,-357.53 209.04,-351"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge26" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M466.25,-389.69C440.49,-422.4 371.16,-510.06 364.56,-514.52 340.75,-530.58 331.06,-528.41 302.8,-533.52"/>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M300.8,-533.52C268.23,-539.4 142.59,-478.61 130.77,-467.52 89.2,-428.5 65.15,-363.83 54.68,-329.53"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="58.12,-328.83 51.96,-320.21 51.4,-330.79 58.12,-328.83"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_multipatch -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge27" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M456.97,-390.15C426.55,-410.55 366.45,-450.84 330.94,-474.65"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="329.24,-471.58 322.88,-480.05 333.13,-477.39 329.24,-471.58"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge28" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M413.67,-364.93C408.98,-362.58 404.53,-359.81 400.56,-356.52 372.71,-333.42 390.89,-308.32 364.56,-283.52 361.36,-280.51 357.77,-277.82 353.96,-275.42"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="355.94,-272.52 345.49,-270.78 352.58,-278.66 355.94,-272.52"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge29" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M411.97,-365.02C407.82,-362.65 403.95,-359.84 400.56,-356.52 360.81,-317.53 407.58,-271.87 364.56,-236.52 322.84,-202.23 258.06,-202.93 214.36,-208.55"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="214.08,-205.05 204.68,-209.94 215.08,-211.98 214.08,-205.05"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge25" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M400.33,-380.28C369.98,-380.67 334.68,-380.21 302.8,-377.52"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge31" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M441.56,-506.14C407.04,-517.73 351.97,-533.18 302.8,-533.52"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_multipatch -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge32" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M400.18,-493.52C389.23,-493.52 378.04,-493.52 367.34,-493.52"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="367.45,-490.02 357.45,-493.52 367.45,-497.02 367.45,-490.02"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge33" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M466.29,-480.97C444.06,-451.92 388.79,-381.21 364.56,-363.52 360.26,-360.38 355.53,-357.53 350.66,-354.98"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="352.44,-351.95 341.91,-350.78 349.42,-358.26 352.44,-351.95"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge34" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M464.23,-481.08C448.39,-463.62 419.77,-430.43 400.56,-398.52 380.03,-364.42 394.34,-342.93 364.56,-316.52 320.95,-277.84 289.25,-308.12 239.04,-278.52 219.82,-267.18 220.05,-257.96 203.04,-243.52 200.41,-241.28 197.6,-239.02 194.76,-236.81"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="197.08,-234.17 186.98,-230.94 192.86,-239.75 197.08,-234.17"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge30" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M439.21,-480.9C391.52,-463.78 306.31,-430.76 239.04,-391.52 221.96,-381.55 204.23,-368.11 190.75,-357.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="193.25,-354.66 183.32,-350.96 188.78,-360.04 193.25,-354.66"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge37" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M165.91,-177.52C151.28,-187.58 143.16,-183.8 130.77,-196.52 106.09,-221.86 116.75,-239.8 94.77,-267.52 89.16,-274.59 82.1,-281.3 75.2,-287.1"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="73.47,-284 67.83,-292.97 77.84,-289.47 73.47,-284"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge38" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M260.31,-114.01C252.7,-117.57 245.2,-122.02 239.04,-127.52 214.69,-149.24 224.63,-167.05 203.04,-191.52 200.97,-193.86 198.65,-196.13 196.22,-198.28"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="194.52,-195.16 188.91,-204.14 198.9,-200.62 194.52,-195.16"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge35" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M295.15,-113.94C275.33,-157.48 209.75,-301.02 203.04,-309.52 200.77,-312.39 198.14,-315.16 195.38,-317.75"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="193.37,-314.87 188,-324 197.89,-320.21 193.37,-314.87"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge36" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M267.17,-114.14C257.86,-118.04 247.9,-122.61 239.04,-127.52 205.23,-146.23 199.75,-155.62 167.91,-177.52"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M165.91,-177.52C151.28,-187.58 145.55,-186.68 130.77,-196.52 113.66,-207.89 112.27,-214.75 94.77,-225.52 92.91,-226.66 90.97,-227.78 88.99,-228.87"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="87.56,-225.68 80.25,-233.35 90.74,-231.91 87.56,-225.68"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge41" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M264.03,-270.13C237.6,-278.67 200.95,-289.47 167.91,-295.52"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge42" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M259.12,-244.97C244.8,-240.66 228.7,-235.81 214.05,-231.4"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="215.22,-228.1 204.63,-228.57 213.2,-234.8 215.22,-228.1"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge39" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M280.04,-270.02C258.09,-283.23 223.27,-304.19 198.25,-319.25"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="196.58,-316.17 189.82,-324.32 200.19,-322.16 196.58,-316.17"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge40" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M238.81,-262.36C216.3,-262.85 190.79,-261.92 167.91,-257.52"/>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M165.91,-257.52C146.65,-253.81 125.37,-251.34 106.27,-249.7"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="106.76,-246.23 96.51,-248.92 106.2,-253.2 106.76,-246.23"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge45" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M272.16,-324.99C239.49,-311.32 188.02,-291.84 167.91,-295.52"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge46" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M259.88,-324.99C252.39,-321.45 245.05,-317.01 239.04,-311.52 213.81,-288.43 225.34,-269.44 203.04,-243.52 201.18,-241.35 199.1,-239.26 196.92,-237.27"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="199.31,-234.71 189.35,-231.1 194.89,-240.13 199.31,-234.71"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;fordebug -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge43" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M238.63,-337.52C228.47,-337.52 218.17,-337.52 208.69,-337.52"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="208.72,-334.02 198.72,-337.52 208.72,-341.02 208.72,-334.02"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge44" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M265.93,-324.96C256.91,-321.14 247.39,-316.6 239.04,-311.52 205.13,-290.88 206.88,-265.01 167.91,-257.52"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge49" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M149.32,-230.08C129.72,-244.92 96.89,-269.78 74.02,-287.11"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="71.95,-284.28 66.1,-293.1 76.18,-289.86 71.95,-284.28"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;ieee_arithmetic -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge47" class="edge">
+<title>module~forcad_utils&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M130.33,-226.3C122.71,-228.18 114.47,-230.21 106.26,-232.23"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="105.48,-228.82 96.6,-234.62 107.15,-235.62 105.48,-228.82"/>
+</g>
+<!-- iso_fortran_env -->
+<g id="program~~volume_fit_bspline~~UsesGraph_node15" class="node">
+<title>iso_fortran_env</title>
+<g id="a_program~~volume_fit_bspline~~UsesGraph_node15"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
+<polygon fill="#337ab7" stroke="#337ab7" points="94.02,-216.65 0.75,-216.65 0.75,-192.38 94.02,-192.38 94.02,-216.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-200.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_utils&#45;&gt;iso_fortran_env -->
+<g id="program~~volume_fit_bspline~~UsesGraph_edge48" class="edge">
+<title>module~forcad_utils&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M130.33,-213.58C122.52,-212.72 114.07,-211.78 105.66,-210.85"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="106.11,-207.38 95.78,-209.76 105.34,-214.34 106.11,-207.38"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramvolume_fit_bsplineUsesGraph = svgPanZoom('#programvolume_fit_bsplineUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~volume_fit_bspline~~CallsGraph Pages: 1 -->
+<svg id="programvolume_fit_bsplineCallsGraph" width="641pt" height="457pt"
+ viewBox="0.00 0.00 641.00 457.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~volume_fit_bspline~~CallsGraph" class="graph" transform="scale(0.327757 0.327757) rotate(0) translate(4 1390.27)">
+<title>program~~volume_fit_bspline~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-1390.27 1951.72,-1390.27 1951.72,4 -4,4"/>
+<!-- program~volume_fit_bspline -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node1" class="node">
+<title>program~volume_fit_bspline</title>
+<polygon fill="none" stroke="black" points="110.52,-802.27 0,-802.27 0,-778 110.52,-778 110.52,-802.27"/>
+<text xml:space="preserve" text-anchor="middle" x="55.26" y="-786.53" font-family="Helvetica,sans-Serif" font-size="10.50">volume_fit_bspline</text>
+</g>
+<!-- interface~ndgrid -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node2" class="node">
+<title>interface~ndgrid</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node2"><a xlink:href="../interface/ndgrid.html" xlink:title="ndgrid">
+<polygon fill="#a7506f" stroke="#a7506f" points="492.67,-802.27 438.67,-802.27 438.67,-778 492.67,-778 492.67,-802.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-786.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;interface~ndgrid -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge1" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#ff0000" d="M110.92,-790.13C195.13,-790.13 354.46,-790.13 427,-790.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="426.77,-793.64 436.77,-790.14 426.77,-786.64 426.77,-793.64"/>
+</g>
+<!-- none~get_degree -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node3" class="node">
+<title>none~get_degree</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node3"><a xlink:href="../type/nurbs_volume.html#boundprocedure-get_degree" xlink:title="nurbs_volume%get_degree">
+<polygon fill="#a7506f" stroke="#a7506f" points="318.54,-1344.27 162.27,-1344.27 162.27,-1320 318.54,-1320 318.54,-1344.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-1328.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_degree</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;none~get_degree -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge2" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;none~get_degree</title>
+<path fill="none" stroke="#ff0000" d="M57.33,-802.73C63.22,-870.15 93.49,-1188.29 146.52,-1269.13 159.38,-1288.75 180.69,-1303.84 199.65,-1314.34"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="197.76,-1317.3 208.24,-1318.84 201.01,-1311.1 197.76,-1317.3"/>
+</g>
+<!-- none~get_knot -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node4" class="node">
+<title>none~get_knot</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node4"><a xlink:href="../type/nurbs_volume.html#boundprocedure-get_knot" xlink:title="nurbs_volume%get_knot">
+<polygon fill="#a7506f" stroke="#a7506f" points="311.41,-1260.27 169.39,-1260.27 169.39,-1236 311.41,-1236 311.41,-1260.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-1244.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_knot</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;none~get_knot -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge3" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;none~get_knot</title>
+<path fill="none" stroke="#ff0000" d="M55.94,-802.72C55.25,-854.76 58.58,-1056.51 146.52,-1185.13 159.85,-1204.63 181.38,-1219.79 200.36,-1230.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="198.47,-1233.31 208.94,-1234.88 201.74,-1227.12 198.47,-1233.31"/>
+</g>
+<!-- none~get_nc -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node5" class="node">
+<title>none~get_nc</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node5"><a xlink:href="../type/nurbs_volume.html#boundprocedure-get_nc" xlink:title="nurbs_volume%get_nc">
+<polygon fill="#a7506f" stroke="#a7506f" points="306.16,-1176.27 174.64,-1176.27 174.64,-1152 306.16,-1152 306.16,-1176.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-1160.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_nc</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;none~get_nc -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge4" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;none~get_nc</title>
+<path fill="none" stroke="#ff0000" d="M57.77,-802.72C63.3,-844.99 85.47,-984.61 146.52,-1080.13 163.3,-1106.39 190.4,-1129.57 211.01,-1144.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="208.86,-1147.66 219.02,-1150.68 212.96,-1141.99 208.86,-1147.66"/>
+</g>
+<!-- none~get_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node6" class="node">
+<title>none~get_xg</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node6"><a xlink:href="../type/nurbs_volume.html#boundprocedure-get_xg" xlink:title="nurbs_volume%get_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="306.91,-1071.27 173.89,-1071.27 173.89,-1047 306.91,-1047 306.91,-1071.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-1055.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;none~get_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge5" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;none~get_xg</title>
+<path fill="none" stroke="#ff0000" d="M60.23,-802.51C70.73,-834.05 101.57,-919.08 146.52,-978.13 165.01,-1002.42 191.73,-1024.79 211.78,-1039.84"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="209.66,-1042.63 219.79,-1045.72 213.8,-1036.99 209.66,-1042.63"/>
+</g>
+<!-- none~set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node7" class="node">
+<title>none~set</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node7"><a xlink:href="../type/nurbs_volume.html#boundprocedure-set" xlink:title="nurbs_volume%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="296.41,-886.27 184.39,-886.27 184.39,-862 296.41,-862 296.41,-886.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-870.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;none~set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge6" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;none~set</title>
+<path fill="none" stroke="#ff0000" d="M83.68,-802.71C115.06,-817.1 166.64,-840.76 201.77,-856.87"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="200.17,-859.99 210.72,-860.98 203.09,-853.63 200.17,-859.99"/>
+</g>
+<!-- proc~create -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node8" class="node">
+<title>proc~create</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node8"><a xlink:href="../proc/create.html" xlink:title="nurbs_volume%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="305.41,-676.27 175.39,-676.27 175.39,-652 305.41,-652 305.41,-676.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-660.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%create</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~create -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge7" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~create</title>
+<path fill="none" stroke="#ff0000" d="M74.49,-777.59C106.72,-755.42 173.91,-709.19 211.83,-683.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="213.75,-686.04 220,-677.48 209.78,-680.27 213.75,-686.04"/>
+</g>
+<!-- proc~export_xc -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node9" class="node">
+<title>proc~export_xc</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node9"><a xlink:href="../proc/export_xc.html" xlink:title="nurbs_volume%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="314.79,-266.27 166.02,-266.27 166.02,-242 314.79,-242 314.79,-266.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-250.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~export_xc -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge8" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~export_xc</title>
+<path fill="none" stroke="#ff0000" d="M57.16,-777.77C62.26,-710.2 89.46,-385.65 146.52,-306.13 157.49,-290.84 174.44,-279.48 190.87,-271.35"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="191.98,-274.7 199.6,-267.34 189.05,-268.34 191.98,-274.7"/>
+</g>
+<!-- proc~export_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node10" class="node">
+<title>proc~export_xg</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node10"><a xlink:href="../proc/export_xg.html" xlink:title="nurbs_volume%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="315.16,-339.27 165.64,-339.27 165.64,-315 315.16,-315 315.16,-339.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-323.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~export_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge9" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~export_xg</title>
+<path fill="none" stroke="#ff0000" d="M57.42,-777.69C63.48,-715.12 93.26,-435.18 146.52,-369.13 155.11,-358.48 166.99,-350.43 179.39,-344.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="180.74,-347.61 188.48,-340.37 177.91,-341.21 180.74,-347.61"/>
+</g>
+<!-- proc~export_xth_in_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node11" class="node">
+<title>proc~export_xth_in_xg</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node11"><a xlink:href="../proc/export_xth_in_xg.html" xlink:title="nurbs_volume%export_Xth_in_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="334.29,-402.27 146.52,-402.27 146.52,-378 334.29,-378 334.29,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%export_Xth_in_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~export_xth_in_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge10" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~export_xth_in_xg</title>
+<path fill="none" stroke="#ff0000" d="M61.01,-777.69C73.91,-744.14 111,-649.13 146.52,-572.13 173.47,-513.71 208.86,-446.72 227.2,-412.62"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="230.13,-414.56 231.8,-404.09 223.97,-411.23 230.13,-414.56"/>
+</g>
+<!-- proc~get_continuity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node12" class="node">
+<title>proc~get_continuity</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node12"><a xlink:href="../proc/get_continuity.html" xlink:title="nurbs_volume%get_continuity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="326.04,-969.27 154.77,-969.27 154.77,-945 326.04,-945 326.04,-969.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-953.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_continuity</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~get_continuity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge11" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~get_continuity</title>
+<path fill="none" stroke="#ff0000" d="M65.31,-802.75C80.56,-823.5 113.04,-865.5 146.52,-895.13 165.26,-911.73 188.72,-927.35 207.37,-938.76"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="205.51,-941.73 215.88,-943.87 209.11,-935.72 205.51,-941.73"/>
+</g>
+<!-- proc~lsq_fit_bspline -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node13" class="node">
+<title>proc~lsq_fit_bspline</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node13"><a xlink:href="../proc/lsq_fit_bspline.html" xlink:title="nurbs_volume%lsq_fit_bspline">
+<polygon fill="#d9534f" stroke="#d9534f" points="772.08,-444.27 601.56,-444.27 601.56,-420 772.08,-420 772.08,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%lsq_fit_bspline</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~lsq_fit_bspline -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge12" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~lsq_fit_bspline</title>
+<path fill="none" stroke="#ff0000" d="M59.95,-777.84C69.27,-749.09 96.62,-677.33 146.52,-643.13 301.04,-537.26 396.95,-657.44 561.06,-567.13 611.05,-539.63 652.07,-484.69 672.26,-454.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="675.01,-456.26 677.48,-445.95 669.12,-452.47 675.01,-456.26"/>
+</g>
+<!-- proc~show -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node14" class="node">
+<title>proc~show</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node14"><a xlink:href="../proc/show.html" xlink:title="nurbs_volume%show">
+<polygon fill="#d9534f" stroke="#d9534f" points="302.04,-119.27 178.77,-119.27 178.77,-95 302.04,-95 302.04,-119.27"/>
+<text xml:space="preserve" text-anchor="middle" x="240.4" y="-103.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%show</text>
+</a>
+</g>
+</g>
+<!-- program~volume_fit_bspline&#45;&gt;proc~show -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge13" class="edge">
+<title>program~volume_fit_bspline&#45;&gt;proc~show</title>
+<path fill="none" stroke="#ff0000" d="M56.15,-777.8C56.05,-716.3 60.53,-437.68 146.52,-233.13 163.98,-191.59 197.79,-151 219.45,-127.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="221.74,-130.23 226.05,-120.55 216.65,-125.43 221.74,-130.23"/>
+</g>
+<!-- proc~ndgrid2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node37" class="node">
+<title>proc~ndgrid2</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node37"><a xlink:href="../proc/ndgrid2.html" xlink:title="ndgrid2">
+<polygon fill="#d9534f" stroke="#d9534f" points="713.82,-718.27 659.82,-718.27 659.82,-694 713.82,-694 713.82,-718.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-702.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid2</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge14" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M492.94,-788.36C512.73,-786.09 539.95,-780.91 561.06,-769.13 581.1,-757.95 577.4,-743.97 597.06,-732.13 612.71,-722.71 631.97,-716.53 648.55,-712.57"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="649.03,-716.05 658.05,-710.49 647.53,-709.21 649.03,-716.05"/>
+</g>
+<!-- proc~ndgrid3 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node38" class="node">
+<title>proc~ndgrid3</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node38"><a xlink:href="../proc/ndgrid3.html" xlink:title="ndgrid3">
+<polygon fill="#d9534f" stroke="#d9534f" points="713.82,-676.27 659.82,-676.27 659.82,-652 713.82,-652 713.82,-676.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-660.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid3</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid3 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge15" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid3</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M493.11,-790.52C513.76,-789.47 542.07,-784.89 561.06,-769.13 592.32,-743.2 565.97,-711.27 597.06,-685.13 611.14,-673.29 630.73,-667.88 647.92,-665.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="648.26,-668.97 657.83,-664.44 647.52,-662.01 648.26,-668.97"/>
+</g>
+<!-- proc~get_degree_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node24" class="node">
+<title>proc~get_degree_all</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node24"><a xlink:href="../proc/get_degree_all.html" xlink:title="nurbs_volume%get_degree_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="552.81,-1386.27 378.54,-1386.27 378.54,-1362 552.81,-1362 552.81,-1386.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1370.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_degree_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_degree&#45;&gt;proc~get_degree_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge16" class="edge">
+<title>none~get_degree&#45;&gt;proc~get_degree_all</title>
+<path fill="none" stroke="#ff7500" stroke-dasharray="5,2" d="M308.39,-1344.74C333.01,-1349.37 361.09,-1354.65 386.6,-1359.45"/>
+<polygon fill="#ff7500" stroke="#ff7500" points="385.77,-1362.85 396.25,-1361.26 387.07,-1355.97 385.77,-1362.85"/>
+</g>
+<!-- proc~get_degree_dir -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node25" class="node">
+<title>proc~get_degree_dir</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node25"><a xlink:href="../proc/get_degree_dir.html" xlink:title="nurbs_volume%get_degree_dir">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="553.56,-1344.27 377.79,-1344.27 377.79,-1320 553.56,-1320 553.56,-1344.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1328.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_degree_dir</text>
+</a>
+</g>
+</g>
+<!-- none~get_degree&#45;&gt;proc~get_degree_dir -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge17" class="edge">
+<title>none~get_degree&#45;&gt;proc~get_degree_dir</title>
+<path fill="none" stroke="#ff7500" stroke-dasharray="5,2" d="M318.87,-1332.13C334.07,-1332.13 350.21,-1332.13 366,-1332.13"/>
+<polygon fill="#ff7500" stroke="#ff7500" points="365.9,-1335.64 375.9,-1332.14 365.9,-1328.64 365.9,-1335.64"/>
+</g>
+<!-- proc~get_knot_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node26" class="node">
+<title>proc~get_knot_all</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node26"><a xlink:href="../proc/get_knot_all.html" xlink:title="nurbs_volume%get_knot_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="545.68,-1302.27 385.66,-1302.27 385.66,-1278 545.68,-1278 545.68,-1302.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1286.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_knot_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot&#45;&gt;proc~get_knot_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge18" class="edge">
+<title>none~get_knot&#45;&gt;proc~get_knot_all</title>
+<path fill="none" stroke="#ffeb00" stroke-dasharray="5,2" d="M308.39,-1260.74C333.01,-1265.37 361.09,-1270.65 386.6,-1275.45"/>
+<polygon fill="#ffeb00" stroke="#ffeb00" points="385.77,-1278.85 396.25,-1277.26 387.07,-1271.97 385.77,-1278.85"/>
+</g>
+<!-- proc~get_knoti -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node27" class="node">
+<title>proc~get_knoti</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node27"><a xlink:href="../proc/get_knoti.html" xlink:title="nurbs_volume%get_knoti">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="538.18,-1260.27 393.16,-1260.27 393.16,-1236 538.18,-1236 538.18,-1260.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1244.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_knoti</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot&#45;&gt;proc~get_knoti -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge19" class="edge">
+<title>none~get_knot&#45;&gt;proc~get_knoti</title>
+<path fill="none" stroke="#ffeb00" stroke-dasharray="5,2" d="M311.74,-1248.13C333.83,-1248.13 358.43,-1248.13 381.33,-1248.13"/>
+<polygon fill="#ffeb00" stroke="#ffeb00" points="381.26,-1251.64 391.26,-1248.14 381.26,-1244.64 381.26,-1251.64"/>
+</g>
+<!-- proc~get_nc_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node28" class="node">
+<title>proc~get_nc_all</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node28"><a xlink:href="../proc/get_nc_all.html" xlink:title="nurbs_volume%get_nc_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="540.43,-1176.27 390.91,-1176.27 390.91,-1152 540.43,-1152 540.43,-1176.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1160.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_nc_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_nc&#45;&gt;proc~get_nc_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge20" class="edge">
+<title>none~get_nc&#45;&gt;proc~get_nc_all</title>
+<path fill="none" stroke="#9cff00" stroke-dasharray="5,2" d="M306.58,-1164.13C329.36,-1164.13 355.28,-1164.13 379.45,-1164.13"/>
+<polygon fill="#9cff00" stroke="#9cff00" points="379.27,-1167.64 389.27,-1164.14 379.27,-1160.64 379.27,-1167.64"/>
+</g>
+<!-- proc~get_nc_dir -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node29" class="node">
+<title>proc~get_nc_dir</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node29"><a xlink:href="../proc/get_nc_dir.html" xlink:title="nurbs_volume%get_nc_dir">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="541.18,-1218.27 390.16,-1218.27 390.16,-1194 541.18,-1194 541.18,-1218.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1202.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_nc_dir</text>
+</a>
+</g>
+</g>
+<!-- none~get_nc&#45;&gt;proc~get_nc_dir -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge21" class="edge">
+<title>none~get_nc&#45;&gt;proc~get_nc_dir</title>
+<path fill="none" stroke="#9cff00" stroke-dasharray="5,2" d="M306.58,-1176.4C331.7,-1181.12 360.63,-1186.56 386.83,-1191.49"/>
+<polygon fill="#9cff00" stroke="#9cff00" points="385.9,-1194.88 396.38,-1193.29 387.2,-1188 385.9,-1194.88"/>
+</g>
+<!-- proc~get_xg_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node30" class="node">
+<title>proc~get_xg_all</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node30"><a xlink:href="../proc/get_xg_all.html" xlink:title="nurbs_volume%get_Xg_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="541.18,-1092.27 390.16,-1092.27 390.16,-1068 541.18,-1068 541.18,-1092.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1076.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_Xg_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg&#45;&gt;proc~get_xg_all -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge22" class="edge">
+<title>none~get_xg&#45;&gt;proc~get_xg_all</title>
+<path fill="none" stroke="#27ff00" stroke-dasharray="5,2" d="M307.19,-1065.32C329.62,-1067.43 355.04,-1069.82 378.81,-1072.06"/>
+<polygon fill="#27ff00" stroke="#27ff00" points="378.17,-1075.51 388.45,-1072.97 378.83,-1068.54 378.17,-1075.51"/>
+</g>
+<!-- proc~get_xgi -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node31" class="node">
+<title>proc~get_xgi</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node31"><a xlink:href="../proc/get_xgi.html" xlink:title="nurbs_volume%get_Xgi">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="533.68,-1050.27 397.66,-1050.27 397.66,-1026 533.68,-1026 533.68,-1050.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1034.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_Xgi</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg&#45;&gt;proc~get_xgi -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge23" class="edge">
+<title>none~get_xg&#45;&gt;proc~get_xgi</title>
+<path fill="none" stroke="#27ff00" stroke-dasharray="5,2" d="M307.19,-1052.95C331.95,-1050.62 360.36,-1047.95 386.16,-1045.52"/>
+<polygon fill="#27ff00" stroke="#27ff00" points="386.3,-1049.02 395.92,-1044.6 385.64,-1042.05 386.3,-1049.02"/>
+</g>
+<!-- proc~get_xgid -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node32" class="node">
+<title>proc~get_xgid</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node32"><a xlink:href="../proc/get_xgid.html" xlink:title="nurbs_volume%get_Xgid">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="537.06,-1134.27 394.29,-1134.27 394.29,-1110 537.06,-1110 537.06,-1134.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-1118.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_Xgid</text>
+</a>
+</g>
+</g>
+<!-- none~get_xg&#45;&gt;proc~get_xgid -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge24" class="edge">
+<title>none~get_xg&#45;&gt;proc~get_xgid</title>
+<path fill="none" stroke="#27ff00" stroke-dasharray="5,2" d="M276.96,-1071.74C302.69,-1080.61 338.4,-1092.41 370.29,-1101.13 377.58,-1103.13 385.22,-1105.07 392.87,-1106.92"/>
+<polygon fill="#27ff00" stroke="#27ff00" points="392.03,-1110.31 402.57,-1109.2 393.64,-1103.5 392.03,-1110.31"/>
+</g>
+<!-- proc~set1 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node39" class="node">
+<title>proc~set1</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node39"><a xlink:href="../proc/set1.html" xlink:title="nurbs_volume%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.06,-970.27 406.29,-970.27 406.29,-946 525.06,-946 525.06,-970.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-954.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set1 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge25" class="edge">
+<title>none~set&#45;&gt;proc~set1</title>
+<path fill="none" stroke="#00ff4e" stroke-dasharray="5,2" d="M263.07,-886.7C288.15,-900.77 331.03,-923.39 370.29,-937.13 378.17,-939.89 386.54,-942.37 394.93,-944.58"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="393.9,-947.93 404.45,-946.95 395.59,-941.13 393.9,-947.93"/>
+</g>
+<!-- proc~set2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node40" class="node">
+<title>proc~set2</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node40"><a xlink:href="../proc/set2.html" xlink:title="nurbs_volume%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.06,-928.27 406.29,-928.27 406.29,-904 525.06,-904 525.06,-928.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-912.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge26" class="edge">
+<title>none~set&#45;&gt;proc~set2</title>
+<path fill="none" stroke="#00ff4e" stroke-dasharray="5,2" d="M296.88,-884.57C326.57,-890.16 363.43,-897.09 395.03,-903.03"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="394.01,-906.4 404.48,-904.81 395.3,-899.52 394.01,-906.4"/>
+</g>
+<!-- proc~set3 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node41" class="node">
+<title>proc~set3</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node41"><a xlink:href="../proc/set3.html" xlink:title="nurbs_volume%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.06,-886.27 406.29,-886.27 406.29,-862 525.06,-862 525.06,-886.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-870.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set3 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge27" class="edge">
+<title>none~set&#45;&gt;proc~set3</title>
+<path fill="none" stroke="#00ff4e" stroke-dasharray="5,2" d="M296.88,-874.13C326.44,-874.13 363.11,-874.13 394.62,-874.13"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="394.46,-877.64 404.46,-874.14 394.46,-870.64 394.46,-877.64"/>
+</g>
+<!-- proc~set4 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node42" class="node">
+<title>proc~set4</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node42"><a xlink:href="../proc/set4.html" xlink:title="nurbs_volume%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.06,-844.27 406.29,-844.27 406.29,-820 525.06,-820 525.06,-844.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-828.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set4 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge28" class="edge">
+<title>none~set&#45;&gt;proc~set4</title>
+<path fill="none" stroke="#00ff4e" stroke-dasharray="5,2" d="M296.88,-863.7C326.57,-858.11 363.43,-851.18 395.03,-845.24"/>
+<polygon fill="#00ff4e" stroke="#00ff4e" points="395.3,-848.75 404.48,-843.46 394.01,-841.87 395.3,-848.75"/>
+</g>
+<!-- proc~create&#45;&gt;interface~ndgrid -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge30" class="edge">
+<title>proc~create&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#00ffc4" d="M252.85,-676.7C273.85,-698.97 320.94,-745.22 370.29,-769.13 388.01,-777.72 409.31,-782.85 427.19,-785.88"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="426.46,-789.31 436.87,-787.36 427.51,-782.39 426.46,-789.31"/>
+</g>
+<!-- interface~compute_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node17" class="node">
+<title>interface~compute_xg</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node17"><a xlink:href="../interface/compute_xg.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="504.81,-402.27 426.54,-402.27 426.54,-378 504.81,-378 504.81,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;interface~compute_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge29" class="edge">
+<title>proc~create&#45;&gt;interface~compute_xg</title>
+<path fill="none" stroke="#00ffc4" d="M251.58,-651.65C286.67,-608.59 402.9,-465.95 447.26,-411.51"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="449.88,-413.83 453.49,-403.87 444.46,-409.41 449.88,-413.83"/>
+</g>
+<!-- proc~cmp_elem_xg_vis -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node21" class="node">
+<title>proc~cmp_elem_xg_vis</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node21"><a xlink:href="../proc/cmp_elem_xg_vis.html" xlink:title="nurbs_volume%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="561.06,-318.27 370.29,-318.27 370.29,-294 561.06,-294 561.06,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_elem_Xg_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~cmp_elem_xg_vis -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge31" class="edge">
+<title>proc~create&#45;&gt;proc~cmp_elem_xg_vis</title>
+<path fill="none" stroke="#00ffc4" d="M246.02,-651.57C268.27,-591.13 363.59,-332.92 370.29,-327.13 371.24,-326.31 372.22,-325.52 373.22,-324.76"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="374.97,-327.79 381.51,-319.46 371.2,-321.89 374.97,-327.79"/>
+</g>
+<!-- proc~fill_uniform -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node23" class="node">
+<title>proc~fill_uniform</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node23"><a xlink:href="../proc/fill_uniform.html" xlink:title="fill_uniform">
+<polygon fill="#d9534f" stroke="#d9534f" points="501.43,-718.27 429.91,-718.27 429.91,-694 501.43,-694 501.43,-718.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-702.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fill_uniform</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~fill_uniform -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge32" class="edge">
+<title>proc~create&#45;&gt;proc~fill_uniform</title>
+<path fill="none" stroke="#00ffc4" d="M305.68,-676.23C341.75,-683.01 385.92,-691.32 418.54,-697.46"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="417.6,-700.84 428.08,-699.25 418.9,-693.96 417.6,-700.84"/>
+</g>
+<!-- proc~is_rational -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node33" class="node">
+<title>proc~is_rational</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node33"><a xlink:href="../proc/is_rational.html" xlink:title="nurbs_volume%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="541.18,-558.27 390.16,-558.27 390.16,-534 541.18,-534 541.18,-558.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-542.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~is_rational -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge33" class="edge">
+<title>proc~create&#45;&gt;proc~is_rational</title>
+<path fill="none" stroke="#00ffc4" d="M265.3,-651.51C305.17,-630.44 385.37,-588.05 430.96,-563.95"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="432.41,-567.15 439.61,-559.38 429.14,-560.96 432.41,-567.15"/>
+</g>
+<!-- proc~knot_end -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node34" class="node">
+<title>proc~knot_end</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node34"><a xlink:href="../proc/knot_end.html" xlink:title="knot_end">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="495.81,-676.27 435.54,-676.27 435.54,-652 495.81,-652 495.81,-676.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-660.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_end</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~knot_end -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge34" class="edge">
+<title>proc~create&#45;&gt;proc~knot_end</title>
+<path fill="none" stroke="#00ffc4" d="M305.68,-664.13C343.66,-664.13 390.61,-664.13 423.62,-664.13"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="423.59,-667.64 433.59,-664.14 423.59,-660.64 423.59,-667.64"/>
+</g>
+<!-- proc~knot_start -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node35" class="node">
+<title>proc~knot_start</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node35"><a xlink:href="../proc/knot_start.html" xlink:title="knot_start">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="497.68,-760.27 433.66,-760.27 433.66,-736 497.68,-736 497.68,-760.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-744.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_start</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~knot_start -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge35" class="edge">
+<title>proc~create&#45;&gt;proc~knot_start</title>
+<path fill="none" stroke="#00ffc4" d="M263.07,-676.7C288.15,-690.77 331.03,-713.39 370.29,-727.13 387.03,-732.99 406.02,-737.59 422.56,-740.98"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="421.59,-744.35 432.07,-742.83 422.93,-737.48 421.59,-744.35"/>
+</g>
+<!-- set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node45" class="node">
+<title>set</title>
+<polygon fill="#777777" stroke="#777777" points="928.21,-697.27 874.21,-697.27 874.21,-673 928.21,-673 928.21,-697.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-681.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
+</g>
+<!-- proc~create&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge36" class="edge">
+<title>proc~create&#45;&gt;set</title>
+<path fill="none" stroke="#00ffc4" d="M305.73,-651.56C326.27,-648.11 349.16,-644.85 370.29,-643.13 550.27,-628.57 598.42,-613.7 776.58,-643.13 806.64,-648.1 839.22,-659.43 863.38,-669.07"/>
+<polygon fill="#00ffc4" stroke="#00ffc4" points="861.87,-672.24 872.45,-672.78 864.52,-665.76 861.87,-672.24"/>
+</g>
+<!-- proc~cmp_elem_xc_vis -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node20" class="node">
+<title>proc~cmp_elem_xc_vis</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node20"><a xlink:href="../proc/cmp_elem_xc_vis.html" xlink:title="nurbs_volume%cmp_elem_Xc_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="560.68,-171.27 370.66,-171.27 370.66,-147 560.68,-147 560.68,-171.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-155.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_elem_Xc_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge37" class="edge">
+<title>proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis</title>
+<path fill="none" stroke="#00c4ff" d="M271.05,-241.52C310.61,-224.69 380.79,-194.83 424.91,-176.06"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="426.04,-179.38 433.87,-172.24 423.29,-172.94 426.04,-179.38"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node22" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node22"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="519.06,-234.27 412.29,-234.27 412.29,-210 519.06,-210 519.06,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge38" class="edge">
+<title>proc~export_xc&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00c4ff" d="M315.13,-243.57C342.8,-239.6 374.01,-235.13 400.72,-231.3"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="400.97,-234.8 410.37,-229.92 399.98,-227.87 400.97,-234.8"/>
+</g>
+<!-- proc~export_xc&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge39" class="edge">
+<title>proc~export_xc&#45;&gt;set</title>
+<path fill="none" stroke="#00c4ff" d="M276.94,-266.71C296.28,-275.18 319.25,-288.11 334.29,-306.13 365.9,-344.01 332.75,-379.13 370.29,-411.13 435.77,-466.95 476.87,-426.36 561.06,-444.13 577.2,-447.54 580.94,-449.64 597.06,-453.13 676.34,-470.31 709.55,-440.44 776.58,-486.13 840.8,-529.91 878.03,-619.21 892.79,-661.68"/>
+<polygon fill="#00c4ff" stroke="#00c4ff" points="889.46,-662.77 895.95,-671.14 896.1,-660.54 889.46,-662.77"/>
+</g>
+<!-- proc~export_xg&#45;&gt;proc~cmp_elem_xg_vis -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge40" class="edge">
+<title>proc~export_xg&#45;&gt;proc~cmp_elem_xg_vis</title>
+<path fill="none" stroke="#004eff" d="M315.44,-320.17C329.4,-318.86 344.25,-317.46 358.96,-316.08"/>
+<polygon fill="#004eff" stroke="#004eff" points="359.03,-319.59 368.65,-315.17 358.37,-312.62 359.03,-319.59"/>
+</g>
+<!-- proc~export_xg&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge41" class="edge">
+<title>proc~export_xg&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#004eff" d="M267.14,-314.64C286.3,-304.89 312.76,-290.46 334.29,-275.13 351.73,-262.72 351.23,-252.88 370.29,-243.13 379.83,-238.26 390.48,-234.5 401.09,-231.62"/>
+<polygon fill="#004eff" stroke="#004eff" points="401.75,-235.07 410.62,-229.28 400.08,-228.27 401.75,-235.07"/>
+</g>
+<!-- proc~export_xg&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge42" class="edge">
+<title>proc~export_xg&#45;&gt;set</title>
+<path fill="none" stroke="#004eff" d="M284.94,-339.62C301.95,-346.21 320.62,-355.77 334.29,-369.13 360.73,-394.98 341.08,-421.47 370.29,-444.13 438.59,-497.14 476.63,-463.55 561.06,-482.13 657.29,-503.32 693.13,-481.73 776.58,-534.13 828.88,-566.98 869.38,-629.6 888.37,-662.95"/>
+<polygon fill="#004eff" stroke="#004eff" points="885.12,-664.3 893.03,-671.35 891.24,-660.91 885.12,-664.3"/>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;interface~compute_xg -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge43" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;interface~compute_xg</title>
+<path fill="none" stroke="#2700ff" d="M334.47,-390.13C362.01,-390.13 391.09,-390.13 414.77,-390.13"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="414.77,-393.64 424.77,-390.14 414.77,-386.64 414.77,-393.64"/>
+</g>
+<!-- local -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node18" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="492.67,-276.27 438.67,-276.27 438.67,-252 492.67,-252 492.67,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;local -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge44" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;local</title>
+<path fill="none" stroke="#2700ff" d="M283.53,-377.52C300.72,-370.83 319.89,-361.24 334.29,-348.13 358.14,-326.43 344.33,-304.27 370.29,-285.13 386.55,-273.15 408.38,-267.79 426.95,-265.48"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="427.18,-268.97 436.79,-264.52 426.5,-262 427.18,-268.97"/>
+</g>
+<!-- proc~active_knots -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node19" class="node">
+<title>proc~active_knots</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node19"><a xlink:href="../proc/active_knots.html" xlink:title="active_knots">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="504.43,-360.27 426.91,-360.27 426.91,-336 504.43,-336 504.43,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_knots</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;proc~active_knots -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge45" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;proc~active_knots</title>
+<path fill="none" stroke="#2700ff" d="M308.39,-377.53C342.83,-371.06 384.05,-363.3 415.51,-357.38"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="415.96,-360.86 425.14,-355.57 414.66,-353.98 415.96,-360.86"/>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge46" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#2700ff" d="M288.14,-377.51C304.59,-371.05 322.02,-361.62 334.29,-348.13 367.49,-311.64 333.52,-276.02 370.29,-243.13 379.01,-235.33 389.99,-230.22 401.34,-226.92"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="401.9,-230.38 410.8,-224.63 400.26,-223.58 401.9,-230.38"/>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;proc~is_rational -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge47" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;proc~is_rational</title>
+<path fill="none" stroke="#2700ff" d="M250.18,-402.63C269.06,-428.58 316.25,-488.52 370.29,-520.13 376.7,-523.88 383.67,-527.11 390.82,-529.88"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="389.36,-533.08 399.95,-533.12 391.7,-526.48 389.36,-533.08"/>
+</g>
+<!-- proc~export_xth_in_xg&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge48" class="edge">
+<title>proc~export_xth_in_xg&#45;&gt;set</title>
+<path fill="none" stroke="#2700ff" d="M254.93,-402.65C277.23,-422.57 323.87,-461.36 370.29,-482.13 449.62,-517.64 478.62,-497.6 561.06,-525.13 660.69,-558.41 681.86,-576.72 776.58,-622.13 807.37,-636.9 841.97,-654.63 866.72,-667.51"/>
+<polygon fill="#2700ff" stroke="#2700ff" points="864.86,-670.49 875.34,-672.01 868.1,-664.28 864.86,-670.49"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node16" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node16"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1148.37,-1146.27 1025.85,-1146.27 1025.85,-1122 1148.37,-1122 1148.37,-1146.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1087.11" y="-1130.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~get_continuity&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge49" class="edge">
+<title>proc~get_continuity&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#9c00ff" d="M313.38,-969.72C406.19,-986.08 556.35,-1013.05 561.06,-1017.13 598.65,-1049.73 559.59,-1090.41 597.06,-1123.13 670.56,-1187.33 715.44,-1155.76 812.58,-1165.13 891,-1172.71 912.02,-1177.36 989.85,-1165.13 1008.35,-1162.23 1028.14,-1156.37 1044.93,-1150.51"/>
+<polygon fill="#9c00ff" stroke="#9c00ff" points="1045.85,-1153.9 1054.07,-1147.21 1043.48,-1147.32 1045.85,-1153.9"/>
+</g>
+<!-- interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node15" class="node">
+<title>interface~basis_bspline_der</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node15"><a xlink:href="../interface/basis_bspline_der.html" xlink:title="basis_bspline_der">
+<polygon fill="#a7506f" stroke="#a7506f" points="953.85,-381.27 848.58,-381.27 848.58,-357 953.85,-357 953.85,-381.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-365.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_bspline&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge50" class="edge">
+<title>proc~lsq_fit_bspline&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#ff00eb" d="M744.38,-419.61C755.12,-416.99 766.23,-414.11 776.58,-411.13 803.01,-403.54 832.14,-393.71 855.49,-385.47"/>
+<polygon fill="#ff00eb" stroke="#ff00eb" points="856.44,-388.85 864.69,-382.2 854.1,-382.26 856.44,-388.85"/>
+</g>
+<!-- proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node36" class="node">
+<title>proc~map_parameter</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node36"><a xlink:href="../proc/map_parameter.html" xlink:title="map_parameter">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="950.1,-339.27 852.33,-339.27 852.33,-315 950.1,-315 950.1,-339.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-323.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">map_parameter</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_bspline&#45;&gt;proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge51" class="edge">
+<title>proc~lsq_fit_bspline&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#ff00eb" d="M762.13,-419.62C767.26,-417.26 772.14,-414.45 776.58,-411.13 802.41,-391.82 786.78,-367.48 812.58,-348.13 820.94,-341.86 830.91,-337.43 841.08,-334.31"/>
+<polygon fill="#ff00eb" stroke="#ff00eb" points="841.87,-337.72 850.66,-331.8 840.1,-330.95 841.87,-337.72"/>
+</g>
+<!-- proc~solve_spd_banded -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node44" class="node">
+<title>proc~solve_spd_banded</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node44"><a xlink:href="../proc/solve_spd_banded.html" xlink:title="solve_spd_banded">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="955.72,-444.27 846.7,-444.27 846.7,-420 955.72,-420 955.72,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">solve_spd_banded</text>
+</a>
+</g>
+</g>
+<!-- proc~lsq_fit_bspline&#45;&gt;proc~solve_spd_banded -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge52" class="edge">
+<title>proc~lsq_fit_bspline&#45;&gt;proc~solve_spd_banded</title>
+<path fill="none" stroke="#ff00eb" d="M772.37,-432.13C793.26,-432.13 815.32,-432.13 835.12,-432.13"/>
+<polygon fill="#ff00eb" stroke="#ff00eb" points="834.98,-435.64 844.98,-432.14 834.98,-428.64 834.98,-435.64"/>
+</g>
+<!-- proc~lsq_fit_bspline&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge53" class="edge">
+<title>proc~lsq_fit_bspline&#45;&gt;set</title>
+<path fill="none" stroke="#ff00eb" d="M752.88,-444.61C761.39,-448.07 769.58,-452.49 776.58,-458.13 844.57,-512.95 880.64,-615.61 894.02,-661.69"/>
+<polygon fill="#ff00eb" stroke="#ff00eb" points="890.61,-662.47 896.67,-671.16 897.35,-660.58 890.61,-662.47"/>
+</g>
+<!-- proc~show_pyvista_singlepatch -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node43" class="node">
+<title>proc~show_pyvista_singlepatch</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node43"><a xlink:href="../proc/show_pyvista_singlepatch.html" xlink:title="show_pyvista_singlepatch">
+<polygon fill="#d9534f" stroke="#d9534f" points="539.68,-87.27 391.66,-87.27 391.66,-63 539.68,-63 539.68,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="465.67" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">show_pyvista_singlepatch</text>
+</a>
+</g>
+</g>
+<!-- proc~show&#45;&gt;proc~show_pyvista_singlepatch -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge54" class="edge">
+<title>proc~show&#45;&gt;proc~show_pyvista_singlepatch</title>
+<path fill="none" stroke="#ff0075" d="M302.41,-98.39C326.37,-94.96 354.27,-90.96 380.12,-87.25"/>
+<polygon fill="#ff0075" stroke="#ff0075" points="380.53,-90.73 389.93,-85.85 379.54,-83.8 380.53,-90.73"/>
+</g>
+<!-- proc~basis_bspline_active_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node48" class="node">
+<title>proc~basis_bspline_active_ders</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node48"><a xlink:href="../proc/basis_bspline_active_ders.html" xlink:title="basis_bspline_active_ders">
+<polygon fill="#d9534f" stroke="#d9534f" points="1497.66,-361.27 1349.64,-361.27 1349.64,-337 1497.66,-337 1497.66,-361.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1423.65" y="-345.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_active_ders</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_active_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge55" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_active_ders</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M954.3,-358.29C976.28,-354.23 1002.2,-350.13 1025.85,-348.13 1133.37,-339.07 1257.86,-341.47 1338.31,-344.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1337.71,-348.18 1347.85,-345.1 1338,-341.19 1337.71,-348.18"/>
+</g>
+<!-- proc~basis_bspline_der_a -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node49" class="node">
+<title>proc~basis_bspline_der_a</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node49"><a xlink:href="../proc/basis_bspline_der_a.html" xlink:title="basis_bspline_der_A">
+<polygon fill="#d9534f" stroke="#d9534f" points="1146.12,-381.27 1028.1,-381.27 1028.1,-357 1146.12,-357 1146.12,-381.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1087.11" y="-365.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_A</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_a -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge56" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_a</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M953.93,-369.13C973.29,-369.13 995.62,-369.13 1016.34,-369.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1016.15,-372.64 1026.15,-369.14 1016.15,-365.64 1016.15,-372.64"/>
+</g>
+<!-- proc~basis_bspline_der_b -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node50" class="node">
+<title>proc~basis_bspline_der_b</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node50"><a xlink:href="../proc/basis_bspline_der_b.html" xlink:title="basis_bspline_der_B">
+<polygon fill="#d9534f" stroke="#d9534f" points="1146.12,-423.27 1028.1,-423.27 1028.1,-399 1146.12,-399 1146.12,-423.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1087.11" y="-407.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_B</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_b -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge57" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_b</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M953.93,-380.95C974.37,-385.62 998.13,-391.04 1019.81,-395.99"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1018.93,-399.38 1029.45,-398.2 1020.48,-392.56 1018.93,-399.38"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node53" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node53"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1313.64,-1167.27 1184.37,-1167.27 1184.37,-1143 1313.64,-1143 1313.64,-1167.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1249.01" y="-1151.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge58" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff3100" stroke-dasharray="5,2" d="M1148.56,-1142.07C1156.43,-1143.11 1164.58,-1144.18 1172.66,-1145.24"/>
+<polygon fill="#ff3100" stroke="#ff3100" points="1172.13,-1148.7 1182.5,-1146.53 1173.04,-1141.76 1172.13,-1148.7"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node54" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node54"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1313.64,-1125.27 1184.37,-1125.27 1184.37,-1101 1313.64,-1101 1313.64,-1125.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1249.01" y="-1109.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge59" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff3100" stroke-dasharray="5,2" d="M1148.56,-1126.2C1156.43,-1125.16 1164.58,-1124.09 1172.66,-1123.03"/>
+<polygon fill="#ff3100" stroke="#ff3100" points="1173.04,-1126.51 1182.5,-1121.74 1172.13,-1119.57 1173.04,-1126.51"/>
+</g>
+<!-- proc~compute_xg_bspline_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node55" class="node">
+<title>proc~compute_xg_bspline_3d</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node55"><a xlink:href="../proc/compute_xg_bspline_3d.html" xlink:title="compute_Xg_bspline_3d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="757.08,-318.27 616.56,-318.27 616.56,-294 757.08,-294 757.08,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge60" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d</title>
+<path fill="none" stroke="#ff6200" stroke-dasharray="5,2" d="M505.04,-387.22C523.06,-384.5 544.22,-379.24 561.06,-369.13 582.14,-356.48 576.06,-339.93 597.06,-327.13 599.85,-325.44 602.76,-323.87 605.77,-322.44"/>
+<polygon fill="#ff6200" stroke="#ff6200" points="607.01,-325.71 614.87,-318.61 604.3,-319.26 607.01,-325.71"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node56" class="node">
+<title>proc~compute_xg_bspline_3d_1point</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node56"><a xlink:href="../proc/compute_xg_bspline_3d_1point.html" xlink:title="compute_Xg_bspline_3d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="776.58,-276.27 597.06,-276.27 597.06,-252 776.58,-252 776.58,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_3d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d_1point -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge61" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d_1point</title>
+<path fill="none" stroke="#ff6200" stroke-dasharray="5,2" d="M505.16,-389.54C523.85,-387.41 545.55,-382 561.06,-369.13 592.32,-343.2 565.97,-311.27 597.06,-285.13 598.03,-284.32 599.03,-283.53 600.04,-282.78"/>
+<polygon fill="#ff6200" stroke="#ff6200" points="601.84,-285.78 608.5,-277.54 598.15,-279.83 601.84,-285.78"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node57" class="node">
+<title>proc~compute_xg_nurbs_3d</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node57"><a xlink:href="../proc/compute_xg_nurbs_3d.html" xlink:title="compute_Xg_nurbs_3d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="752.95,-402.27 620.68,-402.27 620.68,-378 752.95,-378 752.95,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge62" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d</title>
+<path fill="none" stroke="#ff6200" stroke-dasharray="5,2" d="M505.1,-390.13C533.79,-390.13 573.94,-390.13 609.11,-390.13"/>
+<polygon fill="#ff6200" stroke="#ff6200" points="608.82,-393.64 618.82,-390.14 608.82,-386.64 608.82,-393.64"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node58" class="node">
+<title>proc~compute_xg_nurbs_3d_1point</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node58"><a xlink:href="../proc/compute_xg_nurbs_3d_1point.html" xlink:title="compute_Xg_nurbs_3d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="772.45,-360.27 601.18,-360.27 601.18,-336 772.45,-336 772.45,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_3d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d_1point -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge63" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d_1point</title>
+<path fill="none" stroke="#ff6200" stroke-dasharray="5,2" d="M505.1,-382.77C533.68,-377.29 573.63,-369.64 608.7,-362.91"/>
+<polygon fill="#ff6200" stroke="#ff6200" points="609.25,-366.37 618.41,-361.05 607.93,-359.5 609.25,-366.37"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node46" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node46"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="729.7,-150.27 643.93,-150.27 643.93,-126 729.7,-126 729.7,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge64" class="edge">
+<title>proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#fff600" d="M560.88,-150.11C585.37,-147.76 610.9,-145.31 632.45,-143.25"/>
+<polygon fill="#fff600" stroke="#fff600" points="632.53,-146.76 642.15,-142.32 631.86,-139.79 632.53,-146.76"/>
+</g>
+<!-- proc~cmp_elem_xg_vis&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge65" class="edge">
+<title>proc~cmp_elem_xg_vis&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#d5ff00" d="M549.78,-293.5C553.84,-291.13 557.64,-288.36 561.06,-285.13 603.45,-245.19 554.94,-199.36 597.06,-159.13 606.63,-150 619.4,-144.59 632.27,-141.45"/>
+<polygon fill="#d5ff00" stroke="#d5ff00" points="632.9,-144.89 642.04,-139.52 631.55,-138.02 632.9,-144.89"/>
+</g>
+<!-- proc~pack_big_endian_int32 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node59" class="node">
+<title>proc~pack_big_endian_int32</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node59"><a xlink:href="../proc/pack_big_endian_int32.html" xlink:title="pack_big_endian_int32">
+<polygon fill="#d9534f" stroke="#d9534f" points="753.33,-234.27 620.31,-234.27 620.31,-210 753.33,-210 753.33,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pack_big_endian_int32</text>
+</a>
+</g>
+</g>
+<!-- proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_int32 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge66" class="edge">
+<title>proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_int32</title>
+<path fill="none" stroke="#a4ff00" d="M519.44,-222.13C546.28,-222.13 579.41,-222.13 609.02,-222.13"/>
+<polygon fill="#a4ff00" stroke="#a4ff00" points="608.66,-225.64 618.66,-222.14 608.66,-218.64 608.66,-225.64"/>
+</g>
+<!-- proc~pack_big_endian_real64 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node60" class="node">
+<title>proc~pack_big_endian_real64</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node60"><a xlink:href="../proc/pack_big_endian_real64.html" xlink:title="pack_big_endian_real64">
+<polygon fill="#d9534f" stroke="#d9534f" points="756.7,-192.27 616.93,-192.27 616.93,-168 756.7,-168 756.7,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pack_big_endian_real64</text>
+</a>
+</g>
+</g>
+<!-- proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_real64 -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge67" class="edge">
+<title>proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_real64</title>
+<path fill="none" stroke="#a4ff00" d="M519.44,-212.02C546.28,-206.88 579.41,-200.53 609.02,-194.85"/>
+<polygon fill="#a4ff00" stroke="#a4ff00" points="609.53,-198.32 618.69,-193 608.21,-191.45 609.53,-198.32"/>
+</g>
+<!-- proc~set1&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge71" class="edge">
+<title>proc~set1&#45;&gt;set</title>
+<path fill="none" stroke="#a400ff" d="M525.38,-966.64C592.24,-973.11 701.84,-973.57 776.58,-922.13 852,-870.23 884.6,-757.58 895.59,-708.63"/>
+<polygon fill="#a400ff" stroke="#a400ff" points="898.96,-709.62 897.61,-699.11 892.11,-708.17 898.96,-709.62"/>
+</g>
+<!-- interface~infer_knot_shape -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node47" class="node">
+<title>interface~infer_knot_shape</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node47"><a xlink:href="../interface/infer_knot_shape.html" xlink:title="infer_knot_shape">
+<polygon fill="#a7506f" stroke="#a7506f" points="737.95,-1114.27 635.68,-1114.27 635.68,-1090 737.95,-1090 737.95,-1114.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-1098.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">infer_knot_shape</text>
+</a>
+</g>
+</g>
+<!-- proc~set1&#45;&gt;interface~infer_knot_shape -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge68" class="edge">
+<title>proc~set1&#45;&gt;interface~infer_knot_shape</title>
+<path fill="none" stroke="#a400ff" d="M525.34,-965.35C538.28,-969.23 551.08,-975.15 561.06,-984.13 593.68,-1013.52 564.68,-1046.48 597.06,-1076.13 604.8,-1083.22 614.37,-1088.39 624.34,-1092.14"/>
+<polygon fill="#a400ff" stroke="#a400ff" points="623.21,-1095.46 633.8,-1095.23 625.38,-1088.8 623.21,-1095.46"/>
+</g>
+<!-- proc~valid_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node64" class="node">
+<title>proc~valid_knot_vector</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node64"><a xlink:href="../proc/valid_knot_vector.html" xlink:title="valid_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1139.37,-1094.27 1034.85,-1094.27 1034.85,-1070 1139.37,-1070 1139.37,-1094.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1087.11" y="-1078.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">valid_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set1&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge69" class="edge">
+<title>proc~set1&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#a400ff" d="M525.25,-966.94C537.91,-970.77 550.61,-976.26 561.06,-984.13 585.59,-1002.62 570.89,-1027.05 597.06,-1043.13 632.55,-1064.95 899.42,-1076.2 1023.29,-1080.29"/>
+<polygon fill="#a400ff" stroke="#a400ff" points="1022.84,-1083.78 1032.95,-1080.61 1023.07,-1076.78 1022.84,-1083.78"/>
+</g>
+<!-- proc~valid_weights -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node65" class="node">
+<title>proc~valid_weights</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node65"><a xlink:href="../proc/valid_weights.html" xlink:title="valid_weights">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="728.2,-878.27 645.43,-878.27 645.43,-854 728.2,-854 728.2,-878.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-862.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">valid_weights</text>
+</a>
+</g>
+</g>
+<!-- proc~set1&#45;&gt;proc~valid_weights -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge70" class="edge">
+<title>proc~set1&#45;&gt;proc~valid_weights</title>
+<path fill="none" stroke="#a400ff" d="M525.38,-947.93C537.38,-945.05 549.78,-941.48 561.06,-937.13 596.62,-923.42 634.22,-900.75 658.73,-884.72"/>
+<polygon fill="#a400ff" stroke="#a400ff" points="660.42,-887.8 666.81,-879.36 656.54,-881.97 660.42,-887.8"/>
+</g>
+<!-- proc~set2&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge75" class="edge">
+<title>proc~set2&#45;&gt;set</title>
+<path fill="none" stroke="#d500ff" d="M525.53,-925.4C591.78,-932.68 700.11,-934.8 776.58,-887.13 843.72,-845.28 879.78,-752.23 893.55,-708.59"/>
+<polygon fill="#d500ff" stroke="#d500ff" points="896.87,-709.7 896.41,-699.12 890.16,-707.68 896.87,-709.7"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node52" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node52"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="749.95,-1034.27 623.68,-1034.27 623.68,-1010 749.95,-1010 749.95,-1034.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-1018.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge72" class="edge">
+<title>proc~set2&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#d500ff" d="M525.16,-921.55C537.82,-924.72 550.55,-929.61 561.06,-937.13 586.04,-955.01 572.68,-977.45 597.06,-996.13 601.92,-999.86 607.3,-1003.05 612.94,-1005.79"/>
+<polygon fill="#d500ff" stroke="#d500ff" points="611.35,-1008.91 621.92,-1009.64 614.11,-1002.48 611.35,-1008.91"/>
+</g>
+<!-- proc~set2&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge73" class="edge">
+<title>proc~set2&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#d500ff" d="M525.46,-919.7C657.89,-927.91 969.67,-948.26 989.85,-959.13 1031.55,-981.61 1061.16,-1030.68 1075.76,-1059.59"/>
+<polygon fill="#d500ff" stroke="#d500ff" points="1072.44,-1060.76 1079.96,-1068.22 1078.74,-1057.7 1072.44,-1060.76"/>
+</g>
+<!-- proc~set2&#45;&gt;proc~valid_weights -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge74" class="edge">
+<title>proc~set2&#45;&gt;proc~valid_weights</title>
+<path fill="none" stroke="#d500ff" d="M523.84,-903.51C536.13,-900.77 549.03,-897.87 561.06,-895.13 585.08,-889.67 611.68,-883.51 634.12,-878.27"/>
+<polygon fill="#d500ff" stroke="#d500ff" points="634.69,-881.73 643.63,-876.05 633.1,-874.91 634.69,-881.73"/>
+</g>
+<!-- proc~set3&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge78" class="edge">
+<title>proc~set3&#45;&gt;set</title>
+<path fill="none" stroke="#ff00f6" d="M525.25,-868C537.76,-864.86 550.41,-860.16 561.06,-853.13 583.92,-838.06 574.2,-818.21 597.06,-803.13 665.3,-758.13 701.01,-794.29 776.58,-763.13 813.29,-748 851.3,-722.24 875.32,-704.48"/>
+<polygon fill="#ff00f6" stroke="#ff00f6" points="877.31,-707.37 883.2,-698.56 873.1,-701.77 877.31,-707.37"/>
+</g>
+<!-- proc~cmp_degree -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node51" class="node">
+<title>proc~cmp_degree</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node51"><a xlink:href="../proc/cmp_degree.html" xlink:title="nurbs_volume%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="767.95,-836.27 605.68,-836.27 605.68,-812 767.95,-812 767.95,-836.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-820.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set3&#45;&gt;proc~cmp_degree -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge76" class="edge">
+<title>proc~set3&#45;&gt;proc~cmp_degree</title>
+<path fill="none" stroke="#ff00f6" d="M523.84,-861.51C536.13,-858.77 549.03,-855.87 561.06,-853.13 580.55,-848.7 601.72,-843.81 621.01,-839.32"/>
+<polygon fill="#ff00f6" stroke="#ff00f6" points="621.69,-842.76 630.64,-837.08 620.11,-835.94 621.69,-842.76"/>
+</g>
+<!-- proc~set3&#45;&gt;proc~valid_weights -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge77" class="edge">
+<title>proc~set3&#45;&gt;proc~valid_weights</title>
+<path fill="none" stroke="#ff00f6" d="M525.4,-871.99C559.2,-870.76 601.29,-869.22 633.87,-868.03"/>
+<polygon fill="#ff00f6" stroke="#ff00f6" points="633.6,-871.54 643.46,-867.68 633.34,-864.55 633.6,-871.54"/>
+</g>
+<!-- proc~set4&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge80" class="edge">
+<title>proc~set4&#45;&gt;set</title>
+<path fill="none" stroke="#ff00c5" d="M525.26,-825.11C537.64,-822.01 550.23,-817.55 561.06,-811.13 581.93,-798.78 576.29,-782.66 597.06,-770.13 667.32,-727.77 697.76,-749.91 776.58,-727.13 806.04,-718.62 838.89,-707.38 863.32,-698.67"/>
+<polygon fill="#ff00c5" stroke="#ff00c5" points="864.26,-702.05 872.49,-695.37 861.89,-695.46 864.26,-702.05"/>
+</g>
+<!-- proc~set4&#45;&gt;proc~valid_weights -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge79" class="edge">
+<title>proc~set4&#45;&gt;proc~valid_weights</title>
+<path fill="none" stroke="#ff00c5" d="M525.4,-841.25C559.2,-846.49 601.29,-853.02 633.87,-858.08"/>
+<polygon fill="#ff00c5" stroke="#ff00c5" points="633.06,-861.49 643.48,-859.57 634.13,-854.57 633.06,-861.49"/>
+</g>
+<!-- proc~pyvista_string_literal -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node61" class="node">
+<title>proc~pyvista_string_literal</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node61"><a xlink:href="../proc/pyvista_string_literal.html" xlink:title="pyvista_string_literal">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="746.95,-66.27 626.68,-66.27 626.68,-42 746.95,-42 746.95,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-50.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pyvista_string_literal</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_string_literal -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge81" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_string_literal</title>
+<path fill="none" stroke="#ff0094" d="M539.95,-68.11C564.23,-65.79 591.18,-63.2 615.25,-60.9"/>
+<polygon fill="#ff0094" stroke="#ff0094" points="615.32,-64.41 624.94,-59.97 614.65,-57.44 615.32,-64.41"/>
+</g>
+<!-- proc~pyvista_viewer_script -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node62" class="node">
+<title>proc~pyvista_viewer_script</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node62"><a xlink:href="../proc/pyvista_viewer_script.html" xlink:title="pyvista_viewer_script">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="748.83,-24.27 624.81,-24.27 624.81,0 748.83,0 748.83,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-8.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pyvista_viewer_script</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_viewer_script -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge82" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_viewer_script</title>
+<path fill="none" stroke="#ff0094" d="M502.97,-62.59C529,-53.8 564.99,-42.08 597.06,-33.14 604.05,-31.19 611.38,-29.26 618.71,-27.42"/>
+<polygon fill="#ff0094" stroke="#ff0094" points="619.44,-30.84 628.31,-25.05 617.76,-24.04 619.44,-30.84"/>
+</g>
+<!-- proc~run_python_script -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node63" class="node">
+<title>proc~run_python_script</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node63"><a xlink:href="../proc/run_python_script.html" xlink:title="run_python_script">
+<polygon fill="#d9534f" stroke="#d9534f" points="739.83,-108.27 633.81,-108.27 633.81,-84 739.83,-84 739.83,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="686.82" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">run_python_script</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~run_python_script -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge83" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~run_python_script</title>
+<path fill="none" stroke="#ff0094" d="M539.95,-82.16C566.62,-84.71 596.51,-87.58 622.26,-90.04"/>
+<polygon fill="#ff0094" stroke="#ff0094" points="621.61,-93.5 631.89,-90.97 622.27,-86.53 621.61,-93.5"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node68" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node68"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="963.97,-192.27 838.45,-192.27 838.45,-168 963.97,-168 963.97,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge84" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M730.04,-146.48C757.74,-151.96 794.71,-159.27 827.11,-165.68"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="826.38,-169.1 836.87,-167.61 827.74,-162.24 826.38,-169.1"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node69" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node69"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="964.35,-150.27 838.08,-150.27 838.08,-126 964.35,-126 964.35,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge85" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M730.04,-138.13C757.63,-138.13 794.42,-138.13 826.73,-138.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="826.43,-141.64 836.43,-138.14 826.43,-134.64 826.43,-141.64"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node70" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node70"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="964.72,-108.27 837.7,-108.27 837.7,-84 964.72,-84 964.72,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge86" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M730.04,-129.79C757.52,-124.35 794.13,-117.11 826.35,-110.74"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="826.92,-114.2 836.05,-108.82 825.56,-107.33 826.92,-114.2"/>
+</g>
+<!-- proc~infer_knot_shape_2d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node72" class="node">
+<title>proc~infer_knot_shape_2d</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node72"><a xlink:href="../proc/infer_knot_shape_2d.html" xlink:title="infer_knot_shape_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="961.72,-1156.27 840.7,-1156.27 840.7,-1132 961.72,-1132 961.72,-1156.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-1140.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">infer_knot_shape_2d</text>
+</a>
+</g>
+</g>
+<!-- interface~infer_knot_shape&#45;&gt;proc~infer_knot_shape_2d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge87" class="edge">
+<title>interface~infer_knot_shape&#45;&gt;proc~infer_knot_shape_2d</title>
+<path fill="none" stroke="#ff4c00" stroke-dasharray="5,2" d="M738.42,-1112.14C765.62,-1117.52 799.6,-1124.24 829.39,-1130.13"/>
+<polygon fill="#ff4c00" stroke="#ff4c00" points="828.6,-1133.54 839.09,-1132.05 829.96,-1126.67 828.6,-1133.54"/>
+</g>
+<!-- proc~infer_knot_shape_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node73" class="node">
+<title>proc~infer_knot_shape_3d</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node73"><a xlink:href="../proc/infer_knot_shape_3d.html" xlink:title="infer_knot_shape_3d">
+<polygon fill="#d9534f" stroke="#d9534f" points="961.72,-1114.27 840.7,-1114.27 840.7,-1090 961.72,-1090 961.72,-1114.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-1098.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">infer_knot_shape_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~infer_knot_shape&#45;&gt;proc~infer_knot_shape_3d -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge88" class="edge">
+<title>interface~infer_knot_shape&#45;&gt;proc~infer_knot_shape_3d</title>
+<path fill="none" stroke="#ff4c00" stroke-dasharray="5,2" d="M738.42,-1102.13C765.62,-1102.13 799.6,-1102.13 829.39,-1102.13"/>
+<polygon fill="#ff4c00" stroke="#ff4c00" points="829.06,-1105.64 839.06,-1102.14 829.06,-1098.64 829.06,-1105.64"/>
+</g>
+<!-- proc~basis_bspline_der_all_active -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node66" class="node">
+<title>proc~basis_bspline_der_all_active</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node66"><a xlink:href="../proc/basis_bspline_der_all_active.html" xlink:title="basis_bspline_der_all_active">
+<polygon fill="#d9534f" stroke="#d9534f" points="1694.43,-361.27 1533.66,-361.27 1533.66,-337 1694.43,-337 1694.43,-361.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1614.05" y="-345.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_all_active</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_active_ders&#45;&gt;proc~basis_bspline_der_all_active -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge89" class="edge">
+<title>proc~basis_bspline_active_ders&#45;&gt;proc~basis_bspline_der_all_active</title>
+<path fill="none" stroke="#ff9900" d="M1498.03,-349.13C1505.89,-349.13 1513.96,-349.13 1522,-349.13"/>
+<polygon fill="#ff9900" stroke="#ff9900" points="1521.81,-352.64 1531.81,-349.14 1521.81,-345.64 1521.81,-352.64"/>
+</g>
+<!-- proc~basis_bspline_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node67" class="node">
+<title>proc~basis_bspline_ders</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node67"><a xlink:href="../proc/basis_bspline_ders.html" xlink:title="basis_bspline_ders">
+<polygon fill="#d9534f" stroke="#d9534f" points="1304.27,-381.27 1193.75,-381.27 1193.75,-357 1304.27,-357 1304.27,-381.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1249.01" y="-365.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_ders</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_a&#45;&gt;proc~basis_bspline_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge90" class="edge">
+<title>proc~basis_bspline_der_a&#45;&gt;proc~basis_bspline_ders</title>
+<path fill="none" stroke="#ffe500" d="M1146.29,-369.13C1157.93,-369.13 1170.23,-369.13 1182.11,-369.13"/>
+<polygon fill="#ffe500" stroke="#ffe500" points="1181.82,-372.64 1191.82,-369.14 1181.82,-365.64 1181.82,-372.64"/>
+</g>
+<!-- proc~basis_bspline_der_b&#45;&gt;proc~basis_bspline_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge91" class="edge">
+<title>proc~basis_bspline_der_b&#45;&gt;proc~basis_bspline_ders</title>
+<path fill="none" stroke="#cbff00" d="M1136.08,-398.53C1152.84,-394.13 1171.85,-389.14 1189.37,-384.54"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="1189.82,-388.04 1198.6,-382.11 1188.04,-381.27 1189.82,-388.04"/>
+</g>
+<!-- proc~cmp_degree&#45;&gt;set -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge93" class="edge">
+<title>proc~cmp_degree&#45;&gt;set</title>
+<path fill="none" stroke="#7fff00" d="M744.79,-811.64C755.71,-808.09 766.79,-803.65 776.58,-798.13 819.91,-773.74 860.52,-731.52 882.71,-706.17"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="885.17,-708.67 889.03,-698.8 879.86,-704.11 885.17,-708.67"/>
+</g>
+<!-- proc~get_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node71" class="node">
+<title>proc~get_multiplicity</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node71"><a xlink:href="../proc/get_multiplicity.html" xlink:title="nurbs_volume%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="989.85,-992.27 812.58,-992.27 812.58,-968 989.85,-968 989.85,-992.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-976.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree&#45;&gt;proc~get_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge92" class="edge">
+<title>proc~cmp_degree&#45;&gt;proc~get_multiplicity</title>
+<path fill="none" stroke="#7fff00" d="M758.63,-836.74C764.9,-839.08 770.98,-841.85 776.58,-845.13 825.58,-873.9 866.44,-928.33 886.63,-958.55"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="883.44,-960.07 891.84,-966.53 889.31,-956.24 883.44,-960.07"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node74" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node74"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="929.1,-1034.27 873.33,-1034.27 873.33,-1010 929.1,-1010 929.1,-1034.27"/>
+<text xml:space="preserve" text-anchor="middle" x="901.21" y="-1018.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge94" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#33ff00" d="M750.4,-1022.13C786.53,-1022.13 830.81,-1022.13 861.83,-1022.13"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="861.51,-1025.64 871.51,-1022.14 861.51,-1018.64 861.51,-1025.64"/>
+</g>
+<!-- proc~compute_xg_bspline_3d&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge95" class="edge">
+<title>proc~compute_xg_bspline_3d&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00ffb2" d="M751.09,-318.67C759.78,-321.09 768.49,-323.9 776.58,-327.13 793.78,-334.01 795.39,-341.24 812.58,-348.13 820.45,-351.3 828.93,-354.06 837.39,-356.45"/>
+<polygon fill="#00ffb2" stroke="#00ffb2" points="836.43,-359.82 846.99,-359 838.22,-353.05 836.43,-359.82"/>
+</g>
+<!-- proc~compute_xg_bspline_3d&#45;&gt;proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge96" class="edge">
+<title>proc~compute_xg_bspline_3d&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#00ffb2" d="M757.37,-313.01C784.35,-315.68 814.92,-318.7 840.84,-321.26"/>
+<polygon fill="#00ffb2" stroke="#00ffb2" points="840.22,-324.72 850.51,-322.22 840.91,-317.75 840.22,-324.72"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge97" class="edge">
+<title>proc~compute_xg_bspline_3d_1point&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00ffff" d="M762.13,-276.65C767.26,-279.01 772.14,-281.82 776.58,-285.13 802.41,-304.45 786.78,-328.79 812.58,-348.13 819.97,-353.67 828.6,-357.77 837.52,-360.81"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="836.44,-364.14 847.02,-363.58 838.4,-357.42 836.44,-364.14"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point&#45;&gt;proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge98" class="edge">
+<title>proc~compute_xg_bspline_3d_1point&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#00ffff" d="M744.38,-276.66C755.12,-279.28 766.23,-282.16 776.58,-285.13 803.01,-292.73 832.14,-302.56 855.49,-310.8"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="854.1,-314.01 864.69,-314.07 856.44,-307.42 854.1,-314.01"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge99" class="edge">
+<title>proc~compute_xg_nurbs_3d&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00b2ff" d="M753.28,-383.66C779.82,-381.04 810.37,-378.02 836.71,-375.41"/>
+<polygon fill="#00b2ff" stroke="#00b2ff" points="836.99,-378.9 846.6,-374.44 836.3,-371.94 836.99,-378.9"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d&#45;&gt;proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge100" class="edge">
+<title>proc~compute_xg_nurbs_3d&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#00b2ff" d="M751.09,-377.6C759.78,-375.18 768.49,-372.37 776.58,-369.13 793.78,-362.26 795.39,-355.03 812.58,-348.13 821.65,-344.49 831.52,-341.38 841.25,-338.75"/>
+<polygon fill="#00b2ff" stroke="#00b2ff" points="841.83,-342.21 850.66,-336.36 840.1,-335.43 841.83,-342.21"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge101" class="edge">
+<title>proc~compute_xg_nurbs_3d_1point&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#0066ff" d="M772.68,-356.53C794.13,-358.65 816.78,-360.89 836.96,-362.88"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="836.4,-366.34 846.69,-363.84 837.09,-359.38 836.4,-366.34"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point&#45;&gt;proc~map_parameter -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge102" class="edge">
+<title>proc~compute_xg_nurbs_3d_1point&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#0066ff" d="M772.68,-339.74C795.4,-337.5 819.47,-335.12 840.51,-333.04"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="840.75,-336.53 850.35,-332.06 840.06,-329.57 840.75,-336.53"/>
+</g>
+<!-- proc~active_span_at -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node75" class="node">
+<title>proc~active_span_at</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node75"><a xlink:href="../proc/active_span_at.html" xlink:title="active_span_at">
+<polygon fill="#d9534f" stroke="#d9534f" points="1820.7,-361.27 1730.43,-361.27 1730.43,-337 1820.7,-337 1820.7,-361.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1775.57" y="-345.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_span_at</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge103" class="edge">
+<title>proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at</title>
+<path fill="none" stroke="#ff0000" d="M1694.81,-349.13C1702.87,-349.13 1710.94,-349.13 1718.68,-349.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1718.62,-352.64 1728.62,-349.14 1718.62,-345.64 1718.62,-352.64"/>
+</g>
+<!-- proc~basis_bspline_ders&#45;&gt;proc~basis_bspline_active_ders -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge104" class="edge">
+<title>proc~basis_bspline_ders&#45;&gt;proc~basis_bspline_active_ders</title>
+<path fill="none" stroke="#ffaa00" d="M1304.63,-362.81C1315.3,-361.57 1326.72,-360.25 1338.1,-358.93"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="1338.4,-362.42 1347.93,-357.79 1337.59,-355.47 1338.4,-362.42"/>
+</g>
+<!-- proc~get_multiplicity&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge105" class="edge">
+<title>proc~get_multiplicity&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#00a9ff" d="M977.96,-992.76C982.23,-995.12 986.25,-997.89 989.85,-1001.13 1025.57,-1033.31 994.24,-1066.91 1025.85,-1103.13 1030.16,-1108.08 1035.45,-1112.33 1041.09,-1115.97"/>
+<polygon fill="#00a9ff" stroke="#00a9ff" points="1039.07,-1118.85 1049.48,-1120.77 1042.54,-1112.77 1039.07,-1118.85"/>
+</g>
+<!-- proc~infer_knot_shape_2d&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge106" class="edge">
+<title>proc~infer_knot_shape_2d&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#0000ff" d="M962.17,-1140.87C978.85,-1139.97 997.14,-1138.97 1014.42,-1138.03"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1014.3,-1141.55 1024.09,-1137.51 1013.92,-1134.56 1014.3,-1141.55"/>
+</g>
+<!-- proc~infer_knot_shape_2d&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge107" class="edge">
+<title>proc~infer_knot_shape_2d&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#0000ff" d="M960.58,-1131.59C970.43,-1129.07 980.49,-1126.23 989.85,-1123.13 1009.99,-1116.48 1031.78,-1107.37 1049.53,-1099.43"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1050.98,-1102.61 1058.63,-1095.29 1048.08,-1096.24 1050.98,-1102.61"/>
+</g>
+<!-- proc~infer_knot_shape_3d&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge108" class="edge">
+<title>proc~infer_knot_shape_3d&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#aa00ff" d="M962.17,-1112.57C978.85,-1115.47 997.14,-1118.65 1014.42,-1121.66"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="1013.66,-1125.08 1024.11,-1123.35 1014.86,-1118.18 1013.66,-1125.08"/>
+</g>
+<!-- proc~infer_knot_shape_3d&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge109" class="edge">
+<title>proc~infer_knot_shape_3d&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#aa00ff" d="M962.17,-1095.61C981.71,-1093.49 1003.45,-1091.12 1023.2,-1088.98"/>
+<polygon fill="#aa00ff" stroke="#aa00ff" points="1023.5,-1092.47 1033.06,-1087.9 1022.74,-1085.51 1023.5,-1092.47"/>
+</g>
+<!-- proc~knot_tolerance -->
+<g id="program~~volume_fit_bspline~~CallsGraph_node76" class="node">
+<title>proc~knot_tolerance</title>
+<g id="a_program~~volume_fit_bspline~~CallsGraph_node76"><a xlink:href="../proc/knot_tolerance.html" xlink:title="knot_tolerance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1947.72,-361.27 1856.7,-361.27 1856.7,-337 1947.72,-337 1947.72,-361.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1902.21" y="-345.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_tolerance</text>
+</a>
+</g>
+</g>
+<!-- proc~active_span_at&#45;&gt;proc~knot_tolerance -->
+<g id="program~~volume_fit_bspline~~CallsGraph_edge110" class="edge">
+<title>proc~active_span_at&#45;&gt;proc~knot_tolerance</title>
+<path fill="none" stroke="#ff0000" d="M1820.86,-349.13C1828.66,-349.13 1836.87,-349.13 1844.95,-349.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1844.7,-352.64 1854.7,-349.14 1844.7,-345.64 1844.7,-352.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramvolume_fit_bsplineCallsGraph = svgPanZoom('#programvolume_fit_bsplineCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xdata"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xdata</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xg_eval"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xg_eval</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt1"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt1</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt2"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt2</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-xt3"></span>
+              real(kind=rk),
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>Xt3</strong>(:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-bsp"></span>
+              type(<a href='../type/nurbs_volume.html'>nurbs_volume</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>bsp</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err1"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err1</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err2"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err2</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-err3"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>err3</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-i"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>i</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-n"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>n</strong>(3)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-ndata"></span>
+              integer
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>ndata</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-pi"></span>
+              real(kind=rk),
+            </td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>pi</strong></td>
+<td> =</td>
+                <td>acos(-1.0_rk)</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-rms"></span>
+              real(kind=rk)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>rms</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    <section>
+    <h2 id="src">Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">volume_fit_bspline</span>
+
+<span class="w">   </span><span class="k">use </span><span class="n">forcad</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span><span class="p">,</span><span class="w"> </span><span class="n">nurbs_volume</span><span class="p">,</span><span class="w"> </span><span class="n">ndgrid</span>
+
+<span class="w">   </span><span class="k">implicit none</span>
+
+<span class="k">   type</span><span class="p">(</span><span class="n">nurbs_volume</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">bsp</span>
+<span class="w">   </span><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">ndata</span><span class="p">,</span><span class="w"> </span><span class="n">i</span>
+<span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0_rk</span><span class="p">)</span>
+<span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xdata</span><span class="p">(:,:)</span>
+<span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xt1</span><span class="p">(:),</span><span class="w"> </span><span class="n">Xt2</span><span class="p">(:),</span><span class="w"> </span><span class="n">Xt3</span><span class="p">(:),</span><span class="w"> </span><span class="n">Xt</span><span class="p">(:,:)</span>
+<span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">Xg_eval</span><span class="p">(:,:)</span>
+<span class="w">   </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">err1</span><span class="p">,</span><span class="w"> </span><span class="n">err2</span><span class="p">,</span><span class="w"> </span><span class="n">err3</span><span class="p">,</span><span class="w"> </span><span class="n">rms</span>
+
+<span class="w">   </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="w">   </span><span class="c">! create parametric grid points</span>
+<span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Xt1</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span><span class="w"> </span><span class="n">Xt2</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span><span class="w"> </span><span class="n">Xt3</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+<span class="w">   </span><span class="k">do</span><span class="w"> </span><span class="k">concurrent</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">      </span><span class="n">Xt1</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end do</span>
+<span class="k">   do</span><span class="w"> </span><span class="k">concurrent</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">      </span><span class="n">Xt2</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end do</span>
+<span class="k">   do</span><span class="w"> </span><span class="k">concurrent</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="w">      </span><span class="n">Xt3</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="kt">real</span><span class="p">(</span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">rk</span><span class="p">)</span>
+<span class="w">   </span><span class="k">end do</span>
+<span class="k">   call </span><span class="n">ndgrid</span><span class="p">(</span><span class="n">Xt1</span><span class="p">,</span><span class="w"> </span><span class="n">Xt2</span><span class="p">,</span><span class="w"> </span><span class="n">Xt3</span><span class="p">,</span><span class="w"> </span><span class="n">Xt</span><span class="p">)</span>
+
+<span class="w">   </span><span class="c">! data points to be fitted</span>
+<span class="w">   </span><span class="n">ndata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">   </span><span class="k">allocate</span><span class="p">(</span><span class="n">Xdata</span><span class="p">(</span><span class="n">ndata</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">))</span>
+<span class="w">   </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ndata</span>
+<span class="w">      </span><span class="n">Xdata</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.1_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="mf">2.0_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">      </span><span class="n">Xdata</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.1_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="mf">2.0_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="w">      </span><span class="n">Xdata</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.1_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="mf">2.0_rk</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Xt</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">   </span><span class="k">end do</span>
+
+<span class="w">   </span><span class="c">! set up B-Spline volume</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">set</span><span class="p">(&amp;</span>
+<span class="w">      </span><span class="n">degree</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">Xth_dir1</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.75_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">Xth_dir2</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.75_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">Xth_dir3</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.75_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0_rk</span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">continuity1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">  </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">continuity2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">  </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">],&amp;</span>
+<span class="w">      </span><span class="n">continuity3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">   </span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="w">    </span><span class="p">,</span><span class="w">  </span><span class="o">-</span><span class="mi">1</span><span class="w">   </span><span class="p">])</span>
+
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;========================================&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;B-Spline Volume Configuration&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;----------------------------------------&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,3(i0,a))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Degrees    : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_degree</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;, &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_degree</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot;, &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_degree</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,3(i0,a))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Control pts: &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_nc</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot; x &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_nc</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot; x &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_nc</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,3(i0,a))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Data grid  : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot; x &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s2">&quot; x &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;----------------------------------------&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Continuity&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(i3,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir1:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_continuity</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(i3,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir2:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_continuity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(i3,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir3:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_continuity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;----------------------------------------&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Knot vectors&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(f5.2,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir1:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_knot</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(f5.2,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir2:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_knot</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(f5.2,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;  dir3:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_knot</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;========================================&quot;</span>
+
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Fitting least squares volume...&quot;</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">lsq_fit_bspline</span><span class="p">(</span><span class="n">Xt</span><span class="p">,</span><span class="w"> </span><span class="n">Xdata</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Fitting complete.&quot;</span>
+
+<span class="w">   </span><span class="c">! create B-Spline volume</span>
+<span class="w">   </span><span class="c">! call bsp%create(n(1), n(2), n(3))</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">create</span><span class="p">(</span><span class="n">Xt1</span><span class="o">=</span><span class="n">Xt1</span><span class="p">,</span><span class="w"> </span><span class="n">Xt2</span><span class="o">=</span><span class="n">Xt2</span><span class="p">,</span><span class="w"> </span><span class="n">Xt3</span><span class="o">=</span><span class="n">Xt3</span><span class="p">)</span>
+<span class="w">   </span><span class="n">Xg_eval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bsp</span><span class="p">%</span><span class="n">get_Xg</span><span class="p">()</span>
+
+<span class="w">   </span><span class="c">! Compute relative errors in each direction</span>
+<span class="w">   </span><span class="n">err1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xg_eval</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)),</span><span class="w"> </span><span class="nb">epsilon</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">   </span><span class="n">err2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xg_eval</span><span class="p">(:,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">2</span><span class="p">)),</span><span class="w"> </span><span class="nb">epsilon</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">   </span><span class="n">err3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xg_eval</span><span class="p">(:,</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">3</span><span class="p">))</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="w"> </span><span class="nb">norm2</span><span class="p">(</span><span class="n">Xdata</span><span class="p">(:,</span><span class="mi">3</span><span class="p">)),</span><span class="w"> </span><span class="nb">epsilon</span><span class="p">(</span><span class="mf">0.0_rk</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">   </span><span class="n">rms</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nb">sqrt</span><span class="p">((</span><span class="n">err1</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">err2</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">err3</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">3.0_rk</span><span class="p">)</span>
+
+<span class="w">   </span><span class="c">! Report</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;========================================&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Fitting Error Report&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;----------------------------------------&quot;</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,e13.6)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Rel. error (dir1):&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">err1</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,e13.6)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Rel. error (dir2):&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">err2</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,e13.6)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Rel. error (dir3):&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">err3</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,e13.6)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Total RMS error  :&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rms</span>
+<span class="w">   </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;========================================&quot;</span>
+
+<span class="w">   </span><span class="c">! Export results and visualize</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">export_Xc</span><span class="p">(</span><span class="s2">&quot;vtk/volume_fit_bspline_Xc.vtk&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">export_Xg</span><span class="p">(</span><span class="s2">&quot;vtk/volume_fit_bspline_Xg.vtk&quot;</span><span class="p">)</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">export_Xth_in_Xg</span><span class="p">(</span><span class="s2">&quot;vtk/volume_fit_bspline_Xth.vtk&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="w">   </span><span class="k">call </span><span class="n">bsp</span><span class="p">%</span><span class="n">show</span><span class="p">(</span><span class="s2">&quot;vtk/volume_fit_bspline_Xc.vtk&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;vtk/volume_fit_bspline_Xg.vtk&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;vtk/volume_fit_bspline_Xth.vtk&quot;</span><span class="p">)</span>
+
+<span class="k">end program </span><span class="n">volume_fit_bspline</span>
+</pre></div>
+
+    </section>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2026 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-07-21T13:35:50.771609+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

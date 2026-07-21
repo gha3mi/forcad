@@ -1,0 +1,1484 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>is_valid_curve &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">NURBS Theory and ForCAD Usage</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>is_valid_curve
+      <small>Function</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-author"><i class="fa fa-pencil"></i> Seyed Ali Ghasemi</li>
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.1% of total for procedures.">116 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/forcad_multipatch_curve.F90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/forcad_multipatch_curve.f90.html'>forcad_multipatch_curve.F90</a></li>
+                <li class="breadcrumb-item"><a href='../module/forcad_multipatch_curve.html'>forcad_multipatch_curve</a></li>
+            <li class="breadcrumb-item active" aria-current="page">is_valid_curve</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2>private pure function is_valid_curve(this, tol) result(ok)  
+</h2>
+    
+
+    <p>Validate all patches and connection invariants without changing state.</p>
+<p>Validation covers patch diagnostics, patch/side ranges, continuity order,
+endpoint-control coincidence, transition jets, homogeneous derivative
+residuals, and rational projective weight compatibility. <code>tol</code> is used as
+one absolute threshold for physical coordinates and assembled homogeneous
+residuals; the default is <code>sqrt(epsilon(rk))</code>. Specifically, paired
+coordinates and each component of <script type="math/tex">A\mathbf H</script> are compared directly
+with <code>tol</code>. Weight proportionality uses
+<code>max(tol,128*epsilon(rk))*max(abs(wA),abs(lambda*wB))</code> for each pair.
+<code>tol&gt;=0</code> is a caller precondition and is not separately diagnosed. The
+test conservatively requires both
+patches to have the same whole-patch <code>is_rational</code> classification and, for
+rational patches, enforces the constant-projective-scale homogeneous model
+documented by <a href="../module/forcad_multipatch.html">forcad_multipatch</a>. It can therefore reject a Euclidean
+join admitted by a more general projective gauge.</p>
+
+    <h3>Type Bound</h3>
+    <p><a href='../type/nurbs_multipatch_curve.html'>nurbs_multipatch_curve</a></p>
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this~314"></span>
+              class(<a href='../type/nurbs_multipatch_curve.html'>nurbs_multipatch_curve</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tol~28"></span>
+              real(kind=rk),
+            </td>
+<td>intent(in),</td>
+              <td>optional</td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>tol</strong></td>
+            <td>
+                <p>Optional nonnegative absolute coordinate/residual tolerance; default <code>sqrt(epsilon(rk))</code>.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <h3>Return Value
+        <small>
+          <span class="anchor" id="variable-ok~43"></span>
+          logical
+        </small>
+      </h3>
+      
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: proc~~is_valid_curve~~CallsGraph Pages: 1 -->
+<svg id="procis_valid_curveCallsGraph" width="641pt" height="507pt"
+ viewBox="0.00 0.00 641.00 507.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~is_valid_curve~~CallsGraph" class="graph" transform="scale(0.430167 0.430167) rotate(0) translate(4 1174.06)">
+<title>proc~~is_valid_curve~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-1174.06 1486.12,-1174.06 1486.12,4 -4,4"/>
+<!-- proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node1" class="node">
+<title>proc~is_valid_curve</title>
+<polygon fill="none" stroke="black" points="223.02,-399.27 0,-399.27 0,-375 223.02,-375 223.02,-399.27"/>
+<text xml:space="preserve" text-anchor="middle" x="111.51" y="-383.53" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_multipatch_curve%is_valid_curve</text>
+</g>
+<!-- interface~boundary_index -->
+<g id="proc~~is_valid_curve~~CallsGraph_node2" class="node">
+<title>interface~boundary_index</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node2"><a xlink:href="../interface/boundary_index.html" xlink:title="boundary_index">
+<polygon fill="#a7506f" stroke="#a7506f" points="1087.83,-296.27 991.56,-296.27 991.56,-272 1087.83,-272 1087.83,-296.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-280.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundary_index</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;interface~boundary_index -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge1" class="edge">
+<title>proc~is_valid_curve&#45;&gt;interface~boundary_index</title>
+<path fill="none" stroke="#ff0000" d="M125.24,-374.71C149.09,-352.4 203.15,-306.29 259.02,-289.13 517.72,-209.68 847.86,-251.28 980.09,-273.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="979.2,-276.71 989.65,-274.93 980.37,-269.81 979.2,-276.71"/>
+</g>
+<!-- none~get_degree~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node3" class="node">
+<title>none~get_degree~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node3"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_degree~3" xlink:title="nurbs_curve%get_degree">
+<polygon fill="#a7506f" stroke="#a7506f" points="798.81,-1140.27 652.29,-1140.27 652.29,-1116 798.81,-1116 798.81,-1140.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-1124.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;none~get_degree~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge2" class="edge">
+<title>proc~is_valid_curve&#45;&gt;none~get_degree~3</title>
+<path fill="none" stroke="#ff0000" d="M113.07,-399.64C117.26,-486.99 146.69,-1005.14 259.02,-1102.13 375.89,-1203.04 577.05,-1168.01 672.01,-1143.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="672.81,-1147.01 681.59,-1141.07 671.02,-1140.24 672.81,-1147.01"/>
+</g>
+<!-- none~get_nc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node4" class="node">
+<title>none~get_nc~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node4"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_nc~3" xlink:title="nurbs_curve%get_nc">
+<polygon fill="#a7506f" stroke="#a7506f" points="1100.58,-970.27 978.81,-970.27 978.81,-946 1100.58,-946 1100.58,-970.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-954.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_nc</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;none~get_nc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge3" class="edge">
+<title>proc~is_valid_curve&#45;&gt;none~get_nc~3</title>
+<path fill="none" stroke="#ff0000" d="M114.17,-399.44C124.27,-472.85 179.9,-852.69 259.02,-934.13 354.48,-1032.4 737.08,-1072.08 867.81,-1031.13 886.4,-1025.31 886.48,-1015.03 903.81,-1006.13 928.94,-993.23 958.35,-982.32 983.29,-974.18"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="984.13,-977.58 992.59,-971.21 982,-970.91 984.13,-977.58"/>
+</g>
+<!-- none~get_wc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node5" class="node">
+<title>none~get_wc~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node5"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_wc~3" xlink:title="nurbs_curve%get_Wc">
+<polygon fill="#a7506f" stroke="#a7506f" points="1102.45,-232.27 976.93,-232.27 976.93,-208 1102.45,-208 1102.45,-232.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-216.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Wc</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;none~get_wc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge4" class="edge">
+<title>proc~is_valid_curve&#45;&gt;none~get_wc~3</title>
+<path fill="none" stroke="#ff0000" d="M120.11,-374.56C139.07,-344.54 191.83,-269.05 259.02,-240.13 384.48,-186.15 796.39,-204.83 965.37,-215.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="964.92,-218.65 975.12,-215.78 965.35,-211.67 964.92,-218.65"/>
+</g>
+<!-- none~get_xc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node6" class="node">
+<title>none~get_xc~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node6"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_xc~3" xlink:title="nurbs_curve%get_Xc">
+<polygon fill="#a7506f" stroke="#a7506f" points="464.41,-108.27 341.89,-108.27 341.89,-84 464.41,-84 464.41,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="403.15" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xc</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;none~get_xc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge5" class="edge">
+<title>proc~is_valid_curve&#45;&gt;none~get_xc~3</title>
+<path fill="none" stroke="#ff0000" d="M115.37,-374.6C125.89,-331.49 166.78,-188.36 259.02,-122.14 279.48,-107.45 305.71,-100.26 330.12,-96.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="330.5,-100.43 340.05,-95.83 329.72,-93.47 330.5,-100.43"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node7" class="node">
+<title>proc~cmp_dof_constraint_curve</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node7"><a xlink:href="../proc/cmp_dof_constraint_curve.html" xlink:title="nurbs_multipatch_curve%cmp_dof_constraint_curve">
+<polygon fill="#d9534f" stroke="#d9534f" points="547.29,-734.27 259.02,-734.27 259.02,-710 547.29,-710 547.29,-734.27"/>
+<text xml:space="preserve" text-anchor="middle" x="403.15" y="-718.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_multipatch_curve%cmp_dof_constraint_curve</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~cmp_dof_constraint_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge6" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~cmp_dof_constraint_curve</title>
+<path fill="none" stroke="#ff0000" d="M123.16,-399.46C166.45,-449.52 329.48,-638.08 384.15,-701.31"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="381.23,-703.28 390.42,-708.56 386.52,-698.7 381.23,-703.28"/>
+</g>
+<!-- proc~cmp_dof_offsets_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node8" class="node">
+<title>proc~cmp_dof_offsets_curve</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node8"><a xlink:href="../proc/cmp_dof_offsets_curve.html" xlink:title="nurbs_multipatch_curve%cmp_dof_offsets_curve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="860.68,-1022.27 590.41,-1022.27 590.41,-998 860.68,-998 860.68,-1022.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-1006.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_multipatch_curve%cmp_dof_offsets_curve</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~cmp_dof_offsets_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge7" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~cmp_dof_offsets_curve</title>
+<path fill="none" stroke="#ff0000" d="M112.83,-399.67C115,-458.43 131.65,-709.56 259.02,-850.13 340.68,-940.27 475.42,-979.63 578.98,-996.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="578.25,-1000.25 588.68,-998.38 579.36,-993.34 578.25,-1000.25"/>
+</g>
+<!-- proc~connection_weight_scale_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node9" class="node">
+<title>proc~connection_weight_scale_curve</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node9"><a xlink:href="../proc/connection_weight_scale_curve.html" xlink:title="connection_weight_scale_curve">
+<polygon fill="#d9534f" stroke="#d9534f" points="815.31,-340.27 635.79,-340.27 635.79,-316 815.31,-316 815.31,-340.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-324.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">connection_weight_scale_curve</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~connection_weight_scale_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge8" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~connection_weight_scale_curve</title>
+<path fill="none" stroke="#ff0000" d="M159.32,-374.51C187.91,-367.32 225.32,-358.84 259.02,-354.13 384.01,-336.69 529.43,-330.85 624.03,-328.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="623.87,-332.45 633.8,-328.77 623.74,-325.46 623.87,-332.45"/>
+</g>
+<!-- proc~get_connection_continuity -->
+<g id="proc~~is_valid_curve~~CallsGraph_node10" class="node">
+<title>proc~get_connection_continuity</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node10"><a xlink:href="../proc/get_connection_continuity.html" xlink:title="multipatch_connection%get_connection_continuity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="866.68,-980.27 584.41,-980.27 584.41,-956 866.68,-956 866.68,-980.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-964.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_continuity</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_continuity -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge9" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_continuity</title>
+<path fill="none" stroke="#ff0000" d="M114.73,-399.63C124.01,-448.73 163.69,-631.19 259.02,-743.13 368.65,-871.88 425.41,-881.58 583.29,-942.13 594.34,-946.37 606.15,-949.93 618.06,-952.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="616.99,-956.27 627.53,-955.16 618.6,-949.45 616.99,-956.27"/>
+</g>
+<!-- proc~get_connection_patch_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_node11" class="node">
+<title>proc~get_connection_patch_a</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node11"><a xlink:href="../proc/get_connection_patch_a.html" xlink:title="multipatch_connection%get_connection_patch_a">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175.58,-464.27 903.81,-464.27 903.81,-440 1175.58,-440 1175.58,-464.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-448.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_patch_a</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_patch_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge10" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_patch_a</title>
+<path fill="none" stroke="#ff0000" d="M183.48,-399.77C207.41,-403.63 234.31,-407.54 259.02,-410.13 479.05,-433.27 735.42,-443.98 892.37,-448.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="891.88,-452.19 901.98,-448.98 892.09,-445.19 891.88,-452.19"/>
+</g>
+<!-- proc~get_connection_patch_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_node12" class="node">
+<title>proc~get_connection_patch_b</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node12"><a xlink:href="../proc/get_connection_patch_b.html" xlink:title="multipatch_connection%get_connection_patch_b">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1175.58,-422.27 903.81,-422.27 903.81,-398 1175.58,-398 1175.58,-422.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-406.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_patch_b</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_patch_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge11" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_patch_b</title>
+<path fill="none" stroke="#ff0000" d="M223.3,-391.05C235.36,-391.43 247.44,-391.8 259.02,-392.13 479.74,-398.45 735.66,-404.02 892.36,-407.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="891.88,-410.73 901.95,-407.43 892.03,-403.73 891.88,-410.73"/>
+</g>
+<!-- proc~get_connection_reverse -->
+<g id="proc~~is_valid_curve~~CallsGraph_node13" class="node">
+<title>proc~get_connection_reverse</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node13"><a xlink:href="../proc/get_connection_reverse.html" xlink:title="multipatch_connection%get_connection_reverse">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1174.45,-190.27 904.93,-190.27 904.93,-166 1174.45,-166 1174.45,-190.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-174.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_reverse</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_reverse -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge12" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_reverse</title>
+<path fill="none" stroke="#ff0000" d="M117.62,-374.72C132.88,-339.51 181.88,-239.05 259.02,-200.13 366.15,-146.09 698.6,-156.33 893.07,-167.75"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="892.82,-171.24 903.01,-168.34 893.24,-164.25 892.82,-171.24"/>
+</g>
+<!-- proc~get_connection_side_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_node14" class="node">
+<title>proc~get_connection_side_a</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node14"><a xlink:href="../proc/get_connection_side_a.html" xlink:title="multipatch_connection%get_connection_side_a">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1171.45,-380.27 907.93,-380.27 907.93,-356 1171.45,-356 1171.45,-380.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-364.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_side_a</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_side_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge13" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_side_a</title>
+<path fill="none" stroke="#ff0000" d="M223.31,-384.86C391.44,-381.41 710.99,-374.86 896.2,-371.06"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="896.22,-374.56 906.14,-370.85 896.07,-367.56 896.22,-374.56"/>
+</g>
+<!-- proc~get_connection_side_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_node15" class="node">
+<title>proc~get_connection_side_b</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node15"><a xlink:href="../proc/get_connection_side_b.html" xlink:title="multipatch_connection%get_connection_side_b">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1171.45,-338.27 907.93,-338.27 907.93,-314 1171.45,-314 1171.45,-338.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-322.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_side_b</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_connection_side_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge14" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_connection_side_b</title>
+<path fill="none" stroke="#ff0000" d="M136.34,-374.52C164.69,-360.2 213.87,-337.47 259.02,-327.13 497.64,-272.48 788.22,-294.55 938.26,-312.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="937.41,-315.64 947.76,-313.35 938.25,-308.69 937.41,-315.64"/>
+</g>
+<!-- proc~get_nconnection_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node16" class="node">
+<title>proc~get_nconnection_curve</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node16"><a xlink:href="../proc/get_nconnection_curve.html" xlink:title="nurbs_multipatch_curve%get_nconnection_curve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="861.81,-496.27 589.29,-496.27 589.29,-472 861.81,-472 861.81,-496.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-480.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_multipatch_curve%get_nconnection_curve</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_nconnection_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge15" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_nconnection_curve</title>
+<path fill="none" stroke="#ff0000" d="M131.92,-399.66C159.09,-416.45 210.59,-445.59 259.02,-458.13 363.2,-485.13 484.74,-491.1 577.5,-490.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="577.47,-494.1 587.44,-490.52 577.41,-487.1 577.47,-494.1"/>
+</g>
+<!-- proc~get_npatch_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_node17" class="node">
+<title>proc~get_npatch_curve</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node17"><a xlink:href="../proc/get_npatch_curve.html" xlink:title="nurbs_multipatch_curve%get_npatch_curve">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1161.33,-1039.27 918.06,-1039.27 918.06,-1015 1161.33,-1015 1161.33,-1039.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-1023.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_multipatch_curve%get_npatch_curve</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~get_npatch_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge16" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~get_npatch_curve</title>
+<path fill="none" stroke="#ff0000" d="M113.67,-399.7C121.26,-479.19 166.48,-911.63 259.02,-998.13 358.25,-1090.9 732.36,-1063.38 867.81,-1053.13 898.19,-1050.84 931.35,-1046.27 960.31,-1041.6"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="960.81,-1045.07 970.1,-1039.99 959.67,-1038.16 960.81,-1045.07"/>
+</g>
+<!-- proc~is_rational~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node18" class="node">
+<title>proc~is_rational~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node18"><a xlink:href="../proc/is_rational~3.html" xlink:title="nurbs_curve%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1110.33,-148.27 969.06,-148.27 969.06,-124 1110.33,-124 1110.33,-148.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-132.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~is_rational~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge17" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~is_rational~3</title>
+<path fill="none" stroke="#ff0000" d="M115.89,-374.51C127.54,-333.76 170.35,-205.43 259.02,-155.13 318.5,-121.4 769.64,-129.08 957.25,-133.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="957.08,-137.31 967.17,-134.07 957.26,-130.31 957.08,-137.31"/>
+</g>
+<!-- proc~multipatch_valid_reparameterization -->
+<g id="proc~~is_valid_curve~~CallsGraph_node19" class="node">
+<title>proc~multipatch_valid_reparameterization</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node19"><a xlink:href="../proc/multipatch_valid_reparameterization.html" xlink:title="multipatch_valid_reparameterization">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="506.79,-66.27 299.52,-66.27 299.52,-42 506.79,-42 506.79,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="403.15" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_valid_reparameterization</text>
+</a>
+</g>
+</g>
+<!-- proc~is_valid_curve&#45;&gt;proc~multipatch_valid_reparameterization -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge18" class="edge">
+<title>proc~is_valid_curve&#45;&gt;proc~multipatch_valid_reparameterization</title>
+<path fill="none" stroke="#ff0000" d="M114.16,-374.69C121.24,-326.84 153.56,-153.44 259.02,-75.14 267.77,-68.63 277.68,-63.73 288.09,-60.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="289.11,-63.43 297.64,-57.15 287.06,-56.73 289.11,-63.43"/>
+</g>
+<!-- proc~boundary_index_1d -->
+<g id="proc~~is_valid_curve~~CallsGraph_node22" class="node">
+<title>proc~boundary_index_1d</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node22"><a xlink:href="../proc/boundary_index_1d.html" xlink:title="boundary_index_1d">
+<polygon fill="#d9534f" stroke="#d9534f" points="1340.85,-316.27 1225.83,-316.27 1225.83,-292 1340.85,-292 1340.85,-316.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-300.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundary_index_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~boundary_index&#45;&gt;proc~boundary_index_1d -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge19" class="edge">
+<title>interface~boundary_index&#45;&gt;proc~boundary_index_1d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1088.15,-288.06C1124.13,-291.04 1174.08,-295.17 1214.31,-298.5"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1213.89,-301.98 1224.14,-299.32 1214.46,-295.01 1213.89,-301.98"/>
+</g>
+<!-- proc~boundary_index_2d -->
+<g id="proc~~is_valid_curve~~CallsGraph_node23" class="node">
+<title>proc~boundary_index_2d</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node23"><a xlink:href="../proc/boundary_index_2d.html" xlink:title="boundary_index_2d">
+<polygon fill="#d9534f" stroke="#d9534f" points="1340.85,-274.27 1225.83,-274.27 1225.83,-250 1340.85,-250 1340.85,-274.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-258.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundary_index_2d</text>
+</a>
+</g>
+</g>
+<!-- interface~boundary_index&#45;&gt;proc~boundary_index_2d -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge20" class="edge">
+<title>interface~boundary_index&#45;&gt;proc~boundary_index_2d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1088.15,-279.81C1124.13,-276.54 1174.08,-271.99 1214.31,-268.33"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1214.5,-271.83 1224.14,-267.43 1213.87,-264.85 1214.5,-271.83"/>
+</g>
+<!-- proc~boundary_index_3d -->
+<g id="proc~~is_valid_curve~~CallsGraph_node24" class="node">
+<title>proc~boundary_index_3d</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node24"><a xlink:href="../proc/boundary_index_3d.html" xlink:title="boundary_index_3d">
+<polygon fill="#d9534f" stroke="#d9534f" points="1340.85,-358.27 1225.83,-358.27 1225.83,-334 1340.85,-334 1340.85,-358.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-342.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">boundary_index_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~boundary_index&#45;&gt;proc~boundary_index_3d -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge21" class="edge">
+<title>interface~boundary_index&#45;&gt;proc~boundary_index_3d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1088.18,-287.41C1114.48,-290.24 1147.45,-295.48 1175.58,-305.13 1192.89,-311.08 1194.71,-318.04 1211.58,-325.13 1215.59,-326.82 1219.77,-328.42 1224.02,-329.94"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1222.61,-333.16 1233.21,-333.05 1224.86,-326.53 1222.61,-333.16"/>
+</g>
+<!-- proc~get_degree_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node26" class="node">
+<title>proc~get_degree_all~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node26"><a xlink:href="../proc/get_degree_all~3.html" xlink:title="nurbs_curve%get_degree_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1121.95,-1161.27 957.43,-1161.27 957.43,-1137 1121.95,-1137 1121.95,-1161.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-1145.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_degree_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_degree~3&#45;&gt;proc~get_degree_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge22" class="edge">
+<title>none~get_degree~3&#45;&gt;proc~get_degree_all~3</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M798.95,-1133.01C842.62,-1135.94 898.71,-1139.72 945.65,-1142.88"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="945.34,-1146.36 955.55,-1143.54 945.81,-1139.38 945.34,-1146.36"/>
+</g>
+<!-- proc~get_degree_dir~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node27" class="node">
+<title>proc~get_degree_dir~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node27"><a xlink:href="../proc/get_degree_dir~3.html" xlink:title="nurbs_curve%get_degree_dir">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1122.7,-1119.27 956.68,-1119.27 956.68,-1095 1122.7,-1095 1122.7,-1119.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-1103.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_degree_dir</text>
+</a>
+</g>
+</g>
+<!-- none~get_degree~3&#45;&gt;proc~get_degree_dir~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge23" class="edge">
+<title>none~get_degree~3&#45;&gt;proc~get_degree_dir~3</title>
+<path fill="none" stroke="#ff5400" stroke-dasharray="5,2" d="M798.95,-1123.26C842.37,-1120.34 898.07,-1116.6 944.85,-1113.45"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="944.97,-1116.95 954.71,-1112.79 944.5,-1109.96 944.97,-1116.95"/>
+</g>
+<!-- proc~get_nc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node28" class="node">
+<title>proc~get_nc_all~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node28"><a xlink:href="../proc/get_nc_all~3.html" xlink:title="nurbs_curve%get_nc_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1353.22,-991.27 1213.45,-991.27 1213.45,-967 1353.22,-967 1353.22,-991.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-975.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_nc_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_nc~3&#45;&gt;proc~get_nc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge24" class="edge">
+<title>none~get_nc~3&#45;&gt;proc~get_nc_all~3</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1101.05,-963.38C1131.56,-966.03 1169,-969.29 1201.93,-972.15"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="1201.59,-975.63 1211.85,-973.01 1202.19,-968.66 1201.59,-975.63"/>
+</g>
+<!-- proc~get_nc_dir~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node29" class="node">
+<title>proc~get_nc_dir~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node29"><a xlink:href="../proc/get_nc_dir~3.html" xlink:title="nurbs_curve%get_nc_dir">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1353.97,-949.27 1212.7,-949.27 1212.7,-925 1353.97,-925 1353.97,-949.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-933.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_nc_dir</text>
+</a>
+</g>
+</g>
+<!-- none~get_nc~3&#45;&gt;proc~get_nc_dir~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge25" class="edge">
+<title>none~get_nc~3&#45;&gt;proc~get_nc_dir~3</title>
+<path fill="none" stroke="#ffaa00" stroke-dasharray="5,2" d="M1101.05,-952.89C1131.31,-950.26 1168.39,-947.04 1201.11,-944.19"/>
+<polygon fill="#ffaa00" stroke="#ffaa00" points="1201.32,-947.69 1210.98,-943.34 1200.72,-940.72 1201.32,-947.69"/>
+</g>
+<!-- proc~get_wc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node30" class="node">
+<title>proc~get_wc_all~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node30"><a xlink:href="../proc/get_wc_all~3.html" xlink:title="nurbs_curve%get_Wc_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1355.1,-190.27 1211.58,-190.27 1211.58,-166 1355.1,-166 1355.1,-190.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-174.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Wc_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_wc~3&#45;&gt;proc~get_wc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge26" class="edge">
+<title>none~get_wc~3&#45;&gt;proc~get_wc_all~3</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1102.9,-210.98C1125.78,-207.47 1151.89,-203.31 1175.58,-199.13 1186.46,-197.22 1197.95,-195.08 1209.19,-192.92"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="1209.68,-196.39 1218.83,-191.06 1208.35,-189.52 1209.68,-196.39"/>
+</g>
+<!-- proc~get_wci~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node31" class="node">
+<title>proc~get_wci~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node31"><a xlink:href="../proc/get_wci~3.html" xlink:title="nurbs_curve%get_Wci">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1347.6,-232.27 1219.08,-232.27 1219.08,-208 1347.6,-208 1347.6,-232.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-216.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Wci</text>
+</a>
+</g>
+</g>
+<!-- none~get_wc~3&#45;&gt;proc~get_wci~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge27" class="edge">
+<title>none~get_wc~3&#45;&gt;proc~get_wci~3</title>
+<path fill="none" stroke="#ffff00" stroke-dasharray="5,2" d="M1102.92,-220.13C1134.84,-220.13 1173.94,-220.13 1207.49,-220.13"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="1207.12,-223.64 1217.12,-220.14 1207.12,-216.64 1207.12,-223.64"/>
+</g>
+<!-- proc~get_xc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node32" class="node">
+<title>proc~get_xc_all~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node32"><a xlink:href="../proc/get_xc_all~3.html" xlink:title="nurbs_curve%get_Xc_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="795.81,-24.27 655.29,-24.27 655.29,0 795.81,0 795.81,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xc_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_xc~3&#45;&gt;proc~get_xc_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge28" class="edge">
+<title>none~get_xc~3&#45;&gt;proc~get_xc_all~3</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M464.63,-96.65C491.36,-94.59 522.33,-88.9 547.29,-75.14 568.82,-63.26 561.77,-45.03 583.29,-33.13 601.51,-23.07 622.97,-17.34 643.59,-14.2"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="643.97,-17.68 653.43,-12.9 643.06,-10.74 643.97,-17.68"/>
+</g>
+<!-- proc~get_xcid~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node33" class="node">
+<title>proc~get_xcid~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node33"><a xlink:href="../proc/get_xcid~3.html" xlink:title="nurbs_curve%get_Xcid">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="791.68,-108.27 659.41,-108.27 659.41,-84 791.68,-84 791.68,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xcid</text>
+</a>
+</g>
+</g>
+<!-- none~get_xc~3&#45;&gt;proc~get_xcid~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge29" class="edge">
+<title>none~get_xc~3&#45;&gt;proc~get_xcid~3</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M464.8,-96.14C516.65,-96.14 591.55,-96.14 647.61,-96.14"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="647.41,-99.64 657.41,-96.14 647.41,-92.64 647.41,-99.64"/>
+</g>
+<!-- proc~get_xci~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node34" class="node">
+<title>proc~get_xci~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node34"><a xlink:href="../proc/get_xci~3.html" xlink:title="nurbs_curve%get_Xci">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="788.31,-66.27 662.79,-66.27 662.79,-42 788.31,-42 788.31,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_Xci</text>
+</a>
+</g>
+</g>
+<!-- none~get_xc~3&#45;&gt;proc~get_xci~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge30" class="edge">
+<title>none~get_xc~3&#45;&gt;proc~get_xci~3</title>
+<path fill="none" stroke="#aaff00" stroke-dasharray="5,2" d="M464.8,-88.19C517.75,-81.24 594.75,-71.15 651.17,-63.75"/>
+<polygon fill="#aaff00" stroke="#aaff00" points="651.56,-67.23 661.02,-62.46 650.65,-60.29 651.56,-67.23"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;none~get_degree~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge31" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;none~get_degree~3</title>
+<path fill="none" stroke="#54ff00" d="M408.99,-734.59C426.72,-779.04 491.84,-932.43 583.29,-1031.13 614.44,-1064.76 659.27,-1093.05 690.02,-1110.24"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="688.09,-1113.18 698.54,-1114.91 691.46,-1107.04 688.09,-1113.18"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;none~get_nc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge33" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;none~get_nc~3</title>
+<path fill="none" stroke="#54ff00" d="M421,-734.74C449.28,-756.43 507.16,-803.14 547.29,-851.13 566.75,-874.41 557.6,-892.99 583.29,-909.13 615.04,-929.1 847.33,-946.25 967.34,-953.89"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="966.88,-957.37 977.08,-954.51 967.32,-950.38 966.88,-957.37"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~cmp_dof_offsets_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge35" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~cmp_dof_offsets_curve</title>
+<path fill="none" stroke="#54ff00" d="M412.1,-734.57C445.1,-786.15 570.2,-980.86 583.29,-989.13 585.22,-990.35 587.18,-991.51 589.19,-992.61"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="587.64,-995.74 598.16,-996.98 590.7,-989.45 587.64,-995.74"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~connection_weight_scale_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge36" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~connection_weight_scale_curve</title>
+<path fill="none" stroke="#54ff00" d="M411.54,-709.62C434.57,-671.06 508.04,-551.29 583.29,-463.13 621.05,-418.9 671.59,-373.37 700.86,-348.11"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="703.1,-350.8 708.42,-341.64 698.55,-345.48 703.1,-350.8"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_continuity -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge37" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_continuity</title>
+<path fill="none" stroke="#54ff00" d="M422.93,-734.67C452.96,-755.57 511.99,-800.3 547.29,-851.13 572.1,-886.86 549.69,-914.51 583.29,-942.13 586.97,-945.16 590.9,-947.88 595,-950.33"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="593.06,-953.26 603.54,-954.83 596.33,-947.07 593.06,-953.26"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_patch_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge39" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_patch_a</title>
+<path fill="none" stroke="#54ff00" d="M547.62,-730.08C663.13,-733.97 814.68,-732.65 867.81,-703.13 960.16,-651.84 1012.64,-527.05 1031.08,-475.26"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="1034.33,-476.58 1034.28,-465.99 1027.71,-474.3 1034.33,-476.58"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_patch_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge40" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_patch_b</title>
+<path fill="none" stroke="#54ff00" d="M435,-709.56C470.28,-695.68 530.04,-673.63 583.29,-661.13 645.39,-646.56 821.54,-667.04 867.81,-623.13 930.79,-563.38 841.48,-491.57 903.81,-431.13 904.32,-430.65 904.83,-430.16 905.34,-429.69"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="907.32,-432.59 913.05,-423.68 903.01,-427.07 907.32,-432.59"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_side_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge41" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_side_a</title>
+<path fill="none" stroke="#54ff00" d="M415.3,-709.78C441.49,-681.63 510.28,-612.73 583.29,-581.13 700.66,-530.34 773.53,-624.54 867.81,-538.13 918.03,-492.1 853.69,-435.28 903.81,-389.13 904.46,-388.53 905.13,-387.94 905.8,-387.37"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="907.83,-390.22 913.82,-381.48 903.69,-384.58 907.83,-390.22"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_side_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge42" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_side_b</title>
+<path fill="none" stroke="#54ff00" d="M411.6,-709.96C433.19,-675.88 499.68,-579.26 583.29,-538.13 640.41,-510.04 820.43,-547.63 867.81,-505.13 921.43,-457.05 851.14,-396.26 903.81,-347.13 904.44,-346.54 905.09,-345.97 905.74,-345.4"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="907.56,-348.41 913.48,-339.62 903.37,-342.8 907.56,-348.41"/>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_nconnection_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge43" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_nconnection_curve</title>
+<path fill="none" stroke="#54ff00" d="M410.66,-709.51C430.68,-672.09 495.34,-561.15 583.29,-510.13 589.67,-506.44 596.45,-503.24 603.47,-500.49"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="604.24,-503.94 612.48,-497.28 601.88,-497.35 604.24,-503.94"/>
+</g>
+<!-- none~get_knot~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node20" class="node">
+<title>none~get_knot~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node20"><a xlink:href="../type/nurbs_curve.html#boundprocedure-get_knot~3" xlink:title="nurbs_curve%get_knot">
+<polygon fill="#a7506f" stroke="#a7506f" points="791.68,-900.27 659.41,-900.27 659.41,-876 791.68,-876 791.68,-900.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-884.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;none~get_knot~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge32" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;none~get_knot~3</title>
+<path fill="none" stroke="#54ff00" d="M414.83,-734.43C440.54,-763.14 509.3,-834.62 583.29,-867.13 603.39,-875.97 626.49,-881.2 648.11,-884.27"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="647.39,-887.71 657.75,-885.5 648.27,-880.77 647.39,-887.71"/>
+</g>
+<!-- proc~basis_bspline_der_order_active -->
+<g id="proc~~is_valid_curve~~CallsGraph_node21" class="node">
+<title>proc~basis_bspline_der_order_active</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node21"><a xlink:href="../proc/basis_bspline_der_order_active.html" xlink:title="basis_bspline_der_order_active">
+<polygon fill="#d9534f" stroke="#d9534f" points="814.18,-774.27 636.91,-774.27 636.91,-750 814.18,-750 814.18,-774.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-758.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_order_active</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~basis_bspline_der_order_active -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge34" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~basis_bspline_der_order_active</title>
+<path fill="none" stroke="#54ff00" d="M505.09,-734.74C543.49,-739.53 587.17,-744.98 625.4,-749.76"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="624.7,-753.2 635.05,-750.96 625.56,-746.25 624.7,-753.2"/>
+</g>
+<!-- proc~get_connection_geometric -->
+<g id="proc~~is_valid_curve~~CallsGraph_node25" class="node">
+<title>proc~get_connection_geometric</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node25"><a xlink:href="../proc/get_connection_geometric.html" xlink:title="multipatch_connection%get_connection_geometric">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="867.81,-614.27 583.29,-614.27 583.29,-590 867.81,-590 867.81,-614.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-598.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_connection%get_connection_geometric</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_geometric -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge38" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~get_connection_geometric</title>
+<path fill="none" stroke="#54ff00" d="M423.42,-709.51C455.32,-689.21 521.71,-649.41 583.29,-628.13 595.72,-623.84 609.02,-620.21 622.31,-617.16"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="622.95,-620.6 631.97,-615.05 621.46,-613.76 622.95,-620.6"/>
+</g>
+<!-- proc~knot_end -->
+<g id="proc~~is_valid_curve~~CallsGraph_node35" class="node">
+<title>proc~knot_end</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node35"><a xlink:href="../proc/knot_end.html" xlink:title="knot_end">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="755.68,-858.27 695.41,-858.27 695.41,-834 755.68,-834 755.68,-858.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-842.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_end</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~knot_end -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge44" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~knot_end</title>
+<path fill="none" stroke="#54ff00" d="M420.9,-734.68C451.42,-756.85 518.91,-802.74 583.29,-825.13 616.02,-836.52 655.11,-841.73 683.86,-844.12"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="683.37,-847.59 693.6,-844.84 683.89,-840.61 683.37,-847.59"/>
+</g>
+<!-- proc~knot_start -->
+<g id="proc~~is_valid_curve~~CallsGraph_node36" class="node">
+<title>proc~knot_start</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node36"><a xlink:href="../proc/knot_start.html" xlink:title="knot_start">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="757.56,-816.27 693.54,-816.27 693.54,-792 757.56,-792 757.56,-816.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-800.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_start</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~knot_start -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge45" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~knot_start</title>
+<path fill="none" stroke="#54ff00" d="M435.36,-734.69C470.7,-748.45 530.29,-770.28 583.29,-783.13 616.01,-791.07 653.76,-796.49 682,-799.84"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="681.26,-803.28 691.59,-800.93 682.05,-796.32 681.26,-803.28"/>
+</g>
+<!-- proc~multipatch_chain_rule_coefficients -->
+<g id="proc~~is_valid_curve~~CallsGraph_node37" class="node">
+<title>proc~multipatch_chain_rule_coefficients</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node37"><a xlink:href="../proc/multipatch_chain_rule_coefficients.html" xlink:title="multipatch_chain_rule_coefficients">
+<polygon fill="#d9534f" stroke="#d9534f" points="823.56,-694.27 627.54,-694.27 627.54,-670 823.56,-670 823.56,-694.27"/>
+<text xml:space="preserve" text-anchor="middle" x="725.55" y="-678.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">multipatch_chain_rule_coefficients</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_dof_constraint_curve&#45;&gt;proc~multipatch_chain_rule_coefficients -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge46" class="edge">
+<title>proc~cmp_dof_constraint_curve&#45;&gt;proc~multipatch_chain_rule_coefficients</title>
+<path fill="none" stroke="#54ff00" d="M505.09,-709.53C540.41,-705.12 580.21,-700.15 616.12,-695.67"/>
+<polygon fill="#54ff00" stroke="#54ff00" points="616.14,-699.2 625.63,-694.48 615.27,-692.25 616.14,-699.2"/>
+</g>
+<!-- proc~cmp_dof_offsets_curve&#45;&gt;none~get_nc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge47" class="edge">
+<title>proc~cmp_dof_offsets_curve&#45;&gt;none~get_nc~3</title>
+<path fill="none" stroke="#00ff00" d="M814.4,-997.52C832.1,-994.85 850.56,-991.98 867.81,-989.13 900.66,-983.71 936.97,-977.2 967.64,-971.55"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="967.99,-975.04 977.18,-969.78 966.71,-968.16 967.99,-975.04"/>
+</g>
+<!-- proc~cmp_dof_offsets_curve&#45;&gt;proc~get_npatch_curve -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge48" class="edge">
+<title>proc~cmp_dof_offsets_curve&#45;&gt;proc~get_npatch_curve</title>
+<path fill="none" stroke="#00ff00" d="M860.74,-1017.44C875.88,-1018.27 891.3,-1019.11 906.42,-1019.93"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="906.23,-1023.43 916.4,-1020.47 906.61,-1016.44 906.23,-1023.43"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;interface~boundary_index -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge49" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;interface~boundary_index</title>
+<path fill="none" stroke="#00ff55" d="M815.58,-315.59C868.24,-308.16 933.47,-298.97 979.77,-292.44"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="980.2,-295.91 989.62,-291.05 979.22,-288.98 980.2,-295.91"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;none~get_nc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge50" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;none~get_nc~3</title>
+<path fill="none" stroke="#00ff55" d="M747.18,-340.61C779.46,-361.42 841,-406.58 867.81,-463.13 912.2,-556.79 835.89,-849.85 903.81,-928.13 919.62,-946.36 943.83,-954.89 967.39,-958.54"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="966.65,-961.98 977,-959.74 967.51,-955.03 966.65,-961.98"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;none~get_wc~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge51" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;none~get_wc~3</title>
+<path fill="none" stroke="#00ff55" d="M759.4,-315.61C794.87,-302.2 853.11,-280.5 903.81,-263.13 931.05,-253.8 961.61,-244.01 986.75,-236.12"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="987.57,-239.53 996.07,-233.21 985.49,-232.85 987.57,-239.53"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_patch_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge52" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_patch_a</title>
+<path fill="none" stroke="#00ff55" d="M743.11,-340.64C773.3,-362.76 840.06,-408.56 903.81,-431.13 909.6,-433.19 915.61,-435.04 921.72,-436.71"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="920.8,-440.09 931.35,-439.16 922.52,-433.3 920.8,-440.09"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_patch_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge53" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_patch_b</title>
+<path fill="none" stroke="#00ff55" d="M757.74,-340.76C792.76,-354.48 851.53,-376.18 903.81,-389.13 913.17,-391.45 922.96,-393.57 932.81,-395.48"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="931.98,-398.89 942.45,-397.28 933.26,-392 931.98,-398.89"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_reverse -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge54" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_reverse</title>
+<path fill="none" stroke="#00ff55" d="M739,-315.7C766.21,-289.34 834.16,-227.91 903.81,-199.13 908.43,-197.23 913.21,-195.49 918.08,-193.91"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="918.85,-197.33 927.44,-191.12 916.85,-190.62 918.85,-197.33"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_side_a -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge55" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_side_a</title>
+<path fill="none" stroke="#00ff55" d="M815.58,-339.54C850.85,-344.06 891.77,-349.31 928.86,-354.06"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="928.37,-357.53 938.73,-355.32 929.26,-350.58 928.37,-357.53"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_side_b -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge56" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~get_connection_side_b</title>
+<path fill="none" stroke="#00ff55" d="M815.58,-327.56C840.76,-327.4 868.82,-327.22 896.31,-327.05"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="896.13,-330.55 906.11,-326.98 896.09,-323.55 896.13,-330.55"/>
+</g>
+<!-- proc~connection_weight_scale_curve&#45;&gt;proc~is_rational~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge57" class="edge">
+<title>proc~connection_weight_scale_curve&#45;&gt;proc~is_rational~3</title>
+<path fill="none" stroke="#00ff55" d="M735.17,-315.6C758.21,-283.17 824.92,-196.31 903.81,-157.13 920.25,-148.97 939.08,-143.83 957.35,-140.62"/>
+<polygon fill="#00ff55" stroke="#00ff55" points="957.8,-144.09 967.14,-139.1 956.72,-137.18 957.8,-144.09"/>
+</g>
+<!-- proc~get_knot_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node39" class="node">
+<title>proc~get_knot_all~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node39"><a xlink:href="../proc/get_knot_all~3.html" xlink:title="nurbs_curve%get_knot_all">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1114.83,-919.27 964.56,-919.27 964.56,-895 1114.83,-895 1114.83,-919.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-903.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knot_all</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~3&#45;&gt;proc~get_knot_all~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge58" class="edge">
+<title>none~get_knot~3&#45;&gt;proc~get_knot_all~3</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M791.99,-892.12C838.77,-894.97 902.19,-898.83 953.01,-901.92"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="952.6,-905.4 962.8,-902.52 953.03,-898.41 952.6,-905.4"/>
+</g>
+<!-- proc~get_knoti~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_node40" class="node">
+<title>proc~get_knoti~3</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node40"><a xlink:href="../proc/get_knoti~3.html" xlink:title="nurbs_curve%get_knoti">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1107.33,-877.27 972.06,-877.27 972.06,-853 1107.33,-853 1107.33,-877.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-861.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_knoti</text>
+</a>
+</g>
+</g>
+<!-- none~get_knot~3&#45;&gt;proc~get_knoti~3 -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge59" class="edge">
+<title>none~get_knot~3&#45;&gt;proc~get_knoti~3</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M791.99,-883.31C841.12,-879.69 908.59,-874.72 960.56,-870.89"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="960.51,-874.41 970.22,-870.18 959.99,-867.42 960.51,-874.41"/>
+</g>
+<!-- proc~basis_bspline_der_all_active -->
+<g id="proc~~is_valid_curve~~CallsGraph_node38" class="node">
+<title>proc~basis_bspline_der_all_active</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node38"><a xlink:href="../proc/basis_bspline_der_all_active.html" xlink:title="basis_bspline_der_all_active">
+<polygon fill="#d9534f" stroke="#d9534f" points="1120.08,-774.27 959.31,-774.27 959.31,-750 1120.08,-750 1120.08,-774.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1039.69" y="-758.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_all_active</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_order_active&#45;&gt;proc~basis_bspline_der_all_active -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge60" class="edge">
+<title>proc~basis_bspline_der_order_active&#45;&gt;proc~basis_bspline_der_all_active</title>
+<path fill="none" stroke="#ff5400" d="M814.33,-762.13C855.96,-762.13 905.65,-762.13 947.68,-762.13"/>
+<polygon fill="#ff5400" stroke="#ff5400" points="947.52,-765.64 957.52,-762.14 947.52,-758.64 947.52,-765.64"/>
+</g>
+<!-- proc~active_span_at -->
+<g id="proc~~is_valid_curve~~CallsGraph_node41" class="node">
+<title>proc~active_span_at</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node41"><a xlink:href="../proc/active_span_at.html" xlink:title="active_span_at">
+<polygon fill="#d9534f" stroke="#d9534f" points="1328.47,-774.27 1238.2,-774.27 1238.2,-750 1328.47,-750 1328.47,-774.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1283.34" y="-758.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_span_at</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge61" class="edge">
+<title>proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at</title>
+<path fill="none" stroke="#ff0000" d="M1120.49,-762.13C1155.26,-762.13 1195.18,-762.13 1226.67,-762.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1226.35,-765.64 1236.35,-762.14 1226.35,-758.64 1226.35,-765.64"/>
+</g>
+<!-- proc~knot_tolerance -->
+<g id="proc~~is_valid_curve~~CallsGraph_node42" class="node">
+<title>proc~knot_tolerance</title>
+<g id="a_proc~~is_valid_curve~~CallsGraph_node42"><a xlink:href="../proc/knot_tolerance.html" xlink:title="knot_tolerance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1482.12,-774.27 1391.1,-774.27 1391.1,-750 1482.12,-750 1482.12,-774.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1436.61" y="-758.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_tolerance</text>
+</a>
+</g>
+</g>
+<!-- proc~active_span_at&#45;&gt;proc~knot_tolerance -->
+<g id="proc~~is_valid_curve~~CallsGraph_edge62" class="edge">
+<title>proc~active_span_at&#45;&gt;proc~knot_tolerance</title>
+<path fill="none" stroke="#ff0000" d="M1328.91,-762.13C1344.77,-762.13 1362.84,-762.13 1379.54,-762.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1379.32,-765.64 1389.32,-762.14 1379.32,-758.64 1379.32,-765.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprocis_valid_curveCallsGraph = svgPanZoom('#procis_valid_curveCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Called by</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: proc~~is_valid_curve~~CalledByGraph Pages: 1 -->
+<svg id="procis_valid_curveCalledByGraph" width="628pt" height="494pt"
+ viewBox="0.00 0.00 628.00 494.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="proc~~is_valid_curve~~CalledByGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 490.27)">
+<title>proc~~is_valid_curve~~CalledByGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-490.27 623.56,-490.27 623.56,4 -4,4"/>
+<!-- proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node1" class="node">
+<title>proc~is_valid_curve</title>
+<polygon fill="none" stroke="black" points="619.56,-255.27 396.54,-255.27 396.54,-231 619.56,-231 619.56,-255.27"/>
+<text xml:space="preserve" text-anchor="middle" x="508.05" y="-239.53" font-family="Helvetica,sans-Serif" font-size="10.50">nurbs_multipatch_curve%is_valid_curve</text>
+</g>
+<!-- proc~forcad_multipatch_curve_0003 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node2" class="node">
+<title>proc~forcad_multipatch_curve_0003</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node2"><a xlink:href="../proc/forcad_multipatch_curve_0003.html" xlink:title="forcad_multipatch_curve_0003">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-486.27 185.52,-486.27 185.52,-462 360.54,-462 360.54,-486.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-470.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0003</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0003&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge1" class="edge">
+<title>proc~forcad_multipatch_curve_0003&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M344.84,-461.6C350.38,-459.24 355.69,-456.45 360.54,-453.13 431.44,-404.64 478.78,-309.71 497.73,-266.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="500.87,-267.64 501.54,-257.07 494.42,-264.91 500.87,-267.64"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0018 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node3" class="node">
+<title>proc~forcad_multipatch_curve_0018</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node3"><a xlink:href="../proc/forcad_multipatch_curve_0018.html" xlink:title="forcad_multipatch_curve_0018">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-444.27 185.52,-444.27 185.52,-420 360.54,-420 360.54,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0018</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0018&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge2" class="edge">
+<title>proc~forcad_multipatch_curve_0018&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M343.13,-419.54C349.22,-417.2 355.12,-414.42 360.54,-411.13 422.25,-373.65 471.84,-301.56 494.19,-265.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="497.06,-267.25 499.22,-256.87 491.06,-263.64 497.06,-267.25"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0019 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node4" class="node">
+<title>proc~forcad_multipatch_curve_0019</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node4"><a xlink:href="../proc/forcad_multipatch_curve_0019.html" xlink:title="forcad_multipatch_curve_0019">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-402.27 185.52,-402.27 185.52,-378 360.54,-378 360.54,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0019</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0019&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge3" class="edge">
+<title>proc~forcad_multipatch_curve_0019&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M339.94,-377.63C347.07,-375.26 354.08,-372.45 360.54,-369.13 413.33,-342.04 463.1,-292.25 488.84,-264.05"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="491.24,-266.61 495.31,-256.83 486.02,-261.94 491.24,-266.61"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0020 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node5" class="node">
+<title>proc~forcad_multipatch_curve_0020</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node5"><a xlink:href="../proc/forcad_multipatch_curve_0020.html" xlink:title="forcad_multipatch_curve_0020">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-360.27 185.52,-360.27 185.52,-336 360.54,-336 360.54,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0020</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0020&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge4" class="edge">
+<title>proc~forcad_multipatch_curve_0020&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M335.21,-335.58C343.84,-333.15 352.5,-330.34 360.54,-327.13 404.64,-309.55 451.56,-280.61 480.09,-261.71"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="481.77,-264.8 488.13,-256.32 477.87,-258.99 481.77,-264.8"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0023 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node6" class="node">
+<title>proc~forcad_multipatch_curve_0023</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node6"><a xlink:href="../proc/forcad_multipatch_curve_0023.html" xlink:title="forcad_multipatch_curve_0023">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-318.27 185.52,-318.27 185.52,-294 360.54,-294 360.54,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0023</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0023&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge5" class="edge">
+<title>proc~forcad_multipatch_curve_0023&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M327.19,-293.6C338.23,-290.89 349.78,-287.98 360.54,-285.13 391.7,-276.89 426.39,-266.98 454.18,-258.86"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="454.8,-262.32 463.41,-256.15 452.83,-255.61 454.8,-262.32"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0029 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node7" class="node">
+<title>proc~forcad_multipatch_curve_0029</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node7"><a xlink:href="../proc/forcad_multipatch_curve_0029.html" xlink:title="forcad_multipatch_curve_0029">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-276.27 185.52,-276.27 185.52,-252 360.54,-252 360.54,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0029</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0029&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge6" class="edge">
+<title>proc~forcad_multipatch_curve_0029&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M360.8,-256.32C368.63,-255.61 376.64,-254.89 384.7,-254.16"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="384.95,-257.65 394.59,-253.27 384.32,-250.68 384.95,-257.65"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0030 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node8" class="node">
+<title>proc~forcad_multipatch_curve_0030</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node8"><a xlink:href="../proc/forcad_multipatch_curve_0030.html" xlink:title="forcad_multipatch_curve_0030">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-234.27 185.52,-234.27 185.52,-210 360.54,-210 360.54,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0030</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0030&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge7" class="edge">
+<title>proc~forcad_multipatch_curve_0030&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M360.8,-229.95C368.63,-230.66 376.64,-231.38 384.7,-232.11"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="384.32,-235.59 394.59,-233 384.95,-228.62 384.32,-235.59"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0039 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node9" class="node">
+<title>proc~forcad_multipatch_curve_0039</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node9"><a xlink:href="../proc/forcad_multipatch_curve_0039.html" xlink:title="forcad_multipatch_curve_0039">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-192.27 185.52,-192.27 185.52,-168 360.54,-168 360.54,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0039</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0039&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge8" class="edge">
+<title>proc~forcad_multipatch_curve_0039&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M327.19,-192.67C338.23,-195.38 349.78,-198.29 360.54,-201.13 391.7,-209.38 426.39,-219.29 454.18,-227.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="452.83,-230.66 463.41,-230.12 454.8,-223.95 452.83,-230.66"/>
+</g>
+<!-- proc~forcad_multipatch_curve_0042 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node10" class="node">
+<title>proc~forcad_multipatch_curve_0042</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node10"><a xlink:href="../proc/forcad_multipatch_curve_0042.html" xlink:title="forcad_multipatch_curve_0042">
+<polygon fill="#d9534f" stroke="#d9534f" points="360.54,-150.27 185.52,-150.27 185.52,-126 360.54,-126 360.54,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve_0042</text>
+</a>
+</g>
+</g>
+<!-- proc~forcad_multipatch_curve_0042&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge9" class="edge">
+<title>proc~forcad_multipatch_curve_0042&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M335.21,-150.69C343.84,-153.12 352.5,-155.93 360.54,-159.13 404.64,-176.72 451.56,-205.66 480.09,-224.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="477.87,-227.28 488.13,-229.95 481.77,-221.47 477.87,-227.28"/>
+</g>
+<!-- program~curve_iga_beam_c1 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node11" class="node">
+<title>program~curve_iga_beam_c1</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node11"><a xlink:href="../program/curve_iga_beam_c1.html" xlink:title="curve_iga_beam_c1">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="331.67,-108.27 214.4,-108.27 214.4,-84 331.67,-84 331.67,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">curve_iga_beam_c1</text>
+</a>
+</g>
+</g>
+<!-- program~curve_iga_beam_c1&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge10" class="edge">
+<title>program~curve_iga_beam_c1&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M331.72,-106.1C341.63,-108.94 351.6,-112.55 360.54,-117.14 413.33,-144.23 463.1,-194.02 488.84,-222.22"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="486.02,-224.33 495.31,-229.44 491.24,-219.66 486.02,-224.33"/>
+</g>
+<!-- program~curve_multipatch -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node12" class="node">
+<title>program~curve_multipatch</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node12"><a xlink:href="../program/curve_multipatch.html" xlink:title="curve_multipatch">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="324.92,-66.27 221.15,-66.27 221.15,-42 324.92,-42 324.92,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">curve_multipatch</text>
+</a>
+</g>
+</g>
+<!-- program~curve_multipatch&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge11" class="edge">
+<title>program~curve_multipatch&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M325.04,-61.05C337.25,-64.15 349.84,-68.64 360.54,-75.14 422.25,-112.62 471.84,-184.71 494.19,-221.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="491.06,-222.63 499.22,-229.4 497.06,-219.02 491.06,-222.63"/>
+</g>
+<!-- program~curve_multipatch_gn -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node13" class="node">
+<title>program~curve_multipatch_gn</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node13"><a xlink:href="../program/curve_multipatch_gn.html" xlink:title="curve_multipatch_gn">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="334.29,-24.27 211.77,-24.27 211.77,0 334.29,0 334.29,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="273.03" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">curve_multipatch_gn</text>
+</a>
+</g>
+</g>
+<!-- program~curve_multipatch_gn&#45;&gt;proc~is_valid_curve -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge12" class="edge">
+<title>program~curve_multipatch_gn&#45;&gt;proc~is_valid_curve</title>
+<path fill="none" stroke="#ff0000" d="M334.6,-20.86C343.77,-23.83 352.76,-27.81 360.54,-33.13 431.44,-81.63 478.78,-176.56 497.73,-220.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="494.42,-221.36 501.54,-229.2 500.87,-218.63 494.42,-221.36"/>
+</g>
+<!-- proc~run_tests -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node14" class="node">
+<title>proc~run_tests</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node14"><a xlink:href="../proc/run_tests.html" xlink:title="run_tests">
+<polygon fill="#d9534f" stroke="#d9534f" points="149.52,-318.27 90,-318.27 90,-294 149.52,-294 149.52,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="119.76" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">run_tests</text>
+</a>
+</g>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0003 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge13" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0003</title>
+<path fill="none" stroke="#ff0000" d="M122.49,-318.59C127.13,-347.05 142.54,-417.15 185.52,-453.13 186.62,-454.06 187.75,-454.94 188.92,-455.78"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="186.71,-458.54 197.07,-460.76 190.36,-452.56 186.71,-458.54"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0018 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge14" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0018</title>
+<path fill="none" stroke="#ff7f00" d="M124.89,-318.71C132.87,-340.97 152.59,-387.22 185.52,-411.13 187.07,-412.26 188.67,-413.32 190.31,-414.33"/>
+<polygon fill="#ff7f00" stroke="#ff7f00" points="188.33,-417.24 198.81,-418.8 191.59,-411.05 188.33,-417.24"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0019 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge15" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0019</title>
+<path fill="none" stroke="#ffff00" d="M130.08,-318.58C141.53,-332.96 162.32,-356.31 185.52,-369.13 188.22,-370.63 191.02,-372.01 193.89,-373.3"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="192.56,-376.54 203.15,-376.99 195.15,-370.03 192.56,-376.54"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0020 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge16" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0020</title>
+<path fill="none" stroke="#7fff00" d="M149.95,-316.12C161.04,-319.77 173.81,-323.82 185.52,-327.13 192.25,-329.04 199.31,-330.93 206.37,-332.75"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="205.39,-336.11 215.94,-335.17 207.11,-329.32 205.39,-336.11"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0023 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge17" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0023</title>
+<path fill="none" stroke="#00ff00" d="M149.93,-306.13C157.09,-306.13 165.16,-306.13 173.65,-306.13"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="173.51,-309.64 183.51,-306.14 173.51,-302.64 173.51,-309.64"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0029 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge18" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0029</title>
+<path fill="none" stroke="#00ff7f" d="M149.95,-296.15C161.04,-292.5 173.81,-288.45 185.52,-285.13 192.25,-283.23 199.31,-281.34 206.37,-279.52"/>
+<polygon fill="#00ff7f" stroke="#00ff7f" points="207.11,-282.95 215.94,-277.1 205.39,-276.16 207.11,-282.95"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0030 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge19" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0030</title>
+<path fill="none" stroke="#00ffff" d="M130.08,-293.69C141.53,-279.31 162.32,-255.96 185.52,-243.13 188.22,-241.64 191.02,-240.26 193.89,-238.97"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="195.15,-242.24 203.15,-235.28 192.56,-235.73 195.15,-242.24"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0039 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge20" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0039</title>
+<path fill="none" stroke="#007fff" d="M124.89,-293.56C132.87,-271.3 152.59,-225.05 185.52,-201.13 187.07,-200.01 188.67,-198.95 190.31,-197.94"/>
+<polygon fill="#007fff" stroke="#007fff" points="191.59,-201.22 198.81,-193.47 188.33,-195.03 191.59,-201.22"/>
+</g>
+<!-- proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0042 -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge21" class="edge">
+<title>proc~run_tests&#45;&gt;proc~forcad_multipatch_curve_0042</title>
+<path fill="none" stroke="#0000ff" d="M122.49,-293.68C127.13,-265.22 142.54,-195.12 185.52,-159.13 186.62,-158.21 187.75,-157.33 188.92,-156.49"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="190.36,-159.71 197.07,-151.51 186.71,-153.73 190.36,-159.71"/>
+</g>
+<!-- program~check -->
+<g id="proc~~is_valid_curve~~CalledByGraph_node15" class="node">
+<title>program~check</title>
+<g id="a_proc~~is_valid_curve~~CalledByGraph_node15"><a xlink:href="../program/check.html" xlink:title="check">
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="54,-318.27 0,-318.27 0,-294 54,-294 54,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">check</text>
+</a>
+</g>
+</g>
+<!-- program~check&#45;&gt;proc~run_tests -->
+<g id="proc~~is_valid_curve~~CalledByGraph_edge22" class="edge">
+<title>program~check&#45;&gt;proc~run_tests</title>
+<path fill="none" stroke="#ff0000" d="M54.25,-306.13C61.8,-306.13 70.2,-306.13 78.39,-306.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="78.19,-309.64 88.19,-306.14 78.19,-302.64 78.19,-309.64"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CalledByGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CalledByGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2026 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-07-21T13:35:50.771609+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

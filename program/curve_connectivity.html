@@ -1,0 +1,2159 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>curve_connectivity &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../page/index.html">NURBS Theory and ForCAD Usage</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>curve_connectivity      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-author"><i class="fa fa-pencil"></i> Seyed Ali Ghasemi</li>
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.3% of total for programs.">24 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/curve_connectivity.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/curve_connectivity.f90.html'>curve_connectivity.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">curve_connectivity</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-center~13">center</a>
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-curve~6">curve</a>
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-elem~34">elem</a>
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-elem_xc~2">elem_Xc</a>
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-elem_xg~2">elem_Xg</a>
+            <a class="list-group-item" href="../program/curve_connectivity.html#variable-elem_xth~2">elem_Xth</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    <div class="card card-primary">
+      <div class="card-header text-left"><h3 class="card-title">Source Code</h3></div>
+      <div class="list-group">
+        <a class="list-group-item" href="../program/curve_connectivity.html#src">curve_connectivity</a>
+      </div>
+    </div>
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~curve_connectivity~~UsesGraph Pages: 1 -->
+<svg id="programcurve_connectivityUsesGraph" width="641pt" height="447pt"
+ viewBox="0.00 0.00 641.00 447.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~curve_connectivity~~UsesGraph" class="graph" transform="scale(0.802906 0.802906) rotate(0) translate(4 552.16)">
+<title>program~~curve_connectivity~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-552.16 794.35,-552.16 794.35,4 -4,4"/>
+<!-- program~curve_connectivity -->
+<g id="program~~curve_connectivity~~UsesGraph_node1" class="node">
+<title>program~curve_connectivity</title>
+<polygon fill="none" stroke="black" points="790.35,-347.65 679.08,-347.65 679.08,-323.38 790.35,-323.38 790.35,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="734.71" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50">curve_connectivity</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~curve_connectivity~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="643.08,-347.65 589.08,-347.65 589.08,-323.38 643.08,-323.38 643.08,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="616.08" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;module~forcad -->
+<g id="program~~curve_connectivity~~UsesGraph_edge1" class="edge">
+<title>program~curve_connectivity&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M678.81,-335.52C670.75,-335.52 662.6,-335.52 654.98,-335.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="655.04,-332.02 645.04,-335.52 655.04,-339.02 655.04,-332.02"/>
+</g>
+<!-- module~forcad_geometry -->
+<g id="program~~curve_connectivity~~UsesGraph_node3" class="node">
+<title>module~forcad_geometry</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node3"><a xlink:href="../module/forcad_geometry.html" xlink:title="forcad_geometry">
+<polygon fill="#337ab7" stroke="#337ab7" points="527.95,-191.65 425.68,-191.65 425.68,-167.38 527.95,-167.38 527.95,-191.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-175.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_geometry</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_geometry -->
+<g id="program~~curve_connectivity~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_geometry</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M604.08,-323.01C580.59,-296.31 525.3,-233.48 496.31,-200.53"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="499.11,-198.41 489.87,-193.21 493.85,-203.03 499.11,-198.41"/>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_node4" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node4"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="86.52,-318.65 8.25,-318.65 8.25,-294.38 86.52,-294.38 86.52,-318.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-302.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-533.52C405.67,-565.01 379.7,-532.98 302.8,-533.52"/>
+</g>
+<!-- module~forcad_multipatch -->
+<g id="program~~curve_connectivity~~UsesGraph_node5" class="node">
+<title>module~forcad_multipatch</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node5"><a xlink:href="../module/forcad_multipatch.html" xlink:title="forcad_multipatch">
+<polygon fill="#337ab7" stroke="#337ab7" points="355.56,-505.65 248.04,-505.65 248.04,-481.38 355.56,-481.38 355.56,-505.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-489.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch -->
+<g id="program~~curve_connectivity~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M614.62,-348.09C612.73,-380.72 603,-468.72 553.08,-514.52 527.66,-537.84 509.29,-519.39 477.82,-533.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-533.52C453.05,-543.74 389.88,-525.03 346.51,-509.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="347.7,-506.61 337.1,-506.56 345.36,-513.2 347.7,-506.61"/>
+</g>
+<!-- module~forcad_multipatch_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_node6" class="node">
+<title>module~forcad_multipatch_curve</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node6"><a xlink:href="../module/forcad_multipatch_curve.html" xlink:title="forcad_multipatch_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="548.2,-347.65 405.43,-347.65 405.43,-323.38 548.2,-323.38 548.2,-347.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-331.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.61,-335.52C580.09,-335.52 570.15,-335.52 559.79,-335.52"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="559.94,-332.02 549.94,-335.52 559.94,-339.02 559.94,-332.02"/>
+</g>
+<!-- module~forcad_multipatch_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_node7" class="node">
+<title>module~forcad_multipatch_surface</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node7"><a xlink:href="../module/forcad_multipatch_surface.html" xlink:title="forcad_multipatch_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="553.08,-389.65 400.56,-389.65 400.56,-365.38 553.08,-365.38 553.08,-389.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-373.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_edge6" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.63,-344.83C577.68,-348.59 564.81,-352.9 553.08,-356.52 547.33,-358.29 541.31,-360.08 535.29,-361.83"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="534.61,-358.38 525.96,-364.5 536.54,-365.11 534.61,-358.38"/>
+</g>
+<!-- module~forcad_multipatch_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_node8" class="node">
+<title>module~forcad_multipatch_volume</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node8"><a xlink:href="../module/forcad_multipatch_volume.html" xlink:title="forcad_multipatch_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="553.08,-505.65 400.56,-505.65 400.56,-481.38 553.08,-481.38 553.08,-505.65"/>
+<text xml:space="preserve" text-anchor="middle" x="476.82" y="-489.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_multipatch_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_multipatch_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_edge7" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_multipatch_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M604.31,-347.91C580.86,-374.91 524.95,-439.27 495.96,-472.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="493.45,-470.19 489.53,-480.03 498.73,-474.78 493.45,-470.19"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_node9" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node9"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="359.68,-113.65 243.91,-113.65 243.91,-89.38 359.68,-89.38 359.68,-113.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-97.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_edge8" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-23.52C420.96,4.06 354.29,-49.84 322.07,-81.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.95,-78.38 315.36,-87.94 324.9,-83.33 319.95,-78.38"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_node10" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node10"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="364.56,-269.65 239.04,-269.65 239.04,-245.38 364.56,-245.38 364.56,-269.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-253.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_edge9" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M588.76,-325.29C561.5,-315.3 517.42,-300.86 477.82,-295.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-295.52C437.21,-290.31 394.45,-280.95 361.09,-272.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="362.18,-269.48 351.63,-270.48 360.5,-276.28 362.18,-269.48"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_node11" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node11"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="364.56,-349.65 239.04,-349.65 239.04,-325.38 364.56,-325.38 364.56,-349.65"/>
+<text xml:space="preserve" text-anchor="middle" x="301.8" y="-333.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_edge10" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-295.52C427.86,-289.04 373.85,-306.2 339.13,-320.5"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="337.78,-317.27 329.96,-324.41 340.53,-323.71 337.78,-317.27"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_node12" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node12"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="203.04,-229.65 130.77,-229.65 130.77,-205.38 203.04,-205.38 203.04,-229.65"/>
+<text xml:space="preserve" text-anchor="middle" x="166.91" y="-213.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge11" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M614.64,-322.91C612.06,-272.1 594.66,-82.26 477.82,-23.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M475.82,-23.52C379.11,25.11 318.48,-7 239.04,-80.52 200.98,-115.74 233.33,-149.42 203.04,-191.52 201.41,-193.78 199.53,-195.93 197.49,-197.95"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="195.62,-194.95 190.28,-204.1 200.16,-200.27 195.62,-194.95"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge13" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M425.43,-183.83C375.48,-189.85 298.1,-203.96 239.04,-236.52 203.07,-256.34 208.31,-288.13 167.91,-295.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M165.91,-295.52C143.73,-298.62 119.08,-301.08 98.1,-302.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="98.05,-299.37 88.37,-303.68 98.62,-306.35 98.05,-299.37"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_edge14" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M449.87,-167.04C427.41,-156.32 393.99,-140.58 364.56,-127.52 357.93,-124.57 350.87,-121.52 343.98,-118.59"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="345.34,-115.37 334.77,-114.7 342.62,-121.81 345.34,-115.37"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_edge15" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M448.02,-192.05C419.1,-205.09 373.6,-225.6 341.24,-240.19"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="339.87,-236.96 332.2,-244.26 342.75,-243.34 339.87,-236.96"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_edge16" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M462.24,-191.91C432.43,-219.14 361,-284.37 324.73,-317.49"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="322.46,-314.83 317.43,-324.16 327.18,-320 322.46,-314.83"/>
+</g>
+<!-- module~forcad_geometry&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge17" class="edge">
+<title>module~forcad_geometry&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M437.51,-166.94C402.78,-156.54 349.98,-143.22 302.8,-141.52"/>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M300.8,-141.52C271.37,-140.45 264.87,-151.37 239.04,-165.52 236.56,-166.87 213.23,-184 193.95,-198.23"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="192.1,-195.25 186.14,-204.01 196.26,-200.88 192.1,-195.25"/>
+</g>
+<!-- ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_node14" class="node">
+<title>ieee_arithmetic</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node14"><a xlink:href="http://fortranwiki.org/fortran/show/ieee_arithmetic" xlink:title="ieee_arithmetic">
+<polygon fill="#337ab7" stroke="#337ab7" points="94.77,-258.65 0,-258.65 0,-234.38 94.77,-234.38 94.77,-258.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-242.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ieee_arithmetic</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_geometry&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge12" class="edge">
+<title>module~forcad_geometry&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M466.87,-167.01C449.93,-144.54 410.72,-98.08 364.56,-80.52 312.42,-60.68 291.87,-62.6 239.04,-80.52 181.62,-99.99 170.81,-117.99 130.77,-163.52 109.73,-187.44 118.41,-204.15 94.77,-225.52 94,-226.22 93.19,-226.9 92.37,-227.56"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="90.48,-224.61 84.09,-233.07 94.36,-230.44 90.48,-224.61"/>
+</g>
+<!-- module~forcad_multipatch&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge19" class="edge">
+<title>module~forcad_multipatch&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M165.91,-453.52C150.65,-442.34 144.08,-442.95 130.77,-429.52 100.22,-398.69 74.12,-355.01 59.9,-328.85"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="63.05,-327.32 55.26,-320.13 56.87,-330.6 63.05,-327.32"/>
+</g>
+<!-- module~forcad_multipatch&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge18" class="edge">
+<title>module~forcad_multipatch&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M247.55,-486.05C221.63,-480.39 191.13,-470.54 167.91,-453.52"/>
+<path fill="none" stroke="#cbff00" stroke-dasharray="5,2" d="M165.91,-453.52C100.51,-405.58 142.94,-350.74 94.77,-285.52 89.41,-278.26 82.43,-271.48 75.52,-265.68"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="78.14,-263.29 68.13,-259.84 73.8,-268.78 78.14,-263.29"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge21" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M419.08,-348.01C412.64,-350.39 406.32,-353.2 400.56,-356.52 381.21,-367.64 385.24,-383.12 364.56,-391.52 312.87,-412.5 294.22,-399.74 239.04,-391.52 189.28,-384.1 176.51,-379.46 130.77,-358.52 110.9,-349.42 90.11,-336.26 74.38,-325.46"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="76.73,-322.83 66.53,-319.96 72.72,-328.57 76.73,-322.83"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_multipatch -->
+<g id="program~~curve_connectivity~~UsesGraph_edge22" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M413.67,-348.11C408.98,-350.45 404.53,-353.23 400.56,-356.52 372.71,-379.61 385.37,-399.93 364.56,-429.52 353.23,-445.63 337.86,-461.57 325.28,-473.52"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="323.17,-470.71 318.22,-480.07 327.93,-475.84 323.17,-470.71"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~curve_connectivity~~UsesGraph_edge23" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M418.35,-323.01C411.65,-319.56 405.46,-315.14 400.56,-309.52 346.39,-247.35 416.65,-191.43 364.56,-127.52 362.35,-124.81 359.81,-122.38 357.05,-120.2"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="359.16,-117.39 348.87,-114.87 355.34,-123.26 359.16,-117.39"/>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge24" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M420.17,-322.94C412.93,-319.49 406.12,-315.1 400.56,-309.52 365.47,-274.24 390.8,-245.79 364.56,-203.52 344.05,-170.47 341.67,-142.92 302.8,-141.52"/>
+</g>
+<!-- fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_node13" class="node">
+<title>fordebug</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="197.04,-349.65 136.77,-349.65 136.77,-325.38 197.04,-325.38 197.04,-349.65"/>
+<text xml:space="preserve" text-anchor="middle" x="166.91" y="-333.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fordebug</text>
+</g>
+<!-- module~forcad_multipatch_curve&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge20" class="edge">
+<title>module~forcad_multipatch_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M430.59,-348.07C383.71,-360.83 315.51,-378.59 302.8,-377.52"/>
+<path fill="none" stroke="#33ff00" stroke-dasharray="5,2" d="M300.8,-377.52C268.55,-374.79 233.56,-363.91 207.58,-354.19"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="209.04,-351 198.45,-350.66 206.52,-357.53 209.04,-351"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge26" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M466.25,-389.69C440.49,-422.4 371.16,-510.06 364.56,-514.52 340.75,-530.58 331.06,-528.41 302.8,-533.52"/>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M300.8,-533.52C268.23,-539.4 142.59,-478.61 130.77,-467.52 89.2,-428.5 65.15,-363.83 54.68,-329.53"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="58.12,-328.83 51.96,-320.21 51.4,-330.79 58.12,-328.83"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_multipatch -->
+<g id="program~~curve_connectivity~~UsesGraph_edge27" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M456.97,-390.15C426.55,-410.55 366.45,-450.84 330.94,-474.65"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="329.24,-471.58 322.88,-480.05 333.13,-477.39 329.24,-471.58"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~curve_connectivity~~UsesGraph_edge28" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M413.67,-364.93C408.98,-362.58 404.53,-359.81 400.56,-356.52 372.71,-333.42 390.89,-308.32 364.56,-283.52 361.36,-280.51 357.77,-277.82 353.96,-275.42"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="355.94,-272.52 345.49,-270.78 352.58,-278.66 355.94,-272.52"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge29" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M411.97,-365.02C407.82,-362.65 403.95,-359.84 400.56,-356.52 360.81,-317.53 407.58,-271.87 364.56,-236.52 322.84,-202.23 258.06,-202.93 214.36,-208.55"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="214.08,-205.05 204.68,-209.94 215.08,-211.98 214.08,-205.05"/>
+</g>
+<!-- module~forcad_multipatch_surface&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge25" class="edge">
+<title>module~forcad_multipatch_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ff66" stroke-dasharray="5,2" d="M400.33,-380.28C369.98,-380.67 334.68,-380.21 302.8,-377.52"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge31" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M441.56,-506.14C407.04,-517.73 351.97,-533.18 302.8,-533.52"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_multipatch -->
+<g id="program~~curve_connectivity~~UsesGraph_edge32" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_multipatch</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M400.18,-493.52C389.23,-493.52 378.04,-493.52 367.34,-493.52"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="367.45,-490.02 357.45,-493.52 367.45,-497.02 367.45,-490.02"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~curve_connectivity~~UsesGraph_edge33" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M466.29,-480.97C444.06,-451.92 388.79,-381.21 364.56,-363.52 360.26,-360.38 355.53,-357.53 350.66,-354.98"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="352.44,-351.95 341.91,-350.78 349.42,-358.26 352.44,-351.95"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge34" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M464.23,-481.08C448.39,-463.62 419.77,-430.43 400.56,-398.52 380.03,-364.42 394.34,-342.93 364.56,-316.52 320.95,-277.84 289.25,-308.12 239.04,-278.52 219.82,-267.18 220.05,-257.96 203.04,-243.52 200.41,-241.28 197.6,-239.02 194.76,-236.81"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="197.08,-234.17 186.98,-230.94 192.86,-239.75 197.08,-234.17"/>
+</g>
+<!-- module~forcad_multipatch_volume&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge30" class="edge">
+<title>module~forcad_multipatch_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M439.21,-480.9C391.52,-463.78 306.31,-430.76 239.04,-391.52 221.96,-381.55 204.23,-368.11 190.75,-357.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="193.25,-354.66 183.32,-350.96 188.78,-360.04 193.25,-354.66"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge37" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M165.91,-177.52C151.28,-187.58 143.16,-183.8 130.77,-196.52 106.09,-221.86 116.75,-239.8 94.77,-267.52 89.16,-274.59 82.1,-281.3 75.2,-287.1"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="73.47,-284 67.83,-292.97 77.84,-289.47 73.47,-284"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge38" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M260.31,-114.01C252.7,-117.57 245.2,-122.02 239.04,-127.52 214.69,-149.24 224.63,-167.05 203.04,-191.52 200.97,-193.86 198.65,-196.13 196.22,-198.28"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="194.52,-195.16 188.91,-204.14 198.9,-200.62 194.52,-195.16"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge35" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M295.15,-113.94C275.33,-157.48 209.75,-301.02 203.04,-309.52 200.77,-312.39 198.14,-315.16 195.38,-317.75"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="193.37,-314.87 188,-324 197.89,-320.21 193.37,-314.87"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge36" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M267.17,-114.14C257.86,-118.04 247.9,-122.61 239.04,-127.52 205.23,-146.23 199.75,-155.62 167.91,-177.52"/>
+<path fill="none" stroke="#0066ff" stroke-dasharray="5,2" d="M165.91,-177.52C151.28,-187.58 145.55,-186.68 130.77,-196.52 113.66,-207.89 112.27,-214.75 94.77,-225.52 92.91,-226.66 90.97,-227.78 88.99,-228.87"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="87.56,-225.68 80.25,-233.35 90.74,-231.91 87.56,-225.68"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge41" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M264.03,-270.13C237.6,-278.67 200.95,-289.47 167.91,-295.52"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge42" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M259.12,-244.97C244.8,-240.66 228.7,-235.81 214.05,-231.4"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="215.22,-228.1 204.63,-228.57 213.2,-234.8 215.22,-228.1"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge39" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M280.04,-270.02C258.09,-283.23 223.27,-304.19 198.25,-319.25"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="196.58,-316.17 189.82,-324.32 200.19,-322.16 196.58,-316.17"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge40" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M238.81,-262.36C216.3,-262.85 190.79,-261.92 167.91,-257.52"/>
+<path fill="none" stroke="#3200ff" stroke-dasharray="5,2" d="M165.91,-257.52C146.65,-253.81 125.37,-251.34 106.27,-249.7"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="106.76,-246.23 96.51,-248.92 106.2,-253.2 106.76,-246.23"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge45" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M272.16,-324.99C239.49,-311.32 188.02,-291.84 167.91,-295.52"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~curve_connectivity~~UsesGraph_edge46" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M259.88,-324.99C252.39,-321.45 245.05,-317.01 239.04,-311.52 213.81,-288.43 225.34,-269.44 203.04,-243.52 201.18,-241.35 199.1,-239.26 196.92,-237.27"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="199.31,-234.71 189.35,-231.1 194.89,-240.13 199.31,-234.71"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;fordebug -->
+<g id="program~~curve_connectivity~~UsesGraph_edge43" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M238.63,-337.52C228.47,-337.52 218.17,-337.52 208.69,-337.52"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="208.72,-334.02 198.72,-337.52 208.72,-341.02 208.72,-334.02"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge44" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#cc00ff" stroke-dasharray="5,2" d="M265.93,-324.96C256.91,-321.14 247.39,-316.6 239.04,-311.52 205.13,-290.88 206.88,-265.01 167.91,-257.52"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~curve_connectivity~~UsesGraph_edge49" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M149.32,-230.08C129.72,-244.92 96.89,-269.78 74.02,-287.11"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="71.95,-284.28 66.1,-293.1 76.18,-289.86 71.95,-284.28"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;ieee_arithmetic -->
+<g id="program~~curve_connectivity~~UsesGraph_edge47" class="edge">
+<title>module~forcad_utils&#45;&gt;ieee_arithmetic</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M130.33,-226.3C122.71,-228.18 114.47,-230.21 106.26,-232.23"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="105.48,-228.82 96.6,-234.62 107.15,-235.62 105.48,-228.82"/>
+</g>
+<!-- iso_fortran_env -->
+<g id="program~~curve_connectivity~~UsesGraph_node15" class="node">
+<title>iso_fortran_env</title>
+<g id="a_program~~curve_connectivity~~UsesGraph_node15"><a xlink:href="http://fortranwiki.org/fortran/show/iso_fortran_env" xlink:title="iso_fortran_env">
+<polygon fill="#337ab7" stroke="#337ab7" points="94.02,-216.65 0.75,-216.65 0.75,-192.38 94.02,-192.38 94.02,-216.65"/>
+<text xml:space="preserve" text-anchor="middle" x="47.38" y="-200.92" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">iso_fortran_env</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_utils&#45;&gt;iso_fortran_env -->
+<g id="program~~curve_connectivity~~UsesGraph_edge48" class="edge">
+<title>module~forcad_utils&#45;&gt;iso_fortran_env</title>
+<path fill="none" stroke="#ff0098" stroke-dasharray="5,2" d="M130.33,-213.58C122.52,-212.72 114.07,-211.78 105.66,-210.85"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="106.11,-207.38 95.78,-209.76 105.34,-214.34 106.11,-207.38"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramcurve_connectivityUsesGraph = svgPanZoom('#programcurve_connectivityUsesGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Compare curve IGA, control, geometry, and knot-span connectivities.</p>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~curve_connectivity~~CallsGraph Pages: 1 -->
+<svg id="programcurve_connectivityCallsGraph" width="641pt" height="362pt"
+ viewBox="0.00 0.00 641.00 362.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~curve_connectivity~~CallsGraph" class="graph" transform="scale(0.328639 0.328639) rotate(0) translate(4 1096.27)">
+<title>program~~curve_connectivity~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-1096.27 1946.47,-1096.27 1946.47,4 -4,4"/>
+<!-- program~curve_connectivity -->
+<g id="program~~curve_connectivity~~CallsGraph_node1" class="node">
+<title>program~curve_connectivity</title>
+<polygon fill="none" stroke="black" points="111.27,-682.27 0,-682.27 0,-658 111.27,-658 111.27,-682.27"/>
+<text xml:space="preserve" text-anchor="middle" x="55.63" y="-666.53" font-family="Helvetica,sans-Serif" font-size="10.50">curve_connectivity</text>
+</g>
+<!-- proc~cmp_elem_xc_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node2" class="node">
+<title>proc~cmp_elem_xc_vis~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node2"><a xlink:href="../proc/cmp_elem_xc_vis~3.html" xlink:title="nurbs_curve%cmp_elem_Xc_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="541.93,-966.27 361.66,-966.27 361.66,-942 541.93,-942 541.93,-966.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-950.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xc_vis</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~cmp_elem_xc_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge1" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~cmp_elem_xc_vis~3</title>
+<path fill="none" stroke="#ff0000" d="M57.59,-682.55C61.26,-721 77.94,-839.02 147.27,-896.13 203.42,-942.39 285.26,-955.92 349.81,-958.41"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="349.63,-961.91 359.72,-958.7 349.83,-954.91 349.63,-961.91"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node3" class="node">
+<title>proc~cmp_elem_xg_vis~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node3"><a xlink:href="../proc/cmp_elem_xg_vis~3.html" xlink:title="nurbs_curve%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="542.31,-924.27 361.29,-924.27 361.29,-900 542.31,-900 542.31,-924.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-908.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xg_vis</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~cmp_elem_xg_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge2" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~cmp_elem_xg_vis~3</title>
+<path fill="none" stroke="#ff0000" d="M58.94,-682.71C65.78,-716.17 89.19,-807.8 147.27,-852.13 204.77,-896.02 285.77,-910.34 349.63,-914.05"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="349.27,-917.54 359.43,-914.54 349.61,-910.55 349.27,-917.54"/>
+</g>
+<!-- proc~cmp_elem_xth~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node4" class="node">
+<title>proc~cmp_elem_xth~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node4"><a xlink:href="../proc/cmp_elem_xth~3.html" xlink:title="nurbs_curve%cmp_elem_Xth">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="318.91,-1028.27 153.64,-1028.27 153.64,-1004 318.91,-1004 318.91,-1028.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-1012.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem_Xth</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~cmp_elem_xth~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge3" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~cmp_elem_xth~3</title>
+<path fill="none" stroke="#ff0000" d="M57.69,-682.58C61.84,-724.98 80.27,-866.08 147.27,-956.13 160.37,-973.75 180.25,-987.93 197.8,-998.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="196.02,-1001.08 206.46,-1002.84 199.39,-994.95 196.02,-1001.08"/>
+</g>
+<!-- proc~cmp_elem~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node5" class="node">
+<title>proc~cmp_elem~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node5"><a xlink:href="../proc/cmp_elem~3.html" xlink:title="nurbs_curve%cmp_elem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="307.29,-444.27 165.27,-444.27 165.27,-420 307.29,-420 307.29,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_elem</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~cmp_elem~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge4" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~cmp_elem~3</title>
+<path fill="none" stroke="#ff0000" d="M64.11,-657.67C78.99,-633.14 113.76,-577.16 147.27,-533.13 169.26,-504.25 197.15,-473.04 215.58,-453.08"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="218.04,-455.56 222.29,-445.86 212.92,-450.8 218.04,-455.56"/>
+</g>
+<!-- proc~create~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node6" class="node">
+<title>proc~create~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node6"><a xlink:href="../proc/create~3.html" xlink:title="nurbs_curve%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="296.41,-682.27 176.14,-682.27 176.14,-658 296.41,-658 296.41,-682.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-666.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%create</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~create~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge5" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~create~3</title>
+<path fill="none" stroke="#ff0000" d="M111.69,-670.13C128.34,-670.13 146.87,-670.13 164.4,-670.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="164.24,-673.64 174.24,-670.14 164.24,-666.64 164.24,-673.64"/>
+</g>
+<!-- proc~export_xc~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node7" class="node">
+<title>proc~export_xc~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node7"><a xlink:href="../proc/export_xc~3.html" xlink:title="nurbs_curve%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="305.79,-843.27 166.77,-843.27 166.77,-819 305.79,-819 305.79,-843.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-827.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~export_xc~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge6" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~export_xc~3</title>
+<path fill="none" stroke="#ff0000" d="M63.23,-682.74C76.33,-706.74 107.79,-759.39 147.27,-791.13 158.94,-800.52 173.17,-808.23 186.76,-814.28"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="185,-817.34 195.58,-818 187.72,-810.89 185,-817.34"/>
+</g>
+<!-- proc~export_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node8" class="node">
+<title>proc~export_xg~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node8"><a xlink:href="../proc/export_xg~3.html" xlink:title="nurbs_curve%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="306.16,-782.27 166.39,-782.27 166.39,-758 306.16,-758 306.16,-782.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-766.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~export_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge7" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~export_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M78.9,-682.6C110.06,-700.04 166.87,-731.84 202.76,-751.93"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="200.98,-754.95 211.41,-756.78 204.4,-748.84 200.98,-754.95"/>
+</g>
+<!-- proc~export_xth_in_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node9" class="node">
+<title>proc~export_xth_in_xg~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node9"><a xlink:href="../proc/export_xth_in_xg~3.html" xlink:title="nurbs_curve%export_Xth_in_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="325.29,-566.27 147.27,-566.27 147.27,-542 325.29,-542 325.29,-566.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-550.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%export_Xth_in_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~export_xth_in_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge8" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~export_xth_in_xg~3</title>
+<path fill="none" stroke="#ff0000" d="M76.09,-657.5C107.5,-637.1 169.56,-596.81 206.22,-573"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="208.1,-575.96 214.58,-567.58 204.28,-570.09 208.1,-575.96"/>
+</g>
+<!-- proc~finalize~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node10" class="node">
+<title>proc~finalize~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node10"><a xlink:href="../proc/finalize~3.html" xlink:title="nurbs_curve%finalize">
+<polygon fill="#d9534f" stroke="#d9534f" points="298.66,-360.27 173.89,-360.27 173.89,-336 298.66,-336 298.66,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%finalize</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~finalize~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge9" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~finalize~3</title>
+<path fill="none" stroke="#ff0000" d="M56.31,-657.6C55.85,-611.64 60.73,-450.78 147.27,-369.13 152.03,-364.65 157.57,-361.06 163.51,-358.21"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="164.44,-361.61 172.41,-354.63 161.83,-355.11 164.44,-361.61"/>
+</g>
+<!-- proc~set_circle -->
+<g id="program~~curve_connectivity~~CallsGraph_node11" class="node">
+<title>proc~set_circle</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node11"><a xlink:href="../proc/set_circle.html" xlink:title="nurbs_curve%set_circle">
+<polygon fill="#d9534f" stroke="#d9534f" points="304.29,-402.27 168.27,-402.27 168.27,-378 304.29,-378 304.29,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set_circle</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~set_circle -->
+<g id="program~~curve_connectivity~~CallsGraph_edge10" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~set_circle</title>
+<path fill="none" stroke="#ff0000" d="M57.01,-657.61C58.99,-615.8 71.23,-479.76 147.27,-411.13 150.43,-408.28 153.91,-405.8 157.6,-403.64"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="159,-406.85 166.44,-399.31 155.92,-400.56 159,-406.85"/>
+</g>
+<!-- proc~show~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node12" class="node">
+<title>proc~show~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node12"><a xlink:href="../proc/show~3.html" xlink:title="nurbs_curve%show">
+<polygon fill="#d9534f" stroke="#d9534f" points="293.04,-213.27 179.52,-213.27 179.52,-189 293.04,-189 293.04,-213.27"/>
+<text xml:space="preserve" text-anchor="middle" x="236.28" y="-197.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%show</text>
+</a>
+</g>
+</g>
+<!-- program~curve_connectivity&#45;&gt;proc~show~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge11" class="edge">
+<title>program~curve_connectivity&#45;&gt;proc~show~3</title>
+<path fill="none" stroke="#ff0000" d="M58.3,-657.76C64.78,-612.03 90.81,-448.96 147.27,-327.13 165.89,-286.96 197.36,-245.91 217.19,-222.02"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="219.67,-224.51 223.44,-214.61 214.32,-220 219.67,-224.51"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~curve_connectivity~~CallsGraph_node14" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node14"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="710.95,-1050.27 625.18,-1050.27 625.18,-1026 710.95,-1026 710.95,-1050.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-1034.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xc_vis~3&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge12" class="edge">
+<title>proc~cmp_elem_xc_vis~3&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#ff0000" d="M476.26,-966.74C506.68,-982.93 558.2,-1009.82 578.31,-1017.13 589.59,-1021.24 601.97,-1024.75 613.81,-1027.66"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="612.93,-1031.05 623.47,-1029.93 614.53,-1024.24 612.93,-1031.05"/>
+</g>
+<!-- proc~cmp_elem_xg_vis~3&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge13" class="edge">
+<title>proc~cmp_elem_xg_vis~3&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#ff8b00" d="M529.48,-924.69C534.06,-927.06 538.4,-929.85 542.31,-933.13 573.42,-959.24 547.22,-991 578.31,-1017.13 588.34,-1025.57 601.16,-1030.74 613.92,-1033.89"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="613.07,-1037.28 623.56,-1035.85 614.46,-1030.43 613.07,-1037.28"/>
+</g>
+<!-- proc~cmp_elem_xth~3&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge14" class="edge">
+<title>proc~cmp_elem_xth~3&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#e7ff00" d="M319.39,-1020.34C405.88,-1024.77 539.59,-1031.61 613.45,-1035.39"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="613.09,-1038.88 623.26,-1035.89 613.45,-1031.89 613.09,-1038.88"/>
+</g>
+<!-- proc~active_span_count -->
+<g id="program~~curve_connectivity~~CallsGraph_node20" class="node">
+<title>proc~active_span_count</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node20"><a xlink:href="../proc/active_span_count.html" xlink:title="active_span_count">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="506.68,-1068.27 396.91,-1068.27 396.91,-1044 506.68,-1044 506.68,-1068.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-1052.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_span_count</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xth~3&#45;&gt;proc~active_span_count -->
+<g id="program~~curve_connectivity~~CallsGraph_edge15" class="edge">
+<title>proc~cmp_elem_xth~3&#45;&gt;proc~active_span_count</title>
+<path fill="none" stroke="#e7ff00" d="M304.55,-1028.74C330.42,-1033.58 359.9,-1039.11 385.58,-1043.92"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="384.74,-1047.32 395.22,-1045.72 386.03,-1040.44 384.74,-1047.32"/>
+</g>
+<!-- interface~elemconn_cn -->
+<g id="program~~curve_connectivity~~CallsGraph_node15" class="node">
+<title>interface~elemconn_cn</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node15"><a xlink:href="../interface/elemconn_cn.html" xlink:title="elemConn_Cn">
+<polygon fill="#a7506f" stroke="#a7506f" points="494.68,-360.27 408.91,-360.27 408.91,-336 494.68,-336 494.68,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_Cn</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem~3&#45;&gt;interface~elemconn_cn -->
+<g id="program~~curve_connectivity~~CallsGraph_edge16" class="edge">
+<title>proc~cmp_elem~3&#45;&gt;interface~elemconn_cn</title>
+<path fill="none" stroke="#5cff00" d="M307.61,-419.68C313.8,-417.31 319.79,-414.49 325.29,-411.13 346.27,-398.32 340.28,-381.91 361.29,-369.13 372.26,-362.46 385.17,-357.91 397.73,-354.81"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="398.1,-358.31 407.13,-352.75 396.61,-351.47 398.1,-358.31"/>
+</g>
+<!-- proc~active_knot_multiplicity -->
+<g id="program~~curve_connectivity~~CallsGraph_node18" class="node">
+<title>proc~active_knot_multiplicity</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node18"><a xlink:href="../proc/active_knot_multiplicity.html" xlink:title="active_knot_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="519.81,-402.27 383.79,-402.27 383.79,-378 519.81,-378 519.81,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_knot_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem~3&#45;&gt;proc~active_knot_multiplicity -->
+<g id="program~~curve_connectivity~~CallsGraph_edge17" class="edge">
+<title>proc~cmp_elem~3&#45;&gt;proc~active_knot_multiplicity</title>
+<path fill="none" stroke="#5cff00" d="M301.34,-419.53C324.78,-414.92 351.5,-409.67 375.81,-404.89"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="376.16,-408.38 385.3,-403.02 374.81,-401.52 376.16,-408.38"/>
+</g>
+<!-- proc~active_knots -->
+<g id="program~~curve_connectivity~~CallsGraph_node19" class="node">
+<title>proc~active_knots</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node19"><a xlink:href="../proc/active_knots.html" xlink:title="active_knots">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="490.56,-444.27 413.04,-444.27 413.04,-420 490.56,-420 490.56,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_knots</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem~3&#45;&gt;proc~active_knots -->
+<g id="program~~curve_connectivity~~CallsGraph_edge18" class="edge">
+<title>proc~cmp_elem~3&#45;&gt;proc~active_knots</title>
+<path fill="none" stroke="#5cff00" d="M307.79,-432.13C338.4,-432.13 373.52,-432.13 401.3,-432.13"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="401.21,-435.64 411.21,-432.14 401.21,-428.64 401.21,-435.64"/>
+</g>
+<!-- proc~create~3&#45;&gt;proc~cmp_elem_xg_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge20" class="edge">
+<title>proc~create~3&#45;&gt;proc~cmp_elem_xg_vis~3</title>
+<path fill="none" stroke="#00ff2e" d="M257.2,-682.75C277.41,-696.6 308.08,-720.67 325.29,-749.13 358.98,-804.85 314.84,-845.51 361.29,-891.13 361.91,-891.74 362.54,-892.34 363.19,-892.91"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="360.9,-895.57 371.04,-898.64 365.03,-889.92 360.9,-895.57"/>
+</g>
+<!-- interface~compute_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node13" class="node">
+<title>interface~compute_xg~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node13"><a xlink:href="../interface/compute_xg~3.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="490.93,-840.27 412.66,-840.27 412.66,-816 490.93,-816 490.93,-840.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-824.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create~3&#45;&gt;interface~compute_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge19" class="edge">
+<title>proc~create~3&#45;&gt;interface~compute_xg~3</title>
+<path fill="none" stroke="#00ff2e" d="M254.03,-682.53C291.13,-709.98 380.41,-776.05 424.82,-808.91"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="422.49,-811.54 432.61,-814.68 426.65,-805.91 422.49,-811.54"/>
+</g>
+<!-- proc~fill_uniform -->
+<g id="program~~curve_connectivity~~CallsGraph_node22" class="node">
+<title>proc~fill_uniform</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node22"><a xlink:href="../proc/fill_uniform.html" xlink:title="fill_uniform">
+<polygon fill="#d9534f" stroke="#d9534f" points="487.56,-722.27 416.04,-722.27 416.04,-698 487.56,-698 487.56,-722.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-706.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fill_uniform</text>
+</a>
+</g>
+</g>
+<!-- proc~create~3&#45;&gt;proc~fill_uniform -->
+<g id="program~~curve_connectivity~~CallsGraph_edge21" class="edge">
+<title>proc~create~3&#45;&gt;proc~fill_uniform</title>
+<path fill="none" stroke="#00ff2e" d="M296.76,-681.28C330.83,-687.66 372.95,-695.55 404.53,-701.47"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="403.69,-704.87 414.16,-703.27 404.98,-697.99 403.69,-704.87"/>
+</g>
+<!-- proc~is_rational~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node23" class="node">
+<title>proc~is_rational~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node23"><a xlink:href="../proc/is_rational~3.html" xlink:title="nurbs_curve%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="522.43,-566.27 381.16,-566.27 381.16,-542 522.43,-542 522.43,-566.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-550.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create~3&#45;&gt;proc~is_rational~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge22" class="edge">
+<title>proc~create~3&#45;&gt;proc~is_rational~3</title>
+<path fill="none" stroke="#00ff2e" d="M251.11,-657.58C272.98,-638.33 317.57,-601.54 361.29,-580.13 368.87,-576.42 377.08,-573.15 385.34,-570.28"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="386.32,-573.64 394.74,-567.21 384.15,-566.98 386.32,-573.64"/>
+</g>
+<!-- proc~knot_end -->
+<g id="program~~curve_connectivity~~CallsGraph_node24" class="node">
+<title>proc~knot_end</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node24"><a xlink:href="../proc/knot_end.html" xlink:title="knot_end">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="698.2,-604.27 637.93,-604.27 637.93,-580 698.2,-580 698.2,-604.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-588.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_end</text>
+</a>
+</g>
+</g>
+<!-- proc~create~3&#45;&gt;proc~knot_end -->
+<g id="program~~curve_connectivity~~CallsGraph_edge23" class="edge">
+<title>proc~create~3&#45;&gt;proc~knot_end</title>
+<path fill="none" stroke="#00ff2e" d="M296.59,-659.37C385.3,-643.27 550.25,-613.34 626.49,-599.5"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="626.81,-603 636.02,-597.77 625.56,-596.11 626.81,-603"/>
+</g>
+<!-- proc~knot_start -->
+<g id="program~~curve_connectivity~~CallsGraph_node25" class="node">
+<title>proc~knot_start</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node25"><a xlink:href="../proc/knot_start.html" xlink:title="knot_start">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="700.08,-486.27 636.06,-486.27 636.06,-462 700.08,-462 700.08,-486.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-470.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_start</text>
+</a>
+</g>
+</g>
+<!-- proc~create~3&#45;&gt;proc~knot_start -->
+<g id="program~~curve_connectivity~~CallsGraph_edge24" class="edge">
+<title>proc~create~3&#45;&gt;proc~knot_start</title>
+<path fill="none" stroke="#00ff2e" d="M259.44,-657.52C283.72,-644.19 324.18,-623.44 361.29,-611.13 439.15,-585.32 468.04,-609.96 542.31,-575.13 584.6,-555.31 624.98,-518.16 647.84,-494.86"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="650.25,-497.4 654.66,-487.76 645.2,-492.55 650.25,-497.4"/>
+</g>
+<!-- set -->
+<g id="program~~curve_connectivity~~CallsGraph_node27" class="node">
+<title>set</title>
+<polygon fill="#777777" stroke="#777777" points="897.09,-318.27 843.09,-318.27 843.09,-294 897.09,-294 897.09,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
+</g>
+<!-- proc~create~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge25" class="edge">
+<title>proc~create~3&#45;&gt;set</title>
+<path fill="none" stroke="#00ff2e" d="M296.9,-671.48C418.3,-673 688.58,-669.74 757.83,-613.13 847.39,-539.93 864.86,-388.41 868.27,-329.9"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="871.75,-330.27 868.74,-320.11 864.76,-329.93 871.75,-330.27"/>
+</g>
+<!-- proc~export_xc~3&#45;&gt;proc~cmp_elem_xc_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge26" class="edge">
+<title>proc~export_xc~3&#45;&gt;proc~cmp_elem_xc_vis~3</title>
+<path fill="none" stroke="#00ffb9" d="M248.61,-843.64C268.98,-865.31 314.07,-909.77 361.29,-933.13 364.76,-934.85 368.37,-936.43 372.07,-937.88"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="370.66,-941.09 381.25,-941.14 373,-934.5 370.66,-941.09"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="program~~curve_connectivity~~CallsGraph_node21" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node21"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="505.18,-882.27 398.41,-882.27 398.41,-858 505.18,-858 505.18,-882.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-866.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc~3&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~curve_connectivity~~CallsGraph_edge27" class="edge">
+<title>proc~export_xc~3&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ffb9" d="M306.01,-843.69C332.03,-848.44 361.52,-853.83 387.06,-858.49"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="386.16,-861.89 396.62,-860.24 387.41,-855 386.16,-861.89"/>
+</g>
+<!-- proc~export_xc~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge28" class="edge">
+<title>proc~export_xc~3&#45;&gt;set</title>
+<path fill="none" stroke="#00ffb9" d="M303.56,-818.51C436.41,-792.64 725.38,-733.35 757.83,-701.13 863.98,-595.76 870.85,-397.58 869.89,-329.67"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="873.4,-329.99 869.68,-320.07 866.4,-330.14 873.4,-329.99"/>
+</g>
+<!-- proc~export_xg~3&#45;&gt;proc~cmp_elem_xg_vis~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge29" class="edge">
+<title>proc~export_xg~3&#45;&gt;proc~cmp_elem_xg_vis~3</title>
+<path fill="none" stroke="#00b9ff" d="M280.97,-782.77C296.49,-788.99 313.12,-797.86 325.29,-810.13 353.03,-838.11 330.94,-866.01 361.29,-891.13 362.4,-892.05 363.54,-892.93 364.7,-893.77"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="362.52,-896.53 372.88,-898.73 366.15,-890.55 362.52,-896.53"/>
+</g>
+<!-- proc~export_xg~3&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~curve_connectivity~~CallsGraph_edge30" class="edge">
+<title>proc~export_xg~3&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00b9ff" d="M273.3,-782.7C289.96,-789.45 309.51,-798.73 325.29,-810.13 344.41,-823.96 340.91,-837.25 361.29,-849.13 369.23,-853.77 378.13,-857.37 387.15,-860.19"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="386.13,-863.54 396.7,-862.84 388,-856.79 386.13,-863.54"/>
+</g>
+<!-- proc~export_xg~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge31" class="edge">
+<title>proc~export_xg~3&#45;&gt;set</title>
+<path fill="none" stroke="#00b9ff" d="M306.55,-765.8C368.92,-760.84 462.73,-750.72 542.31,-731.13 641.52,-706.72 687.17,-724.94 757.83,-651.13 847.41,-557.57 864.87,-391.45 868.27,-329.92"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="871.75,-330.42 868.72,-320.26 864.76,-330.09 871.75,-330.42"/>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;interface~compute_xg~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge32" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;interface~compute_xg~3</title>
+<path fill="none" stroke="#002eff" d="M251.66,-566.77C270.51,-583.92 303.71,-616.23 325.29,-649.13 347.12,-682.42 339.5,-697.83 361.29,-731.13 380.44,-760.4 408.57,-789.25 428.17,-807.77"/>
+<polygon fill="#002eff" stroke="#002eff" points="425.69,-810.25 435.4,-814.49 430.46,-805.12 425.69,-810.25"/>
+</g>
+<!-- local -->
+<g id="program~~curve_connectivity~~CallsGraph_node16" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="478.8,-486.27 424.8,-486.27 424.8,-462 478.8,-462 478.8,-486.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-470.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;local -->
+<g id="program~~curve_connectivity~~CallsGraph_edge33" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;local</title>
+<path fill="none" stroke="#002eff" d="M263.49,-541.55C288.32,-529.91 326.84,-512.58 361.29,-500.13 378.35,-493.97 397.64,-488.22 413.93,-483.7"/>
+<polygon fill="#002eff" stroke="#002eff" points="414.48,-487.18 423.21,-481.18 412.64,-480.42 414.48,-487.18"/>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;proc~active_knots -->
+<g id="program~~curve_connectivity~~CallsGraph_edge34" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;proc~active_knots</title>
+<path fill="none" stroke="#002eff" d="M248.64,-541.76C269.05,-520.31 314.2,-476.29 361.29,-453.13 373.82,-446.97 388.25,-442.57 401.8,-439.44"/>
+<polygon fill="#002eff" stroke="#002eff" points="402.38,-442.9 411.44,-437.42 400.94,-436.05 402.38,-442.9"/>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~curve_connectivity~~CallsGraph_edge35" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#002eff" d="M253.56,-566.64C273.84,-583.18 307.93,-614.33 325.29,-649.13 365.6,-729.96 299.12,-783.62 361.29,-849.13 368.39,-856.62 377.61,-861.66 387.43,-865.02"/>
+<polygon fill="#002eff" stroke="#002eff" points="386.21,-868.31 396.78,-867.63 388.09,-861.57 386.21,-868.31"/>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;proc~is_rational~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge36" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;proc~is_rational~3</title>
+<path fill="none" stroke="#002eff" d="M325.67,-554.13C340.15,-554.13 355.1,-554.13 369.41,-554.13"/>
+<polygon fill="#002eff" stroke="#002eff" points="369.21,-557.64 379.21,-554.14 369.21,-550.64 369.21,-557.64"/>
+</g>
+<!-- proc~export_xth_in_xg~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge37" class="edge">
+<title>proc~export_xth_in_xg~3&#45;&gt;set</title>
+<path fill="none" stroke="#002eff" d="M306.34,-541.53C324.2,-538.52 343.43,-535.5 361.29,-533.13 449.05,-521.52 683.17,-542.69 757.83,-495.13 818.92,-456.22 850.65,-370.79 862.93,-329.45"/>
+<polygon fill="#002eff" stroke="#002eff" points="866.24,-330.62 865.59,-320.04 859.5,-328.71 866.24,-330.62"/>
+</g>
+<!-- none~set~4 -->
+<g id="program~~curve_connectivity~~CallsGraph_node17" class="node">
+<title>none~set~4</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node17"><a xlink:href="../type/nurbs_curve.html#boundprocedure-set~4" xlink:title="nurbs_curve%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="502.93,-255.27 400.66,-255.27 400.66,-231 502.93,-231 502.93,-255.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-239.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set</text>
+</a>
+</g>
+</g>
+<!-- proc~set_circle&#45;&gt;none~set~4 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge38" class="edge">
+<title>proc~set_circle&#45;&gt;none~set~4</title>
+<path fill="none" stroke="#e700ff" d="M304.42,-378.86C311.74,-376.26 318.85,-373.06 325.29,-369.13 346.27,-356.32 344.3,-344.91 361.29,-327.13 383.18,-304.23 409.84,-279.6 428.34,-262.97"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="430.45,-265.78 435.58,-256.5 425.79,-260.56 430.45,-265.78"/>
+</g>
+<!-- proc~show_pyvista_singlepatch -->
+<g id="program~~curve_connectivity~~CallsGraph_node26" class="node">
+<title>proc~show_pyvista_singlepatch</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node26"><a xlink:href="../proc/show_pyvista_singlepatch.html" xlink:title="show_pyvista_singlepatch">
+<polygon fill="#d9534f" stroke="#d9534f" points="525.81,-87.27 377.79,-87.27 377.79,-63 525.81,-63 525.81,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451.8" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">show_pyvista_singlepatch</text>
+</a>
+</g>
+</g>
+<!-- proc~show~3&#45;&gt;proc~show_pyvista_singlepatch -->
+<g id="program~~curve_connectivity~~CallsGraph_edge39" class="edge">
+<title>proc~show~3&#45;&gt;proc~show_pyvista_singlepatch</title>
+<path fill="none" stroke="#ff008b" d="M258.53,-188.59C296.42,-166.23 375.78,-119.4 419.77,-93.44"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="421.5,-96.49 428.33,-88.4 417.94,-90.46 421.5,-96.49"/>
+</g>
+<!-- proc~compute_xg_bspline_1d -->
+<g id="program~~curve_connectivity~~CallsGraph_node34" class="node">
+<title>proc~compute_xg_bspline_1d</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node34"><a xlink:href="../proc/compute_xg_bspline_1d.html" xlink:title="compute_Xg_bspline_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="738.33,-798.27 597.81,-798.27 597.81,-774 738.33,-774 738.33,-798.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-782.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~3&#45;&gt;proc~compute_xg_bspline_1d -->
+<g id="program~~curve_connectivity~~CallsGraph_edge40" class="edge">
+<title>interface~compute_xg~3&#45;&gt;proc~compute_xg_bspline_1d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M491.11,-820.63C519.02,-815.15 557.75,-807.56 591.77,-800.9"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="592,-804.42 601.14,-799.06 590.65,-797.55 592,-804.42"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point -->
+<g id="program~~curve_connectivity~~CallsGraph_node35" class="node">
+<title>proc~compute_xg_bspline_1d_1point</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node35"><a xlink:href="../proc/compute_xg_bspline_1d_1point.html" xlink:title="compute_Xg_bspline_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="757.83,-924.27 578.31,-924.27 578.31,-900 757.83,-900 757.83,-924.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-908.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~3&#45;&gt;proc~compute_xg_bspline_1d_1point -->
+<g id="program~~curve_connectivity~~CallsGraph_edge41" class="edge">
+<title>interface~compute_xg~3&#45;&gt;proc~compute_xg_bspline_1d_1point</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M491.4,-831.78C507.99,-834.67 527.03,-839.85 542.31,-849.13 563.32,-861.91 557.31,-878.34 578.31,-891.13 580.59,-892.53 582.96,-893.82 585.39,-895.04"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="583.74,-898.13 594.3,-898.94 586.55,-891.72 583.74,-898.13"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d -->
+<g id="program~~curve_connectivity~~CallsGraph_node36" class="node">
+<title>proc~compute_xg_nurbs_1d</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node36"><a xlink:href="../proc/compute_xg_nurbs_1d.html" xlink:title="compute_Xg_nurbs_1d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="734.2,-840.27 601.93,-840.27 601.93,-816 734.2,-816 734.2,-840.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-824.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~3&#45;&gt;proc~compute_xg_nurbs_1d -->
+<g id="program~~curve_connectivity~~CallsGraph_edge42" class="edge">
+<title>interface~compute_xg~3&#45;&gt;proc~compute_xg_nurbs_1d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M491.11,-828.13C518.69,-828.13 556.81,-828.13 590.53,-828.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="590.26,-831.64 600.26,-828.14 590.26,-824.64 590.26,-831.64"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~curve_connectivity~~CallsGraph_node37" class="node">
+<title>proc~compute_xg_nurbs_1d_1point</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node37"><a xlink:href="../proc/compute_xg_nurbs_1d_1point.html" xlink:title="compute_Xg_nurbs_1d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="753.7,-882.27 582.43,-882.27 582.43,-858 753.7,-858 753.7,-882.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-866.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_1d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg~3&#45;&gt;proc~compute_xg_nurbs_1d_1point -->
+<g id="program~~curve_connectivity~~CallsGraph_edge43" class="edge">
+<title>interface~compute_xg~3&#45;&gt;proc~compute_xg_nurbs_1d_1point</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M491.11,-835.64C519.02,-841.12 557.75,-848.71 591.77,-855.37"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="590.65,-858.72 601.14,-857.21 592,-851.85 590.65,-858.72"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~curve_connectivity~~CallsGraph_node28" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node28"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="932.85,-1050.27 807.33,-1050.27 807.33,-1026 932.85,-1026 932.85,-1050.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-1034.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~curve_connectivity~~CallsGraph_edge44" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M711,-1038.13C735.58,-1038.13 767.31,-1038.13 795.89,-1038.13"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="795.57,-1041.64 805.57,-1038.14 795.57,-1034.64 795.57,-1041.64"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~curve_connectivity~~CallsGraph_node29" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node29"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="933.22,-1008.27 806.95,-1008.27 806.95,-984 933.22,-984 933.22,-1008.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-992.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~curve_connectivity~~CallsGraph_edge45" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M711,-1029.33C736.19,-1024.04 768.91,-1017.17 798.04,-1011.05"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="798.45,-1014.54 807.52,-1009.06 797.01,-1007.69 798.45,-1014.54"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~curve_connectivity~~CallsGraph_node30" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node30"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="933.6,-1092.27 806.58,-1092.27 806.58,-1068 933.6,-1068 933.6,-1092.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-1076.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~curve_connectivity~~CallsGraph_edge46" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#ff6600" stroke-dasharray="5,2" d="M711,-1046.94C736.19,-1052.23 768.91,-1059.1 798.04,-1065.22"/>
+<polygon fill="#ff6600" stroke="#ff6600" points="797.01,-1068.58 807.52,-1067.21 798.45,-1061.73 797.01,-1068.58"/>
+</g>
+<!-- proc~cmp_elemconn_cn_l -->
+<g id="program~~curve_connectivity~~CallsGraph_node31" class="node">
+<title>proc~cmp_elemconn_cn_l</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node31"><a xlink:href="../proc/cmp_elemconn_cn_l.html" xlink:title="cmp_elemConn_Cn_L">
+<polygon fill="#d9534f" stroke="#d9534f" points="730.83,-360.27 605.31,-360.27 605.31,-336 730.83,-336 730.83,-360.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-344.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_Cn_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_l -->
+<g id="program~~curve_connectivity~~CallsGraph_edge47" class="edge">
+<title>interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_l</title>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M495.13,-348.13C523.17,-348.13 560.7,-348.13 593.53,-348.13"/>
+<polygon fill="#ffcc00" stroke="#ffcc00" points="593.42,-351.64 603.42,-348.14 593.42,-344.64 593.42,-351.64"/>
+</g>
+<!-- proc~cmp_elemconn_cn_s -->
+<g id="program~~curve_connectivity~~CallsGraph_node32" class="node">
+<title>proc~cmp_elemconn_cn_s</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node32"><a xlink:href="../proc/cmp_elemconn_cn_s.html" xlink:title="cmp_elemConn_Cn_S">
+<polygon fill="#d9534f" stroke="#d9534f" points="731.2,-444.27 604.93,-444.27 604.93,-420 731.2,-420 731.2,-444.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-428.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_Cn_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_s -->
+<g id="program~~curve_connectivity~~CallsGraph_edge48" class="edge">
+<title>interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_s</title>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M494.99,-352.43C510.69,-355.43 528.13,-360.51 542.31,-369.13 563.32,-381.91 557.31,-398.34 578.31,-411.13 583.17,-414.1 588.42,-416.64 593.85,-418.83"/>
+<polygon fill="#ffcc00" stroke="#ffcc00" points="592.43,-422.04 603.03,-422.1 594.78,-415.44 592.43,-422.04"/>
+</g>
+<!-- proc~cmp_elemconn_cn_v -->
+<g id="program~~curve_connectivity~~CallsGraph_node33" class="node">
+<title>proc~cmp_elemconn_cn_v</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node33"><a xlink:href="../proc/cmp_elemconn_cn_v.html" xlink:title="cmp_elemConn_Cn_V">
+<polygon fill="#d9534f" stroke="#d9534f" points="731.58,-402.27 604.56,-402.27 604.56,-378 731.58,-378 731.58,-402.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-386.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_Cn_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_v -->
+<g id="program~~curve_connectivity~~CallsGraph_edge49" class="edge">
+<title>interface~elemconn_cn&#45;&gt;proc~cmp_elemconn_cn_v</title>
+<path fill="none" stroke="#ffcc00" stroke-dasharray="5,2" d="M495.13,-356.43C523.07,-361.91 560.44,-369.23 593.19,-375.65"/>
+<polygon fill="#ffcc00" stroke="#ffcc00" points="592.13,-379.01 602.62,-377.5 593.48,-372.14 592.13,-379.01"/>
+</g>
+<!-- proc~set1a -->
+<g id="program~~curve_connectivity~~CallsGraph_node43" class="node">
+<title>proc~set1a</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node43"><a xlink:href="../proc/set1a.html" xlink:title="nurbs_curve%set1a">
+<polygon fill="#d9534f" stroke="#d9534f" points="725.95,-234.27 610.18,-234.27 610.18,-210 725.95,-210 725.95,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1a</text>
+</a>
+</g>
+</g>
+<!-- none~set~4&#45;&gt;proc~set1a -->
+<g id="program~~curve_connectivity~~CallsGraph_edge50" class="edge">
+<title>none~set~4&#45;&gt;proc~set1a</title>
+<path fill="none" stroke="#65ff00" stroke-dasharray="5,2" d="M503.31,-238.18C531.74,-235.4 567.63,-231.88 598.57,-228.85"/>
+<polygon fill="#65ff00" stroke="#65ff00" points="598.6,-232.36 608.21,-227.9 597.92,-225.4 598.6,-232.36"/>
+</g>
+<!-- proc~set1~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node44" class="node">
+<title>proc~set1~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node44"><a xlink:href="../proc/set1~3.html" xlink:title="nurbs_curve%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="722.58,-276.27 613.56,-276.27 613.56,-252 722.58,-252 722.58,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set~4&#45;&gt;proc~set1~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge51" class="edge">
+<title>none~set~4&#45;&gt;proc~set1~3</title>
+<path fill="none" stroke="#65ff00" stroke-dasharray="5,2" d="M503.31,-248.09C532.73,-250.97 570.15,-254.64 601.79,-257.74"/>
+<polygon fill="#65ff00" stroke="#65ff00" points="601.36,-261.21 611.65,-258.7 602.04,-254.24 601.36,-261.21"/>
+</g>
+<!-- proc~set2~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node45" class="node">
+<title>proc~set2~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node45"><a xlink:href="../proc/set2~3.html" xlink:title="nurbs_curve%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="722.58,-150.27 613.56,-150.27 613.56,-126 722.58,-126 722.58,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set~4&#45;&gt;proc~set2~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge52" class="edge">
+<title>none~set~4&#45;&gt;proc~set2~3</title>
+<path fill="none" stroke="#65ff00" stroke-dasharray="5,2" d="M467.6,-230.61C490.08,-212.24 534.81,-178.1 578.31,-159.13 585.98,-155.79 594.27,-152.93 602.59,-150.5"/>
+<polygon fill="#65ff00" stroke="#65ff00" points="603.3,-153.94 612.04,-147.94 601.47,-147.18 603.3,-153.94"/>
+</g>
+<!-- proc~set3~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node46" class="node">
+<title>proc~set3~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node46"><a xlink:href="../proc/set3~3.html" xlink:title="nurbs_curve%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="722.58,-192.27 613.56,-192.27 613.56,-168 722.58,-168 722.58,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set~4&#45;&gt;proc~set3~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge53" class="edge">
+<title>none~set~4&#45;&gt;proc~set3~3</title>
+<path fill="none" stroke="#65ff00" stroke-dasharray="5,2" d="M487.7,-230.51C512.74,-221.69 547.37,-209.95 578.31,-201.13 586.06,-198.93 594.23,-196.77 602.36,-194.72"/>
+<polygon fill="#65ff00" stroke="#65ff00" points="603.02,-198.17 611.89,-192.38 601.34,-191.37 603.02,-198.17"/>
+</g>
+<!-- proc~set4~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node47" class="node">
+<title>proc~set4~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node47"><a xlink:href="../proc/set4~3.html" xlink:title="nurbs_curve%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="722.58,-318.27 613.56,-318.27 613.56,-294 722.58,-294 722.58,-318.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-302.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set~4&#45;&gt;proc~set4~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge54" class="edge">
+<title>none~set~4&#45;&gt;proc~set4~3</title>
+<path fill="none" stroke="#65ff00" stroke-dasharray="5,2" d="M487.7,-255.76C512.74,-264.58 547.37,-276.32 578.31,-285.13 586.06,-287.34 594.23,-289.5 602.36,-291.55"/>
+<polygon fill="#65ff00" stroke="#65ff00" points="601.34,-294.9 611.89,-293.89 603.02,-288.1 601.34,-294.9"/>
+</g>
+<!-- proc~active_knot_multiplicity&#45;&gt;proc~knot_end -->
+<g id="program~~curve_connectivity~~CallsGraph_edge55" class="edge">
+<title>proc~active_knot_multiplicity&#45;&gt;proc~knot_end</title>
+<path fill="none" stroke="#00ff00" d="M520.16,-398.55C528.2,-401.61 535.83,-405.7 542.31,-411.13 573.42,-437.24 556.29,-461 578.31,-495.13 597.2,-524.41 625.11,-553.26 644.58,-571.78"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="642.06,-574.22 651.76,-578.49 646.85,-569.11 642.06,-574.22"/>
+</g>
+<!-- proc~active_knot_multiplicity&#45;&gt;proc~knot_start -->
+<g id="program~~curve_connectivity~~CallsGraph_edge56" class="edge">
+<title>proc~active_knot_multiplicity&#45;&gt;proc~knot_start</title>
+<path fill="none" stroke="#00ff00" d="M520.15,-400.99C527.92,-403.66 535.49,-406.99 542.31,-411.13 563.32,-423.91 557.31,-440.34 578.31,-453.13 592.1,-461.54 609,-466.58 624.33,-469.6"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="623.73,-473.05 634.18,-471.29 624.91,-466.15 623.73,-473.05"/>
+</g>
+<!-- proc~pack_big_endian_int32 -->
+<g id="program~~curve_connectivity~~CallsGraph_node38" class="node">
+<title>proc~pack_big_endian_int32</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node38"><a xlink:href="../proc/pack_big_endian_int32.html" xlink:title="pack_big_endian_int32">
+<polygon fill="#d9534f" stroke="#d9534f" points="734.58,-1008.27 601.56,-1008.27 601.56,-984 734.58,-984 734.58,-1008.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-992.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pack_big_endian_int32</text>
+</a>
+</g>
+</g>
+<!-- proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_int32 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge57" class="edge">
+<title>proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_int32</title>
+<path fill="none" stroke="#00cbff" d="M505.35,-874.05C518.56,-877.17 531.92,-882.41 542.31,-891.13 573.42,-917.24 547.22,-949 578.31,-975.13 582.16,-978.38 586.43,-981.13 590.95,-983.48"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="589.22,-986.55 599.78,-987.38 592.05,-980.14 589.22,-986.55"/>
+</g>
+<!-- proc~pack_big_endian_real64 -->
+<g id="program~~curve_connectivity~~CallsGraph_node39" class="node">
+<title>proc~pack_big_endian_real64</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node39"><a xlink:href="../proc/pack_big_endian_real64.html" xlink:title="pack_big_endian_real64">
+<polygon fill="#d9534f" stroke="#d9534f" points="737.95,-966.27 598.18,-966.27 598.18,-942 737.95,-942 737.95,-966.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-950.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pack_big_endian_real64</text>
+</a>
+</g>
+</g>
+<!-- proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_real64 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge58" class="edge">
+<title>proc~export_vtk_legacy&#45;&gt;proc~pack_big_endian_real64</title>
+<path fill="none" stroke="#00cbff" d="M505.61,-876.74C518.25,-879.85 531.26,-884.42 542.31,-891.13 563.32,-903.91 557.31,-920.34 578.31,-933.13 581.26,-934.93 584.35,-936.57 587.53,-938.08"/>
+<polygon fill="#00cbff" stroke="#00cbff" points="586,-941.23 596.58,-941.83 588.68,-934.76 586,-941.23"/>
+</g>
+<!-- proc~pyvista_string_literal -->
+<g id="program~~curve_connectivity~~CallsGraph_node40" class="node">
+<title>proc~pyvista_string_literal</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node40"><a xlink:href="../proc/pyvista_string_literal.html" xlink:title="pyvista_string_literal">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="728.2,-108.27 607.93,-108.27 607.93,-84 728.2,-84 728.2,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pyvista_string_literal</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_string_literal -->
+<g id="program~~curve_connectivity~~CallsGraph_edge59" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_string_literal</title>
+<path fill="none" stroke="#ff00cb" d="M526.24,-82.33C548.94,-84.56 573.88,-87 596.39,-89.21"/>
+<polygon fill="#ff00cb" stroke="#ff00cb" points="595.76,-92.66 606.05,-90.16 596.44,-85.7 595.76,-92.66"/>
+</g>
+<!-- proc~pyvista_viewer_script -->
+<g id="program~~curve_connectivity~~CallsGraph_node41" class="node">
+<title>proc~pyvista_viewer_script</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node41"><a xlink:href="../proc/pyvista_viewer_script.html" xlink:title="pyvista_viewer_script">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="730.08,-66.27 606.06,-66.27 606.06,-42 730.08,-42 730.08,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">pyvista_viewer_script</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_viewer_script -->
+<g id="program~~curve_connectivity~~CallsGraph_edge60" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~pyvista_viewer_script</title>
+<path fill="none" stroke="#ff00cb" d="M526.24,-67.94C548.32,-65.77 572.52,-63.4 594.54,-61.24"/>
+<polygon fill="#ff00cb" stroke="#ff00cb" points="594.71,-64.74 604.32,-60.28 594.03,-57.78 594.71,-64.74"/>
+</g>
+<!-- proc~run_python_script -->
+<g id="program~~curve_connectivity~~CallsGraph_node42" class="node">
+<title>proc~run_python_script</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node42"><a xlink:href="../proc/run_python_script.html" xlink:title="run_python_script">
+<polygon fill="#d9534f" stroke="#d9534f" points="721.08,-24.27 615.06,-24.27 615.06,0 721.08,0 721.08,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="668.07" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">run_python_script</text>
+</a>
+</g>
+</g>
+<!-- proc~show_pyvista_singlepatch&#45;&gt;proc~run_python_script -->
+<g id="program~~curve_connectivity~~CallsGraph_edge61" class="edge">
+<title>proc~show_pyvista_singlepatch&#45;&gt;proc~run_python_script</title>
+<path fill="none" stroke="#ff00cb" d="M487.7,-62.51C512.74,-53.69 547.37,-41.95 578.31,-33.13 586.46,-30.81 595.09,-28.54 603.63,-26.4"/>
+<polygon fill="#ff00cb" stroke="#ff00cb" points="604.42,-29.81 613.3,-24.04 602.75,-23.02 604.42,-29.81"/>
+</g>
+<!-- interface~basis_bspline_der -->
+<g id="program~~curve_connectivity~~CallsGraph_node48" class="node">
+<title>interface~basis_bspline_der</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node48"><a xlink:href="../interface/basis_bspline_der.html" xlink:title="basis_bspline_der">
+<polygon fill="#a7506f" stroke="#a7506f" points="922.72,-871.27 817.45,-871.27 817.45,-847 922.72,-847 922.72,-871.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-855.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_bspline_1d&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~curve_connectivity~~CallsGraph_edge62" class="edge">
+<title>proc~compute_xg_bspline_1d&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#33ff00" d="M732.34,-798.67C741.03,-801.09 749.74,-803.9 757.83,-807.13 775.03,-814.01 777.23,-819.92 793.83,-828.13 803.79,-833.06 814.74,-837.89 825.13,-842.21"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="823.7,-845.41 834.28,-845.95 826.34,-838.93 823.7,-845.41"/>
+</g>
+<!-- proc~map_parameter -->
+<g id="program~~curve_connectivity~~CallsGraph_node51" class="node">
+<title>proc~map_parameter</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node51"><a xlink:href="../proc/map_parameter.html" xlink:title="map_parameter">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="918.97,-819.27 821.2,-819.27 821.2,-795 918.97,-795 918.97,-819.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-803.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">map_parameter</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_bspline_1d&#45;&gt;proc~map_parameter -->
+<g id="program~~curve_connectivity~~CallsGraph_edge63" class="edge">
+<title>proc~compute_xg_bspline_1d&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#33ff00" d="M738.75,-793.45C761.79,-795.87 787.2,-798.54 809.43,-800.87"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="808.91,-804.34 819.22,-801.9 809.64,-797.37 808.91,-804.34"/>
+</g>
+<!-- proc~compute_xg_bspline_1d_1point&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~curve_connectivity~~CallsGraph_edge64" class="edge">
+<title>proc~compute_xg_bspline_1d_1point&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00ff19" d="M724.1,-899.55C735.28,-896.87 746.95,-893.98 757.83,-891.13 776.92,-886.13 797.73,-880.26 816.14,-874.92"/>
+<polygon fill="#00ff19" stroke="#00ff19" points="816.88,-878.35 825.5,-872.19 814.92,-871.63 816.88,-878.35"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~curve_connectivity~~CallsGraph_edge65" class="edge">
+<title>proc~compute_xg_nurbs_1d&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00ff66" d="M734.56,-838.29C757.47,-841.84 783.13,-845.81 805.84,-849.33"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="805.17,-852.77 815.58,-850.84 806.24,-845.85 805.17,-852.77"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d&#45;&gt;proc~map_parameter -->
+<g id="program~~curve_connectivity~~CallsGraph_edge66" class="edge">
+<title>proc~compute_xg_nurbs_1d&#45;&gt;proc~map_parameter</title>
+<path fill="none" stroke="#00ff66" d="M734.56,-821.26C758.75,-818.72 786,-815.86 809.62,-813.38"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="809.81,-816.88 819.39,-812.35 809.08,-809.92 809.81,-816.88"/>
+</g>
+<!-- proc~compute_xg_nurbs_1d_1point&#45;&gt;interface~basis_bspline_der -->
+<g id="program~~curve_connectivity~~CallsGraph_edge67" class="edge">
+<title>proc~compute_xg_nurbs_1d_1point&#45;&gt;interface~basis_bspline_der</title>
+<path fill="none" stroke="#00ffb2" d="M754.19,-865.45C771.55,-864.5 789.53,-863.51 805.96,-862.61"/>
+<polygon fill="#00ffb2" stroke="#00ffb2" points="805.76,-866.12 815.55,-862.08 805.38,-859.13 805.76,-866.12"/>
+</g>
+<!-- proc~set1a&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge70" class="edge">
+<title>proc~set1a&#45;&gt;set</title>
+<path fill="none" stroke="#7f00ff" d="M726.09,-230.02C737.13,-233.06 748.23,-237.28 757.83,-243.13 778.83,-255.93 773.09,-271.93 793.83,-285.13 805.13,-292.33 818.91,-297.1 831.58,-300.25"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="830.8,-303.66 841.32,-302.38 832.3,-296.82 830.8,-303.66"/>
+</g>
+<!-- proc~valid_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_node52" class="node">
+<title>proc~valid_knot_vector</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node52"><a xlink:href="../proc/valid_knot_vector.html" xlink:title="valid_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="922.35,-234.27 817.83,-234.27 817.83,-210 922.35,-210 922.35,-234.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-218.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">valid_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set1a&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_edge68" class="edge">
+<title>proc~set1a&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#7f00ff" d="M726.39,-222.13C751.31,-222.13 780.6,-222.13 806.13,-222.13"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="806.05,-225.64 816.05,-222.14 806.05,-218.64 806.05,-225.64"/>
+</g>
+<!-- proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node53" class="node">
+<title>proc~valid_weights~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node53"><a xlink:href="../proc/valid_weights~3.html" xlink:title="valid_weights">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="911.47,-276.27 828.7,-276.27 828.7,-252 911.47,-252 911.47,-276.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-260.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">valid_weights</text>
+</a>
+</g>
+</g>
+<!-- proc~set1a&#45;&gt;proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge69" class="edge">
+<title>proc~set1a&#45;&gt;proc~valid_weights~3</title>
+<path fill="none" stroke="#7f00ff" d="M726.39,-234.17C755,-240.18 789.35,-247.39 817.18,-253.24"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="816.29,-256.62 826.8,-255.25 817.73,-249.77 816.29,-256.62"/>
+</g>
+<!-- proc~set1~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge73" class="edge">
+<title>proc~set1~3&#45;&gt;set</title>
+<path fill="none" stroke="#cc00ff" d="M722.93,-275.45C757.31,-282.66 800.99,-291.84 831.61,-298.27"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="830.68,-301.65 841.18,-300.27 832.11,-294.79 830.68,-301.65"/>
+</g>
+<!-- proc~set1~3&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_edge71" class="edge">
+<title>proc~set1~3&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#cc00ff" d="M722.93,-252.82C748.65,-247.42 779.58,-240.93 806.35,-235.31"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="807,-238.75 816.06,-233.27 805.56,-231.9 807,-238.75"/>
+</g>
+<!-- proc~set1~3&#45;&gt;proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge72" class="edge">
+<title>proc~set1~3&#45;&gt;proc~valid_weights~3</title>
+<path fill="none" stroke="#cc00ff" d="M722.93,-264.13C752.25,-264.13 788.34,-264.13 817.33,-264.13"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="816.95,-267.64 826.95,-264.14 816.95,-260.64 816.95,-267.64"/>
+</g>
+<!-- proc~set2~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge77" class="edge">
+<title>proc~set2~3&#45;&gt;set</title>
+<path fill="none" stroke="#ff00e5" d="M722.87,-141.51C735.65,-144.66 748.33,-150.06 757.83,-159.13 799.95,-199.36 752.52,-244.08 793.83,-285.13 803.9,-295.15 818.32,-300.48 831.85,-303.29"/>
+<polygon fill="#ff00e5" stroke="#ff00e5" points="830.96,-306.69 841.39,-304.86 832.09,-299.78 830.96,-306.69"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_node50" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node50"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="933.22,-150.27 806.95,-150.27 806.95,-126 933.22,-126 933.22,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2~3&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_edge74" class="edge">
+<title>proc~set2~3&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#ff00e5" d="M722.93,-138.13C745.21,-138.13 771.4,-138.13 795.41,-138.13"/>
+<polygon fill="#ff00e5" stroke="#ff00e5" points="795.11,-141.64 805.11,-138.14 795.11,-134.64 795.11,-141.64"/>
+</g>
+<!-- proc~set2~3&#45;&gt;proc~valid_knot_vector -->
+<g id="program~~curve_connectivity~~CallsGraph_edge75" class="edge">
+<title>proc~set2~3&#45;&gt;proc~valid_knot_vector</title>
+<path fill="none" stroke="#ff00e5" d="M722.83,-145.15C734.92,-148.25 747.28,-152.71 757.83,-159.13 778.83,-171.93 773.09,-187.93 793.83,-201.13 798,-203.79 802.5,-206.11 807.16,-208.15"/>
+<polygon fill="#ff00e5" stroke="#ff00e5" points="805.55,-211.28 816.14,-211.61 808.07,-204.74 805.55,-211.28"/>
+</g>
+<!-- proc~set2~3&#45;&gt;proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge76" class="edge">
+<title>proc~set2~3&#45;&gt;proc~valid_weights~3</title>
+<path fill="none" stroke="#ff00e5" d="M723.03,-142.59C735.52,-145.75 748.01,-150.88 757.83,-159.13 788.92,-185.27 763.27,-216.38 793.83,-243.13 800.58,-249.04 808.86,-253.3 817.43,-256.36"/>
+<polygon fill="#ff00e5" stroke="#ff00e5" points="816.31,-259.68 826.9,-259.2 818.33,-252.98 816.31,-259.68"/>
+</g>
+<!-- proc~set3~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge80" class="edge">
+<title>proc~set3~3&#45;&gt;set</title>
+<path fill="none" stroke="#ff0098" d="M723.03,-184.59C735.52,-187.75 748.01,-192.88 757.83,-201.13 788.92,-227.27 763.27,-258.38 793.83,-285.13 804.25,-294.26 818.33,-299.44 831.49,-302.38"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="830.75,-305.8 841.22,-304.16 832.01,-298.92 830.75,-305.8"/>
+</g>
+<!-- proc~cmp_degree~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node49" class="node">
+<title>proc~cmp_degree~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node49"><a xlink:href="../proc/cmp_degree~3.html" xlink:title="nurbs_curve%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="946.35,-192.27 793.83,-192.27 793.83,-168 946.35,-168 946.35,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="870.09" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set3~3&#45;&gt;proc~cmp_degree~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge78" class="edge">
+<title>proc~set3~3&#45;&gt;proc~cmp_degree~3</title>
+<path fill="none" stroke="#ff0098" d="M722.93,-180.13C741.11,-180.13 761.88,-180.13 781.95,-180.13"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="781.82,-183.64 791.82,-180.14 781.82,-176.64 781.82,-183.64"/>
+</g>
+<!-- proc~set3~3&#45;&gt;proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge79" class="edge">
+<title>proc~set3~3&#45;&gt;proc~valid_weights~3</title>
+<path fill="none" stroke="#ff0098" d="M722.83,-187.15C734.92,-190.25 747.28,-194.71 757.83,-201.13 778.83,-213.93 773.09,-229.93 793.83,-243.13 801.07,-247.75 809.33,-251.36 817.66,-254.19"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="816.54,-257.51 827.12,-257.04 818.56,-250.8 816.54,-257.51"/>
+</g>
+<!-- proc~set4~3&#45;&gt;set -->
+<g id="program~~curve_connectivity~~CallsGraph_edge82" class="edge">
+<title>proc~set4~3&#45;&gt;set</title>
+<path fill="none" stroke="#ff004c" d="M722.93,-306.13C757.15,-306.13 800.61,-306.13 831.21,-306.13"/>
+<polygon fill="#ff004c" stroke="#ff004c" points="831.15,-309.64 841.15,-306.14 831.15,-302.64 831.15,-309.64"/>
+</g>
+<!-- proc~set4~3&#45;&gt;proc~valid_weights~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge81" class="edge">
+<title>proc~set4~3&#45;&gt;proc~valid_weights~3</title>
+<path fill="none" stroke="#ff004c" d="M722.93,-294.82C752.25,-288.67 788.34,-281.09 817.33,-275"/>
+<polygon fill="#ff004c" stroke="#ff004c" points="817.91,-278.46 826.98,-272.98 816.47,-271.61 817.91,-278.46"/>
+</g>
+<!-- proc~basis_bspline_active_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_node54" class="node">
+<title>proc~basis_bspline_active_ders</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node54"><a xlink:href="../proc/basis_bspline_active_ders.html" xlink:title="basis_bspline_active_ders">
+<polygon fill="#d9534f" stroke="#d9534f" points="1492.41,-891.27 1344.39,-891.27 1344.39,-867 1492.41,-867 1492.41,-891.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1418.4" y="-875.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_active_ders</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_active_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_edge83" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_active_ders</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M923.16,-871.04C941.73,-874.74 962.88,-878.31 982.35,-880.13 1103.74,-891.49 1245.02,-888.13 1332.85,-884.09"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1332.74,-887.6 1342.57,-883.63 1332.41,-880.61 1332.74,-887.6"/>
+</g>
+<!-- proc~basis_bspline_der_a -->
+<g id="program~~curve_connectivity~~CallsGraph_node55" class="node">
+<title>proc~basis_bspline_der_a</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node55"><a xlink:href="../proc/basis_bspline_der_a.html" xlink:title="basis_bspline_der_A">
+<polygon fill="#d9534f" stroke="#d9534f" points="1125.12,-871.27 1007.1,-871.27 1007.1,-847 1125.12,-847 1125.12,-871.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1066.11" y="-855.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_A</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_a -->
+<g id="program~~curve_connectivity~~CallsGraph_edge84" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_a</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M923.08,-859.13C945.27,-859.13 971.49,-859.13 995.33,-859.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="995.3,-862.64 1005.3,-859.14 995.3,-855.64 995.3,-862.64"/>
+</g>
+<!-- proc~basis_bspline_der_b -->
+<g id="program~~curve_connectivity~~CallsGraph_node56" class="node">
+<title>proc~basis_bspline_der_b</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node56"><a xlink:href="../proc/basis_bspline_der_b.html" xlink:title="basis_bspline_der_B">
+<polygon fill="#d9534f" stroke="#d9534f" points="1125.12,-829.27 1007.1,-829.27 1007.1,-805 1125.12,-805 1125.12,-829.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1066.11" y="-813.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_B</text>
+</a>
+</g>
+</g>
+<!-- interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_b -->
+<g id="program~~curve_connectivity~~CallsGraph_edge85" class="edge">
+<title>interface~basis_bspline_der&#45;&gt;proc~basis_bspline_der_b</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M923.08,-847.88C945.37,-843.06 971.73,-837.35 995.65,-832.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="996.3,-835.61 1005.33,-830.08 994.82,-828.77 996.3,-835.61"/>
+</g>
+<!-- proc~get_multiplicity~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_node57" class="node">
+<title>proc~get_multiplicity~3</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node57"><a xlink:href="../proc/get_multiplicity~3.html" xlink:title="nurbs_curve%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1149.87,-192.27 982.35,-192.27 982.35,-168 1149.87,-168 1149.87,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1066.11" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_curve%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree~3&#45;&gt;proc~get_multiplicity~3 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge86" class="edge">
+<title>proc~cmp_degree~3&#45;&gt;proc~get_multiplicity~3</title>
+<path fill="none" stroke="#ffff00" d="M946.66,-180.13C954.54,-180.13 962.62,-180.13 970.68,-180.13"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="970.52,-183.64 980.52,-180.14 970.52,-176.64 970.52,-183.64"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~curve_connectivity~~CallsGraph_node58" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node58"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1094,-150.27 1038.23,-150.27 1038.23,-126 1094,-126 1094,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1066.11" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~curve_connectivity~~CallsGraph_edge87" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#00ff00" d="M933.55,-138.13C964.1,-138.13 999.9,-138.13 1026.44,-138.13"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="1026.42,-141.64 1036.42,-138.14 1026.42,-134.64 1026.42,-141.64"/>
+</g>
+<!-- proc~basis_bspline_der_all_active -->
+<g id="program~~curve_connectivity~~CallsGraph_node60" class="node">
+<title>proc~basis_bspline_der_all_active</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node60"><a xlink:href="../proc/basis_bspline_der_all_active.html" xlink:title="basis_bspline_der_all_active">
+<polygon fill="#d9534f" stroke="#d9534f" points="1689.18,-891.27 1528.41,-891.27 1528.41,-867 1689.18,-867 1689.18,-891.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1608.8" y="-875.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_der_all_active</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_active_ders&#45;&gt;proc~basis_bspline_der_all_active -->
+<g id="program~~curve_connectivity~~CallsGraph_edge88" class="edge">
+<title>proc~basis_bspline_active_ders&#45;&gt;proc~basis_bspline_der_all_active</title>
+<path fill="none" stroke="#ff0000" d="M1492.78,-879.13C1500.64,-879.13 1508.71,-879.13 1516.75,-879.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1516.56,-882.64 1526.56,-879.14 1516.56,-875.64 1516.56,-882.64"/>
+</g>
+<!-- proc~basis_bspline_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_node61" class="node">
+<title>proc~basis_bspline_ders</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node61"><a xlink:href="../proc/basis_bspline_ders.html" xlink:title="basis_bspline_ders">
+<polygon fill="#d9534f" stroke="#d9534f" points="1302.39,-871.27 1191.87,-871.27 1191.87,-847 1302.39,-847 1302.39,-871.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1247.13" y="-855.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline_ders</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_a&#45;&gt;proc~basis_bspline_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_edge89" class="edge">
+<title>proc~basis_bspline_der_a&#45;&gt;proc~basis_bspline_ders</title>
+<path fill="none" stroke="#cbff00" d="M1125.23,-859.13C1142.82,-859.13 1162.26,-859.13 1180.31,-859.13"/>
+<polygon fill="#cbff00" stroke="#cbff00" points="1180.13,-862.64 1190.13,-859.14 1180.13,-855.64 1180.13,-862.64"/>
+</g>
+<!-- proc~basis_bspline_der_b&#45;&gt;proc~basis_bspline_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_edge90" class="edge">
+<title>proc~basis_bspline_der_b&#45;&gt;proc~basis_bspline_ders</title>
+<path fill="none" stroke="#00ff66" d="M1120.82,-829.74C1139.85,-834.2 1161.46,-839.27 1181.32,-843.93"/>
+<polygon fill="#00ff66" stroke="#00ff66" points="1180.45,-847.32 1190.98,-846.2 1182.05,-840.51 1180.45,-847.32"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~curve_connectivity~~CallsGraph_node59" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node59"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1308.39,-192.27 1185.87,-192.27 1185.87,-168 1308.39,-168 1308.39,-192.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1247.13" y="-176.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~get_multiplicity~3&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~curve_connectivity~~CallsGraph_edge91" class="edge">
+<title>proc~get_multiplicity~3&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#0066ff" d="M1150.33,-180.13C1158.31,-180.13 1166.35,-180.13 1174.2,-180.13"/>
+<polygon fill="#0066ff" stroke="#0066ff" points="1174.03,-183.64 1184.03,-180.14 1174.03,-176.64 1174.03,-183.64"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~curve_connectivity~~CallsGraph_node63" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node63"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1483.04,-213.27 1353.77,-213.27 1353.77,-189 1483.04,-189 1483.04,-213.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1418.4" y="-197.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge92" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1308.76,-187.66C1319.65,-189.01 1331.11,-190.43 1342.35,-191.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1341.62,-195.26 1351.97,-193.02 1342.48,-188.31 1341.62,-195.26"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~curve_connectivity~~CallsGraph_node64" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node64"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1483.04,-171.27 1353.77,-171.27 1353.77,-147 1483.04,-147 1483.04,-171.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1418.4" y="-155.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~curve_connectivity~~CallsGraph_edge93" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1308.76,-172.61C1319.65,-171.26 1331.11,-169.84 1342.35,-168.45"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1342.48,-171.96 1351.97,-167.25 1341.62,-165.01 1342.48,-171.96"/>
+</g>
+<!-- proc~active_span_at -->
+<g id="program~~curve_connectivity~~CallsGraph_node62" class="node">
+<title>proc~active_span_at</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node62"><a xlink:href="../proc/active_span_at.html" xlink:title="active_span_at">
+<polygon fill="#d9534f" stroke="#d9534f" points="1815.45,-891.27 1725.18,-891.27 1725.18,-867 1815.45,-867 1815.45,-891.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1770.32" y="-875.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">active_span_at</text>
+</a>
+</g>
+</g>
+<!-- proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at -->
+<g id="program~~curve_connectivity~~CallsGraph_edge94" class="edge">
+<title>proc~basis_bspline_der_all_active&#45;&gt;proc~active_span_at</title>
+<path fill="none" stroke="#00ff00" d="M1689.56,-879.13C1697.62,-879.13 1705.69,-879.13 1713.43,-879.13"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="1713.37,-882.64 1723.37,-879.14 1713.37,-875.64 1713.37,-882.64"/>
+</g>
+<!-- proc~basis_bspline_ders&#45;&gt;proc~basis_bspline_active_ders -->
+<g id="program~~curve_connectivity~~CallsGraph_edge95" class="edge">
+<title>proc~basis_bspline_ders&#45;&gt;proc~basis_bspline_active_ders</title>
+<path fill="none" stroke="#0000ff" d="M1302.62,-865.57C1312.34,-866.72 1322.68,-867.94 1333.01,-869.16"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1332.34,-872.61 1342.68,-870.31 1333.16,-865.66 1332.34,-872.61"/>
+</g>
+<!-- proc~knot_tolerance -->
+<g id="program~~curve_connectivity~~CallsGraph_node65" class="node">
+<title>proc~knot_tolerance</title>
+<g id="a_program~~curve_connectivity~~CallsGraph_node65"><a xlink:href="../proc/knot_tolerance.html" xlink:title="knot_tolerance">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1942.47,-891.27 1851.45,-891.27 1851.45,-867 1942.47,-867 1942.47,-891.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1896.96" y="-875.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">knot_tolerance</text>
+</a>
+</g>
+</g>
+<!-- proc~active_span_at&#45;&gt;proc~knot_tolerance -->
+<g id="program~~curve_connectivity~~CallsGraph_edge96" class="edge">
+<title>proc~active_span_at&#45;&gt;proc~knot_tolerance</title>
+<path fill="none" stroke="#ff0000" d="M1815.61,-879.13C1823.41,-879.13 1831.62,-879.13 1839.7,-879.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1839.45,-882.64 1849.45,-879.14 1839.45,-875.64 1839.45,-882.64"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramcurve_connectivityCallsGraph = svgPanZoom('#programcurve_connectivityCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-center~13"></span>
+              real(kind=rk),
+            </td>
+            <td>
+parameter               
+            </td>
+            <td>::</td>
+            <td><strong>center</strong>(3)</td>
+<td> =</td>
+                <td>[0.0_rk, 0.0_rk, 0.0_rk]</td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-curve~6"></span>
+              type(<a href='../type/nurbs_curve.html'>nurbs_curve</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>curve</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elem~34"></span>
+              integer,
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elem</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elem_xc~2"></span>
+              integer,
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elem_Xc</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elem_xg~2"></span>
+              integer,
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elem_Xg</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-elem_xth~2"></span>
+              integer,
+            </td>
+            <td>
+              allocatable
+            </td>
+            <td>::</td>
+            <td><strong>elem_Xth</strong>(:,:)</td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    <section>
+    <h2 id="src">Source Code</h2>
+    <div class="hl codehilite"><pre><span></span><span class="k">program </span><span class="n">curve_connectivity</span>
+
+<span class="w">    </span><span class="k">use </span><span class="n">forcad</span><span class="p">,</span><span class="w"> </span><span class="k">only</span><span class="p">:</span><span class="w"> </span><span class="n">rk</span><span class="p">,</span><span class="w"> </span><span class="n">nurbs_curve</span>
+
+<span class="w">    </span><span class="k">implicit none</span>
+
+<span class="k">    </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">parameter</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">center</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">]</span>
+
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">nurbs_curve</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">curve</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">elem</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">elem_Xc</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">elem_Xg</span><span class="p">(:,:),</span><span class="w"> </span><span class="n">elem_Xth</span><span class="p">(:,:)</span>
+
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">set_circle</span><span class="p">(&amp;</span>
+<span class="w">        </span><span class="n">center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">center</span><span class="p">,&amp;</span>
+<span class="w">        </span><span class="n">radius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0_rk</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">create</span><span class="p">(</span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">33</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">elem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curve</span><span class="p">%</span><span class="n">cmp_elem</span><span class="p">()</span>
+<span class="w">    </span><span class="n">elem_Xc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curve</span><span class="p">%</span><span class="n">cmp_elem_Xc_vis</span><span class="p">()</span>
+<span class="w">    </span><span class="n">elem_Xg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curve</span><span class="p">%</span><span class="n">cmp_elem_Xg_vis</span><span class="p">()</span>
+<span class="w">    </span><span class="n">elem_Xth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curve</span><span class="p">%</span><span class="n">cmp_elem_Xth</span><span class="p">()</span>
+
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,l1)&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Valid curve       : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">curve</span><span class="p">%</span><span class="n">err</span><span class="p">%</span><span class="n">ok</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,2(i0,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;IGA connectivity   : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,2(i0,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Control mesh       : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xc</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xc</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,2(i0,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Geometry mesh      : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xg</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xg</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,2(i0,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;Knot-span mesh     : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xth</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">elem_Xth</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="k">write</span><span class="p">(</span><span class="o">*</span><span class="p">,</span><span class="s2">&quot;(a,*(i0,1x))&quot;</span><span class="p">)</span><span class="w"> </span><span class="s2">&quot;First IGA element  : &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">elem</span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span>
+
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">export_Xc</span><span class="p">(</span><span class="s2">&quot;vtk/curve_connectivity_Xc.vtk&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">export_Xg</span><span class="p">(</span><span class="s2">&quot;vtk/curve_connectivity_Xg.vtk&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">export_Xth_in_Xg</span><span class="p">(</span><span class="s2">&quot;vtk/curve_connectivity_Xth.vtk&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">show</span><span class="p">(&amp;</span>
+<span class="w">        </span><span class="n">vtkfile_Xc</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vtk/curve_connectivity_Xc.vtk&quot;</span><span class="p">,&amp;</span>
+<span class="w">        </span><span class="n">vtkfile_Xg</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vtk/curve_connectivity_Xg.vtk&quot;</span><span class="p">,&amp;</span>
+<span class="w">        </span><span class="n">vtkfile_Xth_in_Xg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vtk/curve_connectivity_Xth.vtk&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">call </span><span class="n">curve</span><span class="p">%</span><span class="n">finalize</span><span class="p">()</span>
+
+<span class="k">end program </span><span class="n">curve_connectivity</span>
+</pre></div>
+
+    </section>
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2026 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-07-21T13:35:50.771609+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
