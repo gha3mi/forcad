@@ -1,0 +1,1366 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+    <meta name="author" content="Seyed Ali Ghasemi" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>shape_ring_3d &ndash; ForCAD</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">ForCAD </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/programs.html">Programs</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>shape_ring_3d      <small>Program</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+            <li class="list-inline-item" id="meta-license"><i class="fa fa-legal"></i> BSD 3-Clause</li>
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.2% of total for programs.">11 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/shape_ring_3d.f90"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='../sourcefile/shape_ring_3d.f90.html'>shape_ring_3d.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">shape_ring_3d</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#vars-0"
+         aria-expanded="false" aria-controls="vars-0">
+         <h4 class="card-header bg-primary text-white">Variables</h4>
+      </a>
+      <div id="vars-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../program/shape_ring_3d.html#variable-shape~12">shape</a>
+        </div>
+      </div>
+    </div>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+        <div class="card mb-4">
+      <h3 class="card-header card-title bg-light">Uses</h3>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <ul class="list-inline">
+                  <li class="list-inline-item"><a href='../module/forcad.html'>forcad</a></li>
+              </ul>
+            </li>
+            <li class="list-group-item">
+              <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~shape_ring_3d~~UsesGraph Pages: 1 -->
+<svg id="programshape_ring_3dUsesGraph" width="571pt" height="156pt"
+ viewBox="0.00 0.00 571.00 156.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~shape_ring_3d~~UsesGraph" class="graph" transform="scale(1 1) rotate(0) translate(4 151.84)">
+<title>program~~shape_ring_3d~~UsesGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-151.84 566.83,-151.84 566.83,4 -4,4"/>
+<!-- program~shape_ring_3d -->
+<g id="program~~shape_ring_3d~~UsesGraph_node1" class="node">
+<title>program~shape_ring_3d</title>
+<polygon fill="none" stroke="black" points="562.83,-87.27 474.06,-87.27 474.06,-63 562.83,-63 562.83,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="518.44" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50">shape_ring_3d</text>
+</g>
+<!-- module~forcad -->
+<g id="program~~shape_ring_3d~~UsesGraph_node2" class="node">
+<title>module~forcad</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node2"><a xlink:href="../module/forcad.html" xlink:title="forcad">
+<polygon fill="#337ab7" stroke="#337ab7" points="438.06,-87.27 384.06,-87.27 384.06,-63 438.06,-63 438.06,-87.27"/>
+<text xml:space="preserve" text-anchor="middle" x="411.06" y="-71.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;module~forcad -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge1" class="edge">
+<title>program~shape_ring_3d&#45;&gt;module~forcad</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M473.67,-75.14C465.71,-75.14 457.47,-75.14 449.7,-75.14"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="449.89,-71.64 439.89,-75.14 449.89,-78.64 449.89,-71.64"/>
+</g>
+<!-- module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_node3" class="node">
+<title>module~forcad_kinds</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node3"><a xlink:href="../module/forcad_kinds.html" xlink:title="forcad_kinds">
+<polygon fill="#337ab7" stroke="#337ab7" points="78.27,-66.27 0,-66.27 0,-42 78.27,-42 78.27,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="39.13" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_kinds</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge2" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M396.41,-87.37C384.54,-97.24 366.41,-110.52 348.06,-117.14 265.45,-146.9 236.61,-157.34 151.4,-136.13"/>
+</g>
+<!-- module~forcad_nurbs_curve -->
+<g id="program~~shape_ring_3d~~UsesGraph_node4" class="node">
+<title>module~forcad_nurbs_curve</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node4"><a xlink:href="../module/forcad_nurbs_curve.html" xlink:title="forcad_nurbs_curve">
+<polygon fill="#337ab7" stroke="#337ab7" points="343.18,-108.27 227.41,-108.27 227.41,-84 343.18,-84 343.18,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_curve</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_curve -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge3" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_curve</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M383.81,-79.59C375.16,-81.06 365.1,-82.76 354.8,-84.51"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="354.34,-81.04 345.06,-86.16 355.51,-87.94 354.34,-81.04"/>
+</g>
+<!-- module~forcad_nurbs_surface -->
+<g id="program~~shape_ring_3d~~UsesGraph_node5" class="node">
+<title>module~forcad_nurbs_surface</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node5"><a xlink:href="../module/forcad_nurbs_surface.html" xlink:title="forcad_nurbs_surface">
+<polygon fill="#337ab7" stroke="#337ab7" points="348.06,-66.27 222.54,-66.27 222.54,-42 348.06,-42 348.06,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_surface</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_surface -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge4" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_surface</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M383.81,-70.68C376.48,-69.44 368.13,-68.02 359.48,-66.55"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="360.35,-63.15 349.9,-64.93 359.18,-70.05 360.35,-63.15"/>
+</g>
+<!-- module~forcad_nurbs_volume -->
+<g id="program~~shape_ring_3d~~UsesGraph_node6" class="node">
+<title>module~forcad_nurbs_volume</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node6"><a xlink:href="../module/forcad_nurbs_volume.html" xlink:title="forcad_nurbs_volume">
+<polygon fill="#337ab7" stroke="#337ab7" points="348.06,-24.27 222.54,-24.27 222.54,0 348.06,0 348.06,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="285.3" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_nurbs_volume</text>
+</a>
+</g>
+</g>
+<!-- module~forcad&#45;&gt;module~forcad_nurbs_volume -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge5" class="edge">
+<title>module~forcad&#45;&gt;module~forcad_nurbs_volume</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M394.21,-62.65C382.1,-53.55 364.71,-41.42 348.06,-33.13 345.01,-31.62 341.83,-30.17 338.59,-28.8"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="340.11,-25.63 329.52,-25.21 337.53,-32.14 340.11,-25.63"/>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge7" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M255.24,-108.68C222.45,-122.16 171.1,-141.04 151.4,-136.13"/>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M149.4,-136.13C111.75,-126.76 77.59,-95.87 57.84,-74.8"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="60.61,-72.65 51.31,-67.58 55.42,-77.34 60.61,-72.65"/>
+</g>
+<!-- fordebug -->
+<g id="program~~shape_ring_3d~~UsesGraph_node7" class="node">
+<title>fordebug</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="180.54,-108.27 120.27,-108.27 120.27,-84 180.54,-84 180.54,-108.27"/>
+<text xml:space="preserve" text-anchor="middle" x="150.4" y="-92.54" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">fordebug</text>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;fordebug -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge6" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;fordebug</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M227.17,-96.14C215.49,-96.14 203.43,-96.14 192.45,-96.14"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="192.55,-92.64 182.55,-96.14 192.55,-99.64 192.55,-92.64"/>
+</g>
+<!-- module~forcad_utils -->
+<g id="program~~shape_ring_3d~~UsesGraph_node8" class="node">
+<title>module~forcad_utils</title>
+<g id="a_program~~shape_ring_3d~~UsesGraph_node8"><a xlink:href="../module/forcad_utils.html" xlink:title="forcad_utils">
+<polygon fill="#337ab7" stroke="#337ab7" points="186.54,-66.27 114.27,-66.27 114.27,-42 186.54,-42 186.54,-66.27"/>
+<text xml:space="preserve" text-anchor="middle" x="150.4" y="-50.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">forcad_utils</text>
+</a>
+</g>
+</g>
+<!-- module~forcad_nurbs_curve&#45;&gt;module~forcad_utils -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge8" class="edge">
+<title>module~forcad_nurbs_curve&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M244.43,-83.53C229.66,-78.87 212.8,-73.54 197.52,-68.71"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="198.77,-65.43 188.18,-65.76 196.66,-72.11 198.77,-65.43"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge10" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M247.63,-41.51C211.75,-29.42 161.11,-13.14 151.4,-14.13"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;fordebug -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge9" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;fordebug</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M244.43,-66.74C227.62,-72.05 208.09,-78.22 191.29,-83.53"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="190.61,-80.07 182.13,-86.42 192.72,-86.75 190.61,-80.07"/>
+</g>
+<!-- module~forcad_nurbs_surface&#45;&gt;module~forcad_utils -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge11" class="edge">
+<title>module~forcad_nurbs_surface&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M222.13,-54.13C214.06,-54.13 205.9,-54.13 198.13,-54.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="198.23,-50.64 188.23,-54.14 198.23,-57.64 198.23,-50.64"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge13" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M222.3,-10.82C199.91,-10.94 174.47,-11.76 151.4,-14.13"/>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M149.4,-14.13C123.05,-16.85 95.02,-27.28 73.95,-36.81"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="72.55,-33.6 64.98,-41.02 75.52,-39.94 72.55,-33.6"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;fordebug -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge12" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;fordebug</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M238.12,-24.74C232.65,-27.12 227.32,-29.9 222.54,-33.13 202.18,-46.91 205.34,-59.29 186.54,-75.14 185.76,-75.8 184.95,-76.45 184.12,-77.09"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="182.25,-74.14 176.05,-82.73 186.26,-79.87 182.25,-74.14"/>
+</g>
+<!-- module~forcad_nurbs_volume&#45;&gt;module~forcad_utils -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge14" class="edge">
+<title>module~forcad_nurbs_volume&#45;&gt;module~forcad_utils</title>
+<path fill="none" stroke="#7f00ff" stroke-dasharray="5,2" d="M244.43,-24.74C229.66,-29.4 212.8,-34.73 197.52,-39.56"/>
+<polygon fill="#7f00ff" stroke="#7f00ff" points="196.66,-36.16 188.18,-42.51 198.77,-42.84 196.66,-36.16"/>
+</g>
+<!-- module~forcad_utils&#45;&gt;module~forcad_kinds -->
+<g id="program~~shape_ring_3d~~UsesGraph_edge15" class="edge">
+<title>module~forcad_utils&#45;&gt;module~forcad_kinds</title>
+<path fill="none" stroke="#00ffff" stroke-dasharray="5,2" d="M113.93,-54.13C106.22,-54.13 97.93,-54.13 89.79,-54.13"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="89.96,-50.64 79.96,-54.14 89.96,-57.64 89.96,-50.64"/>
+</g>
+</g>
+</svg>
+</div>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#UsesGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="UsesGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="511pt" height="32pt"
+ viewBox="0.00 0.00 511.00 32.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 506.88,-28.27 506.88,4 -4,4"/>
+<!-- Module -->
+<g id="node1" class="node">
+<title>Module</title>
+<polygon fill="#337ab7" stroke="#337ab7" points="54,-24.27 0,-24.27 0,0 54,0 54,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="27" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Module</text>
+</g>
+<!-- Submodule -->
+<g id="node2" class="node">
+<title>Submodule</title>
+<polygon fill="#5bc0de" stroke="#5bc0de" points="144.13,-24.27 71.87,-24.27 71.87,0 144.13,0 144.13,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="108" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Submodule</text>
+</g>
+<!-- Subroutine -->
+<g id="node3" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="231.63,-24.27 162.37,-24.27 162.37,0 231.63,0 231.63,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node4" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="306.26,-24.27 249.74,-24.27 249.74,0 306.26,0 306.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="278" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Program -->
+<g id="node5" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="381.26,-24.27 324.74,-24.27 324.74,0 381.26,0 381.26,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node6" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="502.88,-24.27 399.12,-24.27 399.12,0 502.88,0 502.88,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="451" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a submodule to the (sub)module which it is
+descended from. Dashed arrows point from a module or program unit to 
+modules which it uses.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Set up a ring shape centered at 0,0,0 with inner radius 1, outer radius 2, and length 1.</p>
+<p>Export the control points to a VTK file for visualization.</p>
+<p>Create the shape using the specified number of elements in each direction.</p>
+<p>Export the geometry to a VTK file for visualization.</p>
+<p>Show the control geometry and geometry using PyVista</p>
+<p>Finalize and clean up the shape object.</p>
+    <br>
+    <div class="card">
+      <div class="card-header">
+  <h3 class="card-title">Calls</h3>
+      </div>
+      <div class="card-body">
+  <div class="depgraph"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: program~~shape_ring_3d~~CallsGraph Pages: 1 -->
+<svg id="programshape_ring_3dCallsGraph" width="641pt" height="338pt"
+ viewBox="0.00 0.00 641.00 338.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="program~~shape_ring_3d~~CallsGraph" class="graph" transform="scale(0.44828 0.44828) rotate(0) translate(4 749.27)">
+<title>program~~shape_ring_3d~~CallsGraph</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-749.27 1425.91,-749.27 1425.91,4 -4,4"/>
+<!-- program~shape_ring_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_node1" class="node">
+<title>program~shape_ring_3d</title>
+<polygon fill="none" stroke="black" points="88.77,-330.27 0,-330.27 0,-306 88.77,-306 88.77,-330.27"/>
+<text xml:space="preserve" text-anchor="middle" x="44.38" y="-314.53" font-family="Helvetica,sans-Serif" font-size="10.50">shape_ring_3d</text>
+</g>
+<!-- proc~create -->
+<g id="program~~shape_ring_3d~~CallsGraph_node2" class="node">
+<title>proc~create</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node2"><a xlink:href="../proc/create.html" xlink:title="nurbs_volume%create">
+<polygon fill="#d9534f" stroke="#d9534f" points="264.54,-603.27 134.52,-603.27 134.52,-579 264.54,-579 264.54,-603.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-587.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%create</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~create -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge1" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~create</title>
+<path fill="none" stroke="#ff0000" d="M52.36,-330.57C76.28,-373.21 155.17,-513.84 186.01,-568.82"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="182.83,-570.29 190.77,-577.3 188.93,-566.87 182.83,-570.29"/>
+</g>
+<!-- proc~export_xc -->
+<g id="program~~shape_ring_3d~~CallsGraph_node3" class="node">
+<title>proc~export_xc</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node3"><a xlink:href="../proc/export_xc.html" xlink:title="nurbs_volume%export_Xc">
+<polygon fill="#d9534f" stroke="#d9534f" points="273.91,-403.27 125.14,-403.27 125.14,-379 273.91,-379 273.91,-403.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-387.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%export_Xc</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~export_xc -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge2" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~export_xc</title>
+<path fill="none" stroke="#ff0000" d="M67.7,-330.62C83.46,-339.27 105.18,-350.86 124.77,-360.13 134.93,-364.94 146.03,-369.81 156.47,-374.22"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="155.06,-377.42 165.64,-378.04 157.75,-370.96 155.06,-377.42"/>
+</g>
+<!-- proc~export_xg -->
+<g id="program~~shape_ring_3d~~CallsGraph_node4" class="node">
+<title>proc~export_xg</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node4"><a xlink:href="../proc/export_xg.html" xlink:title="nurbs_volume%export_Xg">
+<polygon fill="#d9534f" stroke="#d9534f" points="274.29,-351.27 124.77,-351.27 124.77,-327 274.29,-327 274.29,-351.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-335.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%export_Xg</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~export_xg -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge3" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~export_xg</title>
+<path fill="none" stroke="#ff0000" d="M88.86,-324.1C96.61,-325.16 104.91,-326.3 113.36,-327.46"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="112.63,-330.89 123.02,-328.78 113.58,-323.95 112.63,-330.89"/>
+</g>
+<!-- proc~finalize -->
+<g id="program~~shape_ring_3d~~CallsGraph_node5" class="node">
+<title>proc~finalize</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node5"><a xlink:href="../proc/finalize.html" xlink:title="nurbs_volume%finalize">
+<polygon fill="#d9534f" stroke="#d9534f" points="266.79,-309.27 132.27,-309.27 132.27,-285 266.79,-285 266.79,-309.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-293.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%finalize</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~finalize -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge4" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~finalize</title>
+<path fill="none" stroke="#ff0000" d="M88.86,-312.17C98.84,-310.81 109.74,-309.31 120.68,-307.81"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="121.12,-311.28 130.55,-306.46 120.17,-304.35 121.12,-311.28"/>
+</g>
+<!-- proc~set_ring -->
+<g id="program~~shape_ring_3d~~CallsGraph_node6" class="node">
+<title>proc~set_ring</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node6"><a xlink:href="../proc/set_ring.html" xlink:title="nurbs_volume%set_ring">
+<polygon fill="#d9534f" stroke="#d9534f" points="268.66,-267.27 130.39,-267.27 130.39,-243 268.66,-243 268.66,-267.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-251.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set_ring</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~set_ring -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge5" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~set_ring</title>
+<path fill="none" stroke="#ff0000" d="M66.04,-305.67C81.73,-296.58 104.08,-284.45 124.77,-276.13 129.08,-274.4 133.58,-272.75 138.15,-271.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="138.97,-274.61 147.41,-268.2 136.82,-267.95 138.97,-274.61"/>
+</g>
+<!-- proc~show -->
+<g id="program~~shape_ring_3d~~CallsGraph_node7" class="node">
+<title>proc~show</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node7"><a xlink:href="../proc/show.html" xlink:title="nurbs_volume%show">
+<polygon fill="#d9534f" stroke="#d9534f" points="261.16,-225.27 137.89,-225.27 137.89,-201 261.16,-201 261.16,-225.27"/>
+<text xml:space="preserve" text-anchor="middle" x="199.53" y="-209.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%show</text>
+</a>
+</g>
+</g>
+<!-- program~shape_ring_3d&#45;&gt;proc~show -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge6" class="edge">
+<title>program~shape_ring_3d&#45;&gt;proc~show</title>
+<path fill="none" stroke="#ff0000" d="M53.84,-305.58C66.89,-287.17 93.72,-252.98 124.77,-234.13 127.07,-232.74 129.48,-231.43 131.95,-230.2"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="133.25,-233.45 141.01,-226.24 130.45,-227.04 133.25,-233.45"/>
+</g>
+<!-- interface~compute_xg -->
+<g id="program~~shape_ring_3d~~CallsGraph_node8" class="node">
+<title>interface~compute_xg</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node8"><a xlink:href="../interface/compute_xg.html" xlink:title="compute_Xg">
+<polygon fill="#a7506f" stroke="#a7506f" points="444.81,-603.27 366.54,-603.27 366.54,-579 444.81,-579 444.81,-603.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-587.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;interface~compute_xg -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge7" class="edge">
+<title>proc~create&#45;&gt;interface~compute_xg</title>
+<path fill="none" stroke="#ff0000" d="M264.84,-591.13C293.99,-591.13 327.91,-591.13 355.05,-591.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="354.72,-594.64 364.72,-591.14 354.72,-587.64 354.72,-594.64"/>
+</g>
+<!-- interface~ndgrid -->
+<g id="program~~shape_ring_3d~~CallsGraph_node9" class="node">
+<title>interface~ndgrid</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node9"><a xlink:href="../interface/ndgrid.html" xlink:title="ndgrid">
+<polygon fill="#a7506f" stroke="#a7506f" points="432.68,-674.27 378.68,-674.27 378.68,-650 432.68,-650 432.68,-674.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-658.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;interface~ndgrid -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge8" class="edge">
+<title>proc~create&#45;&gt;interface~ndgrid</title>
+<path fill="none" stroke="#ff0000" d="M236.56,-603.66C273.54,-616.53 330.8,-636.44 368.01,-649.38"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="366.38,-652.52 376.98,-652.5 368.68,-645.91 366.38,-652.52"/>
+</g>
+<!-- proc~is_rational -->
+<g id="program~~shape_ring_3d~~CallsGraph_node14" class="node">
+<title>proc~is_rational</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node14"><a xlink:href="../proc/is_rational.html" xlink:title="nurbs_volume%is_rational">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="481.19,-716.27 330.17,-716.27 330.17,-692 481.19,-692 481.19,-716.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-700.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%is_rational</text>
+</a>
+</g>
+</g>
+<!-- proc~create&#45;&gt;proc~is_rational -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge9" class="edge">
+<title>proc~create&#45;&gt;proc~is_rational</title>
+<path fill="none" stroke="#ff0000" d="M211.66,-603.74C230.09,-623.8 269.04,-662.79 310.29,-683.13 313.6,-684.77 317.04,-686.28 320.56,-687.67"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="319.3,-690.94 329.9,-691 321.66,-684.34 319.3,-690.94"/>
+</g>
+<!-- set -->
+<g id="program~~shape_ring_3d~~CallsGraph_node15" class="node">
+<title>set</title>
+<polygon fill="#777777" stroke="#777777" points="1036.49,-224.27 982.49,-224.27 982.49,-200 1036.49,-200 1036.49,-224.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1009.49" y="-208.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">set</text>
+</g>
+<!-- proc~create&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge10" class="edge">
+<title>proc~create&#45;&gt;set</title>
+<path fill="none" stroke="#ff0000" d="M264.94,-578.74C279.83,-575.89 295.61,-572.89 310.29,-570.13 342.19,-564.14 858.98,-483.74 884.85,-464.13 961.99,-405.67 993.85,-286.23 1004.26,-235.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1007.65,-236.56 1006.12,-226.07 1000.78,-235.22 1007.65,-236.56"/>
+</g>
+<!-- proc~cmp_elem_xc_vis -->
+<g id="program~~shape_ring_3d~~CallsGraph_node11" class="node">
+<title>proc~cmp_elem_xc_vis</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node11"><a xlink:href="../proc/cmp_elem_xc_vis.html" xlink:title="nurbs_volume%cmp_elem_Xc_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="500.69,-424.27 310.67,-424.27 310.67,-400 500.69,-400 500.69,-424.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-408.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_elem_Xc_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge11" class="edge">
+<title>proc~export_xc&#45;&gt;proc~cmp_elem_xc_vis</title>
+<path fill="none" stroke="#ffff00" d="M274.23,-398.72C282.32,-399.55 290.66,-400.41 299.04,-401.27"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="298.65,-404.75 308.96,-402.29 299.37,-397.78 298.65,-404.75"/>
+</g>
+<!-- proc~export_vtk_legacy -->
+<g id="program~~shape_ring_3d~~CallsGraph_node13" class="node">
+<title>proc~export_vtk_legacy</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node13"><a xlink:href="../proc/export_vtk_legacy.html" xlink:title="export_vtk_legacy">
+<polygon fill="#d9534f" stroke="#d9534f" points="459.06,-382.27 352.29,-382.27 352.29,-358 459.06,-358 459.06,-382.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-366.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">export_vtk_legacy</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xc&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge12" class="edge">
+<title>proc~export_xc&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#ffff00" d="M274.23,-383.55C295.91,-381.32 319.45,-378.9 340.49,-376.74"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="340.79,-380.23 350.38,-375.72 340.08,-373.26 340.79,-380.23"/>
+</g>
+<!-- proc~export_xc&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge13" class="edge">
+<title>proc~export_xc&#45;&gt;set</title>
+<path fill="none" stroke="#ffff00" d="M225.49,-403.71C247.25,-413.93 279.99,-427.54 310.29,-433.13 435.84,-456.34 774.71,-497.72 884.85,-433.13 959.16,-389.56 992.15,-283.22 1003.53,-235.72"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="1006.89,-236.74 1005.69,-226.21 1000.07,-235.19 1006.89,-236.74"/>
+</g>
+<!-- proc~cmp_elem_xg_vis -->
+<g id="program~~shape_ring_3d~~CallsGraph_node12" class="node">
+<title>proc~cmp_elem_xg_vis</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node12"><a xlink:href="../proc/cmp_elem_xg_vis.html" xlink:title="nurbs_volume%cmp_elem_Xg_vis">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="501.06,-340.27 310.29,-340.27 310.29,-316 501.06,-316 501.06,-340.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-324.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_elem_Xg_vis</text>
+</a>
+</g>
+</g>
+<!-- proc~export_xg&#45;&gt;proc~cmp_elem_xg_vis -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge14" class="edge">
+<title>proc~export_xg&#45;&gt;proc~cmp_elem_xg_vis</title>
+<path fill="none" stroke="#00ff00" d="M274.52,-335.15C282.35,-334.73 290.43,-334.29 298.53,-333.85"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="298.69,-337.35 308.48,-333.32 298.31,-330.36 298.69,-337.35"/>
+</g>
+<!-- proc~export_xg&#45;&gt;proc~export_vtk_legacy -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge15" class="edge">
+<title>proc~export_xg&#45;&gt;proc~export_vtk_legacy</title>
+<path fill="none" stroke="#00ff00" d="M274.52,-350.37C296.18,-353.66 319.67,-357.23 340.66,-360.41"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="340.13,-363.87 350.54,-361.91 341.18,-356.95 340.13,-363.87"/>
+</g>
+<!-- proc~export_xg&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge16" class="edge">
+<title>proc~export_xg&#45;&gt;set</title>
+<path fill="none" stroke="#00ff00" d="M245.43,-326.5C254.96,-323.78 264.97,-320.89 274.29,-318.13 290.34,-313.4 293.91,-310.55 310.29,-307.13 561.92,-254.7 631.62,-285.23 884.85,-241.13 914.1,-236.04 946.79,-228.28 971.21,-222.07"/>
+<polygon fill="#00ff00" stroke="#00ff00" points="971.86,-225.52 980.67,-219.63 970.12,-218.74 971.86,-225.52"/>
+</g>
+<!-- none~set -->
+<g id="program~~shape_ring_3d~~CallsGraph_node10" class="node">
+<title>none~set</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node10"><a xlink:href="../type/nurbs_volume.html#boundprocedure-set" xlink:title="nurbs_volume%set">
+<polygon fill="#a7506f" stroke="#a7506f" points="461.69,-207.27 349.67,-207.27 349.67,-183 461.69,-183 461.69,-207.27"/>
+<text xml:space="preserve" text-anchor="middle" x="405.68" y="-191.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set</text>
+</a>
+</g>
+</g>
+<!-- proc~set_ring&#45;&gt;none~set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge17" class="edge">
+<title>proc~set_ring&#45;&gt;none~set</title>
+<path fill="none" stroke="#0000ff" d="M245.02,-242.57C254.68,-239.82 264.83,-236.9 274.29,-234.13 299.94,-226.65 328.37,-218.17 352.12,-211.03"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="353.01,-214.42 361.58,-208.18 350.99,-207.71 353.01,-214.42"/>
+</g>
+<!-- proc~compute_xg_bspline_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_node17" class="node">
+<title>proc~compute_xg_bspline_3d</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node17"><a xlink:href="../proc/compute_xg_bspline_3d.html" xlink:title="compute_Xg_bspline_3d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="865.35,-542.27 724.83,-542.27 724.83,-518 865.35,-518 865.35,-542.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-526.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge18" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M445.24,-585.06C507.39,-575.28 631.03,-555.81 713.16,-542.88"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="713.64,-546.35 722.97,-541.33 712.55,-539.43 713.64,-546.35"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point -->
+<g id="program~~shape_ring_3d~~CallsGraph_node18" class="node">
+<title>proc~compute_xg_bspline_3d_1point</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node18"><a xlink:href="../proc/compute_xg_bspline_3d_1point.html" xlink:title="compute_Xg_bspline_3d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="884.85,-668.27 705.33,-668.27 705.33,-644 884.85,-644 884.85,-668.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-652.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_bspline_3d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d_1point -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge19" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_bspline_3d_1point</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M439.93,-603.74C465.98,-613.09 503.33,-625.34 537.06,-632.13 588.21,-642.44 645.99,-648.34 693.79,-651.7"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="693.37,-655.18 703.58,-652.36 693.84,-648.2 693.37,-655.18"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_node19" class="node">
+<title>proc~compute_xg_nurbs_3d</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node19"><a xlink:href="../proc/compute_xg_nurbs_3d.html" xlink:title="compute_Xg_nurbs_3d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="669.33,-623.27 537.06,-623.27 537.06,-599 669.33,-599 669.33,-623.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-607.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_3d</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge20" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M445.3,-595.09C468.19,-597.43 498.01,-600.48 525.49,-603.29"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="524.88,-606.74 535.19,-604.28 525.6,-599.78 524.88,-606.74"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point -->
+<g id="program~~shape_ring_3d~~CallsGraph_node20" class="node">
+<title>proc~compute_xg_nurbs_3d_1point</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node20"><a xlink:href="../proc/compute_xg_nurbs_3d_1point.html" xlink:title="compute_Xg_nurbs_3d_1point">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="880.73,-584.27 709.46,-584.27 709.46,-560 880.73,-560 880.73,-584.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-568.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_Xg_nurbs_3d_1point</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d_1point -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge21" class="edge">
+<title>interface~compute_xg&#45;&gt;proc~compute_xg_nurbs_3d_1point</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M445.24,-589.24C503.64,-586.38 616.34,-580.85 697.87,-576.85"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="697.84,-580.36 707.65,-576.37 697.49,-573.37 697.84,-580.36"/>
+</g>
+<!-- proc~ndgrid2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node21" class="node">
+<title>proc~ndgrid2</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node21"><a xlink:href="../proc/ndgrid2.html" xlink:title="ndgrid2">
+<polygon fill="#d9534f" stroke="#d9534f" points="630.2,-703.27 576.2,-703.27 576.2,-679 630.2,-679 630.2,-703.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-687.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid2</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge22" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid2</title>
+<path fill="none" stroke="#ffbf00" stroke-dasharray="5,2" d="M433.04,-666.05C466.96,-671.08 526.07,-679.84 564.66,-685.57"/>
+<polygon fill="#ffbf00" stroke="#ffbf00" points="564.03,-689.01 574.44,-687.02 565.06,-682.09 564.03,-689.01"/>
+</g>
+<!-- proc~ndgrid3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node22" class="node">
+<title>proc~ndgrid3</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node22"><a xlink:href="../proc/ndgrid3.html" xlink:title="ndgrid3">
+<polygon fill="#d9534f" stroke="#d9534f" points="630.2,-745.27 576.2,-745.27 576.2,-721 630.2,-721 630.2,-745.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-729.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">ndgrid3</text>
+</a>
+</g>
+</g>
+<!-- interface~ndgrid&#45;&gt;proc~ndgrid3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge23" class="edge">
+<title>interface~ndgrid&#45;&gt;proc~ndgrid3</title>
+<path fill="none" stroke="#ffbf00" stroke-dasharray="5,2" d="M432.97,-664.71C452.51,-667.39 479.43,-672.73 501.06,-683.13 519.57,-692.04 518.98,-702.38 537.06,-712.13 545.78,-716.84 555.72,-720.71 565.18,-723.79"/>
+<polygon fill="#ffbf00" stroke="#ffbf00" points="563.91,-727.06 574.49,-726.6 565.93,-720.36 563.91,-727.06"/>
+</g>
+<!-- proc~set1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node23" class="node">
+<title>proc~set1</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node23"><a xlink:href="../proc/set1.html" xlink:title="nurbs_volume%set1">
+<polygon fill="#d9534f" stroke="#d9534f" points="662.58,-150.27 543.81,-150.27 543.81,-126 662.58,-126 662.58,-150.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-134.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set1</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge24" class="edge">
+<title>none~set&#45;&gt;proc~set1</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M449.58,-182.63C478.64,-174.15 517.26,-162.89 548.38,-153.82"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="548.98,-157.3 557.6,-151.14 547.02,-150.58 548.98,-157.3"/>
+</g>
+<!-- proc~set2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node24" class="node">
+<title>proc~set2</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node24"><a xlink:href="../proc/set2.html" xlink:title="nurbs_volume%set2">
+<polygon fill="#d9534f" stroke="#d9534f" points="662.58,-84.27 543.81,-84.27 543.81,-60 662.58,-60 662.58,-84.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-68.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set2</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge25" class="edge">
+<title>none~set&#45;&gt;proc~set2</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M426.5,-182.66C461.05,-160.93 532.44,-116.02 572.77,-90.64"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="574.44,-93.73 581.04,-85.44 570.71,-87.81 574.44,-93.73"/>
+</g>
+<!-- proc~set3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node25" class="node">
+<title>proc~set3</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node25"><a xlink:href="../proc/set3.html" xlink:title="nurbs_volume%set3">
+<polygon fill="#d9534f" stroke="#d9534f" points="662.58,-207.27 543.81,-207.27 543.81,-183 662.58,-183 662.58,-207.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-191.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set3</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge26" class="edge">
+<title>none~set&#45;&gt;proc~set3</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M462.18,-195.13C483.91,-195.13 509.09,-195.13 532.06,-195.13"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="531.97,-198.64 541.97,-195.14 531.97,-191.64 531.97,-198.64"/>
+</g>
+<!-- proc~set4 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node26" class="node">
+<title>proc~set4</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node26"><a xlink:href="../proc/set4.html" xlink:title="nurbs_volume%set4">
+<polygon fill="#d9534f" stroke="#d9534f" points="662.58,-253.27 543.81,-253.27 543.81,-229 662.58,-229 662.58,-253.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-237.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%set4</text>
+</a>
+</g>
+</g>
+<!-- none~set&#45;&gt;proc~set4 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge27" class="edge">
+<title>none~set&#45;&gt;proc~set4</title>
+<path fill="none" stroke="#7fff00" stroke-dasharray="5,2" d="M460.36,-207.77C484.29,-213.4 512.68,-220.07 537.74,-225.97"/>
+<polygon fill="#7fff00" stroke="#7fff00" points="536.62,-229.3 547.16,-228.19 538.22,-222.49 536.62,-229.3"/>
+</g>
+<!-- interface~elemconn_c0 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node16" class="node">
+<title>interface~elemconn_c0</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node16"><a xlink:href="../interface/elemconn_c0.html" xlink:title="elemConn_C0">
+<polygon fill="#a7506f" stroke="#a7506f" points="646.08,-382.27 560.31,-382.27 560.31,-358 646.08,-358 646.08,-382.27"/>
+<text xml:space="preserve" text-anchor="middle" x="603.2" y="-366.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">elemConn_C0</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge28" class="edge">
+<title>proc~cmp_elem_xc_vis&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#00ff3f" d="M465.34,-399.53C491.89,-393.83 523.05,-387.14 548.93,-381.58"/>
+<polygon fill="#00ff3f" stroke="#00ff3f" points="549.51,-385.03 558.56,-379.51 548.04,-378.19 549.51,-385.03"/>
+</g>
+<!-- proc~cmp_elem_xg_vis&#45;&gt;interface~elemconn_c0 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge29" class="edge">
+<title>proc~cmp_elem_xg_vis&#45;&gt;interface~elemconn_c0</title>
+<path fill="none" stroke="#00ffff" d="M465.34,-340.74C491.89,-346.44 523.05,-353.13 548.93,-358.69"/>
+<polygon fill="#00ffff" stroke="#00ffff" points="548.04,-362.08 558.56,-360.76 549.51,-355.24 548.04,-362.08"/>
+</g>
+<!-- proc~cmp_elemconn_c0_l -->
+<g id="program~~shape_ring_3d~~CallsGraph_node31" class="node">
+<title>proc~cmp_elemconn_c0_l</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node31"><a xlink:href="../proc/cmp_elemconn_c0_l.html" xlink:title="cmp_elemConn_C0_L">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="857.85,-340.27 732.33,-340.27 732.33,-316 857.85,-316 857.85,-340.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-324.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_L</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge30" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_l</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M646.34,-360.81C669.76,-355.63 699.47,-349.06 726.1,-343.17"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="726.81,-346.6 735.82,-341.02 725.3,-339.77 726.81,-346.6"/>
+</g>
+<!-- proc~cmp_elemconn_c0_s -->
+<g id="program~~shape_ring_3d~~CallsGraph_node32" class="node">
+<title>proc~cmp_elemconn_c0_s</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node32"><a xlink:href="../proc/cmp_elemconn_c0_s.html" xlink:title="cmp_elemConn_C0_S">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="858.23,-424.27 731.96,-424.27 731.96,-400 858.23,-400 858.23,-424.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-408.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_S</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge31" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_s</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M646.34,-379.46C669.76,-384.64 699.47,-391.21 726.1,-397.1"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="725.3,-400.5 735.82,-399.25 726.81,-393.67 725.3,-400.5"/>
+</g>
+<!-- proc~cmp_elemconn_c0_v -->
+<g id="program~~shape_ring_3d~~CallsGraph_node33" class="node">
+<title>proc~cmp_elemconn_c0_v</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node33"><a xlink:href="../proc/cmp_elemconn_c0_v.html" xlink:title="cmp_elemConn_C0_V">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="858.6,-382.27 731.58,-382.27 731.58,-358 858.6,-358 858.6,-382.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-366.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_elemConn_C0_V</text>
+</a>
+</g>
+</g>
+<!-- interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge32" class="edge">
+<title>interface~elemconn_c0&#45;&gt;proc~cmp_elemconn_c0_v</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M646.34,-370.13C667.94,-370.13 694.9,-370.13 719.84,-370.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="719.62,-373.64 729.62,-370.14 719.62,-366.64 719.62,-373.64"/>
+</g>
+<!-- interface~kron -->
+<g id="program~~shape_ring_3d~~CallsGraph_node27" class="node">
+<title>interface~kron</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node27"><a xlink:href="../interface/kron.html" xlink:title="kron">
+<polygon fill="#a7506f" stroke="#a7506f" points="1036.49,-626.27 982.49,-626.27 982.49,-602 1036.49,-602 1036.49,-626.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1009.49" y="-610.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_bspline_3d&#45;&gt;interface~kron -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge33" class="edge">
+<title>proc~compute_xg_bspline_3d&#45;&gt;interface~kron</title>
+<path fill="none" stroke="#ff8b00" d="M865.64,-542.03C872.37,-544.51 878.9,-547.51 884.85,-551.13 905.85,-563.93 899.87,-580.31 920.85,-593.13 935.89,-602.33 954.66,-607.5 970.97,-610.4"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="970.41,-613.86 980.83,-611.91 971.47,-606.94 970.41,-613.86"/>
+</g>
+<!-- proc~basis_bspline -->
+<g id="program~~shape_ring_3d~~CallsGraph_node29" class="node">
+<title>proc~basis_bspline</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node29"><a xlink:href="../proc/basis_bspline.html" xlink:title="basis_bspline">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1050.5,-584.27 968.48,-584.27 968.48,-560 1050.5,-560 1050.5,-584.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1009.49" y="-568.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">basis_bspline</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_bspline_3d&#45;&gt;proc~basis_bspline -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge34" class="edge">
+<title>proc~compute_xg_bspline_3d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#ff8b00" d="M859.82,-542.74C890.88,-548.88 927.76,-556.17 957.01,-561.96"/>
+<polygon fill="#ff8b00" stroke="#ff8b00" points="956.25,-565.37 966.74,-563.88 957.61,-558.51 956.25,-565.37"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point&#45;&gt;interface~kron -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge35" class="edge">
+<title>proc~compute_xg_bspline_3d_1point&#45;&gt;interface~kron</title>
+<path fill="none" stroke="#e7ff00" d="M859.82,-643.53C896.11,-636.36 940.34,-627.61 971.07,-621.53"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="971.53,-625.01 980.66,-619.64 970.17,-618.14 971.53,-625.01"/>
+</g>
+<!-- proc~compute_xg_bspline_3d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge36" class="edge">
+<title>proc~compute_xg_bspline_3d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#e7ff00" d="M867.47,-643.55C873.56,-641.21 879.44,-638.43 884.85,-635.13 905.85,-622.34 899.87,-605.96 920.85,-593.13 931.68,-586.51 944.46,-581.98 956.85,-578.87"/>
+<polygon fill="#e7ff00" stroke="#e7ff00" points="957.56,-582.3 966.58,-576.73 956.06,-575.46 957.56,-582.3"/>
+</g>
+<!-- proc~cmp_tgc_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_node35" class="node">
+<title>proc~cmp_tgc_3d</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node35"><a xlink:href="../proc/cmp_tgc_3d.html" xlink:title="cmp_Tgc_3d">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="834.23,-626.27 755.96,-626.27 755.96,-602 834.23,-602 834.23,-626.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-610.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">cmp_Tgc_3d</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_xg_nurbs_3d&#45;&gt;proc~cmp_tgc_3d -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge37" class="edge">
+<title>proc~compute_xg_nurbs_3d&#45;&gt;proc~cmp_tgc_3d</title>
+<path fill="none" stroke="#5cff00" d="M669.81,-612.17C694.19,-612.56 721.42,-612.99 744.17,-613.35"/>
+<polygon fill="#5cff00" stroke="#5cff00" points="744.05,-616.84 754.1,-613.5 744.16,-609.85 744.05,-616.84"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point&#45;&gt;interface~kron -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge38" class="edge">
+<title>proc~compute_xg_nurbs_3d_1point&#45;&gt;interface~kron</title>
+<path fill="none" stroke="#00ff2e" d="M859.82,-584.74C896.11,-591.91 940.34,-600.66 971.07,-606.74"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="970.17,-610.13 980.66,-608.63 971.53,-603.26 970.17,-610.13"/>
+</g>
+<!-- proc~compute_xg_nurbs_3d_1point&#45;&gt;proc~basis_bspline -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge39" class="edge">
+<title>proc~compute_xg_nurbs_3d_1point&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#00ff2e" d="M880.95,-572.13C906.53,-572.13 933.84,-572.13 956.59,-572.13"/>
+<polygon fill="#00ff2e" stroke="#00ff2e" points="956.53,-575.64 966.53,-572.14 956.53,-568.64 956.53,-575.64"/>
+</g>
+<!-- local -->
+<g id="program~~shape_ring_3d~~CallsGraph_node28" class="node">
+<title>local</title>
+<polygon fill="#777777" stroke="#777777" points="822.09,-728.27 768.09,-728.27 768.09,-704 822.09,-704 822.09,-728.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-712.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">local</text>
+</g>
+<!-- proc~ndgrid2&#45;&gt;local -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge40" class="edge">
+<title>proc~ndgrid2&#45;&gt;local</title>
+<path fill="none" stroke="#00ffb9" d="M630.6,-694.61C663.24,-698.91 719.04,-706.25 756.23,-711.15"/>
+<polygon fill="#00ffb9" stroke="#00ffb9" points="755.73,-714.62 766.1,-712.45 756.65,-707.68 755.73,-714.62"/>
+</g>
+<!-- proc~ndgrid3&#45;&gt;local -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge41" class="edge">
+<title>proc~ndgrid3&#45;&gt;local</title>
+<path fill="none" stroke="#00b9ff" d="M630.6,-730.77C663.24,-727.85 719.04,-722.85 756.23,-719.52"/>
+<polygon fill="#00b9ff" stroke="#00b9ff" points="756.45,-723.02 766.1,-718.64 755.82,-716.05 756.45,-723.02"/>
+</g>
+<!-- proc~set1&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge44" class="edge">
+<title>proc~set1&#45;&gt;set</title>
+<path fill="none" stroke="#002eff" d="M662.98,-148.9C747.42,-164.35 900.6,-192.39 971.12,-205.3"/>
+<polygon fill="#002eff" stroke="#002eff" points="970.14,-208.68 980.61,-207.03 971.4,-201.79 970.14,-208.68"/>
+</g>
+<!-- proc~cmp_degree -->
+<g id="program~~shape_ring_3d~~CallsGraph_node30" class="node">
+<title>proc~cmp_degree</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node30"><a xlink:href="../proc/cmp_degree.html" xlink:title="nurbs_volume%cmp_degree">
+<polygon fill="#d9534f" stroke="#d9534f" points="876.23,-146.27 713.96,-146.27 713.96,-122 876.23,-122 876.23,-146.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-130.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_degree</text>
+</a>
+</g>
+</g>
+<!-- proc~set1&#45;&gt;proc~cmp_degree -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge42" class="edge">
+<title>proc~set1&#45;&gt;proc~cmp_degree</title>
+<path fill="none" stroke="#002eff" d="M662.98,-136.9C675.49,-136.63 688.98,-136.35 702.39,-136.07"/>
+<polygon fill="#002eff" stroke="#002eff" points="702.17,-139.57 712.1,-135.86 702.02,-132.57 702.17,-139.57"/>
+</g>
+<!-- proc~cmp_nc -->
+<g id="program~~shape_ring_3d~~CallsGraph_node34" class="node">
+<title>proc~cmp_nc</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node34"><a xlink:href="../proc/cmp_nc.html" xlink:title="nurbs_volume%cmp_nc">
+<polygon fill="#d9534f" stroke="#d9534f" points="863.85,-104.27 726.33,-104.27 726.33,-80 863.85,-80 863.85,-104.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-88.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%cmp_nc</text>
+</a>
+</g>
+</g>
+<!-- proc~set1&#45;&gt;proc~cmp_nc -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge43" class="edge">
+<title>proc~set1&#45;&gt;proc~cmp_nc</title>
+<path fill="none" stroke="#002eff" d="M654.84,-125.51C670.97,-121.52 688.89,-117.11 705.33,-113.13 713.16,-111.24 721.38,-109.27 729.54,-107.33"/>
+<polygon fill="#002eff" stroke="#002eff" points="730.17,-110.78 739.09,-105.06 728.55,-103.96 730.17,-110.78"/>
+</g>
+<!-- proc~set2&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge47" class="edge">
+<title>proc~set2&#45;&gt;set</title>
+<path fill="none" stroke="#5c00ff" d="M642.91,-59.56C700.8,-43.3 811.02,-22.45 884.85,-71.13 918.76,-93.49 894.7,-124.06 920.85,-155.13 934.82,-171.74 954.85,-185.26 972.24,-194.96"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="970.3,-197.9 980.77,-199.52 973.59,-191.72 970.3,-197.9"/>
+</g>
+<!-- proc~set2&#45;&gt;proc~cmp_nc -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge45" class="edge">
+<title>proc~set2&#45;&gt;proc~cmp_nc</title>
+<path fill="none" stroke="#5c00ff" d="M662.98,-78.33C679.33,-80.05 697.36,-81.95 714.69,-83.77"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="714.13,-87.23 724.44,-84.8 714.86,-80.27 714.13,-87.23"/>
+</g>
+<!-- proc~compute_knot_vector -->
+<g id="program~~shape_ring_3d~~CallsGraph_node36" class="node">
+<title>proc~compute_knot_vector</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node36"><a xlink:href="../proc/compute_knot_vector.html" xlink:title="compute_knot_vector">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="858.23,-24.27 731.96,-24.27 731.96,0 858.23,0 858.23,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="795.09" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_knot_vector</text>
+</a>
+</g>
+</g>
+<!-- proc~set2&#45;&gt;proc~compute_knot_vector -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge46" class="edge">
+<title>proc~set2&#45;&gt;proc~compute_knot_vector</title>
+<path fill="none" stroke="#5c00ff" d="M640.6,-59.51C659.79,-52.95 683.77,-44.91 705.33,-38.13 716.13,-34.74 727.71,-31.24 738.83,-27.96"/>
+<polygon fill="#5c00ff" stroke="#5c00ff" points="739.68,-31.35 748.29,-25.18 737.71,-24.64 739.68,-31.35"/>
+</g>
+<!-- proc~set3&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge49" class="edge">
+<title>proc~set3&#45;&gt;set</title>
+<path fill="none" stroke="#e700ff" d="M662.98,-197.61C747.24,-201.15 899.96,-207.57 970.68,-210.55"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="970.45,-214.04 980.59,-210.96 970.74,-207.04 970.45,-214.04"/>
+</g>
+<!-- proc~set3&#45;&gt;proc~cmp_degree -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge48" class="edge">
+<title>proc~set3&#45;&gt;proc~cmp_degree</title>
+<path fill="none" stroke="#e700ff" d="M643.08,-182.64C672.3,-173.26 712.55,-160.33 744.15,-150.18"/>
+<polygon fill="#e700ff" stroke="#e700ff" points="745.04,-153.57 753.49,-147.18 742.9,-146.9 745.04,-153.57"/>
+</g>
+<!-- proc~set4&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge50" class="edge">
+<title>proc~set4&#45;&gt;set</title>
+<path fill="none" stroke="#ff008b" d="M662.98,-236.92C747.24,-230.87 899.96,-219.92 970.68,-214.85"/>
+<polygon fill="#ff008b" stroke="#ff008b" points="970.86,-218.34 980.59,-214.14 970.36,-211.36 970.86,-218.34"/>
+</g>
+<!-- proc~kron3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node39" class="node">
+<title>proc~kron3</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node39"><a xlink:href="../proc/kron3.html" xlink:title="kron3">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1222.38,-668.27 1168.38,-668.27 1168.38,-644 1222.38,-644 1222.38,-668.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1195.38" y="-652.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron3</text>
+</a>
+</g>
+</g>
+<!-- interface~kron&#45;&gt;proc~kron3 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge51" class="edge">
+<title>interface~kron&#45;&gt;proc~kron3</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1036.83,-620.15C1068.38,-627.36 1121.42,-639.47 1157.14,-647.63"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1156.08,-650.98 1166.61,-649.79 1157.64,-644.15 1156.08,-650.98"/>
+</g>
+<!-- proc~kron_t1_t1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node40" class="node">
+<title>proc~kron_t1_t1</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node40"><a xlink:href="../proc/kron_t1_t1.html" xlink:title="kron_t1_t1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1228.52,-626.27 1162.25,-626.27 1162.25,-602 1228.52,-602 1228.52,-626.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1195.38" y="-610.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron_t1_t1</text>
+</a>
+</g>
+</g>
+<!-- interface~kron&#45;&gt;proc~kron_t1_t1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge52" class="edge">
+<title>interface~kron&#45;&gt;proc~kron_t1_t1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1036.83,-614.13C1066.46,-614.13 1115.04,-614.13 1150.43,-614.13"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1150.37,-617.64 1160.37,-614.14 1150.37,-610.64 1150.37,-617.64"/>
+</g>
+<!-- proc~kron_t1_t2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node41" class="node">
+<title>proc~kron_t1_t2</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node41"><a xlink:href="../proc/kron_t1_t2.html" xlink:title="kron_t1_t2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1228.52,-584.27 1162.25,-584.27 1162.25,-560 1228.52,-560 1228.52,-584.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1195.38" y="-568.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">kron_t1_t2</text>
+</a>
+</g>
+</g>
+<!-- interface~kron&#45;&gt;proc~kron_t1_t2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge53" class="edge">
+<title>interface~kron&#45;&gt;proc~kron_t1_t2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1036.83,-608.12C1066.58,-601.32 1115.46,-590.16 1150.89,-582.07"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1151.44,-585.53 1160.4,-579.89 1149.88,-578.71 1151.44,-585.53"/>
+</g>
+<!-- proc~cmp_degree&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge55" class="edge">
+<title>proc~cmp_degree&#45;&gt;set</title>
+<path fill="none" stroke="#33ff00" d="M842.48,-146.65C856.22,-150.64 871.23,-155.29 884.85,-160.13 914.67,-170.73 947.66,-184.73 972.07,-195.54"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="970.36,-198.6 980.91,-199.48 973.21,-192.21 970.36,-198.6"/>
+</g>
+<!-- proc~get_multiplicity -->
+<g id="program~~shape_ring_3d~~CallsGraph_node38" class="node">
+<title>proc~get_multiplicity</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node38"><a xlink:href="../proc/get_multiplicity.html" xlink:title="nurbs_volume%get_multiplicity">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1098.12,-146.27 920.85,-146.27 920.85,-122 1098.12,-122 1098.12,-146.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1009.49" y="-130.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">nurbs_volume%get_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_degree&#45;&gt;proc~get_multiplicity -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge54" class="edge">
+<title>proc~cmp_degree&#45;&gt;proc~get_multiplicity</title>
+<path fill="none" stroke="#33ff00" d="M876.69,-134.13C887.32,-134.13 898.31,-134.13 909.2,-134.13"/>
+<polygon fill="#33ff00" stroke="#33ff00" points="908.98,-137.64 918.98,-134.14 908.98,-130.64 908.98,-137.64"/>
+</g>
+<!-- proc~cmp_nc&#45;&gt;set -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge57" class="edge">
+<title>proc~cmp_nc&#45;&gt;set</title>
+<path fill="none" stroke="#3200ff" d="M864.26,-103.53C871.48,-106.1 878.49,-109.26 884.85,-113.13 905.85,-125.93 902.36,-138.93 920.85,-155.13 937.74,-169.93 958.77,-183.74 976,-194.06"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="973.94,-196.91 984.34,-198.95 977.48,-190.87 973.94,-196.91"/>
+</g>
+<!-- interface~compute_multiplicity -->
+<g id="program~~shape_ring_3d~~CallsGraph_node37" class="node">
+<title>interface~compute_multiplicity</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node37"><a xlink:href="../interface/compute_multiplicity.html" xlink:title="compute_multiplicity">
+<polygon fill="#a7506f" stroke="#a7506f" points="1256.64,-126.27 1134.12,-126.27 1134.12,-102 1256.64,-102 1256.64,-126.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1195.38" y="-110.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity</text>
+</a>
+</g>
+</g>
+<!-- proc~cmp_nc&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge56" class="edge">
+<title>proc~cmp_nc&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#3200ff" d="M864.11,-95.89C936.02,-99.86 1049.01,-106.11 1122.39,-110.16"/>
+<polygon fill="#3200ff" stroke="#3200ff" points="1122.13,-113.65 1132.31,-110.71 1122.52,-106.66 1122.13,-113.65"/>
+</g>
+<!-- proc~cmp_tgc_3d&#45;&gt;interface~kron -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge58" class="edge">
+<title>proc~cmp_tgc_3d&#45;&gt;interface~kron</title>
+<path fill="none" stroke="#cc00ff" d="M834.55,-614.13C873.23,-614.13 932.48,-614.13 970.85,-614.13"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="970.54,-617.64 980.54,-614.14 970.54,-610.64 970.54,-617.64"/>
+</g>
+<!-- proc~cmp_tgc_3d&#45;&gt;proc~basis_bspline -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge59" class="edge">
+<title>proc~cmp_tgc_3d&#45;&gt;proc~basis_bspline</title>
+<path fill="none" stroke="#cc00ff" d="M834.55,-606.53C868.79,-599.76 919.14,-589.8 956.87,-582.34"/>
+<polygon fill="#cc00ff" stroke="#cc00ff" points="957.52,-585.78 966.66,-580.41 956.17,-578.91 957.52,-585.78"/>
+</g>
+<!-- proc~repelem -->
+<g id="program~~shape_ring_3d~~CallsGraph_node42" class="node">
+<title>proc~repelem</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node42"><a xlink:href="../proc/repelem.html" xlink:title="repelem">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1037.37,-24.27 981.6,-24.27 981.6,0 1037.37,0 1037.37,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1009.49" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">repelem</text>
+</a>
+</g>
+</g>
+<!-- proc~compute_knot_vector&#45;&gt;proc~repelem -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge60" class="edge">
+<title>proc~compute_knot_vector&#45;&gt;proc~repelem</title>
+<path fill="none" stroke="#ff0098" d="M858.67,-12.13C894.8,-12.13 939.08,-12.13 970.1,-12.13"/>
+<polygon fill="#ff0098" stroke="#ff0098" points="969.78,-15.64 979.78,-12.14 969.78,-8.64 969.78,-15.64"/>
+</g>
+<!-- proc~compute_multiplicity1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node43" class="node">
+<title>proc~compute_multiplicity1</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node43"><a xlink:href="../proc/compute_multiplicity1.html" xlink:title="compute_multiplicity1">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1421.91,-147.27 1292.64,-147.27 1292.64,-123 1421.91,-123 1421.91,-147.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1357.28" y="-131.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity1</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge61" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity1</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1256.83,-122.07C1264.7,-123.11 1272.85,-124.18 1280.93,-125.24"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1280.4,-128.7 1290.77,-126.53 1281.31,-121.76 1280.4,-128.7"/>
+</g>
+<!-- proc~compute_multiplicity2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_node44" class="node">
+<title>proc~compute_multiplicity2</title>
+<g id="a_program~~shape_ring_3d~~CallsGraph_node44"><a xlink:href="../proc/compute_multiplicity2.html" xlink:title="compute_multiplicity2">
+<polygon fill="#d94e8f" stroke="#d94e8f" points="1421.91,-105.27 1292.64,-105.27 1292.64,-81 1421.91,-81 1421.91,-105.27"/>
+<text xml:space="preserve" text-anchor="middle" x="1357.28" y="-89.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">compute_multiplicity2</text>
+</a>
+</g>
+</g>
+<!-- interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2 -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge62" class="edge">
+<title>interface~compute_multiplicity&#45;&gt;proc~compute_multiplicity2</title>
+<path fill="none" stroke="#ff0000" stroke-dasharray="5,2" d="M1256.83,-106.2C1264.7,-105.16 1272.85,-104.09 1280.93,-103.03"/>
+<polygon fill="#ff0000" stroke="#ff0000" points="1281.31,-106.51 1290.77,-101.74 1280.4,-99.57 1281.31,-106.51"/>
+</g>
+<!-- proc~get_multiplicity&#45;&gt;interface~compute_multiplicity -->
+<g id="program~~shape_ring_3d~~CallsGraph_edge63" class="edge">
+<title>proc~get_multiplicity&#45;&gt;interface~compute_multiplicity</title>
+<path fill="none" stroke="#ffff00" d="M1098.39,-124.57C1106.46,-123.7 1114.57,-122.82 1122.47,-121.96"/>
+<polygon fill="#ffff00" stroke="#ffff00" points="1122.79,-125.44 1132.36,-120.88 1122.04,-118.48 1122.79,-125.44"/>
+</g>
+</g>
+</svg>
+</div>                <script>
+                  var panprogramshape_ring_3dCallsGraph = svgPanZoom('#programshape_ring_3dCallsGraph',
+                    {zoomEnabled: true, controlIconsEnabled: true, fit: true, center: true,}
+                  );
+                </script>          <div>
+            <a type="button" class="graph-help" data-bs-toggle="modal" href="#CallsGraph-help-text">Help</a>
+          </div>
+          <div class="modal fade" id="CallsGraph-help-text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="-graph-help-label">Graph Key</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+<p>Nodes of different colours represent the following: </p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 14.1.2 (20260126.1125)
+ -->
+<!-- Title: Graph Key Pages: 1 -->
+<svg width="641pt" height="28pt"
+ viewBox="0.00 0.00 641.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(0.873868 0.873868) rotate(0) translate(4 28.27)">
+<title>Graph Key</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-28.27 729.52,-28.27 729.52,4 -4,4"/>
+<!-- Subroutine -->
+<g id="node1" class="node">
+<title>Subroutine</title>
+<polygon fill="#d9534f" stroke="#d9534f" points="69.27,-24.27 0,-24.27 0,0 69.27,0 69.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="34.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Subroutine</text>
+</g>
+<!-- Function -->
+<g id="node2" class="node">
+<title>Function</title>
+<polygon fill="#d94e8f" stroke="#d94e8f" points="143.89,-24.27 87.38,-24.27 87.38,0 143.89,0 143.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="115.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Function</text>
+</g>
+<!-- Interface -->
+<g id="node3" class="node">
+<title>Interface</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="221.39,-24.27 161.88,-24.27 161.88,0 221.39,0 221.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="191.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Interface</text>
+</g>
+<!-- Type Bound Procedure -->
+<g id="node4" class="node">
+<title>Type Bound Procedure</title>
+<polygon fill="#a7506f" stroke="#a7506f" points="368.27,-24.27 239,-24.27 239,0 368.27,0 368.27,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="303.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Type Bound Procedure</text>
+</g>
+<!-- Unknown Procedure Type -->
+<g id="node5" class="node">
+<title>Unknown Procedure Type</title>
+<polygon fill="#777777" stroke="#777777" points="529.39,-24.27 385.88,-24.27 385.88,0 529.39,0 529.39,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="457.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Unknown Procedure Type</text>
+</g>
+<!-- Program -->
+<g id="node6" class="node">
+<title>Program</title>
+<polygon fill="#f0ad4e" stroke="#f0ad4e" points="603.89,-24.27 547.38,-24.27 547.38,0 603.89,0 603.89,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="575.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50" fill="white">Program</text>
+</g>
+<!-- This Page&#39;s Entity -->
+<g id="node7" class="node">
+<title>This Page&#39;s Entity</title>
+<polygon fill="none" stroke="black" points="725.52,-24.27 621.75,-24.27 621.75,0 725.52,0 725.52,-24.27"/>
+<text xml:space="preserve" text-anchor="middle" x="673.63" y="-8.53" font-family="Helvetica,sans-Serif" font-size="10.50">This Page&#39;s Entity</text>
+</g>
+</g>
+</svg>
+
+<p>Solid arrows point from a procedure to one which it calls. Dashed 
+arrows point from an interface to procedures which implement that interface.
+This could include the module procedures in a generic interface or the
+implementation in a submodule of an interface in a parent module.
+</p>
+ Where possible, edges connecting nodes are
+given different colours to make them easier to distinguish in
+large graphs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+
+    <section>
+    <h2>Variables</h2>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+<th></th><th scope="col">Initial</th>        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-shape~12"></span>
+              type(<a href='../type/nurbs_volume.html'>nurbs_volume</a>)
+            </td>
+            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>shape</strong></td>
+                <td></td>
+                <td></td>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    </section>
+    <br>
+    
+    
+    
+
+    
+
+
+    
+
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              ForCAD
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2026-07-21T19:24:38.426814+0000             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>

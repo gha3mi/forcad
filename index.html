@@ -52,7 +52,6 @@
 
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="page/index.html">NURBS Theory and ForCAD Usage</a></li>
                   <li class="nav-item">
                     <a class="nav-link" href="./lists/files.html">Source Files</a>
                   </li>
@@ -138,37 +137,20 @@
 </ul>
 <h2>Main Features</h2>
 <ul>
-<li><strong>Unified spline geometry:</strong> polynomial B-spline, NURBS, Bezier and rational
-  Bezier curves, surfaces and volumes through a consistent object-oriented API.</li>
-<li><strong>General knot-vector handling:</strong> complete nondecreasing knot vectors,
-  including uniform, nonuniform, clamped, unclamped and repeated-knot forms,
-  with optional periodic parameter wrapping.</li>
-<li><strong>Basis evaluation:</strong> dense and locally active polynomial or rational basis
-  functions, arbitrary-order parametric derivatives and mixed derivatives for
-  tensor-product geometries.</li>
-<li><strong>Geometry-preserving refinement:</strong> exact knot insertion and degree elevation
-  in homogeneous coordinates, together with tolerance-controlled knot removal.</li>
-<li><strong>Geometry construction and editing:</strong> extrusion, revolution, sweep, loft,
-  control-point and weight modification, rotation and translation.</li>
-<li><strong>Ready-to-use geometry:</strong> exact rational circles and annuli, half-circle and
-  half-annulus variants, tetragons, hexahedra and predefined C-shaped objects.</li>
-<li><strong>Fitting and projection:</strong> B-spline and NURBS least-squares fitting plus
-  sample-based and iterative nearest-point searches for every geometry rank.</li>
-<li><strong>IGA data:</strong> nonzero-span element connectivity, element-local basis data,
-  derivatives and physical differential measures through <code>ansatz</code>.</li>
-<li><strong>Multipatch modeling:</strong> oriented curve, surface and volume connections,
-  <code>C^n</code> and <code>G^n</code> continuity constraints, compact global degree-of-freedom maps
-  and sparse CSR constraint assembly.</li>
-<li><strong>Geometric analysis:</strong> elementwise Gauss integration of curve length,
-  surface area and volume.</li>
-<li><strong>Interoperability:</strong> VTK export of control, sampled and parameter geometry
-  with point data, IGES export for curves and surfaces, and interactive PyVista
-  visualization of single- and multi-patch models.</li>
-<li><strong>HPC-oriented implementation:</strong> configurable real precision, allocation-aware
-  local kernels and standard <code>do concurrent</code> loops that compilers can parallelize
-  with opt-in host or accelerator flags.</li>
-<li><strong>Recoverable diagnostics:</strong> structured error state on geometry and multipatch
-  objects for invalid input, failed numerical operations and unsupported output.</li>
+<li>Parallelized using <code>do concurrent</code>.</li>
+<li>Create NURBS objects by specifying control points, weights and knots.</li>
+<li>Refine NURBS objects by inserting or removing knots and elevating degree.</li>
+<li>Compute analytical basis functions and their first and second derivatives for NURBS and B-Spline objects.</li>
+<li>Generation of IGA-compatible element connectivity and shape functions.</li>
+<li>Obtain visualized elements connectivity and coordinates for geometry and control geometry.</li>
+<li>Mesh insertion into a NURBS object.</li>
+<li>Export NURBS objects to VTK files for visualization.</li>
+<li>Export of NURBS curves and surfaces to IGES format (volumes currently not supported).</li>
+<li>Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.</li>
+<li>Rotate and translate NURBS objects.</li>
+<li>Visualization using provided python PyVista scripts.</li>
+<li>Least squares fitting for NURBS curves, surfaces and volumes.</li>
+<li>Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.</li>
 </ul>
 <h2>Examples</h2>
 <p>Below are some sample outputs from the <code>examples</code> directory:</p>
@@ -497,7 +479,7 @@ command:</p>
           <div class="col-xs-6 col-sm-3">
             <div>
               <h3>Source Files</h3>
-              <ul><li><a href='sourcefile/check.f90.html'>check.f90</a></li><li><a href='sourcefile/curve_ansatz.f90.html'>curve_ansatz.f90</a></li><li><a href='sourcefile/curve_basic.f90.html'>curve_basic.f90</a></li><li><a href='sourcefile/curve_basis.f90.html'>curve_basis.f90</a></li><li><a href='sourcefile/curve_circle.f90.html'>curve_circle.f90</a></li><li><a href='sourcefile/curve_cmp_length.f90.html'>curve_cmp_length.f90</a></li><li><a href='sourcefile/curve_connectivity.f90.html'>curve_connectivity.f90</a></li><li><a href='sourcefile/curve_derivatives.f90.html'>curve_derivatives.f90</a></li><li><a href='sourcefile/curve_fit_bspline.f90.html'>curve_fit_bspline.f90</a></li><li><a href='sourcefile/curve_fit_nurbs.f90.html'>curve_fit_nurbs.f90</a></li></ul>
+              <ul><li><a href='sourcefile/cmp_area.f90.html'>cmp_area.f90</a></li><li><a href='sourcefile/cmp_length.f90.html'>cmp_length.f90</a></li><li><a href='sourcefile/cmp_volume.f90.html'>cmp_volume.f90</a></li><li><a href='sourcefile/demo_curve.f90.html'>demo_curve.f90</a></li><li><a href='sourcefile/demo_surface.f90.html'>demo_surface.f90</a></li><li><a href='sourcefile/demo_volume.f90.html'>demo_volume.f90</a></li><li><a href='sourcefile/example_bend_pipe.f90.html'>example_bend_pipe.f90</a></li><li><a href='sourcefile/example_curve_1.f90.html'>example_curve_1.f90</a></li><li><a href='sourcefile/example_helix_pipe.f90.html'>example_helix_pipe.f90</a></li><li><a href='sourcefile/example_plate_hole_1_2d.f90.html'>example_plate_hole_1_2d.f90</a></li></ul>
             </div>
             <div>
               <ul>
@@ -508,7 +490,7 @@ command:</p>
           <div class="col-xs-6 col-sm-3">
             <div>
               <h3>Modules</h3>
-              <ul><li><a href='module/forcad.html'>forcad</a></li><li><a href='module/forcad_geometry.html'>forcad_geometry</a></li><li><a href='module/forcad_kinds.html'>forcad_kinds</a></li><li><a href='module/forcad_multipatch.html'>forcad_multipatch</a></li><li><a href='module/forcad_multipatch_curve.html'>forcad_multipatch_curve</a></li><li><a href='module/forcad_multipatch_surface.html'>forcad_multipatch_surface</a></li><li><a href='module/forcad_multipatch_volume.html'>forcad_multipatch_volume</a></li><li><a href='module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li><li><a href='module/forcad_nurbs_surface.html'>forcad_nurbs_surface</a></li><li><a href='module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li></ul>
+              <ul><li><a href='module/forcad.html'>forcad</a></li><li><a href='module/forcad_interface.html'>forcad_interface</a></li><li><a href='module/forcad_kinds.html'>forcad_kinds</a></li><li><a href='module/forcad_nurbs_curve.html'>forcad_nurbs_curve</a></li><li><a href='module/forcad_nurbs_surface.html'>forcad_nurbs_surface</a></li><li><a href='module/forcad_nurbs_volume.html'>forcad_nurbs_volume</a></li><li><a href='module/forcad_utils.html'>forcad_utils</a></li></ul>
             </div>
             <div>
               <ul>
@@ -519,7 +501,7 @@ command:</p>
           <div class="col-xs-6 col-sm-3">
             <div>
               <h3>Procedures</h3>
-              <ul><li><a href='proc/active_knot_multiplicity.html'>active_knot_multiplicity</a></li><li><a href='proc/active_knots.html'>active_knots</a></li><li><a href='proc/active_span_at.html'>active_span_at</a></li><li><a href='proc/active_span_count.html'>active_span_count</a></li><li><a href='proc/add_patch_curve.html'>add_patch_curve</a></li><li><a href='proc/add_patch_surface.html'>add_patch_surface</a></li><li><a href='proc/add_patch_volume.html'>add_patch_volume</a></li><li><a href='proc/ansatz.html'>ansatz</a></li><li><a href='proc/ansatz~2.html'>ansatz</a></li><li><a href='proc/ansatz~3.html'>ansatz</a></li></ul>
+              <ul><li><a href='proc/ansatz.html'>ansatz</a></li><li><a href='proc/ansatz~2.html'>ansatz</a></li><li><a href='proc/ansatz~3.html'>ansatz</a></li><li><a href='proc/basis_bernstein.html'>basis_bernstein</a></li><li><a href='proc/basis_bspline.html'>basis_bspline</a></li><li><a href='interface/basis_bspline_2der.html'>basis_bspline_2der</a></li><li><a href='proc/basis_bspline_2der_a.html'>basis_bspline_2der_A</a></li><li><a href='proc/basis_bspline_2der_b.html'>basis_bspline_2der_B</a></li><li><a href='proc/basis_bspline_2der_c.html'>basis_bspline_2der_C</a></li><li><a href='interface/basis_bspline_der.html'>basis_bspline_der</a></li></ul>
             </div>
             <div>
               <ul>
@@ -530,7 +512,7 @@ command:</p>
           <div class="col-xs-6 col-sm-3">
             <div>
               <h3>Derived Types</h3>
-              <ul><li><a href='type/multipatch_connection.html'>multipatch_connection</a></li><li><a href='type/nurbs_curve.html'>nurbs_curve</a></li><li><a href='type/nurbs_multipatch_curve.html'>nurbs_multipatch_curve</a></li><li><a href='type/nurbs_multipatch_surface.html'>nurbs_multipatch_surface</a></li><li><a href='type/nurbs_multipatch_volume.html'>nurbs_multipatch_volume</a></li><li><a href='type/nurbs_surface.html'>nurbs_surface</a></li><li><a href='type/nurbs_volume.html'>nurbs_volume</a></li></ul>
+              <ul><li><a href='type/nurbs_curve.html'>nurbs_curve</a></li><li><a href='type/nurbs_surface.html'>nurbs_surface</a></li><li><a href='type/nurbs_volume.html'>nurbs_volume</a></li></ul>
             </div>
             <div>
               <ul>
@@ -547,14 +529,14 @@ command:</p>
           <div class="col">
             <p>
               ForCAD
- was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2026 BSD 3-Clause
+ was developed by Seyed Ali Ghasemi<br>              &copy; 2023-2025 BSD 3-Clause
 </p>
           </div>
           <div class="col">
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2026-07-21T13:35:50.771609+0000             </p>
+ on 2026-07-21T19:24:38.426814+0000             </p>
           </div>
         </div>
         <br>
