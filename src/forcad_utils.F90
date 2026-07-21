@@ -1,19 +1,147 @@
 !> author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-!> This module contains parameters, functions and subroutines that are used in the library.
+!> Numerical kernels and low-level geometry utilities used by ForCAD.
+!!
+!! This module contains the public building blocks behind the single- and
+!! multipatch APIs. Real arguments use `rk`, and tensor-product indices are
+!! flattened with direction 1 varying fastest. Mathematical subscripts in this
+!! module are zero-based unless stated otherwise; Fortran array indices and
+!! returned connectivity are one-based. A documented mathematical precondition
+!! is not necessarily checked at run time: each procedure states whether an
+!! invalid input is represented by a sentinel result or must be excluded by the
+!! caller.
+!!
+!! **B-spline convention**
+!!
+!! Let \(n=n_c-1\). For degree \(p\), control count \(n_c\), and knot vector
+!! \(U=\{u_0,\ldots,u_m\}\), a spline space requires
+!! \(m=n+p+1\), equivalently \(m+1=n_c+p+1\). The active interval is
+!! \([u_p,u_{n+1}]=[u_p,u_{n_c}]\). In Fortran indexing these bounds are
+!! `knot(degree+1)` and `knot(nc+1)`. Basis values use the
+!! Cox-de Boor recurrence and are right-continuous on interior spans; the final
+!! active endpoint is included explicitly. Rational tensor bases are
+!!
+!! \[
+!! N_{i,0}(u)=
+!! \begin{cases}
+!! 1,&u_i\le u<u_{i+1},\\
+!! 0,&\text{otherwise},
+!! \end{cases}
+!! \qquad
+!! N_{i,p}(u)=
+!! \frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)
+!! +\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u),
+!! \]
+!!
+!! where a term with zero denominator is defined as zero. For a flattened
+!! tensor index \(A\), rational normalization is
+!!
+!! \[
+!! R_A(\boldsymbol\xi)=
+!! \frac{N_A(\boldsymbol\xi)w_A}
+!!      {\sum_B N_B(\boldsymbol\xi)w_B}.
+!! \]
+!!
+!! For a derivative multi-index \(\boldsymbol\alpha\), the implementation uses
+!! the quotient recurrence
+!!
+!! \[
+!! D^{\boldsymbol\alpha}R_A
+!! =\frac{1}{W}\left[
+!! D^{\boldsymbol\alpha}(N_Aw_A)
+!! -\sum_{\mathbf0<\boldsymbol\beta\le\boldsymbol\alpha}
+!! {\boldsymbol\alpha\choose\boldsymbol\beta}
+!! D^{\boldsymbol\beta}W\,
+!! D^{\boldsymbol\alpha-\boldsymbol\beta}R_A
+!! \right],
+!! \qquad W=\sum_BN_Bw_B .
+!! \]
+!!
+!! A polynomial B-spline derivative is zero when its order exceeds the degree
+!! in that direction. Rational derivatives need not be zero above that degree:
+!! the quotient recurrence combines denominator derivatives with lower-order
+!! rational derivatives. Local-support variants return the first active
+!! one-based control index together with only \(p+1\) values; use these variants
+!! in assembly and evaluation hot paths.
+!! Knot insertion and degree elevation produce a scalar operator
+!! \(\mathbf S\) satisfying
+!! \(\mathbf H_{\mathrm{new}}=\mathbf S\mathbf H_{\mathrm{old}}\) for
+!! homogeneous controls \(\mathbf H=(w\mathbf P,w)\). Tensor-product callers
+!! apply this one-dimensional operator by directional sweeps.
+!! Rational sums first replace every active weight by
+!! \(\widehat w_i=\operatorname{scale}(w_i,-e)\), where
+!! \(e=\max_i\operatorname{exponent}(w_i)\). This exact radix-power change of
+!! projective gauge leaves every rational quotient unchanged while preventing a
+!! common very small or very large weight scale from exhausting the floating-
+!! point exponent range.
+!!
+!! **Failure conventions**
+!!
+!! These kernels do not own a diagnostic object. Where documented, a rejected
+!! shape or numerical breakdown returns an empty array, zero-sized map, NaN, or
+!! false success flag. Other low-level routines deliberately assume valid
+!! dimensions and metadata; violating such a precondition can cause a bounds or
+!! shape error. Higher-level NURBS methods validate their public inputs and
+!! translate kernel failures into their structured `err` state where supported.
+!!
+!! **Primary references**
+!!
+!! - M. G. Cox, "The Numerical Evaluation of B-Splines," *IMA Journal of
+!!   Applied Mathematics* 10 (1972), 134-149.
+!!   [doi:10.1093/imamat/10.2.134](https://doi.org/10.1093/imamat/10.2.134).
+!! - C. de Boor, "On Calculating with B-Splines," *Journal of Approximation
+!!   Theory* 6 (1972), 50-62.
+!!   [doi:10.1016/0021-9045(72)90080-9](https://doi.org/10.1016/0021-9045(72)90080-9).
+!! - W. Boehm, "Inserting New Knots into B-Spline Curves," *Computer-Aided
+!!   Design* 12 (1980), 199-201.
+!!   [doi:10.1016/0010-4485(80)90154-2](https://doi.org/10.1016/0010-4485(80)90154-2).
+!! - H. Prautzsch, "Degree Elevation of B-Spline Curves," *Computer Aided
+!!   Geometric Design* 1 (1984), 193-198.
+!!   [doi:10.1016/0167-8396(84)90031-1](https://doi.org/10.1016/0167-8396(84)90031-1).
+!! - W. Tiller, "Knot-Removal Algorithms for NURBS Curves and Surfaces,"
+!!   *Computer-Aided Design* 24 (1992), 445-453.
+!!   [doi:10.1016/0010-4485(92)90012-Y](https://doi.org/10.1016/0010-4485(92)90012-Y).
+!! - L. Piegl and W. Tiller, *The NURBS Book*, 2nd ed., Springer, 1997.
+!!   [doi:10.1007/978-3-642-59223-2](https://doi.org/10.1007/978-3-642-59223-2).
+!! - IEEE, *IEEE Standard for Floating-Point Arithmetic*, IEEE Std 754-2019,
+!!   2019. [IEEE 754-2019](https://standards.ieee.org/ieee/754/6210/).
+!! - T. J. R. Hughes, J. A. Cottrell, and Y. Bazilevs, "Isogeometric
+!!   Analysis: CAD, Finite Elements, NURBS, Exact Geometry and Mesh
+!!   Refinement," *CMAME* 194 (2005), 4135-4195.
+!!   [doi:10.1016/j.cma.2004.10.008](https://doi.org/10.1016/j.cma.2004.10.008).
+!! - R. E. Tarjan, "Efficiency of a Good But Not Linear Set Union Algorithm,"
+!!   *Journal of the ACM* 22 (1975), 215-225.
+!!   [doi:10.1145/321879.321884](https://doi.org/10.1145/321879.321884).
 module forcad_utils
 
+    use, intrinsic :: ieee_arithmetic, only: ieee_is_finite, ieee_is_nan, ieee_quiet_nan, ieee_support_datatype, &
+        ieee_value
+    use, intrinsic :: iso_fortran_env, only: file_storage_size, int8, int32, int64, real64
     use forcad_kinds, only: rk
 
     implicit none
 
     private
     public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
-        basis_bspline_der, insert_knot_A_5_1, findspan, elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
+        basis_bspline_der, basis_bspline_der_order, basis_bspline_der_order_active, basis_bspline_der_all_active, &
+        tensor_basis_derivative_local, tensor_basis_derivatives2_local, &
+        insert_knot_A_5_1, insert_knot_periodic_A_5_1, findspan, &
+        elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
         elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve, &
-        repelem, linspace, eye, kron_eye
+        solve_spd_banded, sparse_left_matmul, repelem, linspace, fill_uniform, eye, kron_eye, &
+        valid_knot_vector, knot_start, knot_end, active_knots, active_span_count, &
+        active_knot_multiplicity, infer_knot_shape, knot_tolerance, map_parameter, periodic_topology, &
+        rotate_points, run_python_script, show_pyvista_singlepatch, show_pyvista_multipatch, boundary_index, boundary_layer_index, &
+        interpolatory_boundary_layer, disjoint_set_union, disjoint_set_map, structural_nonzero
 
-    !===============================================================================
+    !> Build one-based \(C^0\) tensor-product element connectivity.
+    !!
+    !! These constructors describe a regular positive-degree \(C^0\) layout:
+    !! each directional count must satisfy `nnode=nelem*p+1` with `p>=1`.
+    !! Overloads accept scalar counts for curves and directional counts for
+    !! surfaces or volumes. Direction 1 varies fastest in every element row.
+    !! Use [[elemConn_Cn]] or the rank-specific NURBS `cmp_elem` bindings for
+    !! arbitrary knot vectors, repeated knots, or degree-zero spaces.
     interface elemConn_C0
         module procedure cmp_elemConn_C0_L
         module procedure cmp_elemConn_C0_S
@@ -23,6 +151,25 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Build one-based connectivity from active knots and knot multiplicities.
+    !!
+    !! In each direction, `size(Xth)-1` supplies the number of active spans; the
+    !! numerical values in `Xth` are not inspected. Interior entries
+    !! `vecKnot_mul(2:nelem)` shift the first supported control index by the
+    !! stored knot multiplicity. Entry 1 and the final active-endpoint
+    !! multiplicity are not used. For a valid degree-\(p\) spline direction,
+    !! the metadata must satisfy
+    !!
+    !! \[
+    !! n_c=p+1+\sum_{i=2}^{n_e}s_i,
+    !! \]
+    !!
+    !! where \(s_i\) is the multiplicity at the interior active knot preceding
+    !! element \(i\). The routines check only basic array dimensions; callers
+    !! must provide consistent positive multiplicities and control counts. At
+    !! multiplicity \(s\), the spline space has guaranteed continuity
+    !! \(C^{p-s}\). Returned support indices are one-based, with direction 1
+    !! varying fastest.
     interface elemConn_Cn
         module procedure cmp_elemConn_Cn_L
         module procedure cmp_elemConn_Cn_S
@@ -32,6 +179,10 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Form a two- or three-dimensional tensor-product coordinate grid.
+    !!
+    !! Returned point rows follow Fortran ordering: the first input vector
+    !! varies fastest.
     interface ndgrid
         module procedure ndgrid2
         module procedure ndgrid3
@@ -40,6 +191,11 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Count exact knot multiplicities for one knot or an array of knots.
+    !!
+    !! Callers that compare independently generated floating-point knots should
+    !! first apply a tolerance policy; multiplicity itself follows knot-vector
+    !! representation and therefore uses exact stored values.
     interface compute_multiplicity
         module procedure compute_multiplicity1
         module procedure compute_multiplicity2
@@ -48,6 +204,7 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Return stable unique integer or real values in first-occurrence order.
     interface unique
         module procedure unique_integer
         module procedure unique_real
@@ -56,6 +213,7 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Compute the dyadic product \(A_{ij}=u_i v_j\).
     interface dyad
         module procedure dyad_t1_t1
     end interface
@@ -63,6 +221,17 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Generate tensor-product Gauss-Legendre points and weights.
+    !!
+    !! Despite its name, `degree` is the number of quadrature points minus one.
+    !! Thus \(n_q=degree+1\) points integrate every univariate polynomial of
+    !! degree at most \(2n_q-1=2\,degree+1\) exactly in exact arithmetic.
+    !! Tensor products have this directional exactness separately in each
+    !! coordinate.
+    !!
+    !! **Original reference:** C. F. Gauss, *Methodus nova integralium valores
+    !! per approximationem inveniendi*, H. Dieterich, Gottingae, 1815.
+    !! [Digitized original](https://gallica.bnf.fr/ark:/12148/bpt6k2412190).
     interface gauss_leg
         module procedure gauss_legendre_1D
         module procedure gauss_legendre_2D
@@ -72,6 +241,10 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Compute supported Kronecker products without calling `matmul`.
+    !!
+    !! Overloads cover vector-vector, vector-matrix, and a three-factor tensor
+    !! product. Their flattening order is consistent with ForCAD control nets.
     interface kron
         module procedure kron_t1_t1
         module procedure kron_t1_t2
@@ -81,7 +254,12 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Evaluate first derivatives or a requested low-order local derivative table.
+    !!
+    !! The local overload also returns the first active control index and avoids
+    !! allocating a dense `nc`-entry basis vector.
     interface basis_bspline_der
+        module procedure basis_bspline_active_ders
         module procedure basis_bspline_der_A
         module procedure basis_bspline_der_B
     end interface
@@ -89,6 +267,9 @@ module forcad_utils
 
 
     !===============================================================================
+    !> Evaluate B-spline basis derivatives through second order.
+    !!
+    !! Optional overloads return the lower derivative orders in the same call.
     interface basis_bspline_2der
         module procedure basis_bspline_2der_A
         module procedure basis_bspline_2der_B
@@ -96,75 +277,1374 @@ module forcad_utils
     end interface
     !===============================================================================
 
+
+    !===============================================================================
+    !> Infer directional control counts from flattened tensor-product knot data.
+    interface infer_knot_shape
+        module procedure infer_knot_shape_2d
+        module procedure infer_knot_shape_3d
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    !> Return flattened indices on a curve endpoint, surface edge, or volume face.
+    !!
+    !! `reverse`, `swap`, and `flip` options map interface orientation without
+    !! copying the associated control net.
+    interface boundary_index
+        module procedure boundary_index_1d
+        module procedure boundary_index_2d
+        module procedure boundary_index_3d
+    end interface
+    !===============================================================================
+
+
+    !===============================================================================
+    !> Return flattened indices in a layer measured inward from a boundary.
+    !!
+    !! Layer zero is the boundary itself. Positive layers support arbitrary
+    !! \(C^n\) and \(G^n\) interface stencils.
+    interface boundary_layer_index
+        module procedure boundary_layer_index_1d
+        module procedure boundary_layer_index_2d
+        module procedure boundary_layer_index_3d
+    end interface
+    !===============================================================================
+
+
 contains
 
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function basis_bspline(Xt, knot, nc, degree) result(B)
-        integer, intent(in) :: degree
-        real(rk), intent(in), contiguous :: knot(:)
-        integer, intent(in) :: nc
-        real(rk), intent(in) :: Xt
-        real(rk) :: B(nc)
-        integer :: span, j, r, low, mid, high, nk
-        real(rk) :: left(degree), right(degree)
-        real(rk) :: N(0:degree)
-        real(rk) :: saved, temp
-        integer :: i, index_start
+    !> Test exact structural nonzero status for sparse/refinement coefficients.
+    !! Returns false only for positive or negative floating-point zero. Every
+    !! finite nonzero value, infinity, and NaN is structural; no tolerance is
+    !! applied. Keeping NaNs structural allows invalid arithmetic to propagate.
+    pure elemental logical function structural_nonzero(x) result(nonzero)
+        real(rk), intent(in) :: x
 
-        if (nc == 0) then
-            B = 0.0_rk
-            return
-        end if
+        nonzero = x < 0.0_rk .or. x > 0.0_rk .or. ieee_is_nan(x)
+    end function
+    !===============================================================================
 
-        B = 0.0_rk
-        nk = size(knot)
 
-        if (Xt < knot(1) .or. Xt > knot(nk)) then
-            B = 0.0_rk
-            return
-        end if
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Fill an existing array with inclusive uniformly spaced values.
+    !!
+    !! A one-element output receives `a`; an empty output is unchanged.
+    !!
+    pure subroutine fill_uniform(a, b, x)
+        real(rk), intent(in) :: a
+            !! First value.
+        real(rk), intent(in) :: b
+            !! Last value when `size(x)>1`.
+        real(rk), intent(out), contiguous :: x(:)
+            !! Caller-owned contiguous output array.
+        integer :: i, n
 
-        ! Find span
-        ! if (Xt == knot(nk)) then
-        if (abs(Xt - knot(nk)) < 2.0_rk*epsilon(0.0_rk)) then
-            span = nk-degree-1
+        n = size(x)
+        if (n < 1) return
+        if (n == 1) then
+            x(1) = a
         else
-            low = degree+1
-            high = nk-degree
-            do while (low <= high)
-                mid = (low+high)/2
-                if (Xt >= knot(mid) .and. Xt < knot(mid+1)) then
-                    span = mid
-                    exit
-                else if (Xt < knot(mid)) then
-                    high = mid-1
-                else
-                    low = mid+1
-                end if
+            do concurrent (i = 1:n)
+                x(i) = a + (b - a)*real(i - 1, rk)/real(n - 1, rk)
             end do
         end if
+    end subroutine
+    !===============================================================================
 
-        ! Cox-de Boor recursion
-        N = 0.0_rk
-        N(0) = 1.0_rk
-        do j = 1, degree
-            left(j) = Xt-knot(span+1-j)
-            right(j) = knot(span+j)-Xt
-            saved = 0.0_rk
-            do r = 0, j-1
-                temp = N(r)/(right(r+1)+left(j-r))
-                N(r) = saved+right(r+1)*temp
-                saved = left(j-r)*temp
-            end do
-            N(j) = saved
+
+    !===============================================================================
+    !> Elevate a verified periodic spline without replacing its cyclic topology.
+    !!
+    !! The periodic coefficients are extended over guarded periods, the resulting
+    !! bounded workspace is elevated by Algorithm A5.9, and one interior period
+    !! with \(p+t\) exterior knots is extracted. Because the extracted period is
+    !! separated from the artificial clamped boundaries by at least the elevated
+    !! support width, its coefficients are the cyclic degree-elevated
+    !! representation. Repeated trailing rows are assigned from the leading rows
+    !! exactly after the floating-point transformation.
+    pure subroutine elevate_degree_periodic_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap, success)
+        integer, intent(in) :: t
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: degree
+        real(rk), intent(in), contiguous :: Xcw(:,:)
+        integer, intent(out) :: nc_new
+        real(rk), allocatable, intent(out) :: knot_new(:)
+        real(rk), allocatable, intent(out) :: Xcw_new(:,:)
+        real(rk), allocatable, intent(out), optional :: Tmap(:,:)
+        logical, intent(out), optional :: success
+
+        real(rk), allocatable :: knot_extended(:), knot_elevated(:)
+        real(rk), allocatable :: Xcw_extended(:,:), Xcw_elevated(:,:), Textended(:,:)
+        real(rk) :: a, b, period, tol
+        integer :: nc, elevated_degree, unique_count, guard_periods, period_count
+        integer :: nc_extended, infinite_index, base_index, shift
+        integer :: i, j, first_knot, first_start, first_end, unique_new
+        logical :: ok
+
+        if (present(success)) success = .false.
+        nc = size(Xcw,1)
+        nc_new = 0
+        if (t < 1 .or. .not. periodic_topology(knot, degree, Xcw)) then
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+
+        elevated_degree = degree + t
+        unique_count = nc - degree
+        guard_periods = (elevated_degree + unique_count - 1)/unique_count + 1
+        period_count = 2*guard_periods + 1
+        nc_extended = period_count*unique_count + degree
+        a = knot(degree+1)
+        b = knot(nc+1)
+        period = b - a
+
+        allocate(knot_extended(nc_extended+degree+1))
+        allocate(Xcw_extended(nc_extended,size(Xcw,2)))
+        do concurrent (i = 1:nc_extended)
+            Xcw_extended(i,:) = Xcw(mod(i-1,unique_count)+1,:)
+        end do
+        do concurrent (i = 1:size(knot_extended)) local(infinite_index, base_index, shift)
+            infinite_index = i - 1 - guard_periods*unique_count
+            base_index = degree + modulo(infinite_index-degree, unique_count)
+            shift = (infinite_index-base_index)/unique_count
+            knot_extended(i) = knot(base_index+1) + real(shift,rk)*period
         end do
 
-        index_start = span-degree
+        if (present(Tmap)) then
+            call elevate_degree_bounded_A_5_9(&
+                t        = t,&
+                knot     = knot_extended,&
+                degree   = degree,&
+                Xcw      = Xcw_extended,&
+                nc_new   = nc_extended,&
+                knot_new = knot_elevated,&
+                Xcw_new  = Xcw_elevated,&
+                Tmap     = Textended,&
+                success  = ok)
+        else
+            call elevate_degree_bounded_A_5_9(&
+                t        = t,&
+                knot     = knot_extended,&
+                degree   = degree,&
+                Xcw      = Xcw_extended,&
+                nc_new   = nc_extended,&
+                knot_new = knot_elevated,&
+                Xcw_new  = Xcw_elevated,&
+                success  = ok)
+        end if
+        if (.not. ok) then
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+
+        tol = knot_tolerance(knot_elevated, 1, size(knot_elevated))
+        first_start = 0
+        first_end = 0
+        do i = 1, size(knot_elevated)
+            if (first_start == 0 .and. abs(knot_elevated(i)-a) <= tol) first_start = i
+            if (first_end == 0 .and. abs(knot_elevated(i)-b) <= tol) first_end = i
+        end do
+        first_knot = first_start - elevated_degree
+        unique_new = first_end - first_start
+        nc_new = unique_new + elevated_degree
+        if (first_start < 1 .or. first_end <= first_start .or. first_knot < 1 .or. &
+            first_end+elevated_degree > size(knot_elevated) .or. &
+            first_knot+nc_new-1 > size(Xcw_elevated,1)) then
+            nc_new = 0
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+
+        knot_new = knot_elevated(first_knot:first_end+elevated_degree)
+        Xcw_new = Xcw_elevated(first_knot:first_knot+nc_new-1,:)
+        Xcw_new(unique_new+1:nc_new,:) = Xcw_new(1:elevated_degree,:)
+
+        if (present(Tmap)) then
+            allocate(Tmap(nc_new,nc), source=0.0_rk)
+            do j = 1,size(Xcw_extended,1)
+                i = mod(j-1,unique_count) + 1
+                Tmap(:,i) = Tmap(:,i) + Textended(first_knot:first_knot+nc_new-1,j)
+            end do
+            Tmap(unique_new+1:nc_new,:) = Tmap(1:elevated_degree,:)
+            Xcw_new = matmul(Tmap,Xcw)
+        end if
+
+        if (.not. valid_knot_vector(knot_new, nc_new, elevated_degree) .or. &
+            .not. periodic_topology(knot_new, elevated_degree, Xcw_new)) then
+            nc_new = 0
+            deallocate(knot_new, Xcw_new)
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) then
+                deallocate(Tmap)
+                allocate(Tmap(0,0))
+            end if
+            return
+        end if
+
+        if (present(success)) success = .true.
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Insert a knot while retaining a verified cyclic B-spline representation.
+    !!
+    !! This is repeated Boehm insertion with Dierckx's periodic boundary update.
+    !! After each insertion, the \(p\) exterior knots and repeated coefficient
+    !! rows on the affected side are regenerated from the opposite side of the
+    !! period. The result therefore satisfies [[periodic_topology]] rather than
+    !! merely preserving the mapping on the active interval. `T`, when requested,
+    !! includes these cyclic row identifications and satisfies
+    !! `Qw=matmul(T,Pw)`.
+    !!
+    !! The seam multiplicity must remain at most \(p\); a full \(C^{-1}\) break
+    !! is not a periodic topology. Inputs and outputs follow the zero-based
+    !! bounds of [[insert_knot_A_5_1]].
+    !!
+    !! **References:**
+    !!
+    !! - W. Boehm, "Inserting New Knots into B-Spline Curves,"
+    !!   *Computer-Aided Design* 12 (1980), 199--201.
+    !!   [doi:10.1016/0010-4485(80)90154-2](https://doi.org/10.1016/0010-4485(80)90154-2).
+    !! - P. Dierckx, *Curve and Surface Fitting with Splines*, Oxford
+    !!   University Press, 1993, periodic knot insertion.
+    pure subroutine insert_knot_periodic_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw, T)
+        integer, intent(in) :: p
+            !! Polynomial degree.
+        real(rk), intent(in), contiguous :: UP(0:)
+            !! Verified periodic knot vector.
+        real(rk), intent(in), contiguous :: Pw(0:,:)
+            !! Periodic homogeneous or polynomial control variables.
+        real(rk), intent(in) :: u
+            !! Knot value in the active interval.
+        integer, intent(in) :: k
+            !! Initial zero-based span containing `u`.
+        integer, intent(in) :: s
+            !! Initial multiplicity of `u`.
+        integer, intent(in) :: r
+            !! Nonnegative insertion count.
+        integer, intent(out) :: nq
+            !! New highest zero-based control index.
+        real(rk), allocatable, intent(out) :: UQ(:)
+            !! Refined periodic knot vector.
+        real(rk), allocatable, intent(out) :: Qw(:,:)
+            !! Refined periodic control variables.
+        real(rk), allocatable, intent(out), optional :: T(:,:)
+            !! Optional periodic refinement transformation.
+
+        real(rk), allocatable :: knot_work(:), knot_step(:)
+        real(rk), allocatable :: control_work(:,:), control_step(:,:)
+        real(rk), allocatable :: Twork(:,:), Tstep(:,:), Tcomposed(:,:)
+        real(rk) :: period
+        integer :: insertion, span, multiplicity, nc_step, unique_count, i
+
+        nq = -1
+        if (p < 1 .or. r < 0 .or. .not. ieee_is_finite(u) .or. &
+            .not. periodic_topology(UP, p, Pw)) then
+            allocate(UQ(0:-1), Qw(0:-1,size(Pw,2)))
+            if (present(T)) allocate(T(0:-1,0:-1))
+            return
+        end if
+        if (k /= findspan(size(Pw,1)-1, p, u, UP) .or. &
+            s /= compute_multiplicity(UP, u) .or. s+r > p) then
+            allocate(UQ(0:-1), Qw(0:-1,size(Pw,2)))
+            if (present(T)) allocate(T(0:-1,0:-1))
+            return
+        end if
+        if (r == 0) then
+            if (present(T)) then
+                call insert_knot_A_5_1(&
+                    p  = p,&
+                    UP = UP,&
+                    Pw = Pw,&
+                    u  = u,&
+                    k  = k,&
+                    s  = s,&
+                    r  = 0,&
+                    nq = nq,&
+                    UQ = UQ,&
+                    Qw = Qw,&
+                    T  = T)
+            else
+                call insert_knot_A_5_1(&
+                    p  = p,&
+                    UP = UP,&
+                    Pw = Pw,&
+                    u  = u,&
+                    k  = k,&
+                    s  = s,&
+                    r  = 0,&
+                    nq = nq,&
+                    UQ = UQ,&
+                    Qw = Qw)
+            end if
+            return
+        end if
+
+        knot_work = UP
+        control_work = Pw
+        if (present(T)) then
+            allocate(Twork(size(Pw,1),size(Pw,1)), source=0.0_rk)
+            do concurrent (i = 1:size(Pw,1))
+                Twork(i,i) = 1.0_rk
+            end do
+        end if
+
+        do insertion = 1, r
+            span = findspan(size(control_work,1)-1, p, u, knot_work)
+            multiplicity = compute_multiplicity(knot_work, u)
+            if (present(T)) then
+                call insert_knot_A_5_1(&
+                    p  = p,&
+                    UP = knot_work,&
+                    Pw = control_work,&
+                    u  = u,&
+                    k  = span,&
+                    s  = multiplicity,&
+                    r  = 1,&
+                    nq = nq,&
+                    UQ = knot_step,&
+                    Qw = control_step,&
+                    T  = Tstep)
+            else
+                call insert_knot_A_5_1(&
+                    p  = p,&
+                    UP = knot_work,&
+                    Pw = control_work,&
+                    u  = u,&
+                    k  = span,&
+                    s  = multiplicity,&
+                    r  = 1,&
+                    nq = nq,&
+                    UQ = knot_step,&
+                    Qw = control_step)
+            end if
+
+            nc_step = size(control_step,1)
+            unique_count = nc_step - p
+            period = knot_step(nc_step) - knot_step(p)
+
+            if (span >= nc_step-p-1) then
+                knot_step(0:p-1) = knot_step(nc_step-p:nc_step-1) - period
+                control_step(0:p-1,:) = control_step(unique_count:unique_count+p-1,:)
+                if (present(T)) Tstep(0:p-1,:) = Tstep(unique_count:unique_count+p-1,:)
+            end if
+            if (span <= 2*p-1) then
+                knot_step(size(knot_step)-p:size(knot_step)-1) = knot_step(p+1:2*p) + period
+                control_step(unique_count:unique_count+p-1,:) = control_step(0:p-1,:)
+                if (present(T)) Tstep(unique_count:unique_count+p-1,:) = Tstep(0:p-1,:)
+            end if
+
+            if (present(T)) then
+                call sparse_left_matmul(&
+                    A = Tstep,&
+                    B = Twork,&
+                    C = Tcomposed)
+                call move_alloc(Tcomposed, Twork)
+            end if
+            call move_alloc(knot_step, knot_work)
+            call move_alloc(control_step, control_work)
+        end do
+
+        if (.not. periodic_topology(knot_work, p, control_work)) then
+            nq = -1
+            allocate(UQ(0:-1), Qw(0:-1,size(Pw,2)))
+            if (present(T)) allocate(T(0:-1,0:-1))
+            return
+        end if
+
+        nq = size(control_work,1) - 1
+        call move_alloc(knot_work, UQ)
+        call move_alloc(control_work, Qw)
+        if (present(T)) call move_alloc(Twork, T)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Compute a tensor-product basis, gradient, and Hessian on local support.
+    !! The derivative tables contain rows zero through two. Unused directions
+    !! use a three-row, one-column identity table. Rational derivatives apply
+    !! the quotient rule through second total order. This is a fused
+    !! tensor-product specialization of the multivariate quotient recurrence,
+    !! extending the rational-surface recurrence in Piegl and Tiller, *The
+    !! NURBS Book*, Algorithm A4.4 to as many as three parametric directions.
+    !! Direction 1 varies fastest in `basis`. `gradient(:,i)` stores
+    !! \(\partial R_A/\partial\xi_i\), while `hessian(:,i,j)` stores the mixed
+    !! derivative \(\partial^2R_A/(\partial\xi_i\partial\xi_j)\).
+    !! When `Wc` is present, its active entries are first multiplied by one
+    !! common exact radix power selected from their largest model exponent.
+    !! This preserves the projective quotient and its derivatives.
+    !!
+    pure subroutine tensor_basis_derivatives2_local(&
+        first1,&
+        nc1,&
+        ders1,&
+        first2,&
+        nc2,&
+        ders2,&
+        first3,&
+        nc3,&
+        ders3,&
+        basis,&
+        gradient,&
+        hessian,&
+        Wc)
+        integer, intent(in) :: first1
+            !! First active control index in direction 1.
+        integer, intent(in) :: nc1
+            !! Total control count in direction 1.
+        integer, intent(in) :: first2
+            !! First active control index in direction 2.
+        integer, intent(in) :: nc2
+            !! Total control count in direction 2.
+        integer, intent(in) :: first3
+            !! First active control index in direction 3.
+        integer, intent(in) :: nc3
+            !! Total control count in direction 3.
+        real(rk), intent(in), contiguous :: ders1(0:,0:)
+            !! Derivative rows 0:2 for the active direction-1 basis.
+        real(rk), intent(in), contiguous :: ders2(0:,0:)
+            !! Derivative rows 0:2 for the active direction-2 basis.
+        real(rk), intent(in), contiguous :: ders3(0:,0:)
+            !! Derivative rows 0:2 for the active direction-3 basis.
+        real(rk), intent(out), contiguous :: basis(0:)
+            !! Local tensor-product values.
+        real(rk), intent(out), contiguous :: gradient(0:,:)
+            !! Local parametric gradients, shape `[nlocal,rank]`.
+        real(rk), intent(out), contiguous :: hessian(0:,:,:)
+            !! Local parametric Hessians, shape `[nlocal,rank,rank]`.
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+            !! Optional flattened global weight array.
+        real(rk) :: denominator, denominator1(3), denominator2(3,3)
+        real(rk) :: value, derivative1(3), derivative2(3,3), wi
+        integer :: p1, p2, p3, l1, l2, l3, local, global, i, j, ndim, weight_exponent
+
+        basis = 0.0_rk
+        gradient = 0.0_rk
+        hessian = 0.0_rk
+        p1 = ubound(ders1,2)
+        p2 = ubound(ders2,2)
+        p3 = ubound(ders3,2)
+        ndim = size(gradient,2)
+        if (ubound(ders1,1) < 2 .or. ubound(ders2,1) < 2 .or. ubound(ders3,1) < 2) return
+        if (nc1 < 1 .or. nc2 < 1 .or. nc3 < 1) return
+        if (first1 < 1 .or. first2 < 1 .or. first3 < 1) return
+        if (first1 + p1 > nc1 .or. first2 + p2 > nc2 .or. first3 + p3 > nc3) return
+        if (size(basis) < (p1+1)*(p2+1)*(p3+1)) return
+        if (ndim < 1 .or. ndim > 3 .or. size(gradient,1) < size(basis)) return
+        if (size(hessian,1) < size(basis) .or. size(hessian,2) < ndim .or. size(hessian,3) < ndim) return
+
+        denominator = 1.0_rk
+        denominator1 = 0.0_rk
+        denominator2 = 0.0_rk
+        if (present(Wc)) then
+            if (size(Wc) < nc1*nc2*nc3) return
+            global = first1 + nc1*((first2-1) + nc2*(first3-1))
+            weight_exponent = exponent(Wc(global))
+            do l3 = 0, p3
+                do l2 = 0, p2
+                    do l1 = 0, p1
+                        global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                        weight_exponent = max(weight_exponent, exponent(Wc(global)))
+                    end do
+                end do
+            end do
+            denominator = 0.0_rk
+            do l3 = 0, p3
+                do l2 = 0, p2
+                    do l1 = 0, p1
+                        global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                        wi = scale(Wc(global), -weight_exponent)
+                        value = ders1(0,l1)*ders2(0,l2)*ders3(0,l3)
+                        derivative1(1) = ders1(1,l1)*ders2(0,l2)*ders3(0,l3)
+                        derivative1(2) = ders1(0,l1)*ders2(1,l2)*ders3(0,l3)
+                        derivative1(3) = ders1(0,l1)*ders2(0,l2)*ders3(1,l3)
+                        derivative2(1,1) = ders1(2,l1)*ders2(0,l2)*ders3(0,l3)
+                        derivative2(1,2) = ders1(1,l1)*ders2(1,l2)*ders3(0,l3)
+                        derivative2(1,3) = ders1(1,l1)*ders2(0,l2)*ders3(1,l3)
+                        derivative2(2,2) = ders1(0,l1)*ders2(2,l2)*ders3(0,l3)
+                        derivative2(2,3) = ders1(0,l1)*ders2(1,l2)*ders3(1,l3)
+                        derivative2(3,3) = ders1(0,l1)*ders2(0,l2)*ders3(2,l3)
+                        denominator = denominator + wi*value
+                        denominator1(1) = denominator1(1) + wi*derivative1(1)
+                        denominator1(2) = denominator1(2) + wi*derivative1(2)
+                        denominator1(3) = denominator1(3) + wi*derivative1(3)
+                        denominator2(1,1) = denominator2(1,1) + wi*derivative2(1,1)
+                        denominator2(1,2) = denominator2(1,2) + wi*derivative2(1,2)
+                        denominator2(1,3) = denominator2(1,3) + wi*derivative2(1,3)
+                        denominator2(2,2) = denominator2(2,2) + wi*derivative2(2,2)
+                        denominator2(2,3) = denominator2(2,3) + wi*derivative2(2,3)
+                        denominator2(3,3) = denominator2(3,3) + wi*derivative2(3,3)
+                    end do
+                end do
+            end do
+            denominator2(2,1) = denominator2(1,2)
+            denominator2(3,1) = denominator2(1,3)
+            denominator2(3,2) = denominator2(2,3)
+            if (denominator <= 0.0_rk .or. .not. ieee_is_finite(denominator)) return
+        end if
+
+        do l3 = 0, p3
+            do l2 = 0, p2
+                do l1 = 0, p1
+                    local = l1 + (p1+1)*(l2 + (p2+1)*l3)
+                    wi = 1.0_rk
+                    if (present(Wc)) then
+                        global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                        wi = scale(Wc(global), -weight_exponent)
+                    end if
+                    value = wi*ders1(0,l1)*ders2(0,l2)*ders3(0,l3)
+                    derivative1(1) = wi*ders1(1,l1)*ders2(0,l2)*ders3(0,l3)
+                    derivative1(2) = wi*ders1(0,l1)*ders2(1,l2)*ders3(0,l3)
+                    derivative1(3) = wi*ders1(0,l1)*ders2(0,l2)*ders3(1,l3)
+                    derivative2(1,1) = wi*ders1(2,l1)*ders2(0,l2)*ders3(0,l3)
+                    derivative2(1,2) = wi*ders1(1,l1)*ders2(1,l2)*ders3(0,l3)
+                    derivative2(1,3) = wi*ders1(1,l1)*ders2(0,l2)*ders3(1,l3)
+                    derivative2(2,2) = wi*ders1(0,l1)*ders2(2,l2)*ders3(0,l3)
+                    derivative2(2,3) = wi*ders1(0,l1)*ders2(1,l2)*ders3(1,l3)
+                    derivative2(3,3) = wi*ders1(0,l1)*ders2(0,l2)*ders3(2,l3)
+                    derivative2(2,1) = derivative2(1,2)
+                    derivative2(3,1) = derivative2(1,3)
+                    derivative2(3,2) = derivative2(2,3)
+                    basis(local) = value/denominator
+                    do i = 1, ndim
+                        gradient(local,i) = (derivative1(i)-basis(local)*denominator1(i))/denominator
+                    end do
+                    do j = 1, ndim
+                        do i = 1, ndim
+                            hessian(local,i,j) = (derivative2(i,j)-basis(local)*denominator2(i,j) - &
+                                gradient(local,i)*denominator1(j)-gradient(local,j)*denominator1(i))/denominator
+                        end do
+                    end do
+                end do
+            end do
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Find a disjoint-set representative while shortening the search path.
+    !!
+    !! `parent` must encode a valid one-based forest and `i` must identify one
+    !! of its members. Path halving updates traversed parent links in place;
+    !! `r` is the root satisfying `parent(r)==r`.
+    pure subroutine disjoint_set_root(parent, i, r)
+        integer, intent(inout), contiguous :: parent(:)
+            !! Parent forest, modified by path halving.
+        integer, intent(in) :: i
+            !! One-based member whose representative is requested.
+        integer, intent(out) :: r
+            !! One-based representative of `i`.
+
+        r = i
+        do while (parent(r) /= r)
+            parent(r) = parent(parent(r))
+            r = parent(r)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Merge two disjoint-set components using path halving.
+    !!
+    !! Roots are linked deterministically by their integer identifier. This is
+    !! the union-find structure analyzed by Tarjan (1975), without a separate
+    !! rank array.
+    !!
+    pure subroutine disjoint_set_union(parent, a, b)
+        integer, intent(inout), contiguous :: parent(:)
+            !! Parent forest initialized with `parent(i)=i`.
+        integer, intent(in) :: a
+            !! One-based member of the first component.
+        integer, intent(in) :: b
+            !! One-based member of the second component.
+        integer :: ra, rb
+
+        call disjoint_set_root(parent, a, ra)
+        call disjoint_set_root(parent, b, rb)
+        if (ra == rb) return
+        if (ra < rb) then
+            parent(rb) = ra
+        else
+            parent(ra) = rb
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Compress a disjoint-set forest and return compact component identifiers.
+    !!
+    !! Identifiers are one-based and assigned in first-member order.
+    !!
+    pure subroutine disjoint_set_map(parent, map)
+        integer, intent(inout), contiguous :: parent(:)
+            !! Parent forest; paths are shortened in place.
+        integer, allocatable, intent(out) :: map(:)
+            !! Component identifier for every input member.
+        integer :: i, r, n
+
+        allocate(map(size(parent)), source=0)
+        n = 0
+        do i = 1, size(parent)
+            call disjoint_set_root(parent, i, r)
+            if (map(r) == 0) then
+                n = n + 1
+                map(r) = n
+            end if
+            map(i) = map(r)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return the selected endpoint index of a one-dimensional control array.
+    !!
+    !! Side 1 is the minimum endpoint and side 2 the maximum endpoint. Because
+    !! an endpoint contains one index, `reverse` has no effect. An invalid side
+    !! returns the sentinel array `[0]`.
+    pure subroutine boundary_index_1d(nc, side, reverse, idx)
+        integer, intent(in) :: nc
+            !! Number of controls.
+        integer, intent(in) :: side
+            !! Endpoint identifier, 1 for minimum or 2 for maximum.
+        logical, intent(in) :: reverse
+            !! Orientation flag; immaterial for a single endpoint.
+        integer, allocatable, intent(out) :: idx(:)
+            !! One-element endpoint index, or `[0]` for an invalid side.
+
+        allocate(idx(1))
+        select case(side)
+        case(1)
+            idx(1) = 1
+        case(2)
+            idx(1) = nc
+        case default
+            idx(1) = 0
+        end select
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return direction-1-fastest control indices on one surface edge.
+    !!
+    !! Sides `1:4` denote `u_min`, `u_max`, `v_min`, and `v_max`. The output is
+    !! ordered along the tangential direction and `reverse` reverses that
+    !! ordering. An invalid side returns an empty array.
+    pure subroutine boundary_index_2d(nc, side, reverse, idx)
+        integer, intent(in), contiguous :: nc(:)
+            !! Directional control counts `[nu,nv]`.
+        integer, intent(in) :: side
+            !! Surface-edge identifier in `1:4`.
+        logical, intent(in) :: reverse
+            !! Reverse tangential output ordering when true.
+        integer, allocatable, intent(out) :: idx(:)
+            !! Flattened one-based edge indices.
+        integer :: i, p, q, n1, n2
+
+        n1 = nc(1)
+        n2 = nc(2)
+        select case(side)
+        case(1)
+            allocate(idx(n2))
+            do p = 1, n2
+                q = merge(n2-p+1, p, reverse)
+                idx(p) = (q-1)*n1 + 1
+            end do
+        case(2)
+            allocate(idx(n2))
+            do p = 1, n2
+                q = merge(n2-p+1, p, reverse)
+                idx(p) = (q-1)*n1 + n1
+            end do
+        case(3)
+            allocate(idx(n1))
+            do p = 1, n1
+                i = merge(n1-p+1, p, reverse)
+                idx(p) = i
+            end do
+        case(4)
+            allocate(idx(n1))
+            do p = 1, n1
+                i = merge(n1-p+1, p, reverse)
+                idx(p) = (n2-1)*n1 + i
+            end do
+        case default
+            allocate(idx(0))
+        end select
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return direction-1-fastest control indices on one volume face.
+    !!
+    !! Sides `1:6` denote the minimum and maximum faces normal to directions 1,
+    !! 2, and 3. `swap` exchanges the two face coordinates, `flip` reverses
+    !! either mapped coordinate, and `reverse` reverses the final flattened
+    !! ordering. An invalid side returns an empty array.
+    pure subroutine boundary_index_3d(nc, side, reverse, swap, flip, idx)
+        integer, intent(in), contiguous :: nc(:)
+            !! Directional control counts `[nu,nv,nw]`.
+        integer, intent(in) :: side
+            !! Volume-face identifier in `1:6`.
+        logical, intent(in) :: reverse
+            !! Reverse the final face ordering when true.
+        logical, intent(in) :: swap
+            !! Exchange the two tangential face directions when true.
+        logical, intent(in), contiguous :: flip(:)
+            !! Tangential-axis reversal flags; up to the first two entries apply.
+        integer, allocatable, intent(out) :: idx(:)
+            !! Flattened one-based face indices.
+        integer :: a, b, aa, bb, i, j, k, m1, m2, out1, out2, p, q
+
+        select case(side)
+        case(1, 2)
+            m1 = nc(2)
+            m2 = nc(3)
+            i = merge(1, nc(1), side == 1)
+        case(3, 4)
+            m1 = nc(1)
+            m2 = nc(3)
+            j = merge(1, nc(2), side == 3)
+        case(5, 6)
+            m1 = nc(1)
+            m2 = nc(2)
+            k = merge(1, nc(3), side == 5)
+        case default
+            allocate(idx(0))
+            return
+        end select
+
+        out1 = merge(m2, m1, swap)
+        out2 = merge(m1, m2, swap)
+        allocate(idx(out1*out2))
+        p = 0
+        do b = 1, out2
+            do a = 1, out1
+                if (swap) then
+                    aa = b
+                    bb = a
+                else
+                    aa = a
+                    bb = b
+                end if
+                if (size(flip) >= 1) then
+                    if (flip(1)) aa = m1-aa+1
+                end if
+                if (size(flip) >= 2) then
+                    if (flip(2)) bb = m2-bb+1
+                end if
+                p = p + 1
+                q = merge(size(idx)-p+1, p, reverse)
+                select case(side)
+                case(1, 2)
+                    idx(q) = (bb-1)*nc(1)*nc(2) + (aa-1)*nc(1) + i
+                case(3, 4)
+                    idx(q) = (bb-1)*nc(1)*nc(2) + (j-1)*nc(1) + aa
+                case(5, 6)
+                    idx(q) = (k-1)*nc(1)*nc(2) + (bb-1)*nc(1) + aa
+                case default
+                    idx(q) = 0
+                end select
+            end do
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return the endpoint-normal control index at a specified inward layer.
+    !!
+    !! `layer=0` selects the endpoint itself. Side 1 advances from the minimum
+    !! endpoint and side 2 from the maximum endpoint. This low-level routine
+    !! assumes `0<=layer<nc`; an invalid side returns `[0]`.
+    pure subroutine boundary_layer_index_1d(nc, side, layer, reverse, idx)
+        integer, intent(in) :: nc
+            !! Number of controls.
+        integer, intent(in) :: side
+            !! Endpoint identifier, 1 for minimum or 2 for maximum.
+        integer, intent(in) :: layer
+            !! Zero-based inward layer.
+        logical, intent(in) :: reverse
+            !! Orientation flag; immaterial for a one-entry layer.
+        integer, allocatable, intent(out) :: idx(:)
+            !! One-element layer index, or `[0]` for an invalid side.
+
+        allocate(idx(1))
+        select case(side)
+        case(1)
+            idx(1) = 1 + layer
+        case(2)
+            idx(1) = nc - layer
+        case default
+            idx(1) = 0
+        end select
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return surface-control indices in an inward layer parallel to one edge.
+    !!
+    !! Sides and ordering follow [[boundary_index]]. `layer=0` is the boundary;
+    !! positive values advance along its inward normal control direction. This
+    !! low-level routine assumes the layer lies inside the control net.
+    pure subroutine boundary_layer_index_2d(nc, side, layer, reverse, idx)
+        integer, intent(in), contiguous :: nc(:)
+            !! Directional control counts `[nu,nv]`.
+        integer, intent(in) :: side
+            !! Surface-edge identifier in `1:4`.
+        integer, intent(in) :: layer
+            !! Zero-based inward layer.
+        logical, intent(in) :: reverse
+            !! Reverse tangential output ordering when true.
+        integer, allocatable, intent(out) :: idx(:)
+            !! Flattened one-based layer indices; empty for an invalid side.
+        integer :: i, j, p, q, n1, n2
+
+        n1 = nc(1)
+        n2 = nc(2)
+        select case(side)
+        case(1)
+            allocate(idx(n2))
+            i = 1 + layer
+            do p = 1, n2
+                q = merge(n2-p+1, p, reverse)
+                idx(p) = (q-1)*n1 + i
+            end do
+        case(2)
+            allocate(idx(n2))
+            i = n1 - layer
+            do p = 1, n2
+                q = merge(n2-p+1, p, reverse)
+                idx(p) = (q-1)*n1 + i
+            end do
+        case(3)
+            allocate(idx(n1))
+            j = 1 + layer
+            do p = 1, n1
+                i = merge(n1-p+1, p, reverse)
+                idx(p) = (j-1)*n1 + i
+            end do
+        case(4)
+            allocate(idx(n1))
+            j = n2 - layer
+            do p = 1, n1
+                i = merge(n1-p+1, p, reverse)
+                idx(p) = (j-1)*n1 + i
+            end do
+        case default
+            allocate(idx(0))
+        end select
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return volume-control indices in an inward layer parallel to one face.
+    !!
+    !! Face identifiers and orientation options follow [[boundary_index]].
+    !! `layer=0` is the boundary face; positive layers advance along the inward
+    !! normal control direction. The caller must supply an in-range layer.
+    pure subroutine boundary_layer_index_3d(nc, side, layer, reverse, swap, flip, idx)
+        integer, intent(in), contiguous :: nc(:)
+            !! Directional control counts `[nu,nv,nw]`.
+        integer, intent(in) :: side
+            !! Volume-face identifier in `1:6`.
+        integer, intent(in) :: layer
+            !! Zero-based inward layer.
+        logical, intent(in) :: reverse
+            !! Reverse the final face ordering when true.
+        logical, intent(in) :: swap
+            !! Exchange the two tangential directions when true.
+        logical, intent(in), contiguous :: flip(:)
+            !! Tangential-axis reversal flags; up to the first two entries apply.
+        integer, allocatable, intent(out) :: idx(:)
+            !! Flattened one-based layer indices; empty for an invalid side.
+        integer :: a, b, aa, bb, i, j, k, m1, m2, out1, out2, p, q
+
+        select case(side)
+        case(1, 2)
+            m1 = nc(2)
+            m2 = nc(3)
+            i = merge(1 + layer, nc(1) - layer, side == 1)
+        case(3, 4)
+            m1 = nc(1)
+            m2 = nc(3)
+            j = merge(1 + layer, nc(2) - layer, side == 3)
+        case(5, 6)
+            m1 = nc(1)
+            m2 = nc(2)
+            k = merge(1 + layer, nc(3) - layer, side == 5)
+        case default
+            allocate(idx(0))
+            return
+        end select
+
+        out1 = merge(m2, m1, swap)
+        out2 = merge(m1, m2, swap)
+        allocate(idx(out1*out2))
+        p = 0
+        do b = 1, out2
+            do a = 1, out1
+                if (swap) then
+                    aa = b
+                    bb = a
+                else
+                    aa = a
+                    bb = b
+                end if
+                if (size(flip) >= 1) then
+                    if (flip(1)) aa = m1-aa+1
+                end if
+                if (size(flip) >= 2) then
+                    if (flip(2)) bb = m2-bb+1
+                end if
+                p = p + 1
+                q = merge(size(idx)-p+1, p, reverse)
+                select case(side)
+                case(1, 2)
+                    idx(q) = (bb-1)*nc(1)*nc(2) + (aa-1)*nc(1) + i
+                case(3, 4)
+                    idx(q) = (bb-1)*nc(1)*nc(2) + (j-1)*nc(1) + aa
+                case(5, 6)
+                    idx(q) = (k-1)*nc(1)*nc(2) + (bb-1)*nc(1) + aa
+                case default
+                    idx(q) = 0
+                end select
+            end do
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return the inward layer interpolated by an active endpoint.
+    !!
+    !! The result is the zero-based normal layer whose B-spline basis value is
+    !! exactly one at the selected active endpoint, provided every other active
+    !! value is exactly zero. A negative result means that the endpoint trace is
+    !! a linear combination of multiple layers and therefore cannot be encoded
+    !! by direct control-variable identification. Odd side identifiers select
+    !! the minimum endpoint and even identifiers select the maximum endpoint.
+    !!
+    !! The result can be positive for valid knot vectors containing exterior
+    !! knots. Open-clamped vectors return layer zero. See L. Piegl and W. Tiller,
+    !! *The NURBS Book*, 2nd edition, Sections 2.2 and 3.2.
+    !! [doi:10.1007/978-3-642-59223-2](https://doi.org/10.1007/978-3-642-59223-2).
+    pure function interpolatory_boundary_layer(knot, nc, degree, side) result(layer)
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Valid knot vector.
+        integer, intent(in) :: nc
+            !! Number of basis functions.
+        integer, intent(in) :: degree
+            !! Polynomial degree.
+        integer, intent(in) :: side
+            !! Rank-specific side identifier in the range `1:6`.
+        integer :: layer
+        real(rk) :: B(0:max(0, degree)), endpoint
+        integer :: first, i, index
+
+        layer = -1
+        if (degree < 0 .or. degree >= nc) return
+        if (size(knot) < nc + degree + 1) return
+        if (side < 1 .or. side > 6) return
+
+        endpoint = merge(knot(degree+1), knot(nc+1), mod(side, 2) == 1)
+        call basis_bspline_der_order_active(endpoint, knot, nc, degree, 0, first, B(0:degree))
+
+        index = 0
         do i = 0, degree
-            if (index_start+i >= 1 .and. index_start+i <= nc) then
-                B(index_start+i) = N(i)
+            if (.not. structural_nonzero(B(i))) cycle
+            if (.not. ieee_is_finite(B(i)) .or. abs(B(i) - 1.0_rk) > 0.0_rk .or. index /= 0) return
+            index = first + i
+        end do
+        if (index < 1 .or. index > nc) return
+
+        layer = merge(index - 1, nc - index, mod(side, 2) == 1)
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Compute a scale- and span-aware tolerance for knot comparisons.
+    !!
+    !! The tolerance is based on endpoint spacing and interval width, then
+    !! capped at one eighth of the smallest positive inspected span so that two
+    !! distinct spans cannot collapse under the comparison.
+    !!
+    pure function knot_tolerance(knot, first, last) result(tol)
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Knot vector; an empty vector returns zero.
+        integer, intent(in) :: first
+            !! First inspected one-based index, clamped to the array.
+        integer, intent(in) :: last
+            !! Last inspected one-based index; reversed bounds are accepted.
+        real(rk) :: tol, min_span, span, width
+        integer :: i, lo, hi, tmp
+
+        tol = 0.0_rk
+        if (size(knot) == 0) return
+
+        lo = max(1, min(first, size(knot)))
+        hi = max(1, min(last,  size(knot)))
+        if (lo > hi) then
+            tmp = lo
+            lo = hi
+            hi = tmp
+        end if
+
+        width = abs(knot(hi) - knot(lo))
+        tol = 8.0_rk*max(&
+            spacing(knot(lo)),&
+            spacing(knot(hi)),&
+            epsilon(1.0_rk)*width)
+
+        min_span = huge(1.0_rk)
+        do i = lo + 1, hi
+            span = knot(i) - knot(i-1)
+            if (span > 0.0_rk) min_span = min(min_span, span)
+        end do
+        if (min_span < huge(1.0_rk)) tol = min(tol, 0.125_rk*min_span)
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Optionally wrap one spline parameter into its active interval.
+    !! Disabled wrapping and invalid spline states leave the parameter unchanged.
+    !! Wrapping maps into the half-open interval \([a,b)\), where
+    !! \(a=U_p\) and \(b=U_{n_c}\). It changes parameter evaluation only; it
+    !! does not alter the knot vector or assert periodic geometry closure.
+    !!
+    pure function map_parameter(Xt, knot, nc, degree, wrap_parameter) result(u)
+        real(rk), intent(in) :: Xt
+            !! Input parameter.
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Knot vector.
+        integer, intent(in) :: nc
+            !! Number of control points.
+        integer, intent(in) :: degree
+            !! Polynomial degree.
+        logical, intent(in) :: wrap_parameter
+            !! Enable modulo mapping when true.
+        real(rk) :: u
+        real(rk) :: a, b, period
+
+        u = Xt
+        if (.not. wrap_parameter .or. .not. ieee_is_finite(Xt)) return
+        if (degree < 0 .or. nc < 1 .or. degree >= nc) return
+        if (size(knot) < nc + degree + 1) return
+
+        a = knot(degree+1)
+        b = knot(nc+1)
+        period = b - a
+        if (.not. ieee_is_finite(period) .or. period <= 0.0_rk) return
+
+        if (Xt >= a .and. Xt < b) return
+
+        u = a + modulo(Xt - a, period)
+        if (u >= b) u = a
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Find the active 1-based span for a valid local spline space.
+    !! The active parameter interval is [knot(degree+1), knot(nc+1)].
+    pure subroutine active_span_at(Xt, knot, nc, degree, span, u, inside)
+        real(rk), intent(in) :: Xt
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        integer, intent(out) :: span
+        real(rk), intent(out) :: u
+        logical, intent(out) :: inside
+        integer :: low, mid, high
+        real(rk) :: a, b, tol
+
+        span = 0
+        u = Xt
+        inside = .false.
+        if (degree < 0 .or. nc < 1 .or. degree >= nc) return
+        if (size(knot) < nc + degree + 1) return
+
+        a = knot(degree+1)
+        b = knot(nc+1)
+        tol = knot_tolerance(knot, degree+1, nc+1)
+        if (u < a) then
+            if (a - u > tol) return
+            u = a
+        else if (u > b) then
+            if (u - b > tol) return
+            u = b
+        end if
+
+        if (abs(u - b) <= tol) then
+            span = nc
+            inside = .true.
+            return
+        end if
+
+        low = degree + 1
+        high = nc
+        do while (low <= high)
+            mid = (low + high)/2
+            if (u >= knot(mid) .and. u < knot(mid+1)) then
+                span = mid
+                inside = .true.
+                return
+            else if (u < knot(mid)) then
+                high = mid - 1
+            else
+                low = mid + 1
+            end if
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Validate the structural invariants of a one-dimensional spline space.
+    !!
+    !! A valid vector is finite and nondecreasing, has exactly
+    !! `nc+degree+1` entries, has no run longer than `degree+1`, and has a
+    !! positive active interval. Open, clamped, one-sided clamped, unclamped,
+    !! uniform, nonuniform, and periodic-form vectors can all satisfy this
+    !! predicate; endpoint multiplicity is not prescribed. Here
+    !! "periodic-form" means only that exterior knots and unclamped active
+    !! endpoints can be represented. This structural predicate does not verify
+    !! periodic knot-spacing extension or repeated control data; use
+    !! [[periodic_topology]] when those data are available.
+    !!
+    pure function valid_knot_vector(knot, nc, degree) result(valid)
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Candidate knot vector.
+        integer, intent(in) :: nc
+            !! Number of control points.
+        integer, intent(in) :: degree
+            !! Candidate polynomial degree, satisfying `0<=degree<nc`.
+        logical :: valid
+        integer :: i, run
+
+        valid = .false.
+        if (degree < 0 .or. nc < 1 .or. degree >= nc) return
+        if (size(knot) /= nc + degree + 1) return
+        if (.not. all(ieee_is_finite(knot))) return
+
+        run = 1
+        do i = 2, size(knot)
+            if (knot(i) < knot(i-1)) return
+            if (knot(i) == knot(i-1)) then
+                run = run + 1
+                if (run > degree + 1) return
+            else
+                run = 1
+            end if
+        end do
+        if (knot(nc+1) <= knot(degree+1)) return
+
+        valid = .true.
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Verify a cyclic tensor-product spline topology in one parameter direction.
+    !!
+    !! Let \(p\) be `degree`, \(n_d\) the selected directional control count,
+    !! \(n_u=n_d-p\), \(a=U_p\), \(b=U_{n_d}\), and \(T=b-a\). A representation
+    !! is periodic only if its ordinary knot-vector invariants hold, the seam
+    !! multiplicity is at most \(p\), and
+    !!
+    !! \[
+    !! U_{i+n_u}=U_i+T,\qquad i=0,\ldots,2p,
+    !! \]
+    !!
+    !! while every control layer with directional index \(i+n_u\) repeats layer
+    !! \(i\), for \(i=0,\ldots,p-1\). Supplied rational weights must repeat in
+    !! the same way. These cyclic coefficient and knot identities imply equality
+    !! of the two seam traces and their derivatives through order \(p-s\), where
+    !! \(s\) is the seam-knot multiplicity. They are therefore stronger than
+    !! parameter wrapping or endpoint coincidence alone.
+    !!
+    !! `Xc` uses direction-1-fastest tensor flattening. Omit `nc` and `dir` for
+    !! a curve or packed directional control lines. Comparisons use
+    !! roundoff-scaled tolerances so topology produced by stable refinement is
+    !! not lost to floating-point noise.
+    !!
+    !! **Reference:** M. W. Blake et al., *NASA Geometry Data Exchange
+    !! Specification for Computational Fluid Dynamics (NASA IGES)*, NASA
+    !! Reference Publication 1338, 1994, Sections 4.7.2 and 4.8.2.
+    !! [NASA publication](https://ntrs.nasa.gov/citations/19950005054).
+    pure function periodic_topology(knot, degree, Xc, Wc, nc, dir) result(periodic)
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Complete candidate knot vector.
+        integer, intent(in) :: degree
+            !! Polynomial degree in the selected direction.
+        real(rk), intent(in), contiguous :: Xc(:,:)
+            !! Curve controls, packed lines, or flattened tensor-product controls.
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+            !! Optional flattened positive rational weights.
+        integer, intent(in), contiguous, optional :: nc(:)
+            !! Optional tensor-product control counts.
+        integer, intent(in), optional :: dir
+            !! Selected tensor direction when `nc` is present.
+        logical :: periodic
+        integer :: i, idx, counterpart, layer, n_dir, stride, period_count
+        integer :: seam_multiplicity
+        real(rk) :: period, knot_tol, control_tol, weight_tol
+
+        periodic = .false.
+        if (size(Xc,1) < 1 .or. size(Xc,2) < 1) return
+        if (.not. all(ieee_is_finite(Xc))) return
+        if (present(nc) .neqv. present(dir)) return
+
+        if (present(nc)) then
+            if (size(nc) < 1 .or. any(nc < 1)) return
+            if (dir < 1 .or. dir > size(nc)) return
+            if (product(nc) /= size(Xc,1)) return
+            n_dir = nc(dir)
+            stride = 1
+            if (dir > 1) stride = product(nc(1:dir-1))
+        else
+            n_dir = size(Xc,1)
+            stride = 1
+        end if
+
+        if (.not. valid_knot_vector(knot, n_dir, degree) .or. degree < 1) return
+        if (present(Wc)) then
+            if (size(Wc) /= size(Xc,1)) return
+            if (.not. all(ieee_is_finite(Wc) .and. Wc > 0.0_rk)) return
+        end if
+
+        period_count = n_dir - degree
+        period = knot(n_dir+1) - knot(degree+1)
+        knot_tol = knot_tolerance(knot, 1, size(knot))
+        do i = 1, size(knot) - period_count
+            if (abs(knot(i+period_count) - knot(i) - period) > knot_tol) return
+        end do
+
+        seam_multiplicity = compute_multiplicity(knot, knot(degree+1))
+        if (seam_multiplicity /= compute_multiplicity(knot, knot(n_dir+1)) .or. &
+            seam_multiplicity > degree) return
+
+        control_tol = 128.0_rk*real(degree+1, rk)*epsilon(1.0_rk)*&
+            max(1.0_rk, maxval(abs(Xc)))
+        if (present(Wc)) then
+            weight_tol = 128.0_rk*real(degree+1, rk)*epsilon(1.0_rk)*&
+                max(1.0_rk, maxval(abs(Wc)))
+        end if
+
+        do idx = 0, size(Xc,1) - 1
+            layer = mod(idx/stride, n_dir) + 1
+            if (layer <= period_count) cycle
+            counterpart = idx - period_count*stride
+            if (any(abs(Xc(idx+1,:) - Xc(counterpart+1,:)) > control_tol)) return
+            if (present(Wc)) then
+                if (abs(Wc(idx+1) - Wc(counterpart+1)) > weight_tol) return
+            end if
+        end do
+
+        periodic = .true.
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return the lower active parameter bound \(U_p\).
+    !! Input is assumed to satisfy [[valid_knot_vector]].
+    pure function knot_start(knot, nc, degree) result(a)
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        real(rk) :: a
+
+        a = knot(degree+1)
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return distinct stored knots on the closed active interval.
+    !! A nondecreasing knot vector is a mathematical precondition. Invalid
+    !! degree/count/size metadata returns an allocated zero-length array; other
+    !! knot-vector invariants are not checked here.
+    pure function active_knots(knot, nc, degree) result(Xth)
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        real(rk), allocatable :: Xth(:)
+        integer :: nunique, i
+
+        if (nc < 1 .or. degree < 0 .or. degree >= nc .or. size(knot) < nc + degree + 1) then
+            allocate(Xth(0))
+            return
+        end if
+
+        nunique = 1
+        do i = degree + 2, nc + 1
+            if (knot(i) > knot(i-1)) nunique = nunique + 1
+        end do
+
+        allocate(Xth(nunique))
+        Xth(1) = knot(degree+1)
+        nunique = 1
+        do i = degree + 2, nc + 1
+            if (knot(i) > Xth(nunique)) then
+                nunique = nunique + 1
+                Xth(nunique) = knot(i)
             end if
         end do
     end function
@@ -174,59 +1654,727 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Count positive-length knot spans in the active interval.
+    !! Repeated knots do not create zero-measure elements. A valid
+    !! nondecreasing knot vector is assumed; only degree/count/size metadata is
+    !! checked.
+    pure function active_span_count(knot, nc, degree) result(nspan)
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        integer :: nspan
+        integer :: i
+
+        nspan = 0
+        if (nc < 1 .or. degree < 0 .or. degree >= nc) return
+        if (size(knot) < nc + degree + 1) return
+
+        do i = degree + 1, nc
+            if (knot(i+1) > knot(i)) nspan = nspan + 1
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return multiplicities of distinct knots on the active interval.
+    !! The result includes both active endpoints and follows their order in the
+    !! knot vector. A valid nondecreasing vector is assumed. Invalid
+    !! degree/count/size metadata or a nonpositive active interval returns an
+    !! allocated zero-length array; other invariants are not checked.
+    pure function active_knot_multiplicity(knot, nc, degree) result(multiplicity)
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        integer, allocatable :: multiplicity(:)
+        integer :: i, j, nunique, run
+        real(rk) :: a, b, x
+
+        if (nc < 1 .or. degree < 0 .or. degree >= nc .or. size(knot) < nc + degree + 1) then
+            allocate(multiplicity(0))
+            return
+        end if
+
+        a = knot_start(knot, nc, degree)
+        b = knot_end(knot, nc, degree)
+        if (b <= a) then
+            allocate(multiplicity(0))
+            return
+        end if
+
+        nunique = 0
+        i = 1
+        do while (i <= size(knot))
+            x = knot(i)
+            j = i + 1
+            do while (j <= size(knot))
+                if (knot(j) /= x) exit
+                j = j + 1
+            end do
+            if (x >= a .and. x <= b) nunique = nunique + 1
+            i = j
+        end do
+
+        allocate(multiplicity(nunique))
+
+        nunique = 0
+        i = 1
+        do while (i <= size(knot))
+            x = knot(i)
+            j = i + 1
+            do while (j <= size(knot))
+                if (knot(j) /= x) exit
+                j = j + 1
+            end do
+            if (x >= a .and. x <= b) then
+                nunique = nunique + 1
+                run = j - i
+                multiplicity(nunique) = run
+            end if
+            i = j
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return the upper active parameter bound \(U_{n_c}\).
+    !! Input is assumed to satisfy [[valid_knot_vector]].
+    pure function knot_end(knot, nc, degree) result(b)
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        real(rk) :: b
+
+        b = knot(nc+1)
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Infer a two-dimensional degree and control-net shape from knot lengths.
+    !!
+    !! Candidates satisfy
+    !! \(n_{c,d}=\operatorname{size}(U_d)-p_d-1\) and
+    !! \(n_{c,1}n_{c,2}=n_{cp}\). The first candidate uses
+    !! \(p_d=s_{d,0}-1\), where \(s_{d,0}\) is the exact run length of the first
+    !! knot. If that candidate is valid, it takes precedence; this is the usual
+    !! open-clamped inference and no ambiguity search is performed. Otherwise,
+    !! all degrees are searched and `ok` is true only for exactly one valid
+    !! candidate. Ignore `degree` and `nc` when `ok` is false; after an ambiguous
+    !! search they can retain the first candidate found.
+    pure subroutine infer_knot_shape_2d(knot1, knot2, ncp, degree, nc, ok)
+        real(rk), intent(in), contiguous :: knot1(:), knot2(:)
+            !! Directional knot vectors.
+        integer, intent(in) :: ncp
+            !! Flattened control-point count.
+        integer, intent(out) :: degree(2), nc(2)
+            !! Inferred degrees and control counts; meaningful only when `ok` is true.
+        logical, intent(out) :: ok
+            !! True for a valid preferred candidate or a unique fallback candidate.
+        integer, allocatable :: mul1(:), mul2(:)
+        integer :: p1, p2, n1, n2, nsolution
+
+        degree = 0
+        nc = 0
+        ok = .false.
+
+        if (ncp <= 0 .or. size(knot1) < 2 .or. size(knot2) < 2) return
+
+        mul1 = compute_multiplicity(knot1)
+        mul2 = compute_multiplicity(knot2)
+        if (size(mul1) == 0 .or. size(mul2) == 0) return
+        p1 = mul1(1) - 1
+        p2 = mul2(1) - 1
+        n1 = size(knot1) - p1 - 1
+        n2 = size(knot2) - p2 - 1
+        if (n1*n2 == ncp) then
+            if (valid_knot_vector(knot1, n1, p1) .and. valid_knot_vector(knot2, n2, p2)) then
+                degree = [p1, p2]
+                nc = [n1, n2]
+                ok = .true.
+                return
+            end if
+        end if
+
+        nsolution = 0
+        do p1 = 0, size(knot1)-2
+            n1 = size(knot1) - p1 - 1
+            if (.not. valid_knot_vector(knot1, n1, p1)) cycle
+            if (mod(ncp, n1) /= 0) cycle
+            n2 = ncp/n1
+            p2 = size(knot2) - n2 - 1
+            if (.not. valid_knot_vector(knot2, n2, p2)) cycle
+            nsolution = nsolution + 1
+            if (nsolution == 1) then
+                degree = [p1, p2]
+                nc = [n1, n2]
+            end if
+        end do
+        ok = nsolution == 1
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Infer a three-dimensional degree and control-lattice shape from knot lengths.
+    !!
+    !! Candidates satisfy
+    !! \(n_{c,d}=\operatorname{size}(U_d)-p_d-1\) and
+    !! \(n_{c,1}n_{c,2}n_{c,3}=n_{cp}\). The exact first-knot run lengths first
+    !! define the preferred open-clamped candidate \(p_d=s_{d,0}-1\). A valid
+    !! preferred candidate is returned without an ambiguity search. If it is
+    !! invalid, exhaustive search succeeds only when exactly one candidate is
+    !! valid. Ignore `degree` and `nc` when `ok` is false.
+    pure subroutine infer_knot_shape_3d(knot1, knot2, knot3, ncp, degree, nc, ok)
+        real(rk), intent(in), contiguous :: knot1(:), knot2(:), knot3(:)
+            !! Directional knot vectors.
+        integer, intent(in) :: ncp
+            !! Flattened control-point count.
+        integer, intent(out) :: degree(3), nc(3)
+            !! Inferred degrees and control counts; meaningful only when `ok` is true.
+        logical, intent(out) :: ok
+            !! True for a valid preferred candidate or a unique fallback candidate.
+        integer, allocatable :: mul1(:), mul2(:), mul3(:)
+        integer :: p1, p2, p3, n1, n2, n3, nsolution
+
+        degree = 0
+        nc = 0
+        ok = .false.
+
+        if (ncp <= 0 .or. size(knot1) < 2 .or. size(knot2) < 2 .or. size(knot3) < 2) return
+
+        mul1 = compute_multiplicity(knot1)
+        mul2 = compute_multiplicity(knot2)
+        mul3 = compute_multiplicity(knot3)
+        if (size(mul1) == 0 .or. size(mul2) == 0 .or. size(mul3) == 0) return
+        p1 = mul1(1) - 1
+        p2 = mul2(1) - 1
+        p3 = mul3(1) - 1
+        n1 = size(knot1) - p1 - 1
+        n2 = size(knot2) - p2 - 1
+        n3 = size(knot3) - p3 - 1
+        if (n1*n2*n3 == ncp) then
+            if (valid_knot_vector(knot1, n1, p1) .and. valid_knot_vector(knot2, n2, p2) .and. &
+                valid_knot_vector(knot3, n3, p3)) then
+                degree = [p1, p2, p3]
+                nc = [n1, n2, n3]
+                ok = .true.
+                return
+            end if
+        end if
+
+        nsolution = 0
+        do p1 = 0, size(knot1)-2
+            n1 = size(knot1) - p1 - 1
+            if (.not. valid_knot_vector(knot1, n1, p1)) cycle
+            do p2 = 0, size(knot2)-2
+                n2 = size(knot2) - p2 - 1
+                if (.not. valid_knot_vector(knot2, n2, p2)) cycle
+                if (mod(ncp, n1*n2) /= 0) cycle
+                n3 = ncp/(n1*n2)
+                p3 = size(knot3) - n3 - 1
+                if (.not. valid_knot_vector(knot3, n3, p3)) cycle
+                nsolution = nsolution + 1
+                if (nsolution == 1) then
+                    degree = [p1, p2, p3]
+                    nc = [n1, n2, n3]
+                end if
+            end do
+        end do
+        ok = nsolution == 1
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate the at-most-\(p+1\) nonzero B-spline values at one parameter.
+    !! `N(j)` corresponds to one-based global basis index `first+j`.
+    pure subroutine basis_bspline_active(Xt, knot, nc, degree, first, N)
+        real(rk), intent(in) :: Xt
+        real(rk), intent(in), contiguous :: knot(:)
+        integer, intent(in) :: nc, degree
+        integer, intent(out) :: first
+        real(rk), intent(out) :: N(0:degree)
+        call basis_bspline_active_ders(Xt, knot, nc, degree, 0, first, N=N)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate the complete degree-`degree` B-spline basis at one parameter.
+    !!
+    !! The result has `nc` entries but at most `degree+1` are nonzero.
+    !! Parameters outside the active interval return zeros, except values within
+    !! [[knot_tolerance]] of an endpoint, which are snapped to that endpoint.
+    !!
+    pure function basis_bspline(Xt, knot, nc, degree) result(B)
+        integer, intent(in) :: degree
+            !! Polynomial degree.
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Valid knot vector.
+        integer, intent(in) :: nc
+            !! Number of basis functions/control points.
+        real(rk), intent(in) :: Xt
+            !! Parameter value.
+        real(rk) :: B(nc)
+        real(rk) :: N(0:degree)
+        integer :: first, i, idx
+
+        B = 0.0_rk
+        if (nc == 0) return
+        call basis_bspline_active(Xt, knot, nc, degree, first, N)
+        do i = 0, degree
+            idx = first + i
+            if (idx >= 1 .and. idx <= nc) B(idx) = N(i)
+        end do
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate all nonzero B-spline basis derivatives through `nder`.
+    !! Implements Algorithm A2.3 of Piegl and Tiller, The NURBS Book,
+    !! 2nd edition. Rows above `degree` are identically zero.
+    !! The caller supplies `ders(0:nder,0:degree)`; on return `first` is the
+    !! one-based index associated with column zero.
+    !! For \(k\le p\), row \(k\) contains
+    !! \(\mathrm d^kN_{i,p}/\mathrm du^k\); rows \(k>p\) are zero.
+    !!
+    pure subroutine basis_bspline_der_all_active(Xt, knot, nc, degree, nder, first, ders)
+        integer, intent(in) :: degree
+            !! Polynomial degree.
+        integer, intent(in) :: nc
+            !! Number of basis functions.
+        integer, intent(in) :: nder
+            !! Highest derivative order requested; must be nonnegative.
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Valid knot vector.
+        real(rk), intent(in) :: Xt
+            !! Parameter value on, or within tolerance of, the active interval.
+        integer, intent(out) :: first
+            !! First globally active one-based basis index.
+        real(rk), intent(out), contiguous :: ders(0:,0:)
+            !! Derivative table; row `k` contains \(N^{(k)}\).
+        integer :: span, j, r, k, nder_eff
+        integer :: s1, s2, rkidx, pk, j1, j2, tmp_s
+        real(rk) :: left(0:degree), right(0:degree)
+        real(rk) :: ndu(0:degree, 0:degree), a(0:1, 0:degree)
+        real(rk) :: saved, temp, denom, d, factor, u
+        logical :: inside
+
+        first = 1
+        ders = 0.0_rk
+        if (degree < 0 .or. nder < 0 .or. nc < 1 .or. degree >= nc) return
+        if (size(knot) < nc + degree + 1 .or. ubound(ders,1) < nder .or. ubound(ders,2) < degree) return
+        call active_span_at(Xt, knot, nc, degree, span, u, inside)
+        if (.not. inside) return
+        ndu = 0.0_rk
+        left = 0.0_rk
+        right = 0.0_rk
+        ndu(0, 0) = 1.0_rk
+
+        do j = 1, degree
+            left(j) = u - knot(span + 1 - j)
+            right(j) = knot(span + j) - u
+            saved = 0.0_rk
+            do r = 0, j-1
+                ndu(j, r) = right(r+1) + left(j-r)
+                if (ndu(j, r) /= 0.0_rk) then
+                    temp = ndu(r, j-1)/ndu(j, r)
+                else
+                    temp = 0.0_rk
+                end if
+                ndu(r, j) = saved + right(r+1)*temp
+                saved = left(j-r)*temp
+            end do
+            ndu(j, j) = saved
+        end do
+
+        do j = 0, degree
+            ders(0, j) = ndu(j, degree)
+        end do
+
+        nder_eff = min(nder, degree)
+        if (nder_eff > 0) then
+            do r = 0, degree
+                a = 0.0_rk
+                a(0, 0) = 1.0_rk
+                s1 = 0
+                s2 = 1
+                do k = 1, nder_eff
+                    d = 0.0_rk
+                    rkidx = r - k
+                    pk = degree - k
+
+                    if (r >= k) then
+                        denom = ndu(pk+1, rkidx)
+                        if (denom /= 0.0_rk) then
+                            a(s2, 0) = a(s1, 0)/denom
+                            d = a(s2, 0)*ndu(rkidx, pk)
+                        else
+                            a(s2, 0) = 0.0_rk
+                        end if
+                    end if
+
+                    if (rkidx >= -1) then
+                        j1 = 1
+                    else
+                        j1 = -rkidx
+                    end if
+
+                    if (r - 1 <= pk) then
+                        j2 = k - 1
+                    else
+                        j2 = degree - r
+                    end if
+
+                    do j = j1, j2
+                        denom = ndu(pk+1, rkidx+j)
+                        if (denom /= 0.0_rk) then
+                            a(s2, j) = (a(s1, j) - a(s1, j-1))/denom
+                            d = d + a(s2, j)*ndu(rkidx+j, pk)
+                        else
+                            a(s2, j) = 0.0_rk
+                        end if
+                    end do
+
+                    if (r <= pk) then
+                        denom = ndu(pk+1, r)
+                        if (denom /= 0.0_rk) then
+                            a(s2, k) = -a(s1, k-1)/denom
+                            d = d + a(s2, k)*ndu(r, pk)
+                        else
+                            a(s2, k) = 0.0_rk
+                        end if
+                    end if
+
+                    ders(k, r) = d
+                    tmp_s = s1
+                    s1 = s2
+                    s2 = tmp_s
+                end do
+            end do
+
+            factor = real(degree, rk)
+            do k = 1, nder_eff
+                do j = 0, degree
+                    ders(k, j) = ders(k, j)*factor
+                end do
+                factor = factor*real(degree-k, rk)
+            end do
+        end if
+
+        first = span - degree
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return local basis values and optional first or second derivatives.
+    !! This convenience overload requests at most order two from
+    !! [[basis_bspline_der_all_active]] and never forms a dense `nc`-vector.
+    pure subroutine basis_bspline_active_ders(Xt, knot, nc, degree, nder, first, N, dN, d2N)
+        integer, intent(in) :: degree, nc, nder
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in) :: Xt
+        integer, intent(out) :: first
+        real(rk), intent(out), optional :: N(0:degree), dN(0:degree), d2N(0:degree)
+        real(rk) :: ders(0:2,0:degree)
+
+        first = 1
+        if (present(N)) N = 0.0_rk
+        if (present(dN)) dN = 0.0_rk
+        if (present(d2N)) d2N = 0.0_rk
+        if (nder < 0) return
+
+        call basis_bspline_der_all_active(&
+            Xt     = Xt,&
+            knot   = knot,&
+            nc     = nc,&
+            degree = degree,&
+            nder   = min(2, nder),&
+            first  = first,&
+            ders   = ders)
+        if (present(N)) N = ders(0,:)
+        if (present(dN) .and. nder >= 1) dN = ders(1,:)
+        if (present(d2N) .and. nder >= 2) d2N = ders(2,:)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Scatter local values and derivatives into optional dense vectors.
+    !! Every present output has length `nc`; entries outside local support are
+    !! set to zero.
+    pure subroutine basis_bspline_ders(Xt, knot, nc, degree, nder, B, dB, d2B)
+        integer, intent(in) :: degree, nc, nder
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out), optional :: B(nc), dB(nc), d2B(nc)
+        real(rk) :: N(0:degree), dN(0:degree), d2N(0:degree)
+        integer :: first, j, idx
+
+        if (present(B))  B  = 0.0_rk
+        if (present(dB)) dB = 0.0_rk
+        if (present(d2B)) d2B = 0.0_rk
+        if (nc == 0) return
+
+        call basis_bspline_active_ders(Xt, knot, nc, degree, nder, first, N, dN, d2N)
+        do j = 0, degree
+            idx = first + j
+            if (idx >= 1 .and. idx <= nc) then
+                if (present(B)) B(idx) = N(j)
+                if (present(dB)) dB(idx) = dN(j)
+                if (present(d2B)) d2B(idx) = d2N(j)
+            end if
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate one arbitrary derivative order as a dense basis vector.
+    !!
+    !! `B` is zero when `nder>degree`, when metadata are invalid, or when `Xt`
+    !! lies outside the active interval.
+    !!
+    pure subroutine basis_bspline_der_order(Xt, knot, nc, degree, nder, B)
+        integer, intent(in) :: degree
+        integer, intent(in) :: nc
+        integer, intent(in) :: nder
+            !! Nonnegative derivative order.
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in) :: Xt
+        real(rk), intent(out), contiguous :: B(:)
+        real(rk) :: B_active(0:degree)
+        integer :: j, first, idx
+
+        B = 0.0_rk
+        if (nc == 0 .or. degree < 0 .or. degree >= nc .or. nder < 0) return
+        if (size(B) < nc .or. size(knot) < nc + degree + 1) return
+
+        call basis_bspline_der_order_active(Xt, knot, nc, degree, nder, first, B_active)
+        do j = 0, degree
+            idx = first + j
+            if (idx >= 1 .and. idx <= nc) B(idx) = B_active(j)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate one arbitrary derivative order on local support only.
+    !!
+    !! The fixed-size result `B(0:degree)` avoids a dense temporary. `first`
+    !! maps `B(j)` to global basis index `first+j`.
+    !!
+    pure subroutine basis_bspline_der_order_active(Xt, knot, nc, degree, nder, first, B)
+        integer, intent(in) :: degree
+        integer, intent(in) :: nc
+        integer, intent(in) :: nder
+            !! Nonnegative derivative order.
+        real(rk), intent(in), contiguous :: knot(:)
+        real(rk), intent(in) :: Xt
+        integer, intent(out) :: first
+        real(rk), intent(out) :: B(0:degree)
+        real(rk) :: ders(0:max(0, min(nder, degree)),0:degree)
+
+        first = 1
+        B = 0.0_rk
+        if (nc == 0 .or. degree < 0 .or. degree >= nc .or. nder < 0) return
+        if (size(knot) < nc + degree + 1) return
+        if (nder > degree) return
+
+        call basis_bspline_der_all_active(&
+            Xt     = Xt,&
+            knot   = knot,&
+            nc     = nc,&
+            degree = degree,&
+            nder   = nder,&
+            first  = first,&
+            ders   = ders)
+        B = ders(nder,:)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Compute one tensor-product B-spline or rational basis derivative on its local support.
+    !! The three directional derivative tables include rows zero through the
+    !! requested derivative order. Unused directions are represented by a
+    !! \(1\times1\) table containing one. Rational derivatives use a
+    !! multivariate quotient recurrence that extends the rational-surface
+    !! recurrence in Piegl and Tiller, *The NURBS Book*, 2nd edition, Algorithm
+    !! A4.4 to three tensor-product directions.
+    !! The derivative multi-index is given by the last row present in each
+    !! directional table. For example, upper row bounds `(1,0,2)` request
+    !! \(\partial^3/(\partial\xi_1\partial\xi_3^2)\).
+    !! `values` uses direction-1-fastest local ordering.
+    !! The rational path evaluates numerator and denominator derivatives in a
+    !! common exact radix-power gauge, so a uniform finite weight rescaling does
+    !! not alter the recurrence.
+    !!
+    pure subroutine tensor_basis_derivative_local(&
+        first1,&
+        nc1,&
+        ders1,&
+        first2,&
+        nc2,&
+        ders2,&
+        first3,&
+        nc3,&
+        ders3,&
+        values,&
+        Wc)
+        integer, intent(in) :: first1, nc1, first2, nc2, first3, nc3
+        real(rk), intent(in), contiguous :: ders1(0:,0:), ders2(0:,0:), ders3(0:,0:)
+        real(rk), intent(out), contiguous :: values(0:)
+            !! Local derivative value for every supported basis function.
+        real(rk), intent(in), contiguous, optional :: Wc(:)
+            !! Optional flattened global rational weights; absence selects the polynomial tensor-product path.
+        integer :: p1, p2, p3, o1, o2, o3, weight_exponent
+        integer :: a1, a2, a3, b1, b2, b3, l1, l2, l3, local, global
+        real(rk) :: denominator(0:ubound(ders1,1),0:ubound(ders2,1),0:ubound(ders3,1))
+        real(rk) :: quotient(0:ubound(ders1,1),0:ubound(ders2,1),0:ubound(ders3,1))
+        real(rk) :: coefficient1, coefficient2, coefficient3, numerator
+
+        values = 0.0_rk
+        p1 = ubound(ders1,2)
+        p2 = ubound(ders2,2)
+        p3 = ubound(ders3,2)
+        o1 = ubound(ders1,1)
+        o2 = ubound(ders2,1)
+        o3 = ubound(ders3,1)
+        if (nc1 < 1 .or. nc2 < 1 .or. nc3 < 1) return
+        if (first1 < 1 .or. first2 < 1 .or. first3 < 1) return
+        if (first1 + p1 > nc1 .or. first2 + p2 > nc2 .or. first3 + p3 > nc3) return
+        if (size(values) < (p1+1)*(p2+1)*(p3+1)) return
+
+        if (.not. present(Wc)) then
+            do concurrent (l3 = 0:p3, l2 = 0:p2, l1 = 0:p1)
+                values(l1+(p1+1)*(l2+(p2+1)*l3)) = ders1(o1,l1)*ders2(o2,l2)*ders3(o3,l3)
+            end do
+            return
+        end if
+        if (size(Wc) < nc1*nc2*nc3) return
+
+        global = first1 + nc1*((first2-1) + nc2*(first3-1))
+        weight_exponent = exponent(Wc(global))
+        do l3 = 0, p3
+            do l2 = 0, p2
+                do l1 = 0, p1
+                    global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                    weight_exponent = max(weight_exponent, exponent(Wc(global)))
+                end do
+            end do
+        end do
+        denominator = 0.0_rk
+        do a3 = 0, o3
+            do a2 = 0, o2
+                do a1 = 0, o1
+                    do l3 = 0, p3
+                        do l2 = 0, p2
+                            do l1 = 0, p1
+                                global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                                denominator(a1,a2,a3) = denominator(a1,a2,a3) + &
+                                    scale(Wc(global), -weight_exponent)*&
+                                    ders1(a1,l1)*ders2(a2,l2)*ders3(a3,l3)
+                            end do
+                        end do
+                    end do
+                end do
+            end do
+        end do
+        if (denominator(0,0,0) <= 0.0_rk .or. .not. ieee_is_finite(denominator(0,0,0))) return
+
+        do l3 = 0, p3
+            do l2 = 0, p2
+                do l1 = 0, p1
+                    global = first1 + l1 + nc1*((first2+l2-1) + nc2*(first3+l3-1))
+                    quotient = 0.0_rk
+                    do a3 = 0, o3
+                        do a2 = 0, o2
+                            do a1 = 0, o1
+                                numerator = scale(Wc(global), -weight_exponent)*&
+                                    ders1(a1,l1)*ders2(a2,l2)*ders3(a3,l3)
+                                coefficient3 = 1.0_rk
+                                do b3 = 0, a3
+                                    coefficient2 = 1.0_rk
+                                    do b2 = 0, a2
+                                        coefficient1 = 1.0_rk
+                                        do b1 = 0, a1
+                                            if (b1 + b2 + b3 > 0) then
+                                                numerator = numerator - coefficient1*coefficient2*coefficient3*&
+                                                    denominator(b1,b2,b3)*quotient(a1-b1,a2-b2,a3-b3)
+                                            end if
+                                            if (b1 < a1) then
+                                                coefficient1 = coefficient1*real(a1-b1,rk)/real(b1+1,rk)
+                                            end if
+                                        end do
+                                        if (b2 < a2) then
+                                            coefficient2 = coefficient2*real(a2-b2,rk)/real(b2+1,rk)
+                                        end if
+                                    end do
+                                    if (b3 < a3) then
+                                        coefficient3 = coefficient3*real(a3-b3,rk)/real(b3+1,rk)
+                                    end if
+                                end do
+                                quotient(a1,a2,a3) = numerator/denominator(0,0,0)
+                            end do
+                        end do
+                    end do
+                    local = l1 + (p1+1)*(l2 + (p2+1)*l3)
+                    values(local) = quotient(o1,o2,o3)
+                end do
+            end do
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Evaluate the dense B-spline basis and its first derivative at one parameter.
+    !!
+    !! Both outputs have length `nc`; entries outside the local support are
+    !! zero. This is the value-and-derivative overload of [[basis_bspline_der]].
     pure subroutine basis_bspline_der_A(Xt, knot, nc, degree, dB, B)
         integer, intent(in) :: degree
+            !! Polynomial degree \(p\).
         real(rk), intent(in), contiguous :: knot(:)
+            !! Complete knot vector of size `nc+degree+1`.
         integer, intent(in) :: nc
+            !! Number of basis functions.
         real(rk), intent(in) :: Xt
+            !! Evaluation parameter.
         real(rk), intent(out) :: dB(nc)
+            !! First derivatives \(\mathrm dN_{i,p}/\mathrm du\).
         real(rk), intent(out) :: B(nc)
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
-        real(rk) :: dB_curr(nc)
-
-        B = 0.0_rk
-        dB = 0.0_rk
-
-        ! Degree 0 initialization
-        do concurrent(i = 1:nc)
-            Xth_i    = knot(i)
-            Xth_i1   = knot(i + 1)
-            Xth_last = knot(size(knot))
-
-            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
-                B(i) = 1.0_rk
-                dB(i) = 0.0_rk
-            end if
-        end do
-
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            dB_curr = 0.0_rk
-            do concurrent(i = 1:nc)
-                Xth_i   = knot(i)
-                Xth_i1  = knot(i+1)
-                Xth_ip  = knot(i+p)
-                Xth_ip1 = knot(i+p+1)
-
-                ! if (Xth_ip /= Xth_i) then
-                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
-                    dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
-                end if
-                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
-                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
-                    dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
-                                (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
-                end if
-            end do
-            B = B_curr
-            dB = dB_curr
-        end do
+            !! Basis values \(N_{i,p}\).
+        call basis_bspline_ders(Xt, knot, nc, degree, 1, B=B, dB=dB)
     end subroutine
     !===============================================================================
 
@@ -234,59 +2382,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Evaluate only the dense first derivative of a B-spline basis.
+    !!
+    !! The output has length `nc`; entries outside the local support are zero.
     pure subroutine basis_bspline_der_B(Xt, knot, nc, degree, dB)
         integer, intent(in) :: degree
+            !! Polynomial degree \(p\).
         real(rk), intent(in), contiguous :: knot(:)
+            !! Complete knot vector of size `nc+degree+1`.
         integer, intent(in) :: nc
+            !! Number of basis functions.
         real(rk), intent(in) :: Xt
+            !! Evaluation parameter.
         real(rk), intent(out) :: dB(nc)
-        real(rk) :: B(nc)
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
-        real(rk) :: dB_curr(nc)
-
-        B = 0.0_rk
-        dB = 0.0_rk
-
-        ! Degree 0 initialization
-        do concurrent(i = 1:nc)
-            Xth_i    = knot(i)
-            Xth_i1   = knot(i + 1)
-            Xth_last = knot(size(knot))
-
-            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
-                B(i) = 1.0_rk
-                dB(i) = 0.0_rk
-            end if
-        end do
-
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            dB_curr = 0.0_rk
-            do concurrent(i = 1:nc)
-                Xth_i   = knot(i)
-                Xth_i1  = knot(i+1)
-                Xth_ip  = knot(i+p)
-                Xth_ip1 = knot(i+p+1)
-
-                ! if (Xth_ip /= Xth_i) then
-                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = (Xt-Xth_i)/(Xth_ip-Xth_i)*B(i)
-                    dB_curr(i) = B(i)/(Xth_ip-Xth_i)+(Xt-Xth_i)/(Xth_ip-Xth_i)*dB(i)
-                end if
-                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
-                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = B_curr(i)+(Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*B(i+1)
-                    dB_curr(i) = dB_curr(i)-B(i+1)/(Xth_ip1-Xth_i1)+ &
-                                (Xth_ip1-Xt)/(Xth_ip1-Xth_i1)*dB(i+1)
-                end if
-            end do
-            B = B_curr
-            dB = dB_curr
-        end do
+            !! First derivatives \(\mathrm dN_{i,p}/\mathrm du\).
+        call basis_bspline_ders(Xt, knot, nc, degree, 1, dB=dB)
     end subroutine
     !===============================================================================
 
@@ -294,67 +2404,26 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Evaluate dense B-spline values and derivatives through second order.
+    !!
+    !! Each output has length `nc`; unsupported derivatives, including all
+    !! second derivatives when `degree<2`, are returned as zero.
     pure subroutine basis_bspline_2der_A(Xt, knot, nc, degree, d2B, dB, B)
         integer, intent(in) :: degree
+            !! Polynomial degree \(p\).
         real(rk), intent(in), contiguous :: knot(:)
+            !! Complete knot vector of size `nc+degree+1`.
         integer, intent(in) :: nc
+            !! Number of basis functions.
         real(rk), intent(in) :: Xt
+            !! Evaluation parameter.
         real(rk), intent(out) :: d2B(nc)
+            !! Second derivatives \(\mathrm d^2N_{i,p}/\mathrm du^2\).
         real(rk), intent(out) :: dB(nc)
+            !! First derivatives \(\mathrm dN_{i,p}/\mathrm du\).
         real(rk), intent(out) :: B(nc)
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
-        real(rk) :: dB_curr(nc)
-        real(rk) :: d2B_curr(nc)
-
-        B = 0.0_rk
-        dB = 0.0_rk
-        d2B = 0.0_rk
-
-        ! Degree 0 initialization
-        do concurrent(i = 1:nc)
-            Xth_i = knot(i)
-            Xth_i1 = knot(i + 1)
-            Xth_last = knot(size(knot))
-
-            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
-                B(i) = 1.0_rk
-                dB(i) = 0.0_rk
-                d2B(i) = 0.0_rk
-            end if
-        end do
-
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            dB_curr = 0.0_rk
-            d2B_curr = 0.0_rk
-            do concurrent(i = 1:nc)
-                Xth_i = knot(i)
-                Xth_i1 = knot(i + 1)
-                Xth_ip = knot(i + p)
-                Xth_ip1 = knot(i + p + 1)
-
-                ! if (Xth_ip /= Xth_i) then
-                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
-                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
-                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
-                end if
-
-                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
-                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
-                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
-                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
-                end if
-            end do
-            B = B_curr
-            dB = dB_curr
-            d2B = d2B_curr
-        end do
+            !! Basis values \(N_{i,p}\).
+        call basis_bspline_ders(Xt, knot, nc, degree, 2, B=B, dB=dB, d2B=d2B)
     end subroutine
     !===============================================================================
 
@@ -362,67 +2431,24 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Evaluate dense first and second derivatives of a B-spline basis.
+    !!
+    !! Values are omitted; both derivative arrays have length `nc` and are
+    !! zero outside the local support.
     pure subroutine basis_bspline_2der_B(Xt, knot, nc, degree, d2B, dB)
         integer, intent(in) :: degree
+            !! Polynomial degree \(p\).
         real(rk), intent(in), contiguous :: knot(:)
+            !! Complete knot vector of size `nc+degree+1`.
         integer, intent(in) :: nc
+            !! Number of basis functions.
         real(rk), intent(in) :: Xt
+            !! Evaluation parameter.
         real(rk), intent(out) :: d2B(nc)
+            !! Second derivatives \(\mathrm d^2N_{i,p}/\mathrm du^2\).
         real(rk), intent(out) :: dB(nc)
-        real(rk) :: B(nc)
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
-        real(rk) :: dB_curr(nc)
-        real(rk) :: d2B_curr(nc)
-
-        B = 0.0_rk
-        dB = 0.0_rk
-        d2B = 0.0_rk
-
-        ! Degree 0 initialization
-        do concurrent(i = 1:nc)
-            Xth_i = knot(i)
-            Xth_i1 = knot(i + 1)
-            Xth_last = knot(size(knot))
-
-            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
-                B(i) = 1.0_rk
-                dB(i) = 0.0_rk
-                d2B(i) = 0.0_rk
-            end if
-        end do
-
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            dB_curr = 0.0_rk
-            d2B_curr = 0.0_rk
-            do concurrent(i = 1:nc)
-                Xth_i = knot(i)
-                Xth_i1 = knot(i + 1)
-                Xth_ip = knot(i + p)
-                Xth_ip1 = knot(i + p + 1)
-
-                ! if (Xth_ip /= Xth_i) then
-                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
-                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
-                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
-                end if
-
-                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
-                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
-                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
-                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
-                end if
-            end do
-            B = B_curr
-            dB = dB_curr
-            d2B = d2B_curr
-        end do
+            !! First derivatives \(\mathrm dN_{i,p}/\mathrm du\).
+        call basis_bspline_ders(Xt, knot, nc, degree, 2, dB=dB, d2B=d2B)
     end subroutine
     !===============================================================================
 
@@ -430,67 +2456,22 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Evaluate only the dense second derivative of a B-spline basis.
+    !!
+    !! The output has length `nc`; entries outside local support and all entries
+    !! for `degree<2` are zero.
     pure subroutine basis_bspline_2der_C(Xt, knot, nc, degree, d2B)
         integer, intent(in) :: degree
+            !! Polynomial degree \(p\).
         real(rk), intent(in), contiguous :: knot(:)
+            !! Complete knot vector of size `nc+degree+1`.
         integer, intent(in) :: nc
+            !! Number of basis functions.
         real(rk), intent(in) :: Xt
+            !! Evaluation parameter.
         real(rk), intent(out) :: d2B(nc)
-        real(rk) :: dB(nc)
-        real(rk) :: B(nc)
-        integer :: i, p
-        real(rk) :: Xth_i, Xth_i1, Xth_ip, Xth_ip1, Xth_last
-        real(rk) :: B_curr(nc)
-        real(rk) :: dB_curr(nc)
-        real(rk) :: d2B_curr(nc)
-
-        B = 0.0_rk
-        dB = 0.0_rk
-        d2B = 0.0_rk
-
-        ! Degree 0 initialization
-        do concurrent(i = 1:nc)
-            Xth_i = knot(i)
-            Xth_i1 = knot(i + 1)
-            Xth_last = knot(size(knot))
-
-            ! if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (Xt == Xth_last .and. Xt == Xth_i1)) then
-            if ((Xt >= Xth_i .and. Xt < Xth_i1) .or. (abs(Xt - Xth_last) < 2.0_rk*epsilon(0.0_rk) .and. abs(Xt - Xth_i1) < 2.0_rk*epsilon(0.0_rk))) then
-            B(i) = 1.0_rk
-                dB(i) = 0.0_rk
-                d2B(i) = 0.0_rk
-            end if
-        end do
-
-        ! Recursion for higher degrees
-        do p = 1, degree
-            B_curr = 0.0_rk
-            dB_curr = 0.0_rk
-            d2B_curr = 0.0_rk
-            do concurrent(i = 1:nc)
-                Xth_i = knot(i)
-                Xth_i1 = knot(i + 1)
-                Xth_ip = knot(i + p)
-                Xth_ip1 = knot(i + p + 1)
-
-                ! if (Xth_ip /= Xth_i) then
-                if (abs(Xth_ip - Xth_i) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = (Xt - Xth_i)/(Xth_ip - Xth_i)*B(i)
-                    dB_curr(i) = B(i)/(Xth_ip - Xth_i) + (Xt - Xth_i)/(Xth_ip - Xth_i)*dB(i)
-                    d2B_curr(i) = (2*dB(i) + (Xt - Xth_i)*d2B(i))/(Xth_ip - Xth_i)
-                end if
-
-                ! if (i < nc .and. Xth_ip1 /= Xth_i1) then
-                if (i < nc .and. abs(Xth_ip1 - Xth_i1) > 2.0_rk*epsilon(0.0_rk)) then
-                    B_curr(i) = B_curr(i) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*B(i + 1)
-                    dB_curr(i) = dB_curr(i) - B(i + 1)/(Xth_ip1 - Xth_i1) + (Xth_ip1 - Xt)/(Xth_ip1 - Xth_i1)*dB(i + 1)
-                    d2B_curr(i) = d2B_curr(i) - (2*dB(i + 1) - (Xth_ip1 - Xt)*d2B(i + 1))/(Xth_ip1 - Xth_i1)
-                end if
-            end do
-            B = B_curr
-            dB = dB_curr
-            d2B = d2B_curr
-        end do
+            !! Second derivatives \(\mathrm d^2N_{i,p}/\mathrm du^2\).
+        call basis_bspline_ders(Xt, knot, nc, degree, 2, d2B=d2B)
     end subroutine
     !===============================================================================
 
@@ -498,27 +2479,54 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Evaluate all Bernstein basis polynomials of degree `nc-1` on `[0,1]`.
+    !!
+    !! The implementation uses an adjacent-term recurrence with explicit
+    !! endpoint values. `nc=1` returns the constant basis.
+    !!
+    !! \[
+    !! B_i^p(t)={p\choose i}t^i(1-t)^{p-i},
+    !! \qquad i=0,\ldots,p,\quad p=nc-1.
+    !! \]
+    !!
+    !! `nc>=1` is an unchecked caller precondition. Values outside `[0,1]`
+    !! evaluate the same polynomial formula but need not be nonnegative or form
+    !! a numerically stable partition. Values within `2*epsilon(rk)` of zero or
+    !! one are snapped to the corresponding exact endpoint basis vector.
+    !!
     pure function basis_bernstein(Xt, nc) result(B)
         real(rk), intent(in) :: Xt
+            !! Bernstein parameter, normally in `[0,1]`.
         integer, intent(in) :: nc
+            !! Number of basis functions; the degree is `nc-1`.
         real(rk), allocatable :: B(:)
         integer  :: p, degree
+        real(rk) :: omt, ratio
 
         degree = nc - 1
 
         allocate(B(nc), source=0.0_rk)
 
-        do concurrent (p = 0:degree)
-            B(p+1) = gamma(real(nc, kind=rk))/(gamma(real(p+1, kind=rk))*gamma(real(nc-p, kind=rk)))
-            ! if (Xt == 0.0_rk .and. p == 0) then
-            if (abs(Xt) < 2.0_rk*epsilon(0.0_rk) .and. p == 0) then
-                B(p+1) = B(p+1)*(1.0_rk-Xt)**(degree-p)
-            ! else if (Xt == 0.0_rk .and. degree-p == 0) then
-            else if (abs(Xt) < 2.0_rk*epsilon(0.0_rk) .and. degree-p == 0) then
-                B(p+1) = B(p+1)*(Xt**p)
-            else
-                B(p+1) = B(p+1)*(Xt**p)*(1.0_rk-Xt)**(degree-p)
-            end if
+        if (nc == 1) then
+            B(1) = 1.0_rk
+            return
+        end if
+
+        if (abs(Xt) < 2.0_rk*epsilon(0.0_rk)) then
+            B(1) = 1.0_rk
+            return
+        end if
+
+        omt = 1.0_rk - Xt
+        if (abs(omt) < 2.0_rk*epsilon(0.0_rk)) then
+            B(nc) = 1.0_rk
+            return
+        end if
+
+        ratio = Xt/omt
+        B(1) = omt**degree
+        do p = 1, degree
+            B(p+1) = B(p)*real(degree - p + 1, rk)*ratio/real(p, rk)
         end do
     end function
     !===============================================================================
@@ -527,9 +2535,17 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Form the Kronecker product of two vectors.
+    !!
+    !! The result is ordered in blocks of `v`:
+    !! `w((i-1)*size(v)+j)=u(i)*v(j)`.
     pure function kron_t1_t1(u,v) result(w)
-        real(rk), intent(in), contiguous :: u(:), v(:)
+        real(rk), intent(in), contiguous :: u(:)
+            !! Left vector.
+        real(rk), intent(in), contiguous :: v(:)
+            !! Right vector, varying fastest in the result.
         real(rk) :: w(size(u)*size(v))
+            !! Kronecker product of length `size(u)*size(v)`.
         integer :: i, j, n
 
         n = size(v)
@@ -544,10 +2560,17 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Form the Kronecker product of a vector and a matrix.
+    !!
+    !! Every row of `A` is scaled by each entry of `u`; the matrix columns are
+    !! retained and the `A` row index varies fastest inside each `u` block.
     pure function kron_t1_t2(u,A) result(B)
         real(rk), intent(in), contiguous :: u(:)
+            !! Left vector of length `m`.
         real(rk), intent(in), contiguous :: A(:,:)
+            !! Right matrix of shape `[r,c]`.
         real(rk) :: B(size(u)*size(A,1), size(A,2))
+            !! Kronecker product of shape `[m*r,c]`.
         integer :: i, j, k, m, r, c
 
         m = size(u)
@@ -564,9 +2587,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Form a flattened three-vector tensor product.
+    !!
+    !! `w` varies fastest, followed by `v` and then `u`, matching the ordering
+    !! used by the ForCAD tensor-product geometry modules.
     pure function kron3(u, v, w) result(out)
-        real(rk), intent(in), contiguous :: u(:), v(:), w(:)
+        real(rk), intent(in), contiguous :: u(:)
+            !! First tensor factor, varying slowest.
+        real(rk), intent(in), contiguous :: v(:)
+            !! Second tensor factor.
+        real(rk), intent(in), contiguous :: w(:)
+            !! Third tensor factor, varying fastest.
         real(rk) :: out(size(u)*size(v)*size(w))
+            !! Flattened product `u(i)*v(j)*w(k)`.
         integer :: i, j, k, nv, nw
 
         nv = size(v)
@@ -582,15 +2615,27 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure function kron_eye(A, dim) result(B)
+    !> Expand a scalar operator independently over `ncoord` components.
+    !!
+    !! The result is the control-point-major representation of
+    !! \(A\otimes I_{ncoord}\):
+    !! `B((i-1)*ncoord+r,(j-1)*ncoord+r)=A(i,j)`. Nonpositive `ncoord` returns `B(0,0)`.
+    pure function kron_eye(A, ncoord) result(B)
         real(rk), intent(in), contiguous :: A(:,:)
-        integer, intent(in) :: dim
-        real(rk) :: B(size(A,1)*dim, size(A,2)*dim)
+            !! Scalar operator `[m,n]`.
+        integer, intent(in) :: ncoord
+            !! Number of independent components.
+        real(rk), allocatable :: B(:,:)
         integer :: i, j, r
 
-        B = 0.0_rk
-        do concurrent (r = 1:dim, i = 1:size(A,1), j = 1:size(A,2))
-            B((i-1)*dim + r, (j-1)*dim + r) = A(i,j)
+        if (ncoord <= 0) then
+            allocate(B(0,0))
+            return
+        end if
+
+        allocate(B(size(A,1)*ncoord, size(A,2)*ncoord), source=0.0_rk)
+        do concurrent (r = 1:ncoord, i = 1:size(A,1), j = 1:size(A,2))
+            B((i-1)*ncoord + r, (j-1)*ncoord + r) = A(i,j)
         end do
     end function
     !===============================================================================
@@ -599,20 +2644,50 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
-        real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
-        real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, j, off, s, e
+    !> Compute `C=matmul(A,B)` by scanning structural nonzeros of `A`.
+    !! Intended for local-support refinement maps, where A is structurally sparse
+    !! but the existing API still needs a dense transformation matrix. NaN
+    !! coefficients remain structural and therefore propagate rather than being
+    !! silently dropped. Incompatible inner dimensions return `C(0,0)`.
+    !! This is not a compressed sparse representation: every entry of dense
+    !! `A` is inspected and exact zeros alone are skipped. For dimensions
+    !! \(m\times k\) and \(k\times n\), work is
+    !! \(O(mk+\operatorname{nnz}(A)n+mn)\), including the scan and result
+    !! initialization. `A`, `B`, and the returned `C` all remain dense; result
+    !! storage is \(O(mn)\).
+    !!
+    pure subroutine sparse_left_matmul(A, B, C)
+        real(rk), intent(in), contiguous :: A(:,:)
+            !! Left matrix, commonly a refinement transformation.
+        real(rk), intent(in), contiguous :: B(:,:)
+            !! Dense right-hand matrix.
+        real(rk), allocatable, intent(out) :: C(:,:)
+            !! Allocatable result of shape `[size(A,1),size(B,2)]`.
+        real(rk) :: aik
+        integer :: i, j, k, nrow, nmid, ncol
 
-        s1 = size(X_dir1)
-        s2 = size(X_dir2)
-        allocate(Xt(s1*s2,2))
-        do concurrent (j = 1:s2) local(off, s, e)
-            off = (j-1)*s1
-            s = off + 1
-            e = off + s1
-            Xt(s:e, 1) = X_dir1(:)
-            Xt(s:e, 2) = X_dir2(j)
+        if (size(A,2) /= size(B,1)) then
+            allocate(C(0,0))
+            return
+        end if
+
+        nrow = size(A,1)
+        nmid = size(A,2)
+        ncol = size(B,2)
+        allocate(C(nrow, ncol))
+
+        do concurrent (i = 1:nrow) local(aik, j, k)
+            do j = 1, ncol
+                C(i,j) = 0.0_rk
+            end do
+            do k = 1, nmid
+                aik = A(i,k)
+                if (structural_nonzero(aik)) then
+                    do j = 1, ncol
+                        C(i,j) = C(i,j) + aik*B(k,j)
+                    end do
+                end if
+            end do
         end do
     end subroutine
     !===============================================================================
@@ -621,22 +2696,44 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Form all pairs from two directional coordinate vectors.
+    !! Row `i+(j-1)*size(X_dir1)` contains
+    !! `[X_dir1(i),X_dir2(j)]`.
+    pure subroutine ndgrid2(X_dir1,X_dir2, Xt)
+        real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:)
+        real(rk), allocatable, intent(out) :: Xt(:,:)
+        integer :: s1, s2, i, j
+
+        s1 = size(X_dir1)
+        s2 = size(X_dir2)
+        allocate(Xt(s1*s2,2))
+        do concurrent (j = 1:s2, i = 1:s1)
+            Xt((j-1)*s1+i, 1) = X_dir1(i)
+            Xt((j-1)*s1+i, 2) = X_dir2(j)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Form all triples from three directional coordinate vectors.
+    !! Direction 1 varies fastest, followed by directions 2 and 3.
     pure subroutine ndgrid3(X_dir1,X_dir2,X_dir3, Xt)
         real(rk), intent(in), contiguous :: X_dir1(:), X_dir2(:), X_dir3(:)
         real(rk), allocatable, intent(out) :: Xt(:,:)
-        integer :: s1, s2, s3, j, k, off, s, e
+        integer :: s1, s2, s3, i, j, k, idx
 
         s1 = size(X_dir1)
         s2 = size(X_dir2)
         s3 = size(X_dir3)
         allocate(Xt(s1*s2*s3,3))
-        do concurrent (k=1:s3, j=1:s2) local(off, s, e)
-            off = ((k-1)*s2 + (j-1)) * s1
-            s = off + 1
-            e = off + s1
-            Xt(s:e, 1) = X_dir1(:)
-            Xt(s:e, 2) = X_dir2(j)
-            Xt(s:e, 3) = X_dir3(k)
+        do concurrent (k = 1:s3, j = 1:s2, i = 1:s1) local(idx)
+            idx = ((k-1)*s2 + j - 1)*s1 + i
+            Xt(idx, 1) = X_dir1(i)
+            Xt(idx, 2) = X_dir2(j)
+            Xt(idx, 3) = X_dir3(k)
         end do
     end subroutine
     !===============================================================================
@@ -645,16 +2742,27 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Repeat each value according to a corresponding nonnegative count.
+    !! Values retain input order. Shape mismatch or a negative count returns a
+    !! zero-length array.
     pure function repelem(a, b) result(c)
         real(rk), intent(in), contiguous :: a(:)
+            !! Values to repeat.
         integer, intent(in), contiguous :: b(:)
-        real(rk) :: c(sum(b))
+            !! Repetition counts with `size(b)==size(a)`.
+        real(rk), allocatable :: c(:)
         integer :: i, l, n
 
+        if (size(a) /= size(b) .or. any(b < 0)) then
+            allocate(c(0))
+            return
+        end if
+
+        allocate(c(sum(b)))
         l = 0
         do i = 1, size(a)
             n = b(i)
-            c(l+1:l+n) = a(i)
+            if (n > 0) c(l+1:l+n) = a(i)
             l = l + n
         end do
     end function
@@ -664,22 +2772,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Allocate `n` inclusive uniformly spaced values from `a` to `b`.
+    !! `n=1` returns `[a]`; `n<1` returns a zero-length array.
     pure function linspace(a, b, n) result(x)
         real(rk), intent(in) :: a, b
         integer, intent(in) :: n
         real(rk), allocatable :: x(:)
-        integer :: i
 
-        if (n < 1) error stop "linspace: n must be >= 1"
-        allocate(x(n))
-
-        if (n == 1) then
-            x(1) = a
-        else
-            do concurrent(i = 1:n)
-                x(i) = a + (i - 1) * (b - a) / real(n - 1, rk)
-            end do
+        if (n < 1) then
+            allocate(x(0))
+            return
         end if
+        allocate(x(n))
+        call fill_uniform(a, b, x)
     end function
     !===============================================================================
 
@@ -687,12 +2792,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build curve connectivity for degree-`p` elements joined with \(C^0\).
+    !! The required node count satisfies `nnode=nelem*p+1`.
     pure function cmp_elemConn_C0_L(nnode,p) result(elemConn)
       integer, intent(in) :: nnode, p
       integer, allocatable :: elemConn(:,:)
       integer :: nelem, e, j
 
-      if (mod(nnode-1,p) /= 0) error stop 'cmp_elemConn_C0_L: nnode-1 must be divisible by p'
+      if (p < 1 .or. nnode < 1) then
+         allocate(elemConn(0,0))
+         return
+      end if
+      if (mod(nnode-1,p) /= 0) then
+         allocate(elemConn(0,0))
+         return
+      end if
 
       nelem = (nnode-1)/p
 
@@ -707,14 +2821,22 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build direction-1-fastest \(C^0\) tensor connectivity for a surface.
+    !! The result has \((p_1+1)(p_2+1)\) local controls per element.
     pure function cmp_elemConn_C0_S(nnode1, nnode2, p1, p2) result(elemConn)
         integer, intent(in) :: nnode1, nnode2, p1, p2
         integer, allocatable :: elemConn(:,:)
         integer :: nelem1, nelem2
         integer :: e1, e2, i, j
 
-        if (mod(nnode1-1, p1) /= 0) error stop 'cmp_elemConn_C0_S: nnode1-1 must be divisible by p1'
-        if (mod(nnode2-1, p2) /= 0) error stop 'cmp_elemConn_C0_S: nnode2-1 must be divisible by p2'
+        if (p1 < 1 .or. p2 < 1 .or. nnode1 < 1 .or. nnode2 < 1) then
+            allocate(elemConn(0,0))
+            return
+        end if
+        if (mod(nnode1-1, p1) /= 0 .or. mod(nnode2-1, p2) /= 0) then
+            allocate(elemConn(0,0))
+            return
+        end if
 
         nelem1 = (nnode1-1)/p1
         nelem2 = (nnode2-1)/p2
@@ -731,14 +2853,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build direction-1-fastest \(C^0\) tensor connectivity for a volume.
+    !! The result has \((p_1+1)(p_2+1)(p_3+1)\) controls per element.
     pure function cmp_elemConn_C0_V(nnode1,nnode2,nnode3,p1,p2,p3) result(elemConn)
         integer, intent(in) :: nnode1, nnode2, nnode3, p1, p2, p3
         integer, allocatable :: elemConn(:,:)
         integer :: nelem1, nelem2, nelem3, e1, e2, e3, i, j, k
 
-        if (mod(nnode1-1,p1) /= 0) error stop 'cmp_elemConn_C0_V: nnode1-1 must be divisible by p1'
-        if (mod(nnode2-1,p2) /= 0) error stop 'cmp_elemConn_C0_V: nnode2-1 must be divisible by p2'
-        if (mod(nnode3-1,p3) /= 0) error stop 'cmp_elemConn_C0_V: nnode3-1 must be divisible by p3'
+        if (p1 < 1 .or. p2 < 1 .or. p3 < 1 .or. nnode1 < 1 .or. nnode2 < 1 .or. nnode3 < 1) then
+            allocate(elemConn(0,0))
+            return
+        end if
+        if (mod(nnode1-1,p1) /= 0 .or. mod(nnode2-1,p2) /= 0 .or. mod(nnode3-1,p3) /= 0) then
+            allocate(elemConn(0,0))
+            return
+        end if
 
         nelem1 = (nnode1-1)/p1
         nelem2 = (nnode2-1)/p2
@@ -757,20 +2886,36 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build curve connectivity from distinct active knots and multiplicities.
+    !! At an interior knot of multiplicity \(s\), adjacent degree-`p` elements
+    !! share \(p-s+1\) basis functions and have guaranteed spline-space
+    !! continuity \(C^{p-s}\). Special control data may produce smoother
+    !! geometry than the underlying spline space. Knot values are not read;
+    !! only `size(Xth)-1` determines the element count. The caller must ensure
+    !! `nnode=p+1+sum(vecKnot_mul(2:nelem))` and valid multiplicities.
     pure subroutine cmp_elemConn_Cn_L(nnode, p, Xth, vecKnot_mul, elemConn)
         integer,  intent(in)              :: nnode, p
+            !! Control count and nonnegative polynomial degree.
         real(rk), intent(in), contiguous  :: Xth(:)
+            !! Active-knot metadata; only its size is used.
         integer,  intent(in), contiguous  :: vecKnot_mul(:)
+            !! Run data whose entries `2:nelem` determine support shifts.
         integer,  allocatable, intent(out):: elemConn(:,:)
+            !! One-based connectivity `[nelem,p+1]`, or shape `[0,0]` for invalid dimensions.
 
         integer :: nelem, i, j
         integer, allocatable :: pref(:)
 
         nelem = size(Xth)-1
 
+        if (nnode < 1 .or. p < 0 .or. nelem < 1 .or. size(vecKnot_mul) < nelem) then
+            allocate(elemConn(0,0))
+            return
+        end if
+
         allocate(elemConn(nelem, p + 1))
         allocate(pref(nelem))
-        pref(1) = vecKnot_mul(1)
+        pref(1) = p + 1
         do i = 2, nelem
             pref(i) = pref(i-1) + vecKnot_mul(i)
         end do
@@ -785,12 +2930,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build surface connectivity as the tensor product of two span maps.
+    !! Rows and local controls both use direction-1-fastest ordering. The knot
+    !! values are not read; each directional size supplies its element count.
+    !! Directional control counts and multiplicities must satisfy the scalar
+    !! consistency relation documented by [[elemConn_Cn]].
     pure subroutine cmp_elemConn_Cn_S(nnode1, nnode2, p1, p2, &
         Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)
         integer,  intent(in)              :: nnode1, nnode2, p1, p2
+            !! Directional control counts and nonnegative polynomial degrees.
         real(rk), intent(in), contiguous  :: Xth1(:), Xth2(:)
+            !! Active-knot metadata; only the two array sizes are used.
         integer,  intent(in), contiguous  :: vecKnot_mul1(:), vecKnot_mul2(:)
+            !! Stored multiplicities corresponding to `Xth1` and `Xth2`.
         integer,  allocatable, intent(out):: elemConn(:,:)
+            !! Direction-1-fastest one-based connectivity, or shape `[0,0]` for invalid dimensions.
 
         integer, allocatable :: pref1(:), pref2(:)
         integer :: nelem1, nelem2, i, j, i2, j2
@@ -798,12 +2952,19 @@ contains
         nelem1 = size(Xth1)-1
         nelem2 = size(Xth2)-1
 
+        if (nnode1 < 1 .or. nnode2 < 1 .or. p1 < 0 .or. p2 < 0 .or. &
+            nelem1 < 1 .or. nelem2 < 1 .or. size(vecKnot_mul1) < nelem1 .or. &
+            size(vecKnot_mul2) < nelem2) then
+            allocate(elemConn(0,0))
+            return
+        end if
+
         allocate(pref1(nelem1), pref2(nelem2))
-        pref1(1) = vecKnot_mul1(1)
+        pref1(1) = p1 + 1
         do i = 2, nelem1
             pref1(i) = pref1(i-1) + vecKnot_mul1(i)
         end do
-        pref2(1) = vecKnot_mul2(1)
+        pref2(1) = p2 + 1
         do j = 2, nelem2
             pref2(j) = pref2(j-1) + vecKnot_mul2(j)
         end do
@@ -819,12 +2980,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Build volume connectivity as the tensor product of three span maps.
+    !! Rows and local controls both use direction-1-fastest ordering. Knot
+    !! values are not read; directional array sizes supply element counts.
+    !! Every directional control count and multiplicity vector must satisfy the
+    !! scalar consistency relation documented by [[elemConn_Cn]].
     pure subroutine cmp_elemConn_Cn_V(nnode1,nnode2,nnode3,p1,p2,p3, &
         Xth1,Xth2,Xth3,vecKnot_mul1,vecKnot_mul2,vecKnot_mul3, elemConn)
         integer,  intent(in)              :: nnode1, nnode2, nnode3, p1, p2, p3
+            !! Directional control counts and nonnegative polynomial degrees.
         real(rk), intent(in), contiguous  :: Xth1(:), Xth2(:), Xth3(:)
+            !! Active-knot metadata; only the three array sizes are used.
         integer,  intent(in), contiguous  :: vecKnot_mul1(:), vecKnot_mul2(:), vecKnot_mul3(:)
+            !! Stored multiplicities corresponding to the directional active knots.
         integer,  allocatable, intent(out):: elemConn(:,:)
+            !! Direction-1-fastest one-based connectivity, or shape `[0,0]` for invalid dimensions.
 
         integer, allocatable :: pref1(:), pref2(:), pref3(:)
         integer :: nelem1, nelem2, nelem3, i, j, k, i2, j2, k2
@@ -833,16 +3003,23 @@ contains
         nelem2 = size(Xth2)-1
         nelem3 = size(Xth3)-1
 
+        if (nnode1 < 1 .or. nnode2 < 1 .or. nnode3 < 1 .or. p1 < 0 .or. p2 < 0 .or. p3 < 0 .or. &
+            nelem1 < 1 .or. nelem2 < 1 .or. nelem3 < 1 .or. size(vecKnot_mul1) < nelem1 .or. &
+            size(vecKnot_mul2) < nelem2 .or. size(vecKnot_mul3) < nelem3) then
+            allocate(elemConn(0,0))
+            return
+        end if
+
         allocate(pref1(nelem1), pref2(nelem2), pref3(nelem3))
-        pref1(1) = vecKnot_mul1(1)
+        pref1(1) = p1 + 1
         do i = 2, nelem1
             pref1(i) = pref1(i-1) + vecKnot_mul1(i)
         end do
-        pref2(1) = vecKnot_mul2(1)
+        pref2(1) = p2 + 1
         do j = 2, nelem2
             pref2(j) = pref2(j-1) + vecKnot_mul2(j)
         end do
-        pref3(1) = vecKnot_mul3(1)
+        pref3(1) = p3 + 1
         do k = 2, nelem3
             pref3(k) = pref3(k-1) + vecKnot_mul3(k)
         end do
@@ -859,29 +3036,36 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Return exact consecutive run lengths in stored knot order.
+    !! For a nondecreasing knot vector, each value occupies one run and these
+    !! are its mathematical knot multiplicities. For arbitrary input, equal
+    !! values in separated runs produce separate entries. Equality is exact.
     pure function compute_multiplicity1(knot) result(multiplicity)
         real(rk), intent(in), contiguous :: knot(:)
         integer, allocatable :: multiplicity(:)
-        integer :: i, count
+        integer :: i, nunique
 
-        count = 1
+        if (size(knot) == 0) then
+            allocate(multiplicity(0))
+            return
+        end if
+
+        nunique = 1
         do i = 2, size(knot)
-            ! if (knot(i) /= knot(i-1)) count = count + 1
-            if (abs(knot(i) - knot(i-1)) > 2.0_rk*epsilon(0.0_rk)) count = count + 1
+            if (knot(i) /= knot(i-1)) nunique = nunique + 1
         end do
 
-        allocate(multiplicity(count))
+        allocate(multiplicity(nunique))
 
         multiplicity(1) = 1
-        count = 1
+        nunique = 1
 
         do i = 2, size(knot)
-            ! if (knot(i) /= knot(i-1)) then
-            if (abs(knot(i) - knot(i-1)) > 2.0_rk*epsilon(0.0_rk)) then
-                count = count + 1
-                multiplicity(count) = 1
+            if (knot(i) /= knot(i-1)) then
+                nunique = nunique + 1
+                multiplicity(nunique) = 1
             else
-                multiplicity(count) = multiplicity(count) + 1
+                multiplicity(nunique) = multiplicity(nunique) + 1
             end if
         end do
     end function
@@ -891,28 +3075,32 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Return the longest exact consecutive run of one stored knot value.
+    !! For a nondecreasing knot vector this is its knot multiplicity. For
+    !! arbitrary input with separated equal runs, the result is the maximum run
+    !! length rather than the total occurrence count. Zero means absent.
     pure function compute_multiplicity2(knot, Xth) result(multiplicity)
         real(rk), intent(in), contiguous :: knot(:)
         real(rk), intent(in) :: Xth
         integer :: multiplicity
-        integer :: i, count, size_knot
+        integer :: i, run_length, size_knot
 
         size_knot = size(knot)
         multiplicity = 0
+        if (size_knot == 0) return
+
         i = 1
         do while (i <= size_knot)
-            ! if (knot(i) == Xth) then
-            if (abs(knot(i) - Xth) < 2.0_rk*epsilon(0.0_rk)) then
-                count = 1
-                ! do while (i + count <= size_knot .and. knot(i + count) == Xth)
-                do while ((i + count) <= size_knot)
-                    if (abs(knot(i + count) - Xth) >= 2.0_rk*epsilon(0.0_rk)) exit
-                    count = count + 1
+            if (knot(i) == Xth) then
+                run_length = 1
+                do while ((i + run_length) <= size_knot)
+                    if (knot(i + run_length) /= Xth) exit
+                    run_length = run_length + 1
                 end do
-                if (count > multiplicity) then
-                    multiplicity = count
+                if (run_length > multiplicity) then
+                    multiplicity = run_length
                 end if
-                i = i + count
+                i = i + run_length
             else
                 i = i + 1
             end if
@@ -924,11 +3112,32 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Construct a knot vector from breakpoints and requested continuity.
+    !!
+    !! Breakpoint `Xth_dir(i)` is repeated `degree-continuity(i)` times. Thus an
+    !! interior continuity \(c_i\) has multiplicity \(p-c_i\); clamped
+    !! endpoints use `continuity=-1` and therefore multiplicity \(p+1\).
+    !! `continuity=degree` omits that breakpoint. Values are not checked for
+    !! finiteness or ordering and are not sorted or normalized by this routine.
+    !! To construct a standard valid knot vector, supply nondecreasing finite
+    !! breakpoints and use \(-1\leq c_i\leq p-1\) for retained knots, then
+    !! validate the resulting spline space. Values below `-1` produce
+    !! multiplicity greater than \(p+1\) and are not rejected here.
+    !!
     pure function compute_knot_vector(Xth_dir, degree, continuity) result(knot)
         real(rk), intent(in), contiguous :: Xth_dir(:)
+            !! Ordered breakpoint values.
         integer, intent(in) :: degree
+            !! Nonnegative polynomial degree \(p\).
         integer, intent(in), contiguous :: continuity(:)
+            !! Repetition specification for every breakpoint. Shape mismatch, negative degree, or any value greater than
+            !! `degree` returns an allocated empty vector.
         real(rk), allocatable :: knot(:)
+
+        if (degree < 0 .or. size(Xth_dir) /= size(continuity) .or. any(degree - continuity < 0)) then
+            allocate(knot(0))
+            return
+        end if
 
         knot = repelem(Xth_dir, (degree - continuity))
     end function
@@ -938,21 +3147,133 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw, T)
-        integer, intent(in) :: p, k, s, r
-        real(rk), intent(in), contiguous :: UP(0:), Pw(0:,:)
+    !> Insert a knot without changing the represented homogeneous geometry.
+    !!
+    !! For `s+r<=p`, this is Algorithm A5.1 of Piegl and Tiller, equivalent to
+    !! repeated Boehm knot insertion. The `s+r=p+1` extension first applies the
+    !! standard insertion through multiplicity \(p\), then duplicates the
+    !! interface control row to represent the same two one-sided pieces in a
+    !! discontinuous \(C^{-1}\) space. Arrays use the algorithm's zero-based
+    !! bounds. When requested, `T` satisfies `Qw=matmul(T,Pw)` and can transform
+    !! any field in the same spline space. `r=0` returns the exact identity
+    !! operation.
+    !!
+    pure recursive subroutine insert_knot_A_5_1(p, UP, Pw, u, k, s, r, nq, UQ, Qw, T)
+        integer, intent(in) :: p
+            !! Polynomial degree.
+        integer, intent(in) :: k
+            !! Zero-based span containing `u`.
+        integer, intent(in) :: s
+            !! Existing multiplicity of `u`.
+        integer, intent(in) :: r
+            !! Number of insertions, satisfying `s+r<=p+1`.
+        real(rk), intent(in), contiguous :: UP(0:)
+            !! Original valid knot vector, lower bound zero.
+        real(rk), intent(in), contiguous :: Pw(0:,:)
+            !! Original homogeneous or polynomial control variables by row.
         real(rk), intent(in) :: u
-        real(rk), allocatable, intent(out) :: UQ(:), Qw(:,:)
+            !! Knot value to insert.
+        real(rk), allocatable, intent(out) :: UQ(:)
+            !! Refined knot vector.
+        real(rk), allocatable, intent(out) :: Qw(:,:)
+            !! Refined control variables.
         integer, intent(out) :: nq
+            !! New highest zero-based control index; `-1` signals invalid input.
         real(rk), allocatable, intent(out), optional :: T(:,:)
+            !! Optional refinement transformation.
 
-        real(rk), allocatable :: Rw(:,:)
+        real(rk), allocatable :: Rw(:,:), Utemp(:), Qtemp(:,:), Ttemp(:,:)
         real(rk) :: alpha
-        integer  :: i, j, L, mp, d, np, Lf, bw
+        integer  :: i, j, L, mp, d, np, Lf, bw, nq_temp, k_full, shared
 
         d  = size(Pw, 2)
         np = size(Pw, 1)-1
         mp = np+p+1
+        nq = -1
+
+        if (p < 0 .or. np < p .or. d < 1 .or. size(UP) /= np+p+2 .or. &
+            k < p .or. s < 0 .or. s > p+1 .or. k-s > np .or. r < 0 .or. s+r > p+1 .or. &
+            .not. valid_knot_vector(UP, np+1, p) .or. .not. all(ieee_is_finite(Pw)) .or. &
+            .not. ieee_is_finite(u)) then
+            allocate(UQ(0:-1), Qw(0:-1,d))
+            if (present(T)) allocate(T(0:-1,0:-1))
+            return
+        end if
+
+        if (r == 0) then
+            nq = np
+            allocate(UQ(0:mp), Qw(0:np,d))
+            UQ = UP
+            Qw = Pw
+            if (present(T)) then
+                allocate(T(0:np,0:np), source=0.0_rk)
+                do concurrent (i = 0:np)
+                    T(i,i) = 1.0_rk
+                end do
+            end if
+            return
+        end if
+
+        if (s+r == p+1) then
+            if (r > 1) then
+                if (present(T)) then
+                    call insert_knot_A_5_1(&
+                        p  = p,&
+                        UP = UP,&
+                        Pw = Pw,&
+                        u  = u,&
+                        k  = k,&
+                        s  = s,&
+                        r  = r-1,&
+                        nq = nq_temp,&
+                        UQ = Utemp,&
+                        Qw = Qtemp,&
+                        T  = Ttemp)
+                else
+                    call insert_knot_A_5_1(&
+                        p  = p,&
+                        UP = UP,&
+                        Pw = Pw,&
+                        u  = u,&
+                        k  = k,&
+                        s  = s,&
+                        r  = r-1,&
+                        nq = nq_temp,&
+                        UQ = Utemp,&
+                        Qw = Qtemp)
+                end if
+            else
+                nq_temp = np
+                allocate(Utemp(0:mp), Qtemp(0:np,d))
+                Utemp = UP
+                Qtemp = Pw
+                if (present(T)) then
+                    allocate(Ttemp(0:np,0:np), source=0.0_rk)
+                    do concurrent (i = 0:np)
+                        Ttemp(i,i) = 1.0_rk
+                    end do
+                end if
+            end if
+
+            nq = nq_temp + 1
+            k_full = k + r - 1
+            shared = k_full - p
+            allocate(UQ(0:mp+r), Qw(0:nq,d))
+            UQ(0:k_full) = Utemp(0:k_full)
+            UQ(k_full+1) = u
+            UQ(k_full+2:mp+r) = Utemp(k_full+1:mp+r-1)
+            Qw(0:shared,:) = Qtemp(0:shared,:)
+            Qw(shared+1,:) = Qtemp(shared,:)
+            Qw(shared+2:nq,:) = Qtemp(shared+1:nq-1,:)
+            if (present(T)) then
+                allocate(T(0:nq,0:np))
+                T(0:shared,:) = Ttemp(0:shared,:)
+                T(shared+1,:) = Ttemp(shared,:)
+                T(shared+2:nq,:) = Ttemp(shared+1:nq-1,:)
+            end if
+            return
+        end if
+
         nq = np+r
 
         allocate(UQ(0:mp+r))
@@ -1003,14 +3324,32 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Locate the zero-based knot span containing a parameter.
+    !!
+    !! Implements the binary search of Piegl and Tiller, Algorithm A2.1, with
+    !! endpoint saturation. Here `n` is the highest zero-based control index. A
+    !! parameter at or below `knot(degree+1)+eps` returns `degree`; one at or
+    !! above `knot(n+2)-eps` returns `n`, including values far outside the active
+    !! interval. This routine therefore does not reject out-of-domain
+    !! parameters. Invalid metadata returns the sentinel zero; otherwise
+    !! `degree<=s<=n`.
     pure function findspan(n,degree,Xth,knot) result(s)
         integer, intent(in) :: n, degree
         real(rk), intent(in) :: Xth
         real(rk), intent(in), contiguous :: knot(:)
         integer :: s
         integer :: low, high, mid
-        ! if (Xth == knot(n+2)) then
-        if (abs(Xth - knot(n+2)) < 2.0_rk*epsilon(0.0_rk)) then
+        real(rk) :: eps
+
+        s = 0
+        if (degree < 0 .or. n < degree .or. size(knot) < max(n + 2, n + degree + 1)) return
+
+        eps = knot_tolerance(knot, degree+1, n+2)
+        if (Xth <= knot(degree+1) + eps) then
+            s = degree
+            return
+        end if
+        if (Xth >= knot(n+2) - eps) then
             s = n
             return
         end if
@@ -1031,22 +3370,395 @@ contains
 
 
     !===============================================================================
-    !> author:  Seyed Ali Ghasemi
+    !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap)
+    !> Elevate a spline degree while preserving bounded or periodic topology.
+    !!
+    !! Homogeneous coordinates must be supplied for rational geometry. A
+    !! representation satisfying [[periodic_topology]] is elevated cyclically:
+    !! each seam and interior multiplicity increases by `t`, the knot extension
+    !! remains periodic, and the final elevated-degree control rows repeat the
+    !! first rows. Other valid inputs are elevated on their active interval; a
+    !! non-clamped bounded representation is first restricted to an equivalent
+    !! open-clamped representation.
+    !!
+    !! `Tmap`, when requested, satisfies `Xcw_new=matmul(Tmap,Xcw)` for either
+    !! topology. `t=0` is the exact identity. Invalid input returns empty arrays
+    !! and `success=.false.` when present.
+    !!
+    !! **References:**
+    !!
+    !! - H. Prautzsch, "Degree Elevation of B-Spline Curves,"
+    !!   *Computer Aided Geometric Design* 1 (1984), 193--198.
+    !!   [doi:10.1016/0167-8396(84)90031-1](https://doi.org/10.1016/0167-8396(84)90031-1).
+    !! - L. Piegl and W. Tiller, *The NURBS Book*, 2nd ed., Springer, 1997,
+    !!   Algorithm A5.9.
+    !!
+    pure subroutine elevate_degree_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap, success)
         integer,  intent(in)             :: t
-        real(rk), intent(in), contiguous :: Xcw(:,:), knot(:)
+            !! Nonnegative number of degree elevations.
+        real(rk), intent(in), contiguous :: Xcw(:,:)
+            !! Original control variables, one point per row.
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Original valid knot vector.
+        integer,  intent(in)             :: degree
+            !! Original polynomial degree.
+        integer,  intent(out)            :: nc_new
+            !! New control-point count.
+        real(rk), allocatable, intent(out) :: Xcw_new(:,:)
+            !! Elevated control variables.
+        real(rk), allocatable, intent(out) :: knot_new(:)
+            !! Elevated knot vector.
+        real(rk), allocatable, intent(out), optional :: Tmap(:,:)
+            !! Optional transformation satisfying `Xcw_new=matmul(Tmap,Xcw)`.
+        logical, intent(out), optional :: success
+            !! Optional operation status.
+
+        if (t > 0 .and. periodic_topology(knot, degree, Xcw)) then
+            if (present(Tmap)) then
+                if (present(success)) then
+                    call elevate_degree_periodic_A_5_9(&
+                        t        = t,&
+                        knot     = knot,&
+                        degree   = degree,&
+                        Xcw      = Xcw,&
+                        nc_new   = nc_new,&
+                        knot_new = knot_new,&
+                        Xcw_new  = Xcw_new,&
+                        Tmap     = Tmap,&
+                        success  = success)
+                else
+                    call elevate_degree_periodic_A_5_9(&
+                        t        = t,&
+                        knot     = knot,&
+                        degree   = degree,&
+                        Xcw      = Xcw,&
+                        nc_new   = nc_new,&
+                        knot_new = knot_new,&
+                        Xcw_new  = Xcw_new,&
+                        Tmap     = Tmap)
+                end if
+            else if (present(success)) then
+                call elevate_degree_periodic_A_5_9(&
+                    t        = t,&
+                    knot     = knot,&
+                    degree   = degree,&
+                    Xcw      = Xcw,&
+                    nc_new   = nc_new,&
+                    knot_new = knot_new,&
+                    Xcw_new  = Xcw_new,&
+                    success  = success)
+            else
+                call elevate_degree_periodic_A_5_9(&
+                    t        = t,&
+                    knot     = knot,&
+                    degree   = degree,&
+                    Xcw      = Xcw,&
+                    nc_new   = nc_new,&
+                    knot_new = knot_new,&
+                    Xcw_new  = Xcw_new)
+            end if
+        else
+            if (present(Tmap)) then
+                if (present(success)) then
+                    call elevate_degree_bounded_A_5_9(&
+                        t        = t,&
+                        knot     = knot,&
+                        degree   = degree,&
+                        Xcw      = Xcw,&
+                        nc_new   = nc_new,&
+                        knot_new = knot_new,&
+                        Xcw_new  = Xcw_new,&
+                        Tmap     = Tmap,&
+                        success  = success)
+                else
+                    call elevate_degree_bounded_A_5_9(&
+                        t        = t,&
+                        knot     = knot,&
+                        degree   = degree,&
+                        Xcw      = Xcw,&
+                        nc_new   = nc_new,&
+                        knot_new = knot_new,&
+                        Xcw_new  = Xcw_new,&
+                        Tmap     = Tmap)
+                end if
+            else if (present(success)) then
+                call elevate_degree_bounded_A_5_9(&
+                    t        = t,&
+                    knot     = knot,&
+                    degree   = degree,&
+                    Xcw      = Xcw,&
+                    nc_new   = nc_new,&
+                    knot_new = knot_new,&
+                    Xcw_new  = Xcw_new,&
+                    success  = success)
+            else
+                call elevate_degree_bounded_A_5_9(&
+                    t        = t,&
+                    knot     = knot,&
+                    degree   = degree,&
+                    Xcw      = Xcw,&
+                    nc_new   = nc_new,&
+                    knot_new = knot_new,&
+                    Xcw_new  = Xcw_new)
+            end if
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> Elevate a bounded spline after periodic topology has been excluded.
+    !!
+    !! Open-clamped input is elevated directly. Any other valid representation
+    !! is restricted to an equivalent open-clamped representation on its active
+    !! interval before Algorithm A5.9 is applied.
+    pure subroutine elevate_degree_bounded_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap, success)
+        integer,  intent(in)             :: t
+        real(rk), intent(in), contiguous :: Xcw(:,:)
+        real(rk), intent(in), contiguous :: knot(:)
         integer,  intent(in)             :: degree
         integer,  intent(out)            :: nc_new
-        real(rk), allocatable, intent(out)           :: Xcw_new(:,:), knot_new(:)
+        real(rk), allocatable, intent(out) :: Xcw_new(:,:)
+        real(rk), allocatable, intent(out) :: knot_new(:)
         real(rk), allocatable, intent(out), optional :: Tmap(:,:)
+        logical, intent(out), optional :: success
+
+        real(rk), allocatable :: Xcw_work(:,:), Xcw_inserted(:,:), Xcw_clamped(:,:)
+        real(rk), allocatable :: knot_work(:), knot_inserted(:), knot_clamped(:)
+        real(rk), allocatable :: Twork(:,:), Tinsert(:,:), Tcomposed(:,:), Tclamped(:,:), Telev(:,:)
+        real(rk) :: u0, u1, u_boundary
+        integer :: nc, i, boundary, multiplicity, add, span, nq
+        integer :: first_start, last_start, first_end, last_end, start_multiplicity, end_multiplicity
+        integer :: first_control, last_control, first_row, last_row, pos
+        logical :: open_knot
+
+        if (present(success)) success = .false.
+        nc = size(Xcw, 1)
+        nc_new = 0
+        if (t < 0 .or. degree < 0 .or. nc <= degree .or. size(Xcw,2) < 1 .or. &
+            .not. valid_knot_vector(knot, nc, degree) .or. .not. all(ieee_is_finite(Xcw))) then
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+        if (t == 0) then
+            nc_new = nc
+            knot_new = knot
+            Xcw_new = Xcw
+            if (present(Tmap)) then
+                allocate(Tmap(nc, nc), source=0.0_rk)
+                do concurrent (i = 1:nc)
+                    Tmap(i, i) = 1.0_rk
+                end do
+            end if
+            if (present(success)) success = .true.
+            return
+        end if
+        open_knot = all(knot(1:degree+1) == knot(degree+1)) .and. &
+            all(knot(nc+1:nc+degree+1) == knot(nc+1))
+
+        if (open_knot) then
+            call elevate_degree_open_A_5_9(&
+                t        = t,&
+                knot     = knot,&
+                degree   = degree,&
+                Xcw      = Xcw,&
+                nc_new   = nc_new,&
+                knot_new = knot_new,&
+                Xcw_new  = Xcw_new,&
+                Tmap     = Tmap)
+            if (present(success)) then
+                success = nc_new > 0 .and. size(knot_new) == nc_new + degree + t + 1 .and. &
+                    size(Xcw_new,1) == nc_new .and. all(ieee_is_finite(Xcw_new))
+            end if
+            return
+        end if
+
+        u0 = knot_start(knot, nc, degree)
+        u1 = knot_end(knot, nc, degree)
+        knot_work = knot
+        Xcw_work = Xcw
+        if (present(Tmap)) then
+            allocate(Twork(nc,nc), source=0.0_rk)
+            do concurrent (i = 1:nc)
+                Twork(i,i) = 1.0_rk
+            end do
+        end if
+
+        do boundary = 1, 2
+            if (boundary == 1) then
+                u_boundary = u0
+            else
+                u_boundary = u1
+            end if
+
+            multiplicity = compute_multiplicity(knot_work, u_boundary)
+            add = max(0, degree - multiplicity)
+            if (add <= 0) cycle
+
+            span = -1
+            do i = lbound(knot_work,1), ubound(knot_work,1)
+                if (knot_work(i) == u_boundary) span = i - lbound(knot_work,1)
+            end do
+            if (span < 0) then
+                allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+                if (present(Tmap)) allocate(Tmap(0,0))
+                return
+            end if
+
+            if (present(Tmap)) then
+                call insert_knot_A_5_1(&
+                    p  = degree,&
+                    UP = knot_work,&
+                    Pw = Xcw_work,&
+                    u  = u_boundary,&
+                    k  = span,&
+                    s  = multiplicity,&
+                    r  = add,&
+                    nq = nq,&
+                    UQ = knot_inserted,&
+                    Qw = Xcw_inserted,&
+                    T  = Tinsert)
+                call sparse_left_matmul(&
+                    A = Tinsert,&
+                    B = Twork,&
+                    C = Tcomposed)
+                call move_alloc(Tcomposed, Twork)
+            else
+                call insert_knot_A_5_1(&
+                    p  = degree,&
+                    UP = knot_work,&
+                    Pw = Xcw_work,&
+                    u  = u_boundary,&
+                    k  = span,&
+                    s  = multiplicity,&
+                    r  = add,&
+                    nq = nq,&
+                    UQ = knot_inserted,&
+                    Qw = Xcw_inserted)
+            end if
+            call move_alloc(knot_inserted, knot_work)
+            call move_alloc(Xcw_inserted, Xcw_work)
+        end do
+
+        first_start = lbound(knot_work,1) - 1
+        last_start = lbound(knot_work,1) - 1
+        first_end = lbound(knot_work,1) - 1
+        last_end = lbound(knot_work,1) - 1
+        do i = lbound(knot_work,1), ubound(knot_work,1)
+            if (knot_work(i) == u0) then
+                if (first_start < lbound(knot_work,1)) first_start = i
+                last_start = i
+            end if
+            if (knot_work(i) == u1) then
+                if (first_end < lbound(knot_work,1)) first_end = i
+                last_end = i
+            end if
+        end do
+        start_multiplicity = last_start - first_start + 1
+        end_multiplicity = last_end - first_end + 1
+        first_control = last_start - degree
+        last_control = first_end - 1
+        if (first_start < lbound(knot_work,1) .or. first_end < lbound(knot_work,1) .or. &
+            start_multiplicity < degree .or. end_multiplicity < degree .or. &
+            first_control < lbound(Xcw_work,1) .or. last_control > ubound(Xcw_work,1)) then
+            allocate(knot_new(0), Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+
+        pos = last_end - first_start + 1
+        if (start_multiplicity == degree) pos = pos + 1
+        if (end_multiplicity == degree) pos = pos + 1
+        allocate(knot_clamped(pos))
+        pos = 1
+        if (start_multiplicity == degree) then
+            knot_clamped(pos) = u0
+            pos = pos + 1
+        end if
+        knot_clamped(pos:pos+last_end-first_start) = knot_work(first_start:last_end)
+        pos = pos + last_end - first_start + 1
+        if (end_multiplicity == degree) knot_clamped(pos) = u1
+        Xcw_clamped = Xcw_work(first_control:last_control,:)
+        if (size(knot_clamped) /= size(Xcw_clamped,1) + degree + 1) then
+            nc_new = 0
+            knot_new = [real(rk) ::]
+            allocate(Xcw_new(0,size(Xcw,2)))
+            if (present(Tmap)) allocate(Tmap(0,0))
+            return
+        end if
+        if (present(Tmap)) then
+            first_row = first_control - lbound(Xcw_work,1) + 1
+            last_row = last_control - lbound(Xcw_work,1) + 1
+            Tclamped = Twork(first_row:last_row,:)
+            call elevate_degree_open_A_5_9(&
+                t        = t,&
+                knot     = knot_clamped,&
+                degree   = degree,&
+                Xcw      = Xcw_clamped,&
+                nc_new   = nc_new,&
+                knot_new = knot_new,&
+                Xcw_new  = Xcw_new,&
+                Tmap     = Telev)
+            call sparse_left_matmul(&
+                A = Telev,&
+                B = Tclamped,&
+                C = Tmap)
+        else
+            call elevate_degree_open_A_5_9(&
+                t        = t,&
+                knot     = knot_clamped,&
+                degree   = degree,&
+                Xcw      = Xcw_clamped,&
+                nc_new   = nc_new,&
+                knot_new = knot_new,&
+                Xcw_new  = Xcw_new)
+        end if
+        if (present(success)) then
+            success = nc_new > 0 .and. size(knot_new) == nc_new + degree + t + 1 .and. &
+                size(Xcw_new,1) == nc_new .and. all(ieee_is_finite(Xcw_new))
+        end if
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Elevate an open B-spline representation using Algorithm A5.9.
+    !!
+    !! The routine raises degree `degree` by `t`, preserves every geometric or
+    !! homogeneous coordinate column of `Xcw`, and optionally returns the dense
+    !! linear operator satisfying `Xcw_new=matmul(Tmap,Xcw)`. The input is the
+    !! open-clamped workspace prepared by [[elevate_degree_A_5_9]].
+    !!
+    !! **Reference:** L. Piegl and W. Tiller, *The NURBS Book*, 2nd ed.,
+    !! Springer, 1997, Algorithm A5.9.
+    pure subroutine elevate_degree_open_A_5_9(t, knot, degree, Xcw, nc_new, knot_new, Xcw_new, Tmap)
+        integer, intent(in) :: t
+            !! Nonnegative degree increment.
+        real(rk), intent(in), contiguous :: Xcw(:,:)
+            !! Control or homogeneous-control rows `[nc,nvalue]`.
+        real(rk), intent(in), contiguous :: knot(:)
+            !! Open-clamped knot vector of degree `degree`.
+        integer, intent(in) :: degree
+            !! Original polynomial degree.
+        integer, intent(out) :: nc_new
+            !! Elevated control count.
+        real(rk), allocatable, intent(out) :: Xcw_new(:,:)
+            !! Elevated control or homogeneous-control rows.
+        real(rk), allocatable, intent(out) :: knot_new(:)
+            !! Elevated knot vector; each distinct multiplicity increases by `t`.
+        real(rk), allocatable, intent(out), optional :: Tmap(:,:)
+            !! Optional elevation operator `[nc_new,nc]`.
 
         real(rk), allocatable :: bezalfs(:,:), bpts(:,:), ebpts(:,:), Nextbpts(:,:), alfs(:)
         real(rk), allocatable :: bC(:,:), ebC(:,:), NextbC(:,:)  ! only used if Tmap present
 
-        real(rk) :: iinv, alpha1, alpha2, Xth1, Xth2, numer, den, alpha3
+        real(rk) :: alpha1, alpha2, Xth1, Xth2, numer, den, alpha3
         integer  :: n, lbz, rbz, sv, tr, kj, first, knoti, last, d, nc
-        integer  :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul
+        integer  :: i, j, q, s, m, ph, ph2, mpi, mh, r, a, b, Xcwi, oldr, mul, lo
         integer, allocatable :: mlp(:)
 
         nc = size(Xcw,1)
@@ -1076,10 +3788,21 @@ contains
         bezalfs(1,1)           = 1.0_rk
         bezalfs(degree+1,ph+1) = 1.0_rk
         do i = 1, ph2
-            iinv = 1.0_rk / bincoeff(ph,i)
+            lo = max(0,i-t)
             mpi = min(degree,i)
-            do j = max(0,i-t), mpi
-                bezalfs(j+1,i+1) = iinv * bincoeff(degree,j) * bincoeff(t, i-j)
+            bezalfs(lo+1,i+1) = 1.0_rk
+            if (i <= t) then
+                do q = 0, i-1
+                    bezalfs(lo+1,i+1) = bezalfs(lo+1,i+1)*real(t-q,rk)/real(ph-q,rk)
+                end do
+            else
+                do q = 1, t
+                    bezalfs(lo+1,i+1) = bezalfs(lo+1,i+1)*real(lo+q,rk)/real(degree+q,rk)
+                end do
+            end if
+            do j = lo, mpi-1
+                bezalfs(j+2,i+1) = bezalfs(j+1,i+1)*real(degree-j,rk)*real(i-j,rk) / &
+                    (real(j+1,rk)*real(t-i+j+1,rk))
             end do
         end do
         do i = ph2+1, ph-1
@@ -1110,7 +3833,7 @@ contains
 
         do while (b < m)
             i = b
-            do while (b < m .and. abs(knot(b+1)-knot(b+2)) < 2.0_rk*epsilon(0.0_rk))
+            do while (b < m .and. knot(b+1) == knot(b+2))
                 b = b + 1
                 if (b+2 > size(knot)) exit
             end do
@@ -1120,7 +3843,13 @@ contains
             oldr = r
             r    = degree - mul
 
-            lbz = merge((oldr+2)/2, 1, oldr > 0)
+            if (oldr < 0 .and. a /= degree) then
+                ! A full break shares no endpoint control point with the
+                ! preceding Bezier piece, so retain this piece's first point.
+                lbz = 0
+            else
+                lbz = merge((oldr+2)/2, 1, oldr > 0)
+            end if
             rbz = merge(ph - (r+1)/2, ph, r > 0)
 
             if (r > 0) then
@@ -1153,7 +3882,11 @@ contains
                 first = knoti - 2
                 last  = knoti
                 den   = Xth2 - Xth1
-                alpha3 = floor((Xth2 - knot(knoti)) / den)
+                if (abs(den) <= 32.0_rk*epsilon(1.0_rk)*max(abs(Xth1), abs(Xth2))) then
+                    alpha3 = 0.0_rk
+                else
+                    alpha3 = (Xth2 - knot_new(knoti)) / den
+                end if
 
                 do tr = 1, oldr-1
                     i  = first
@@ -1161,7 +3894,7 @@ contains
                     kj = j - knoti + 1
                     do while (j - i > tr)
                         if (i < Xcwi) then
-                            alpha1 = (Xth2 - knot(i+1)) / (Xth1 - knot(i+1))
+                            alpha1 = (Xth2 - knot_new(i+1)) / (Xth1 - knot_new(i+1))
                             Xcw_new(i+1,:) = (1.0_rk-alpha1)*Xcw_new(i,:) + alpha1*Xcw_new(i+1,:)
                             if (present(Tmap)) Tmap(i+1,:) = (1.0_rk-alpha1)*Tmap(i,:) + alpha1*Tmap(i+1,:)
                         end if
@@ -1200,7 +3933,10 @@ contains
                     bpts(j+1,:) = Nextbpts(j+1,:)
                     if (present(Tmap)) bC(j+1,:) = NextbC(j+1,:)
                 end do
-                do j = r, degree
+                ! A knot of multiplicity degree+1 separates two independent
+                ! spline pieces and gives r=-1.  The next piece starts at its
+                ! first control point; there is no control point at index zero.
+                do j = max(0, r), degree
                     bpts(j+1,:) = Xcw(b-degree+j+1,:)
                     if (present(Tmap)) then
                         bC(j+1,:)  = 0.0_rk
@@ -1223,35 +3959,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure elemental function bincoeff(n,k) result(b)
-        integer, intent(in) :: n, k
-        real(rk) :: b
-        b = floor(0.5_rk+exp(factln(n)-factln(k)-factln(n-k)))
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    pure elemental function factln(n) result(f)
-        integer, intent(in) :: n
-        real(rk) :: f
-        if (n <= 1) then
-            f = 0.0_rk
-            return
-        end if
-        f = log(gamma(real(n+1,rk)))
-    end function
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
+    !> Generate a uniformly spaced axis-aligned hexahedral control net.
+    !!
+    !! `L` and `nc` must each have exactly three entries and every count must be
+    !! greater than one; these shape preconditions are not checked. Coordinates
+    !! run from zero to the corresponding signed extent, so negative extents
+    !! reverse an axis and a zero extent produces a degenerate net.
+    !!
     pure function hexahedron_Xc(L, nc) result(Xc)
         real(rk), intent(in), contiguous :: L(:)
+            !! Signed axis extents `[Lx,Ly,Lz]`.
         integer, intent(in), contiguous :: nc(:)
+            !! Directional point counts `[nx,ny,nz]`, each greater than one. The result has shape `[product(nc),3]`,
+            !! with x/direction 1 fastest.
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: d(3)
         integer :: i, j, k, idx
@@ -1272,9 +3992,18 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Generate a uniformly spaced planar rectangular control net.
+    !!
+    !! `L` and `nc` must each have exactly two entries and every count must be
+    !! greater than one; these shape preconditions are not checked. Coordinates
+    !! run from zero to each signed extent and the third coordinate is zero.
+    !!
     pure function tetragon_Xc(L, nc) result(Xc)
         real(rk), intent(in), contiguous :: L(:)
+            !! Signed axis extents `[Lx,Ly]`.
         integer, intent(in), contiguous :: nc(:)
+            !! Directional point counts `[nx,ny]`, each greater than one. The result has shape `[product(nc),3]`, lies
+            !! in `z=0`, and stores x/direction 1 fastest.
         real(rk), allocatable :: Xc(:,:)
         real(rk) :: d(2)
         integer :: i, j, idx
@@ -1295,21 +4024,119 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
-    pure subroutine remove_knots_A_5_8(p,knot,Pw,u,r,s,num,t, knot_new, Pw_new)
+    !> Attempt knot removal using Algorithm A5.8 of Piegl and Tiller.
+    !! `r` must be the one-based index of the final occurrence of the interior
+    !! knot `u`, `s` must be its complete current multiplicity, and
+    !! `1<=num<=s`. Each removal is accepted by componentwise comparisons in the
+    !! supplied control-variable space using
+    !!
+    !! \[
+    !! |a-b|\le128\,\epsilon_{rk}\max(|a|,|b|).
+    !! \]
+    !!
+    !! Polynomial callers pass control coordinates. Rational callers must pass
+    !! homogeneous controls \((w\mathbf P,w)\); the resulting test is then in
+    !! homogeneous coordinate space and is not a certified Euclidean geometry
+    !! error bound. The two acceptance branches are mutually exclusive:
+    !! `j-i<t` compares the opposing temporary controls, whereas `j-i==t`
+    !! compares the current control with its reconstructed value. If no removal
+    !! is accepted, `t=0` and both outputs are copies of the inputs.
+    !!
+    pure recursive subroutine remove_knots_A_5_8(&
+        p,&
+        knot,&
+        Pw,&
+        u,&
+        r,&
+        s,&
+        num,&
+        t,&
+        knot_new,&
+        Pw_new)
         real(rk), intent(in) :: u
-        integer, intent(in) :: p, r, s, num
+            !! Knot value requested for removal.
+        integer, intent(in) :: p
+            !! Polynomial degree.
+        integer, intent(in) :: r
+            !! One-based index of the final current occurrence of `u`.
+        integer, intent(in) :: s
+            !! Complete current multiplicity of `u`.
+        integer, intent(in) :: num
+            !! Maximum number of removals requested.
         real(rk), intent(in), contiguous :: knot(:)
+            !! Original valid knot vector.
         real(rk), intent(in), contiguous :: Pw(:,:)
+            !! Original homogeneous or polynomial control variables.
         real(rk), allocatable, intent(out) :: knot_new(:)
+            !! Resulting knot vector.
         real(rk), allocatable, intent(out) :: Pw_new(:,:)
+            !! Resulting control variables.
         real(rk), allocatable :: Pw_copy(:,:), knot_copy(:)
         integer, intent(out) :: t
-        real(rk) :: tol, alfi, alfj
+            !! Number of removals accepted.
+        real(rk) :: alfi, alfj, candidate, denominator_i, denominator_j, tol
         real(rk), allocatable :: temp(:,:)
-        integer :: i, j, ii, jj, remflag, off, first, last, ord, fout, m, k, n, nc, d, tt
+        integer :: i, j, ii, jj, remflag, off, first, last, ord, fout, m, k, n, nc, d, tt, t_more, c
 
         d  = size(Pw,2)
         nc = size(Pw,1)
+        t = 0
+        knot_new = knot
+        Pw_new = Pw
+
+        if (p < 0 .or. nc <= p .or. size(knot) /= nc+p+1 .or. num < 1 .or. s < 1 .or. num > s) return
+        if (.not. valid_knot_vector(knot, nc, p)) return
+        if (r < 1 .or. r > size(knot) .or. s > p+1 .or. knot(r) /= u) return
+        if (r-s+1 < 1 .or. any(knot(r-s+1:r) /= u)) return
+        if (r-s >= 1) then
+            if (knot(r-s) == u) return
+        end if
+        if (r < size(knot)) then
+            if (knot(r+1) == u) return
+        end if
+        if (u <= knot(p+1) .or. u >= knot(nc+1)) return
+
+        if (s == p+1) then
+            first = r-p
+            if (first-1 < 1 .or. first > nc) return
+
+            do c = 1, d
+                tol = 128.0_rk*epsilon(1.0_rk)*max(abs(Pw(first-1,c)), abs(Pw(first,c)))
+                if (abs(Pw(first-1,c) - Pw(first,c)) > tol) return
+            end do
+
+            deallocate(Pw_new, knot_new)
+            allocate(Pw_new(nc-1,d))
+            Pw_new(1:first-2,:) = Pw(1:first-2,:)
+            Pw_new(first-1,:) = 0.5_rk*(Pw(first-1,:) + Pw(first,:))
+            Pw_new(first:nc-1,:) = Pw(first+1:nc,:)
+
+            allocate(knot_new(size(knot)-1))
+            knot_new(1:r-1) = knot(1:r-1)
+            knot_new(r:size(knot)-1) = knot(r+1:size(knot))
+            t = 1
+
+            if (num > 1) then
+                call remove_knots_A_5_8(&
+                    p        = p,&
+                    knot     = knot_new,&
+                    Pw       = Pw_new,&
+                    u        = u,&
+                    r        = r-1,&
+                    s        = s-1,&
+                    num      = num-1,&
+                    t        = t_more,&
+                    knot_new = knot_copy,&
+                    Pw_new   = Pw_copy)
+                if (t_more > 0) then
+                    t = t + t_more
+                    call move_alloc(knot_copy, knot_new)
+                    call move_alloc(Pw_copy, Pw_new)
+                end if
+            end if
+            return
+        end if
+
         n = nc
         m = n+p+1
         ord = p+1
@@ -1317,15 +4144,13 @@ contains
         last = r-s
         first = r-p
 
+        if (first-1 < 1 .or. last+1 > nc) return
+
         Pw_copy = Pw
         knot_copy = knot
 
-        ! TODO:
-        tol = 1.0e-6_rk * minval(Pw(:,d))/(1.0_rk + maxval(sqrt(sum(Pw**2, 2))))
-
         allocate(temp(2*p+1,d), source=0.0_rk)
-        t = 0
-        do tt = 0, num-1
+        removal_loop: do tt = 0, num-1
             off = first-1
             temp(1,:) = Pw_copy(off,:)
             temp(last+1-off+1,:) = Pw_copy(last+1,:)
@@ -1335,8 +4160,12 @@ contains
             jj = last-off
             remflag = 0
             do while (j-i>t)
-                alfi = (u-knot_copy(i))/(knot_copy(i+ord+t)-knot_copy(i))
-                alfj = (u-knot_copy(j-t))/(knot_copy(j+ord)-knot_copy(j-t))
+                denominator_i = knot_copy(i+ord+t) - knot_copy(i)
+                denominator_j = knot_copy(j+ord) - knot_copy(j-t)
+                if (denominator_i == 0.0_rk .or. denominator_j == 0.0_rk) exit removal_loop
+                alfi = (u-knot_copy(i))/denominator_i
+                alfj = (u-knot_copy(j-t))/denominator_j
+                if (alfi == 0.0_rk .or. alfj == 1.0_rk) exit removal_loop
                 temp(ii+1,:) = (Pw_copy(i,:)-(1.0_rk-alfi)*temp(ii-1+1,:))/alfi
                 temp(jj+1,:) = (Pw_copy(j,:)-alfj*temp(jj+1+1,:))/(1.0_rk-alfj)
                 i = i+1
@@ -1344,18 +4173,32 @@ contains
                 j = j-1
                 jj = jj-1
             end do
-            if (j-i<=t) then
-                if (norm2(temp(ii-1+1,:) - temp(jj+1+1,:))<=tol) then
-                    remflag = 1
-                else
-                    alfi = (u-knot_copy(i))/(knot_copy(i+ord+t)-knot_copy(i))
-                    if (norm2(Pw_copy(i,:) - (alfi*temp(ii+t+1+1,:)+(1.0_rk-alfi)*temp(ii-1+1,:)))<=tol) then
-                        remflag = 1
+            if (j-i<t) then
+                remflag = 1
+                do c = 1, d
+                    tol = 128.0_rk*epsilon(1.0_rk)*max(abs(temp(ii,c)), abs(temp(jj+2,c)))
+                    if (abs(temp(ii,c) - temp(jj+2,c)) > tol) then
+                        remflag = 0
+                        exit
                     end if
+                end do
+            else if (j-i==t) then
+                denominator_i = knot_copy(i+ord+t) - knot_copy(i)
+                if (denominator_i /= 0.0_rk) then
+                    alfi = (u-knot_copy(i))/denominator_i
+                    remflag = 1
+                    do c = 1, d
+                        candidate = alfi*temp(ii+t+2,c) + (1.0_rk-alfi)*temp(ii,c)
+                        tol = 128.0_rk*epsilon(1.0_rk)*max(abs(Pw_copy(i,c)), abs(candidate))
+                        if (abs(Pw_copy(i,c) - candidate) > tol) then
+                            remflag = 0
+                            exit
+                        end if
+                    end do
                 end if
             end if
             if (remflag == 0) then
-                exit
+                exit removal_loop
             else
                 i = first
                 j = last
@@ -1369,7 +4212,7 @@ contains
             first = first-1
             last = last+1
             t=t+1
-        end do
+        end do removal_loop
         if (t==0) then
             return
         end if
@@ -1398,23 +4241,38 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Return distinct integer values in stable first-occurrence order.
+    !!
+    !! Equality is exact. The implementation performs \(O(n^2)\) comparisons
+    !! and uses \(O(n)\) temporary storage, so it is intended for short metadata
+    !! and connectivity vectors rather than large unsorted datasets.
     pure function unique_integer(vec) result(output)
         integer, intent(in), contiguous :: vec(:)
+            !! Input sequence; it is not sorted or modified.
         integer, allocatable :: output(:)
-        integer :: i, j, k
-        allocate(output(0))
+            !! Stable sequence of distinct values.
+        integer, allocatable :: tmp(:)
+        integer :: i, j, nunique
+        logical :: found
+
+        allocate(tmp(size(vec)))
+        nunique = 0
         do i = 1, size(vec)
-            k = 0
-            do j = 1, size(output)
-                if (vec(i) == output(j)) then
-                    k = k + 1
+            found = .false.
+            do j = 1, nunique
+                if (vec(i) == tmp(j)) then
+                    found = .true.
                     exit
                 end if
             end do
-            if (k == 0) then
-                output = [output, vec(i)]
+            if (.not. found) then
+                nunique = nunique + 1
+                tmp(nunique) = vec(i)
             end if
         end do
+
+        allocate(output(nunique))
+        if (nunique > 0) output = tmp(:nunique)
     end function
     !===============================================================================
 
@@ -1422,24 +4280,45 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Return numerically distinct real values in stable first-occurrence order.
+    !!
+    !! Two entries are treated as equal when their absolute difference is at
+    !! most `32*epsilon(1.0_rk)*maxval(abs(vec))`. The comparison is therefore
+    !! scale-relative but not transitive clustering. Complexity is \(O(n^2)\).
     pure function unique_real(vec) result(output)
         real(rk), intent(in), contiguous :: vec(:)
+            !! Input sequence; an empty input returns an empty result.
         real(rk), allocatable :: output(:)
-        integer :: i, j, k
-        allocate(output(0))
+            !! Stable sequence of tolerance-distinct values.
+        real(rk), allocatable :: tmp(:)
+        integer :: i, j, nunique
+        real(rk) :: tol
+        logical :: found
+
+        if (size(vec) == 0) then
+            allocate(output(0))
+            return
+        end if
+
+        allocate(tmp(size(vec)))
+        tol = 32.0_rk*epsilon(1.0_rk)*maxval(abs(vec))
+        nunique = 0
         do i = 1, size(vec)
-            k = 0
-            do j = 1, size(output)
-                ! if (vec(i) == output(j)) then
-                if (abs(vec(i) - output(j)) < 2.0_rk*epsilon(0.0_rk)) then
-                    k = k + 1
+            found = .false.
+            do j = 1, nunique
+                if (abs(vec(i) - tmp(j)) <= tol) then
+                    found = .true.
                     exit
                 end if
             end do
-            if (k == 0) then
-                output = [output, vec(i)]
+            if (.not. found) then
+                nunique = nunique + 1
+                tmp(nunique) = vec(i)
             end if
         end do
+
+        allocate(output(nunique))
+        if (nunique > 0) output = tmp(:nunique)
     end function
     !===============================================================================
 
@@ -1447,8 +4326,19 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Return an active right-handed Euler rotation matrix.
+    !!
+    !! Angles are in degrees and
+    !! \(R=R_z(\theta)R_y(\beta)R_x(\alpha)\) acts on column vectors. Thus the
+    !! active rotations are applied successively about the fixed x, y, and z
+    !! axes (the extrinsic xyz convention).
     pure function rotation(alpha, beta, theta) result(R)
-        real(rk), intent(in) :: alpha, beta, theta
+        real(rk), intent(in) :: alpha
+            !! Rotation about the x axis in degrees.
+        real(rk), intent(in) :: beta
+            !! Rotation about the y axis in degrees.
+        real(rk), intent(in) :: theta
+            !! Rotation about the z axis in degrees.
         real(rk) :: R(3,3)
 
         R(1,1) = cosd(beta)*cosd(theta)
@@ -1467,12 +4357,93 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Rotate the first `n` rows of a point array in place.
+    !!
+    !! The same Euler convention as [[rotation]] is used. Arrays with at least
+    !! three coordinates rotate their first three and leave additional
+    !! coordinates unchanged. One- and two-coordinate arrays receive only the
+    !! leading principal submatrix of the three-dimensional rotation; that map
+    !! is not generally an orthogonal lower-dimensional rotation when omitted
+    !! coordinates couple to the selected angles. `n` is clipped to the
+    !! available rows; a negative `n` changes nothing.
+    pure subroutine rotate_points(points, n, alpha, beta, theta)
+        real(rk), intent(inout), contiguous :: points(:,:)
+            !! Point rows to modify.
+        integer,  intent(in) :: n
+            !! Maximum number of leading rows to rotate.
+        real(rk), intent(in) :: alpha
+            !! Rotation about x in degrees.
+        real(rk), intent(in) :: beta
+            !! Rotation about y in degrees.
+        real(rk), intent(in) :: theta
+            !! Rotation about z in degrees.
+        integer :: i, ncoord, npoint
+        real(rk) :: ca, sa, cb, sb, ct, st, r11, r12, r13, r21, r22, r23, r31, r32, r33
+        real(rk) :: x, y, z
+
+        npoint = min(n, size(points, 1))
+        ncoord = size(points, 2)
+        if (npoint < 1 .or. ncoord < 1) return
+
+        ca = cosd(alpha); sa = sind(alpha)
+        cb = cosd(beta);  sb = sind(beta)
+        ct = cosd(theta); st = sind(theta)
+        r11 = cb*ct
+        r21 = cb*st
+        r31 = -sb
+        r12 = sa*sb*ct - ca*st
+        r22 = sa*sb*st + ca*ct
+        r32 = sa*cb
+        r13 = ca*sb*ct + sa*st
+        r23 = ca*sb*st - sa*ct
+        r33 = ca*cb
+
+        select case (ncoord)
+        case (1)
+            do concurrent (i = 1:npoint) local(x)
+                x = points(i, 1)
+                points(i, 1) = r11*x
+            end do
+        case (2)
+            do concurrent (i = 1:npoint) local(x, y)
+                x = points(i, 1)
+                y = points(i, 2)
+                points(i, 1) = r11*x + r12*y
+                points(i, 2) = r21*x + r22*y
+            end do
+        case default
+            do concurrent (i = 1:npoint) local(x, y, z)
+                x = points(i, 1)
+                y = points(i, 2)
+                z = points(i, 3)
+                points(i, 1) = r11*x + r12*y + r13*z
+                points(i, 2) = r21*x + r22*y + r23*z
+                points(i, 3) = r31*x + r32*y + r33*z
+            end do
+        end select
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Compute a small determinant or a surface-Jacobian area factor.
+    !!
+    !! Square matrices of order one through three return their determinant. A
+    !! `3x2` matrix returns \(\sqrt{\det(A^T A)}\), the magnitude of the cross
+    !! product of its columns. Other shapes return quiet NaN. Finite entries
+    !! whose intermediate products do not overflow are a caller precondition;
+    !! this low-level routine performs no numerical-range diagnostics.
     pure function det(A) result(detA)
         real(rk), intent(in), contiguous :: A(:,:)
         real(rk) :: detA
 
+        detA = ieee_value(1.0_rk, ieee_quiet_nan)
         if (size(A,1) == size(A,2)) then
             select case(size(A,1))
+              case(1)
+                detA = A(1,1)
               case(2)
                 detA = A(1,1)*A(2,2) - A(1,2)*A(2,1)
               case(3)
@@ -1480,14 +4451,14 @@ contains
                     + A(1,1)*( A(2,2)*A(3,3) - A(2,3)*A(3,2) )&
                     - A(1,2)*( A(2,1)*A(3,3) - A(2,3)*A(3,1) )&
                     + A(1,3)*( A(2,1)*A(3,2) - A(2,2)*A(3,1) )
-                case default
-                    error stop "det: not defined for this size"
+              case default
+                detA = ieee_value(1.0_rk, ieee_quiet_nan)
             end select
-        elseif (size(A,1) == 3 .and. size(A,2) == 2) then
-            detA = &
-                + A(1,1) * ( A(2,2) * 1.0_rk - A(3,2) * 1.0_rk )&
-                - A(1,2) * ( A(2,1) * 1.0_rk - A(3,1) * 1.0_rk )&
-                + 1.0_rk * ( A(2,1) * A(3,2) - A(3,1) * A(2,2) )
+        else if (size(A,1) == 3 .and. size(A,2) == 2) then
+            detA = sqrt( &
+                (A(2,1)*A(3,2) - A(3,1)*A(2,2))**2 + &
+                (A(3,1)*A(1,2) - A(1,1)*A(3,2))**2 + &
+                (A(1,1)*A(2,2) - A(2,1)*A(1,2))**2)
         end if
     end function
     !===============================================================================
@@ -1496,46 +4467,207 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Compute a small inverse or full-rank Moore-Penrose pseudoinverse.
+    !!
+    !! Let \(e\) be the model exponent of \(\max_{ij}|A_{ij}|\), and define the
+    !! exact radix-power scaling
+    !! \(s=\operatorname{radix}(A)^e\). Orders one through three use explicit
+    !! formulas for \((A/s)^{-1}\); larger square matrices delegate to
+    !! [[solve]] and are rescaled to the same representation. Because radix
+    !! scaling introduces no rounding, the dimensionless reciprocal
+    !! infinity-norm condition number
+    !!
+    !! \[
+    !! r_\infty=
+    !! \frac{1}{\|A/s\|_\infty\,\|(A/s)^{-1}\|_\infty}
+    !! \]
+    !!
+    !! must be finite and greater than \(32\epsilon_{rk}\). Thus uniform
+    !! nonzero scaling cannot change acceptance, while singular and
+    !! numerically singular matrices return `A_inv(0,0)`.
+    !!
+    !! For a full-column-rank \(m\times n\) matrix with \(m>n\), the
+    !! rectangular path computes the equivalent scaled form
+    !! \(s^{-1}[(A/s)^T(A/s)]^{-1}(A/s)^T\). For full row rank with \(m<n\),
+    !! it computes \(s^{-1}(A/s)^T[(A/s)(A/s)^T]^{-1}\). These are the
+    !! Moore-Penrose inverse only under the stated rank assumptions and the
+    !! condition test applied recursively to the normal matrix. Empty,
+    !! nonfinite, or numerically rejected input returns `A_inv(0,0)`.
+    !!
+    !! @warning This routine is intended for geometry Jacobians, not general
+    !! large least-squares problems. Normal equations square the condition
+    !! number. Use a rank-revealing QR or singular-value decomposition for
+    !! ill-conditioned rectangular problems.
+    !! @endwarning
+    !!
+    !! **Reference:** R. Penrose, "A Generalized Inverse for Matrices,"
+    !! *Proceedings of the Cambridge Philosophical Society* 51 (1955),
+    !! 406--413.
+    !! [doi:10.1017/S0305004100030401](https://doi.org/10.1017/S0305004100030401).
+    !!
+    !! **Numerical reference:** LAPACK `DGECON` defines the reciprocal
+    !! condition number as
+    !! \(1/(\|A\|\|A^{-1}\|)\):
+    !! [Netlib LAPACK](https://netlib.org/lapack/explore-html/d4/daf/group__gecon_ga4f9b830e19e12c7f082ddb497a57af18.html).
     recursive pure function inv(A) result(A_inv)
         real(rk), intent(in), contiguous :: A(:,:)
         real(rk), allocatable :: A_inv(:,:)
-        integer :: m, n
+        integer :: m, n, i, j, scale_exponent
+        real(rk) :: detA, matrix_scale, matrix_norm, inverse_norm, row_norm, rcond
+        real(rk) :: s11, s12, s13, s21, s22, s23, s31, s32, s33
+        real(rk), allocatable :: A_transpose(:,:), normal_inv(:,:)
 
         m = size(A,1)
         n = size(A,2)
+        if (m < 1 .or. n < 1) then
+            allocate(A_inv(0,0))
+            return
+        end if
+
+        if (.not. all(ieee_is_finite(A))) then
+            allocate(A_inv(0,0))
+            return
+        end if
+        matrix_scale = maxval(abs(A))
+        if (.not. ieee_is_finite(matrix_scale) .or. matrix_scale <= 0.0_rk) then
+            allocate(A_inv(0,0))
+            return
+        end if
+        scale_exponent = exponent(matrix_scale)
 
         if (m == n) then
             select case(m)
+              case(1)
+                allocate(A_inv(1,1))
+                A_inv(1,1) = 1.0_rk/scale(A(1,1),-scale_exponent)
               case(2)
                 allocate(A_inv(m,n))
-                A_inv(1,1) =  A(2,2)
-                A_inv(1,2) = -A(1,2)
-                A_inv(2,1) = -A(2,1)
-                A_inv(2,2) =  A(1,1)
-                A_inv = A_inv/det(A)
+                s11 = scale(A(1,1),-scale_exponent)
+                s12 = scale(A(1,2),-scale_exponent)
+                s21 = scale(A(2,1),-scale_exponent)
+                s22 = scale(A(2,2),-scale_exponent)
+                detA = s11*s22 - s12*s21
+                if (.not. ieee_is_finite(detA) .or. abs(detA) <= 0.0_rk) then
+                    deallocate(A_inv)
+                    allocate(A_inv(0,0))
+                    return
+                end if
+                A_inv(1,1) =  s22
+                A_inv(1,2) = -s12
+                A_inv(2,1) = -s21
+                A_inv(2,2) =  s11
+                A_inv = A_inv/detA
               case(3)
                 allocate(A_inv(m,n))
-                A_inv(1,1) = A(2,2)*A(3,3) - A(2,3)*A(3,2)
-                A_inv(1,2) = A(1,3)*A(3,2) - A(1,2)*A(3,3)
-                A_inv(1,3) = A(1,2)*A(2,3) - A(1,3)*A(2,2)
-                A_inv(2,1) = A(2,3)*A(3,1) - A(2,1)*A(3,3)
-                A_inv(2,2) = A(1,1)*A(3,3) - A(1,3)*A(3,1)
-                A_inv(2,3) = A(1,3)*A(2,1) - A(1,1)*A(2,3)
-                A_inv(3,1) = A(2,1)*A(3,2) - A(2,2)*A(3,1)
-                A_inv(3,2) = A(1,2)*A(3,1) - A(1,1)*A(3,2)
-                A_inv(3,3) = A(1,1)*A(2,2) - A(1,2)*A(2,1)
-                A_inv = A_inv/det(A)
+                s11 = scale(A(1,1),-scale_exponent)
+                s12 = scale(A(1,2),-scale_exponent)
+                s13 = scale(A(1,3),-scale_exponent)
+                s21 = scale(A(2,1),-scale_exponent)
+                s22 = scale(A(2,2),-scale_exponent)
+                s23 = scale(A(2,3),-scale_exponent)
+                s31 = scale(A(3,1),-scale_exponent)
+                s32 = scale(A(3,2),-scale_exponent)
+                s33 = scale(A(3,3),-scale_exponent)
+                detA = s11*(s22*s33 - s23*s32) &
+                    - s12*(s21*s33 - s23*s31) &
+                    + s13*(s21*s32 - s22*s31)
+                if (.not. ieee_is_finite(detA) .or. abs(detA) <= 0.0_rk) then
+                    deallocate(A_inv)
+                    allocate(A_inv(0,0))
+                    return
+                end if
+                A_inv(1,1) = s22*s33 - s23*s32
+                A_inv(1,2) = s13*s32 - s12*s33
+                A_inv(1,3) = s12*s23 - s13*s22
+                A_inv(2,1) = s23*s31 - s21*s33
+                A_inv(2,2) = s11*s33 - s13*s31
+                A_inv(2,3) = s13*s21 - s11*s23
+                A_inv(3,1) = s21*s32 - s22*s31
+                A_inv(3,2) = s12*s31 - s11*s32
+                A_inv(3,3) = s11*s22 - s12*s21
+                A_inv = A_inv/detA
               case default
                 A_inv = solve(A,eye(m))
+                if (size(A_inv,1) == 0) return
+                A_inv = scale(A_inv,scale_exponent)
             end select
-        elseif (m>n) then
-            allocate(A_inv(n,m))
-            A_inv = transpose(A)
-            A_inv = matmul(inv(matmul(A_inv, A)), A_inv)
-        elseif (m<n) then
-            allocate(A_inv(n,m))
-            A_inv = transpose(A)
-            A_inv = matmul(A_inv, inv(matmul(A, A_inv)))
+
+            if (.not. all(ieee_is_finite(A_inv))) then
+                deallocate(A_inv)
+                allocate(A_inv(0,0))
+                return
+            end if
+
+            matrix_norm = 0.0_rk
+            inverse_norm = 0.0_rk
+            do i = 1, m
+                row_norm = 0.0_rk
+                do j = 1, n
+                    row_norm = row_norm + abs(scale(A(i,j),-scale_exponent))
+                end do
+                matrix_norm = max(matrix_norm, row_norm)
+
+                row_norm = 0.0_rk
+                do j = 1, n
+                    row_norm = row_norm + abs(A_inv(i,j))
+                end do
+                inverse_norm = max(inverse_norm, row_norm)
+            end do
+
+            if (.not. ieee_is_finite(matrix_norm) .or. &
+                .not. ieee_is_finite(inverse_norm) .or. &
+                matrix_norm <= 0.0_rk .or. inverse_norm <= 0.0_rk) then
+                deallocate(A_inv)
+                allocate(A_inv(0,0))
+                return
+            end if
+
+            rcond = (1.0_rk/inverse_norm)/matrix_norm
+            if (.not. ieee_is_finite(rcond) .or. rcond <= 32.0_rk*epsilon(1.0_rk)) then
+                deallocate(A_inv)
+                allocate(A_inv(0,0))
+                return
+            end if
+
+            A_inv = scale(A_inv,-scale_exponent)
+            if (.not. all(ieee_is_finite(A_inv))) then
+                deallocate(A_inv)
+                allocate(A_inv(0,0))
+                return
+            end if
+        else if (m>n) then
+            allocate(A_transpose(n,m))
+            do i = 1, m
+                do j = 1, n
+                    A_transpose(j,i) = scale(A(i,j),-scale_exponent)
+                end do
+            end do
+            normal_inv = inv(matmul(A_transpose, transpose(A_transpose)))
+            if (size(normal_inv,1) == 0) then
+                allocate(A_inv(0,0))
+                return
+            end if
+            A_inv = matmul(normal_inv, A_transpose)
+            A_inv = scale(A_inv,-scale_exponent)
+        else if (m<n) then
+            allocate(A_transpose(n,m))
+            do i = 1, m
+                do j = 1, n
+                    A_transpose(j,i) = scale(A(i,j),-scale_exponent)
+                end do
+            end do
+            normal_inv = inv(matmul(transpose(A_transpose), A_transpose))
+            if (size(normal_inv,1) == 0) then
+                allocate(A_inv(0,0))
+                return
+            end if
+            A_inv = matmul(A_transpose, normal_inv)
+            A_inv = scale(A_inv,-scale_exponent)
+        end if
+
+        if (.not. all(ieee_is_finite(A_inv))) then
+            deallocate(A_inv)
+            allocate(A_inv(0,0))
         end if
 
     end function
@@ -1545,8 +4677,10 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Allocate an `n` by `n` identity matrix.
     pure function eye(n) result(I)
         integer, intent(in) :: n
+            !! Nonnegative matrix order.
         real(rk), allocatable :: I(:,:)
 
         ! local variables
@@ -1563,15 +4697,24 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Form the dyadic product of two real vectors.
+    !!
+    !! The allocated result has shape `[size(a),size(b)]` and entries
+    !! \(c_{ij}=a_i b_j\).
     pure function dyad_t1_t1(a, b) result(c)
         real(rk), intent(in), contiguous :: a(:)
+            !! Row-index factor.
         real(rk), intent(in), contiguous :: b(:)
+            !! Column-index factor.
         real(rk), allocatable :: c(:,:)
-        integer :: j
+            !! Allocated dyadic-product matrix.
+        integer :: i, j
 
         allocate(c(size(a), size(b)))
-        do concurrent(j = 1:size(c,2))
-            c(:, j) = a(:) * b(j)
+        do j = 1, size(c,2)
+            do i = 1, size(c,1)
+                c(i,j) = a(i)*b(j)
+            end do
         end do
     end function
     !===============================================================================
@@ -1580,10 +4723,20 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Generate a one-dimensional Gauss-Legendre rule on an interval.
+    !!
+    !! `degree+1` nodes integrate polynomials through degree `2*degree+1` in
+    !! exact arithmetic. `degree>=0` and `size(interval)>=2` are unchecked shape
+    !! preconditions. The first two interval entries must also be finite. When
+    !! they are finite but not strictly increasing, allocated nodes and weights
+    !! are filled with NaNs.
     pure subroutine gauss_legendre_1D(interval, degree, Xksi, Wksi)
         real(rk), intent(in), contiguous :: interval(:)
+            !! Integration interval; the first two entries are used.
         integer, intent(in) :: degree
+            !! Quadrature order minus one; must be nonnegative.
         real(rk), allocatable, intent(out) :: Xksi(:), Wksi(:)
+            !! Allocated nodes and weights, each of length `degree+1`.
 
         allocate(Xksi(degree+1), Wksi(degree+1))
 
@@ -1595,20 +4748,39 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Generate a tensor-product Gauss-Legendre rule on a rectangle.
+    !!
+    !! Direction 1 varies fastest. `Xksi` has shape
+    !! `[(degree(1)+1)*(degree(2)+1),2]`; `Wksi` contains the corresponding
+    !! products of one-dimensional weights. `degree` must contain at least two
+    !! nonnegative entries, and both interval arrays must contain at least two
+    !! finite entries with increasing first pair; these preconditions are not
+    !! shape-validated by this wrapper.
     pure subroutine gauss_legendre_2D(interval1, interval2, degree, Xksi, Wksi)
-        real(rk), intent(in), contiguous :: interval1(:), interval2(:)
+        real(rk), intent(in), contiguous :: interval1(:)
+            !! Strictly increasing direction-1 interval.
+        real(rk), intent(in), contiguous :: interval2(:)
+            !! Strictly increasing direction-2 interval.
         integer, intent(in), contiguous :: degree(:)
+            !! Quadrature orders minus one `[q1-1,q2-1]`.
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
+            !! Flattened parameter pairs and tensor-product weights.
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:)
+        integer :: i, j, n1, n2
 
-        allocate(Xksi1(degree(1)+1), Wksi1(degree(1)+1))
-        allocate(Xksi2(degree(2)+1), Wksi2(degree(2)+1))
+        n1 = degree(1)+1
+        n2 = degree(2)+1
+        allocate(Xksi1(n1), Wksi1(n1))
+        allocate(Xksi2(n2), Wksi2(n2))
 
         call gauss_legendre(Xksi1, Wksi1, interval1)
         call gauss_legendre(Xksi2, Wksi2, interval2)
 
         call ndgrid(Xksi1, Xksi2, Xksi)
-        Wksi = kron(Wksi1, Wksi2)
+        allocate(Wksi(n1*n2))
+        do concurrent (j = 1:n2, i = 1:n1)
+            Wksi((j-1)*n1+i) = Wksi1(i)*Wksi2(j)
+        end do
     end subroutine
     !===============================================================================
 
@@ -1616,22 +4788,43 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Generate a tensor-product Gauss-Legendre rule on a cuboid.
+    !!
+    !! Direction 1 varies fastest, then direction 2. `Xksi` has three columns
+    !! and one row per tensor-product point; `Wksi` uses the same ordering.
+    !! `degree` must contain at least three nonnegative entries, and every
+    !! interval must contain at least two finite entries with increasing first
+    !! pair; these preconditions are not shape-validated by this wrapper.
     pure subroutine gauss_legendre_3D(interval1, interval2, interval3, degree, Xksi, Wksi)
-        real(rk), intent(in), contiguous :: interval1(:), interval2(:), interval3(:)
+        real(rk), intent(in), contiguous :: interval1(:)
+            !! Strictly increasing direction-1 interval.
+        real(rk), intent(in), contiguous :: interval2(:)
+            !! Strictly increasing direction-2 interval.
+        real(rk), intent(in), contiguous :: interval3(:)
+            !! Strictly increasing direction-3 interval.
         integer, intent(in), contiguous :: degree(:)
+            !! Quadrature orders minus one `[q1-1,q2-1,q3-1]`.
         real(rk), allocatable, intent(out) :: Xksi(:,:), Wksi(:)
+            !! Flattened parameter triples and tensor-product weights.
         real(rk), allocatable :: Xksi1(:), Wksi1(:), Xksi2(:), Wksi2(:), Xksi3(:), Wksi3(:)
+        integer :: i, j, k, n1, n2, n3
 
-        allocate(Xksi1(degree(1)+1), Wksi1(degree(1)+1))
-        allocate(Xksi2(degree(2)+1), Wksi2(degree(2)+1))
-        allocate(Xksi3(degree(3)+1), Wksi3(degree(3)+1))
+        n1 = degree(1)+1
+        n2 = degree(2)+1
+        n3 = degree(3)+1
+        allocate(Xksi1(n1), Wksi1(n1))
+        allocate(Xksi2(n2), Wksi2(n2))
+        allocate(Xksi3(n3), Wksi3(n3))
 
         call gauss_legendre(Xksi1, Wksi1, interval1)
         call gauss_legendre(Xksi2, Wksi2, interval2)
         call gauss_legendre(Xksi3, Wksi3, interval3)
 
         call ndgrid(Xksi1, Xksi2, Xksi3, Xksi)
-        Wksi = kron(kron(Wksi3, Wksi2), Wksi1)
+        allocate(Wksi(n1*n2*n3))
+        do concurrent (k = 1:n3, j = 1:n2, i = 1:n1)
+            Wksi(((k-1)*n2+j-1)*n1+i) = Wksi1(i)*Wksi2(j)*Wksi3(k)
+        end do
     end subroutine
     !===============================================================================
 
@@ -1639,9 +4832,21 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Compute an \(n\)-point Gauss-Legendre rule and map it to an interval.
+    !!
+    !! Roots of \(P_n\) are initialized by a cosine approximation and refined
+    !! with Newton iteration; symmetry halves the number of roots evaluated.
+    !! `x` and `w` must have the same positive length, and `interval` must have
+    !! at least two finite entries; these are caller preconditions. A finite
+    !! non-increasing interval fills both arrays with quiet NaNs. On compilers other than
+    !! NVFORTRAN, failure of a root iteration after 100 updates also returns
+    !! NaNs. The NVFORTRAN compatibility path uses the last iterate instead of
+    !! performing that post-loop failure assignment.
     pure subroutine gauss_legendre(x, w, interval)
         real(rk), intent(out) :: x(:), w(:)
+            !! Nodes and weights; their common length is the quadrature order.
         real(rk), intent(in), contiguous :: interval(:)
+            !! Strictly increasing interval in entries 1 and 2.
         real(rk) :: xi, delta, p_next, dp_next, p_prev, p_curr, dp_prev, dp_curr, midpoint, half_length
         integer :: i, j, k, n
         real(rk), parameter :: pi = acos(-1.0_rk)
@@ -1649,10 +4854,14 @@ contains
         integer, parameter :: maxit = 100
         logical :: converged
 
-        if (interval(1) >= interval(2)) error stop "gauss_legendre: Invalid interval, interval(1) must be less than interval(2)"
+        if (size(interval) < 2 .or. interval(1) >= interval(2)) then
+            x = ieee_value(1.0_rk, ieee_quiet_nan)
+            w = ieee_value(1.0_rk, ieee_quiet_nan)
+            return
+        end if
         n = size(x)
         ! Gauss-Legendre points are symmetric, only compute half
-        do concurrent (i = 1:(n+1)/2)
+        do i = 1, (n+1)/2
             ! Initial guess (Chebyshev approximation)
             xi = -cos(pi * (i-0.25_rk)/(n+0.5_rk))
             ! Newton iteration
@@ -1679,10 +4888,12 @@ contains
                 ! Check for convergence
                 converged = (abs(delta) <= tol*abs(xi))
             end do
-#if defined(__NVCOMPILER)
-            ! if (.not. converged) error stop "gauss_legendre: Newton iteration did not converge"
-#else
-            if (.not. converged) error stop "gauss_legendre: Newton iteration did not converge"
+#if !defined(__NVCOMPILER)
+            if (.not. converged) then
+                x = ieee_value(1.0_rk, ieee_quiet_nan)
+                w = ieee_value(1.0_rk, ieee_quiet_nan)
+                return
+            end if
 #endif
             ! Store symmetric nodes and weights
             x(i)     = xi
@@ -1702,18 +4913,58 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Write points, connectivity, and optional scalar fields in legacy VTK format.
+    !!
+    !! Connectivity is one-based on input and converted to VTK's zero-based
+    !! indices; every index must lie in `1:size(points,1)`, but this is not
+    !! checked. Two-dimensional points are emitted with a zero z coordinate.
+    !! `vtkCellType=4` selects `POLYDATA/LINES` and permits any common row width.
+    !! Other cell types require 2, 4, or 8 nodes per row and use ForCAD's
+    !! line/quad/hex tensor-node reordering. The caller must pair the row width
+    !! with the semantically correct VTK cell identifier.
+    !!
+    !! Scalar fields are emitted only when both `point_data` and `field_names`
+    !! are present. The first `size(point_data,2)` names are written verbatim
+    !! after trimming and must already be valid VTK scalar identifiers. If only
+    !! one optional argument is supplied, all point fields are omitted.
+    !!
+    !! Binary output converts coordinates and fields to IEEE `real64` and
+    !! explicitly serializes big-endian 64-bit reals and 32-bit integers as
+    !! required by the legacy format. Headers and binary blocks share one
+    !! unformatted stream; explicit ASCII line feeds make the byte layout
+    !! independent of the operating system's formatted-record convention. It
+    !! requires 8-bit file storage units and the corresponding intrinsic
+    !! integer and IEEE real kinds. Recognized encodings are exactly the lower-,
+    !! title-, and upper-case forms of `ascii` and `binary`; binary is the
+    !! default.
+    !!
+    !! The procedure has no status result. Rejected metadata returns before
+    !! writing, and file-system I/O failures are not converted to a ForCAD
+    !! diagnostic.
+    !!
+    !! Format reference: [VTK Legacy File Format](https://docs.vtk.org/en/latest/vtk_file_formats/vtk_legacy_file_format.html).
     impure subroutine export_vtk_legacy(filename, points, elemConn, vtkCellType, point_data, field_names, encoding)
         character(len=*), intent(in) :: filename
+            !! Destination path.
         real(rk), intent(in), contiguous :: points(:,:)
+            !! Coordinates, shape `[npoint,2]` or `[npoint,3]`.
         integer, intent(in), contiguous :: elemConn(:,:) ! for VTK_POLY_LINE all rows have same nn
+            !! One-based cell connectivity, one cell per row.
         integer, intent(in) :: vtkCellType
+            !! Numeric VTK legacy cell identifier.
         real(rk), intent(in), contiguous, optional :: point_data(:,:)     ! [npoints, nfields]
+            !! Optional scalar fields, shape `[npoint,nfield]`.
         character(len=*), intent(in), contiguous, optional :: field_names(:)
+            !! Optional names corresponding to `point_data` columns.
         character(len=*), intent(in), optional :: encoding
+            !! Optional `"ASCII"` or `"BINARY"`; binary is the default.
 
-        integer :: i, j, ne, np, nn, n, nunit
+        integer :: byte_count, i, j, ne, np, nn, n, nunit
+        integer(int8) :: byte_buffer(8192)
+        character(len=128) :: header
         character(len=6) :: encoding_
-        integer, parameter :: dp = kind(1.0d0)
+        character, parameter :: lf = achar(10)
+        integer, parameter :: vtk_node_order(8) = [1, 2, 4, 3, 5, 6, 8, 7]
         logical :: is_polyline
 
         ne = size(elemConn, 1)
@@ -1725,70 +4976,75 @@ contains
 
         if (present(encoding)) then
             select case (trim(encoding))
-                case ('ascii')
-                    encoding_ = 'ASCII'
-                case ('binary')
-                    encoding_ = 'BINARY'
+                case ("ascii", "ASCII", "Ascii")
+                    encoding_ = "ASCII"
+                case ("binary", "BINARY", "Binary")
+                    encoding_ = "BINARY"
                 case default
-                    error stop 'Invalid encoding type. Use "ASCII" or "BINARY".'
+                    return
             end select
         else
-            encoding_ = 'BINARY'
+            encoding_ = "BINARY"
         end if
 
+        if (size(points,2) /= 2 .and. size(points,2) /= 3) return
+        if (.not. is_polyline .and. nn /= 2 .and. nn /= 4 .and. nn /= 8) return
+        if (present(point_data) .and. present(field_names)) then
+            if (size(point_data,1) /= np .or. size(field_names) < size(point_data,2)) return
+        end if
 
-        if (trim(encoding_) == 'ASCII') then
-            open(newunit=nunit, file=filename, action='write')
-            write(nunit,'(a)') '# vtk DataFile Version 2.0'
-            write(nunit,'(a)') 'Generated by ForCAD'
-            write(nunit,'(a)') 'ASCII'
+        if (trim(encoding_) == "ASCII") then
+            open(newunit=nunit, file=filename, action="write")
+            write(nunit,"(a)") "# vtk DataFile Version 2.0"
+            write(nunit,"(a)") "Generated by ForCAD"
+            write(nunit,"(a)") "ASCII"
             if (is_polyline) then
-                write(nunit,'(a)') 'DATASET POLYDATA'
+                write(nunit,"(a)") "DATASET POLYDATA"
             else
-                write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+                write(nunit,"(a)") "DATASET UNSTRUCTURED_GRID"
             end if
 
-            write(nunit,'(a,1x,g0,1x,a)') 'POINTS', np, 'double'
+            write(nunit,"(a,1x,g0,1x,a)") "POINTS", np, "double"
             if (size(points,2) == 2) then
-                write(nunit,'(g0,1x,g0,1x,g0)') (points(i,1), points(i,2), 0.0_rk , i = 1, np)
-            elseif (size(points,2) == 3) then
-                write(nunit,'(g0,1x,g0,1x,g0)') (points(i,1), points(i,2), points(i,3) , i = 1, np)
+                write(nunit,"(g0,1x,g0,1x,g0)") (points(i,1), points(i,2), 0.0_rk , i = 1, np)
+            else if (size(points,2) == 3) then
+                write(nunit,"(g0,1x,g0,1x,g0)") (points(i,1), points(i,2), points(i,3) , i = 1, np)
             else
-                error stop 'Invalid dimension for points.'
+                return
             end if
 
             if (is_polyline) then
-                write(nunit,'(a,1x,g0,1x,g0)') 'LINES', ne, n
+                write(nunit,"(a,1x,g0,1x,g0)") "LINES", ne, n
                 do i = 1, ne
-                    write(nunit,'(g0, *(1x,g0))') nn, (elemConn(i,j)-1, j=1, nn)
+                    write(nunit,"(g0, *(1x,g0))") nn, (elemConn(i,j)-1, j=1, nn)
                 end do
             else
-                write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
+                write(nunit,"(a,1x,g0,1x,g0)") "CELLS", ne, n
                 select case (nn)
                     case (2)
-                        write(nunit,'(g0,1x,g0,1x,g0)')&
+                        write(nunit,"(g0,1x,g0,1x,g0)")&
                             (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
                     case (4)
-                        write(nunit,'(g0,1x,g0,1x,g0,1x,g0)')&
+                        write(nunit,"(g0,1x,g0,1x,g0,1x,g0)")&
                             (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
                     case (8)
-                        write(nunit,'(g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0)')&
+                        write(nunit,"(g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0,1x,g0)")&
                             (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
                             elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
                     case default
-                        error stop 'Invalid number of nodes per element.'
+                        return
                 end select
 
-                write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
-                write(nunit,'(g0)') (vtkCellType , i = 1, ne)
+                write(nunit,"(a,1x,g0)") "CELL_TYPES", ne
+                write(nunit,"(g0)") (vtkCellType , i = 1, ne)
             end if
 
             if (present(point_data) .and. present(field_names)) then
-                write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
+                write(nunit, "(a,1x,g0)") "POINT_DATA", size(point_data,1)
                 do i = 1, size(point_data,2)
-                    write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
-                    write(nunit, '(a)') 'LOOKUP_TABLE default'
-                    write(nunit, '(g0)') (point_data(j,i), j = 1, size(point_data,1))
+                    write(nunit, "(a,1x,a,1x,a)") "SCALARS", trim(field_names(i)), "double"
+                    write(nunit, "(a)") "LOOKUP_TABLE default"
+                    write(nunit, "(g0)") (point_data(j,i), j = 1, size(point_data,1))
                 end do
             end if
 
@@ -1796,89 +5052,157 @@ contains
         end if
 
 
-        if (trim(encoding_) == 'BINARY') then
-            open(newunit=nunit, file=filename, form='formatted', action='write')
-            write(nunit,'(a)') '# vtk DataFile Version 2.0'
-            write(nunit,'(a)') 'Generated by ForCAD'
-            write(nunit,'(a)') 'BINARY'
+        if (trim(encoding_) == "BINARY") then
+            if (file_storage_size /= 8 .or. bit_size(0_int8) /= 8 .or. bit_size(0_int32) /= 32 .or. &
+                bit_size(0_int64) /= 64 .or. storage_size(0.0_real64) /= 64 .or. &
+                .not. ieee_support_datatype(0.0_real64)) return
+
+            open(&
+                newunit = nunit,&
+                file    = filename,&
+                access  = "stream",&
+                form    = "unformatted",&
+                action  = "write",&
+                status  = "replace")
+            write(nunit) "# vtk DataFile Version 2.0", lf
+            write(nunit) "Generated by ForCAD", lf
+            write(nunit) "BINARY", lf
             if (is_polyline) then
-                write(nunit,'(a)') 'DATASET POLYDATA'
+                write(nunit) "DATASET POLYDATA", lf
             else
-                write(nunit,'(a)') 'DATASET UNSTRUCTURED_GRID'
+                write(nunit) "DATASET UNSTRUCTURED_GRID", lf
             end if
-            close(nunit)
 
-            open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-            write(nunit,'(a,1x,g0,1x,a)') 'POINTS', np, 'double'
-            close(nunit)
-            open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                action="write", convert="big_endian", status="unknown")
-            if (size(points,2) == 2) then
-                write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(0.0_rk,dp) , i = 1, np)
-            else if (size(points,2) == 3) then
-                write(nunit) (real(points(i,1),dp), real(points(i,2),dp), real(points(i,3),dp) , i = 1, np)
-            else
-                error stop 'Invalid dimension for points.'
-            end if
-            close(nunit)
+            write(header,"(a,1x,g0,1x,a)") "POINTS", np, "double"
+            write(nunit) header(:len_trim(header)), lf
+            byte_count = 0
+            do i = 1, np
+                do j = 1, size(points,2)
+                    if (byte_count == size(byte_buffer)) then
+                        write(nunit) byte_buffer
+                        byte_count = 0
+                    end if
+                    call pack_big_endian_real64(&
+                        value  = real(points(i,j),real64),&
+                        bytes  = byte_buffer,&
+                        offset = byte_count)
+                    byte_count = byte_count + 8
+                end do
+                if (size(points,2) == 2) then
+                    if (byte_count == size(byte_buffer)) then
+                        write(nunit) byte_buffer
+                        byte_count = 0
+                    end if
+                    call pack_big_endian_real64(&
+                        value  = 0.0_real64,&
+                        bytes  = byte_buffer,&
+                        offset = byte_count)
+                    byte_count = byte_count + 8
+                end if
+            end do
+            if (byte_count > 0) write(nunit) byte_buffer(:byte_count)
+            write(nunit) lf
 
             if (is_polyline) then
-                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                write(nunit,'(a,1x,g0,1x,g0)') 'LINES', ne, n
-                close(nunit)
-                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                    action="write", convert="big_endian", status="unknown")
-                    write(nunit) ( nn, (elemConn(i,j)-1, j=1,nn), i=1,ne )
-                close(nunit)
+                write(header,"(a,1x,g0,1x,g0)") "LINES", ne, n
+                write(nunit) header(:len_trim(header)), lf
+                byte_count = 0
+                do i = 1, ne
+                    if (byte_count == size(byte_buffer)) then
+                        write(nunit) byte_buffer
+                        byte_count = 0
+                    end if
+                    call pack_big_endian_int32(&
+                        value  = int(nn,int32),&
+                        bytes  = byte_buffer,&
+                        offset = byte_count)
+                    byte_count = byte_count + 4
+                    do j = 1, nn
+                        if (byte_count == size(byte_buffer)) then
+                            write(nunit) byte_buffer
+                            byte_count = 0
+                        end if
+                        call pack_big_endian_int32(&
+                            value  = int(elemConn(i,j)-1,int32),&
+                            bytes  = byte_buffer,&
+                            offset = byte_count)
+                        byte_count = byte_count + 4
+                    end do
+                end do
+                if (byte_count > 0) write(nunit) byte_buffer(:byte_count)
+                write(nunit) lf
             else
-                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                write(nunit,'(a,1x,g0,1x,g0)') 'CELLS', ne, n
-                close(nunit)
-                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                    action="write", convert="big_endian", status="unknown")
-                select case (nn)
-                    case (2)
-                        write(nunit)&
-                            (2, elemConn(i,1)-1,elemConn(i,2)-1, i = 1, ne)
-                    case (4)
-                        write(nunit)&
-                            (4, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1, i = 1, ne)
-                    case (8)
-                    write(nunit)&
-                        (8, elemConn(i,1)-1,elemConn(i,2)-1,elemConn(i,4)-1,elemConn(i,3)-1,&
-                        elemConn(i,5)-1,elemConn(i,6)-1,elemConn(i,8)-1,elemConn(i,7)-1, i = 1, ne)
-                    case default
-                        error stop 'Invalid number of nodes per element.'
-                end select
-                close(nunit)
+                write(header,"(a,1x,g0,1x,g0)") "CELLS", ne, n
+                write(nunit) header(:len_trim(header)), lf
+                byte_count = 0
+                do i = 1, ne
+                    if (byte_count == size(byte_buffer)) then
+                        write(nunit) byte_buffer
+                        byte_count = 0
+                    end if
+                    call pack_big_endian_int32(&
+                        value  = int(nn,int32),&
+                        bytes  = byte_buffer,&
+                        offset = byte_count)
+                    byte_count = byte_count + 4
+                    do j = 1, nn
+                        if (byte_count == size(byte_buffer)) then
+                            write(nunit) byte_buffer
+                            byte_count = 0
+                        end if
+                        call pack_big_endian_int32(&
+                            value  = int(elemConn(i,vtk_node_order(j))-1,int32),&
+                            bytes  = byte_buffer,&
+                            offset = byte_count)
+                        byte_count = byte_count + 4
+                    end do
+                end do
+                if (byte_count > 0) write(nunit) byte_buffer(:byte_count)
+                write(nunit) lf
 
-                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                write(nunit,'(a,1x,g0)') 'CELL_TYPES', ne
-                close(nunit)
-                open(newunit=nunit, file=filename, position='append', access="stream", form="unformatted",&
-                    action="write", convert="big_endian", status="unknown")
-                write(nunit) (vtkCellType, i=1, ne)
-                close(nunit)
+                write(header,"(a,1x,g0)") "CELL_TYPES", ne
+                write(nunit) header(:len_trim(header)), lf
+                byte_count = 0
+                do i = 1, ne
+                    if (byte_count == size(byte_buffer)) then
+                        write(nunit) byte_buffer
+                        byte_count = 0
+                    end if
+                    call pack_big_endian_int32(&
+                        value  = int(vtkCellType,int32),&
+                        bytes  = byte_buffer,&
+                        offset = byte_count)
+                    byte_count = byte_count + 4
+                end do
+                if (byte_count > 0) write(nunit) byte_buffer(:byte_count)
+                write(nunit) lf
             end if
 
             if (present(point_data) .and. present(field_names)) then
-                open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                write(nunit, '(a,1x,g0)') 'POINT_DATA', size(point_data,1)
-                close(nunit)
+                write(header,"(a,1x,g0)") "POINT_DATA", size(point_data,1)
+                write(nunit) header(:len_trim(header)), lf
 
                 do i = 1, size(point_data,2)
-                    open(newunit=nunit, file=filename, form='formatted', action='write', position='append')
-                    write(nunit, '(a,1x,a,1x,a)') 'SCALARS', trim(field_names(i)), 'double'
-                    write(nunit, '(a)') 'LOOKUP_TABLE default'
-                    close(nunit)
-
-                    open(newunit=nunit, file=filename, position='append', access='stream', form='unformatted', &
-                        action='write', convert='big_endian', status='unknown')
-                    write(nunit) (real(point_data(j,i),dp), j=1,size(point_data,1))
-                    close(nunit)
+                    write(nunit) "SCALARS ", trim(field_names(i)), " double", lf
+                    write(nunit) "LOOKUP_TABLE default", lf
+                    byte_count = 0
+                    do j = 1, size(point_data,1)
+                        if (byte_count == size(byte_buffer)) then
+                            write(nunit) byte_buffer
+                            byte_count = 0
+                        end if
+                        call pack_big_endian_real64(&
+                            value  = real(point_data(j,i),real64),&
+                            bytes  = byte_buffer,&
+                            offset = byte_count)
+                        byte_count = byte_count + 8
+                    end do
+                    if (byte_count > 0) write(nunit) byte_buffer(:byte_count)
+                    write(nunit) lf
                 end do
             end if
 
+            close(nunit)
         end if
     end subroutine
     !===============================================================================
@@ -1887,59 +5211,840 @@ contains
     !===============================================================================
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
+    !> Append one 32-bit integer to a byte buffer in VTK big-endian order.
+    pure subroutine pack_big_endian_int32(value, bytes, offset)
+        integer(int32), intent(in) :: value
+        integer(int8), intent(inout), contiguous :: bytes(:)
+        integer, intent(in) :: offset
+
+        integer :: byte
+
+        do byte = 1, 4
+            bytes(offset+byte) = int(ibits(value,8*(4-byte),7),int8)
+            if (btest(value,8*(4-byte)+7)) bytes(offset+byte) = ibset(bytes(offset+byte),7)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Append one IEEE 64-bit real to a byte buffer in VTK big-endian order.
+    pure subroutine pack_big_endian_real64(value, bytes, offset)
+        real(real64), intent(in) :: value
+        integer(int8), intent(inout), contiguous :: bytes(:)
+        integer, intent(in) :: offset
+
+        integer :: byte
+        integer(int64) :: bits
+
+        bits = transfer(value, 0_int64)
+        do byte = 1, 8
+            bytes(offset+byte) = int(ibits(bits,8*(8-byte),7),int8)
+            if (btest(bits,8*(8-byte)+7)) bytes(offset+byte) = ibset(bytes(offset+byte),7)
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Solve the square dense system \(AX=B\) for one or more right-hand sides.
+    !!
+    !! A matrix is classified as numerically symmetric when every compared
+    !! pair satisfies the scale-invariant test
+    !!
+    !! \[
+    !! |\widehat A_{ij}-\widehat A_{ji}|\le
+    !! 32\,\epsilon_{rk},\qquad
+    !! \widehat A=A/\operatorname{radix}(A)^e,
+    !! \]
+    !!
+    !! That path first attempts unpivoted Cholesky using the lower triangle.
+    !! Before accepting its solution, the full input matrix is checked with the
+    !! componentwise backward-residual bound
+    !!
+    !! \[
+    !! |(AX-B)_{ir}|\le 64n\epsilon_{rk}
+    !! \left(|B_{ir}|+\sum_j|A_{ij}|\,|X_{jr}|\right).
+    !! \]
+    !!
+    !! where \(e\) is the model exponent of the largest entry. Scaling by a
+    !! radix power is exact. Cholesky and LU both solve
+    !! \(\widehat A X=\widehat B\), with \(\widehat B=B/\operatorname{radix}(A)^e\),
+    !! so their pivot decisions and arithmetic do not depend on the physical
+    !! units of the system.
+    !!
+    !! If Cholesky encounters a nonpositive pivot, the residual check fails, or
+    !! the symmetry test fails, LU factorization with partial pivoting solves
+    !! the normalized general system. Shape mismatch, an exactly zero LU
+    !! pivot, a nonfinite pivot, or a nonfinite solution returns `X(0,0)`. A
+    !! small nonzero normalized pivot is accepted; its magnitude alone does not
+    !! prove singularity.
+    !!
+    !! The routine is allocation-based and intended for small or medium dense
+    !! systems. Work is \(O(n^3+n^2n_{rhs})\), and dense factor and solution
+    !! storage is allocated internally. The routine does not estimate a
+    !! condition number or perform iterative refinement.
+    !! All entries of `A` and `B` must be finite.
+    !!
+    !! **Reference implementations:**
+    !!
+    !! - LAPACK `DPOSV`, symmetric positive-definite solution by Cholesky
+    !!   factorization:
+    !!   [Netlib LAPACK](https://netlib.org/lapack/explore-html/de/d6c/group__posv_ga4844053bd30fe88a17a7e08d93bbae4b.html).
+    !! - LAPACK `DGESV`, general solution by LU factorization with partial
+    !!   pivoting:
+    !!   [Netlib LAPACK](https://netlib.org/lapack/explore-html/d8/da6/group__gesv_ga831ce6a40e7fd16295752d18aed2d541.html).
     pure function solve(A, B) result(X)
-        real(rk), intent(in), contiguous :: A(:,:), B(:,:)
+        real(rk), intent(in), contiguous :: A(:,:)
+            !! Square coefficient matrix, shape `[n,n]`.
+        real(rk), intent(in), contiguous :: B(:,:)
+            !! Right-hand sides, shape `[n,nrhs]`.
         real(rk), allocatable :: X(:,:)
 
-        integer :: n, m, i, j, k, p
-        real(rk), allocatable :: L(:,:), Y(:,:)
-        real(rk) :: sum
+        integer :: n, m, i, j, p, r, scale_exponent
+        real(rk) :: matrix_scale, sym_tol, residual, residual_scale, residual_tol
+        logical :: symmetric, ok
 
         p = size(A,1)
         n = size(A,2)
         m = size(B,2)
 
-        if (p /= size(B,1)) error stop "solve: A and B row mismatch"
+        if (p /= n .or. p /= size(B,1) .or. n < 1) then
+            allocate(X(0,0))
+            return
+        end if
 
-        allocate(L(n,n), Y(n,m), X(n,m), source=0.0_rk)
+        if (.not. all(ieee_is_finite(A)) .or. &
+            .not. all(ieee_is_finite(B))) then
+            allocate(X(0,0))
+            return
+        end if
+        matrix_scale = maxval(abs(A))
+        if (matrix_scale <= 0.0_rk) then
+            allocate(X(0,0))
+            return
+        end if
+        scale_exponent = exponent(matrix_scale)
+        sym_tol = 32.0_rk*epsilon(1.0_rk)
+        symmetric = .true.
+        do i = 2, n
+            do j = 1, i-1
+                if (abs(scale(A(i,j),-scale_exponent) - &
+                    scale(A(j,i),-scale_exponent)) > sym_tol) then
+                    symmetric = .false.
+                    exit
+                end if
+            end do
+            if (.not. symmetric) exit
+        end do
+
+        if (symmetric) then
+            call solve_cholesky(A, B, scale_exponent, X, ok)
+            if (ok) then
+                residual_tol = 64.0_rk*real(n,rk)*epsilon(1.0_rk)
+                do r = 1, m
+                    do i = 1, n
+                        residual = -scale(B(i,r),-scale_exponent)
+                        residual_scale = abs(residual)
+                        do j = 1, n
+                            residual = residual + &
+                                scale(A(i,j),-scale_exponent)*X(j,r)
+                            residual_scale = residual_scale + &
+                                abs(scale(A(i,j),-scale_exponent))*abs(X(j,r))
+                        end do
+                        if (.not. ieee_is_finite(residual) .or. &
+                            .not. ieee_is_finite(residual_scale) .or. &
+                            abs(residual) > residual_tol*residual_scale) then
+                            ok = .false.
+                            exit
+                        end if
+                    end do
+                    if (.not. ok) exit
+                end do
+                if (ok) return
+            end if
+        end if
+
+        call solve_lu(A, B, scale_exponent, X)
+        if (size(X,1) > 0 .and. .not. all(ieee_is_finite(X))) then
+            deallocate(X)
+            allocate(X(0,0))
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Solve a symmetric positive-definite band system by banded Cholesky factorization.
+    !!
+    !! `A_band(0,j)` is \(A_{jj}\), and `A_band(i-j,j)` stores the lower entry
+    !! \(A_{ij}\) for `0<=i-j<=kd`; entries outside that symmetric band are
+    !! assumed zero. Factorization costs \(O(n\,kd^2)\), and triangular solves
+    !! cost \(O(n\,kd\,n_{rhs})\). Internal factor and solution storage is
+    !! \(O(n(kd+1)+n\,n_{rhs})\), avoiding a dense \(n\times n\) matrix.
+    !!
+    !! Before factorization, the valid stored entries and right-hand sides are
+    !! scaled by the exact radix power
+    !! \(s=\operatorname{radix}(A)^e\), where \(e\) is the model exponent of
+    !! the largest stored magnitude. The resulting factorization
+    !! \((A/s)=LL^T\) has the same solution because it solves
+    !! \((A/s)X=B/s\). A normalized Cholesky pivot not greater than
+    !! \(32\epsilon_{rk}\max_{ij}|A_{ij}/s|\), or a nonfinite pivot, returns
+    !! `X(0,0)`. Consequently, positive uniform rescaling cannot change the
+    !! numerical-definiteness decision. The routine does not estimate a
+    !! condition number. Right-hand-side entries must be finite.
+    !!
+    !! **Reference implementation:** LAPACK `DPBTRF` factors symmetric
+    !! positive-definite band matrices and reports a failed positive-definite
+    !! leading principal minor:
+    !! [Netlib LAPACK](https://netlib.org/lapack/explore-html/dc/d58/group__pbtrf_gafd2c3ba375ecee6dba1fba62696993e0.html).
+    !!
+    pure function solve_spd_banded(A_band, B) result(X)
+        real(rk), intent(in), contiguous :: A_band(0:,:)
+            !! Lower symmetric band storage, lower bound zero in dimension 1.
+        real(rk), intent(in), contiguous :: B(:,:)
+            !! Right-hand sides, shape `[n,nrhs]`.
+        real(rk), allocatable :: X(:,:)
+        real(rk), allocatable :: L(:,:)
+        integer :: kd, n, m, i, j, k, r, k0, i1, scale_exponent
+        real(rk) :: acc, matrix_scale, pivot_tol
+
+        kd = size(A_band, 1) - 1
+        n = size(A_band, 2)
+        m = size(B, 2)
+        if (size(B,1) /= n .or. n < 1 .or. kd < 0) then
+            allocate(X(0,0))
+            return
+        end if
+
+        matrix_scale = 0.0_rk
+        do j = 1, n
+            do i = 0, min(kd,n-j)
+                if (.not. ieee_is_finite(A_band(i,j))) then
+                    allocate(X(0,0))
+                    return
+                end if
+                matrix_scale = max(matrix_scale, abs(A_band(i,j)))
+            end do
+        end do
+        if (matrix_scale <= 0.0_rk .or. .not. all(ieee_is_finite(B))) then
+            allocate(X(0,0))
+            return
+        end if
+        scale_exponent = exponent(matrix_scale)
+        pivot_tol = 32.0_rk*epsilon(1.0_rk)*&
+            scale(matrix_scale,-scale_exponent)
+
+        allocate(L(0:kd,n), X(n,m), source=0.0_rk)
+        X = scale(B,-scale_exponent)
+
+        do j = 1, n
+            acc = scale(A_band(0,j),-scale_exponent)
+            k0 = max(1, j-kd)
+            do k = k0, j-1
+                acc = acc - L(j-k,k)*L(j-k,k)
+            end do
+            if (.not. ieee_is_finite(acc) .or. acc <= pivot_tol) then
+                deallocate(X)
+                allocate(X(0,0))
+                return
+            end if
+            L(0,j) = sqrt(acc)
+
+            do i = j+1, min(n, j+kd)
+                acc = scale(A_band(i-j,j),-scale_exponent)
+                k0 = max(1, max(j-kd, i-kd))
+                do k = k0, j-1
+                    acc = acc - L(i-k,k)*L(j-k,k)
+                end do
+                L(i-j,j) = acc/L(0,j)
+            end do
+        end do
+
+        do r = 1, m
+            do i = 1, n
+                acc = X(i,r)
+                i1 = max(1, i-kd)
+                do j = i1, i-1
+                    acc = acc - L(i-j,j)*X(j,r)
+                end do
+                X(i,r) = acc/L(0,i)
+            end do
+
+            do i = n, 1, -1
+                acc = X(i,r)
+                do j = i+1, min(n, i+kd)
+                    acc = acc - L(j-i,i)*X(j,r)
+                end do
+                X(i,r) = acc/L(0,i)
+            end do
+        end do
+
+        if (.not. all(ieee_is_finite(X))) then
+            deallocate(X)
+            allocate(X(0,0))
+        end if
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Solve a dense symmetric positive-definite system by Cholesky factorization.
+    !!
+    !! This private path factors \(A=LL^T\) without pivoting, then performs
+    !! forward and backward substitutions for every right-hand side. A
+    !! normalized pivot not greater than
+    !! \(32\epsilon_{rk}\max_{ij}|A_{ij}/s|\), or a nonfinite pivot, sets
+    !! `ok=.false.`; `X` remains allocated but must not be used unless `ok` is
+    !! true. Finite inputs are a caller precondition.
+    !!
+    !! **First published account:** Commandant Benoit, "Note sur une methode de
+    !! resolution des equations normales provenant de l'application de la
+    !! methode des moindres carres a un systeme d'equations lineaires en nombre
+    !! inferieur a celui des inconnues -- Application de la methode a la
+    !! resolution d'un systeme defini d'equations lineaires (procede du
+    !! Commandant Cholesky)," *Bulletin Geodesique* 2 (1924), 67--77.
+    !! [doi:10.1007/BF03031308](https://doi.org/10.1007/BF03031308).
+    pure subroutine solve_cholesky(A, B, scale_exponent, X, ok)
+        real(rk), intent(in), contiguous :: A(:,:)
+            !! Symmetric coefficient matrix `[n,n]`.
+        real(rk), intent(in), contiguous :: B(:,:)
+            !! Right-hand sides `[n,nrhs]`.
+        integer, intent(in) :: scale_exponent
+            !! Radix-power exponent used to normalize `A` and `B`.
+        real(rk), allocatable, intent(out) :: X(:,:)
+            !! Solution matrix `[n,nrhs]` when `ok` is true.
+        logical, intent(out) :: ok
+            !! True only when all Cholesky pivots are positive.
+        integer :: n, m, i, j, k
+        real(rk), allocatable :: L(:,:)
+        real(rk) :: acc, pivot_tol
+
+        n = size(A,2)
+        m = size(B,2)
+        ok = .true.
+        pivot_tol = 32.0_rk*epsilon(1.0_rk)*&
+            scale(maxval(abs(A)),-scale_exponent)
+        allocate(L(n,n), X(n,m), source=0.0_rk)
+        X = scale(B,-scale_exponent)
 
         do i = 1, n
             do j = 1, i
-                sum = A(i,j)
+                acc = scale(A(i,j),-scale_exponent)
                 do k = 1, j-1
-                    sum = sum - L(i,k) * L(j,k)
+                    acc = acc - L(i,k)*L(j,k)
                 end do
                 if (i == j) then
-                    if (sum <= 0.0_rk) error stop "solve: Matrix not positive definite"
-                    L(i,j) = sqrt(sum)
+                    if (.not. ieee_is_finite(acc) .or. acc <= pivot_tol) then
+                        ok = .false.
+                        return
+                    end if
+                    L(i,j) = sqrt(acc)
                 else
-                    L(i,j) = sum / L(j,j)
+                    L(i,j) = acc/L(j,j)
                 end if
             end do
         end do
 
-        ! Forward substitution: L·Y = AtB
+        ! Forward substitution: L*X = B
         do j = 1,m
             do i = 1, n
-                sum = B(i,j)
+                acc = X(i,j)
                 do k = 1, i-1
-                    sum = sum - L(i,k) * Y(k,j)
+                    acc = acc - L(i,k)*X(k,j)
                 end do
-                Y(i,j) = sum / L(i,i)
+                X(i,j) = acc/L(i,i)
             end do
         end do
 
-        ! Backward substitution: Lᵗ·X = Y
+        ! Backward substitution: transpose(L)*X = X
         do j = 1,m
             do i = n, 1, -1
-                sum = Y(i,j)
+                acc = X(i,j)
                 do k = i+1, n
-                    sum = sum - L(k,i) * X(k,j)
+                    acc = acc - L(k,i)*X(k,j)
                 end do
-                X(i,j) = sum / L(i,i)
+                X(i,j) = acc/L(i,i)
             end do
         end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Solve a dense square system by Gaussian elimination with partial pivoting.
+    !!
+    !! Row interchanges use the largest available absolute pivot in each
+    !! column. Invalid shapes, an exactly zero pivot, or a nonfinite pivot
+    !! returns `X(0,0)`. As in LAPACK `DGESV`, no fixed magnitude threshold is
+    !! used to infer singularity: uniform rescaling therefore does not change
+    !! whether a finite nonzero pivot is accepted. A very small pivot can still
+    !! indicate severe ill-conditioning; this routine does not estimate the
+    !! condition number. Finite right-hand-side entries are a caller
+    !! precondition.
+    !!
+    !! **Reference:** J. von Neumann and H. H. Goldstine, "Numerical Inverting
+    !! of Matrices of High Order," *Bulletin of the American Mathematical
+    !! Society* 53 (1947), 1021--1099.
+    !! [doi:10.1090/S0002-9904-1947-08909-6](https://doi.org/10.1090/S0002-9904-1947-08909-6).
+    !!
+    !! **Reference implementation:** LAPACK `DGESV`,
+    !! [Netlib LAPACK](https://netlib.org/lapack/explore-html/d8/da6/group__gesv_ga831ce6a40e7fd16295752d18aed2d541.html).
+    pure subroutine solve_lu(A, B, scale_exponent, X)
+        real(rk), intent(in), contiguous :: A(:,:)
+            !! Square coefficient matrix `[n,n]`.
+        real(rk), intent(in), contiguous :: B(:,:)
+            !! Right-hand sides `[n,nrhs]`.
+        integer, intent(in) :: scale_exponent
+            !! Radix-power exponent used to normalize `A` and `B`.
+        real(rk), allocatable, intent(out) :: X(:,:)
+            !! Solution matrix, or an empty matrix on failure.
+        integer :: n, m, i, j, k, pivot
+        real(rk), allocatable :: U(:,:)
+        real(rk) :: factor, pivot_abs, candidate_abs, tmp, acc
+
+        n = size(A,2)
+        m = size(B,2)
+        if (n < 1 .or. size(A,1) /= n .or. size(B,1) /= n) then
+            allocate(X(0,0))
+            return
+        end if
+        allocate(U(n,n), X(n,m))
+        U = scale(A,-scale_exponent)
+        X = scale(B,-scale_exponent)
+
+        do k = 1, n-1
+            pivot = k
+            pivot_abs = abs(U(k,k))
+            do i = k+1, n
+                candidate_abs = abs(U(i,k))
+                if (candidate_abs > pivot_abs) then
+                    pivot_abs = candidate_abs
+                    pivot = i
+                end if
+            end do
+            if (.not. ieee_is_finite(pivot_abs) .or. pivot_abs <= 0.0_rk) then
+                deallocate(X)
+                allocate(X(0,0))
+                return
+            end if
+
+            if (pivot /= k) then
+                do j = k, n
+                    tmp = U(k,j)
+                    U(k,j) = U(pivot,j)
+                    U(pivot,j) = tmp
+                end do
+                do j = 1, m
+                    tmp = X(k,j)
+                    X(k,j) = X(pivot,j)
+                    X(pivot,j) = tmp
+                end do
+            end if
+
+            do i = k+1, n
+                factor = U(i,k)/U(k,k)
+                U(i,k) = 0.0_rk
+                do j = k+1, n
+                    U(i,j) = U(i,j) - factor*U(k,j)
+                end do
+                do j = 1, m
+                    X(i,j) = X(i,j) - factor*X(k,j)
+                end do
+            end do
+        end do
+
+        if (.not. ieee_is_finite(U(n,n)) .or. abs(U(n,n)) <= 0.0_rk) then
+            deallocate(X)
+            allocate(X(0,0))
+            return
+        end if
+
+        do j = 1, m
+            do i = n, 1, -1
+                acc = X(i,j)
+                do k = i+1, n
+                    acc = acc - U(i,k)*X(k,j)
+                end do
+                X(i,j) = acc/U(i,i)
+            end do
+        end do
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Run a generated Python script without making the shell parse the source.
+    !! This private visualization bridge invokes `python` through
+    !! `execute_command_line`; it is impure, synchronous, and intended only for
+    !! the optional PyVista viewer.
+    !!
+    impure subroutine run_python_script(script)
+        character(len=*), intent(in) :: script
+            !! Complete Python source text.
+        character(len=:), allocatable :: command
+
+        command = "python - <<'FORCAD_PYVISTA_EOF'"//achar(10)//&
+            trim(script)//achar(10)//&
+            "FORCAD_PYVISTA_EOF"
+        call execute_command_line(command)
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Return a Python single-quoted string literal.
+    pure function pyvista_string_literal(text) result(literal)
+        character(len=*), intent(in) :: text
+        character(len=:), allocatable :: literal
+        integer :: i
+
+        literal = "'"
+        do i = 1, len_trim(text)
+            select case (text(i:i))
+            case ("'")
+                literal = literal//"\'"
+            case ("\")
+                literal = literal//"\\"
+            case default
+                literal = literal//text(i:i)
+            end select
+        end do
+        literal = literal//"'"
     end function
     !===============================================================================
 
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Build the shared PyVista viewer body used by all single- and multi-patch ranks.
+    function pyvista_viewer_script(header) result(script)
+        character(len=*), intent(in) :: header
+        character(len=:), allocatable :: script
+
+        script = trim(header)//achar(10)//&
+            "import numpy as np"//achar(10)//&
+            "import pyvista as pv"//achar(10)//&
+            "pv.global_theme.color = 'white'"//achar(10)//&
+            "if len(Xc_files) == 0 or len(Xg_files) == 0:"//achar(10)//&
+            "    raise RuntimeError('ForCAD PyVista viewer needs Xc and Xg VTK files')"//achar(10)//&
+            "Xth_files = Xth_files if 'Xth_files' in globals() else []"//achar(10)//&
+            "colormap_names = ['viridis', 'plasma', 'inferno', 'magma', 'cividis',"//&
+            " 'turbo', 'coolwarm', 'RdBu', 'Spectral', 'Greys']"//achar(10)//&
+            "Xc_meshes = [pv.read(path) for path in Xc_files]"//achar(10)//&
+            "Xg_meshes = [pv.read(path) for path in Xg_files]"//achar(10)//&
+            "Xth_meshes = [pv.read(path) for path in Xth_files]"//achar(10)//&
+            "common_fields = [name for name in Xg_meshes[0].point_data.keys()"//&
+            " if all(name in mesh.point_data for mesh in Xg_meshes)]"//achar(10)//&
+            "field_names = []"//achar(10)//&
+            "field_ranges = {}"//achar(10)//&
+            "for field_name in common_fields:"//achar(10)//&
+            "    field_min = None"//achar(10)//&
+            "    field_max = None"//achar(10)//&
+            "    scalar_field = True"//achar(10)//&
+            "    for mesh in Xg_meshes:"//achar(10)//&
+            "        values = np.asarray(mesh.point_data[field_name])"//achar(10)//&
+            "        if values.ndim == 2 and values.shape[1] == 1:"//achar(10)//&
+            "            values = values[:, 0]"//achar(10)//&
+            "        if values.ndim != 1:"//achar(10)//&
+            "            scalar_field = False"//achar(10)//&
+            "            break"//achar(10)//&
+            "        local_min = float(np.nanmin(values))"//achar(10)//&
+            "        local_max = float(np.nanmax(values))"//achar(10)//&
+            "        if not np.isfinite(local_min) or not np.isfinite(local_max):"//achar(10)//&
+            "            scalar_field = False"//achar(10)//&
+            "            break"//achar(10)//&
+            "        field_min = local_min if field_min is None else min(field_min, local_min)"//achar(10)//&
+            "        field_max = local_max if field_max is None else max(field_max, local_max)"//achar(10)//&
+            "    if scalar_field:"//achar(10)//&
+            "        field_names.append(field_name)"//achar(10)//&
+            "        field_ranges[field_name] = (field_min, field_max)"//achar(10)//&
+            "p = pv.Plotter(lighting='light kit')"//achar(10)//&
+            "actor_Xcp = [p.add_mesh(mesh, style='points', point_size=10, color='red',"//&
+            " render_points_as_spheres=True, opacity=0.5) for mesh in Xc_meshes]"//achar(10)//&
+            "actor_Xcw = [p.add_mesh(mesh, show_edges=True, color='yellow', line_width=3,"//&
+            " style='wireframe', opacity=0.2) for mesh in Xc_meshes]"//achar(10)//&
+            "actor_Xg = [p.add_mesh(mesh, show_edges=False, color='cyan', line_width=1,"//&
+            " metallic=0.6, pbr=True, smooth_shading=True, split_sharp_edges=True)"//&
+            " for mesh in Xg_meshes]"//achar(10)//&
+            "actor_Xth = [p.add_mesh(mesh, style='wireframe', color='magenta', line_width=2,"//&
+            " opacity=0.8) for mesh in Xth_meshes]"//achar(10)//&
+            "p.add_axes(interactive=False)"//achar(10)//&
+            "def point_picker_callback(point):"//achar(10)//&
+            "    best = None"//achar(10)//&
+            "    for mesh in Xc_meshes:"//achar(10)//&
+            "        point_id = mesh.find_closest_point(point)"//achar(10)//&
+            "        point_coords = mesh.points[point_id]"//achar(10)//&
+            "        dx = point_coords[0] - point[0]"//achar(10)//&
+            "        dy = point_coords[1] - point[1]"//achar(10)//&
+            "        dz = point_coords[2] - point[2]"//achar(10)//&
+            "        dist2 = dx*dx + dy*dy + dz*dz"//achar(10)//&
+            "        if best is None or dist2 < best[0]:"//achar(10)//&
+            "            best = (dist2, point_id, point_coords)"//achar(10)//&
+            "    _, point_id, point_coords = best"//achar(10)//&
+            "    label = f'ID: {point_id + 1}\n({point_coords[0]:.3f}, "//&
+            "{point_coords[1]:.3f}, {point_coords[2]:.3f})'"//achar(10)//&
+            "    p.add_point_labels([point_coords], [label], font_size=14, text_color='black',"//&
+            " show_points=False, fill_shape=False, shape=None)"//achar(10)//&
+            "p.enable_point_picking(callback=point_picker_callback, show_message=False)"//achar(10)//&
+            "window_size = p.window_size"//achar(10)//&
+            "y_pos = window_size[1]"//achar(10)//&
+            "Xg_visible = [True]"//achar(10)//&
+            "active_field = [None]"//achar(10)//&
+            "active_colormap = [colormap_names[0]]"//achar(10)//&
+            "scalar_bar = None"//achar(10)//&
+            "def Xcp_toggle_vis(flag):"//achar(10)//&
+            "    for actor in actor_Xcp: actor.SetVisibility(flag)"//achar(10)//&
+            "def Xcw_toggle_vis(flag):"//achar(10)//&
+            "    for actor in actor_Xcw: actor.SetVisibility(flag)"//achar(10)//&
+            "def Xg_toggle_vis(flag):"//achar(10)//&
+            "    Xg_visible[0] = bool(flag)"//achar(10)//&
+            "    for actor in actor_Xg: actor.SetVisibility(flag)"//achar(10)//&
+            "    if scalar_bar is not None:"//achar(10)//&
+            "        scalar_bar.SetVisibility(bool(flag) and active_field[0] is not None)"//achar(10)//&
+            "def Xth_toggle_vis(flag):"//achar(10)//&
+            "    for actor in actor_Xth: actor.SetVisibility(flag)"//achar(10)//&
+            "p.add_checkbox_button_widget(Xcp_toggle_vis, value=True, color_on='red',"//&
+            " size=25, position=(0, y_pos - 1*25))"//achar(10)//&
+            "p.add_checkbox_button_widget(Xcw_toggle_vis, value=True, color_on='yellow',"//&
+            " size=25, position=(0, y_pos - 2*25))"//achar(10)//&
+            "p.add_checkbox_button_widget(Xg_toggle_vis, value=True, color_on='cyan',"//&
+            " size=25, position=(0, y_pos - 3*25))"//achar(10)//&
+            "p.add_text('Xc (Points)', position=(28, y_pos - 1*25), font_size=8,"//&
+            " color='black', font='times')"//achar(10)//&
+            "p.add_text('Xc (Control geometry)', position=(28, y_pos - 2*25), font_size=8,"//&
+            " color='black', font='times')"//achar(10)//&
+            "Xg_label = p.add_text('Xg (Geometry)', position=(28, y_pos - 3*25), font_size=8,"//&
+            " color='black', font='times')"//achar(10)//&
+            "if len(actor_Xth) > 0:"//achar(10)//&
+            "    p.add_checkbox_button_widget(Xth_toggle_vis, value=True, color_on='magenta',"//&
+            " size=25, position=(0, y_pos - 4*25))"//achar(10)//&
+            "    p.add_text('Xth (Parameter)', position=(28, y_pos - 4*25), font_size=8,"//&
+            " color='black', font='times')"//achar(10)//&
+            "def select_Xg_field(field_name):"//achar(10)//&
+            "    if field_name == 'Geometry':"//achar(10)//&
+            "        active_field[0] = None"//achar(10)//&
+            "        for actor in actor_Xg: actor.mapper.scalar_visibility = False"//achar(10)//&
+            "        if scalar_bar is not None: scalar_bar.SetVisibility(False)"//achar(10)//&
+            "        Xg_label.SetInput('Xg (Geometry)')"//achar(10)//&
+            "    else:"//achar(10)//&
+            "        active_field[0] = field_name"//achar(10)//&
+            "        for actor in actor_Xg:"//achar(10)//&
+            "            actor.mapper.set_active_scalars(field_name, preference='point')"//achar(10)//&
+            "            actor.mapper.lookup_table.apply_cmap(active_colormap[0])"//achar(10)//&
+            "            actor.mapper.scalar_range = field_ranges[field_name]"//achar(10)//&
+            "            actor.mapper.scalar_visibility = True"//achar(10)//&
+            "        if scalar_bar is not None:"//achar(10)//&
+            "            scalar_bar.SetTitle(field_name)"//achar(10)//&
+            "            scalar_bar.SetVisibility(Xg_visible[0])"//achar(10)//&
+            "        Xg_label.SetInput(f'Xg ({field_name})')"//achar(10)//&
+            "    p.render()"//achar(10)//&
+            "def select_colormap(colormap_name):"//achar(10)//&
+            "    active_colormap[0] = colormap_name"//achar(10)//&
+            "    if active_field[0] is not None:"//achar(10)//&
+            "        for actor in actor_Xg:"//achar(10)//&
+            "            actor.mapper.lookup_table.apply_cmap(colormap_name)"//achar(10)//&
+            "            actor.mapper.scalar_range = field_ranges[active_field[0]]"//achar(10)//&
+            "    p.render()"//achar(10)//&
+            "if field_names:"//achar(10)//&
+            "    select_Xg_field(field_names[0])"//achar(10)//&
+            "    scalar_bar = p.add_scalar_bar(title=field_names[0], mapper=actor_Xg[0].mapper)"//achar(10)//&
+            "    field_menu_widgets = []"//achar(10)//&
+            "    field_menu_labels = []"//achar(10)//&
+            "    colormap_menu_widgets = []"//achar(10)//&
+            "    colormap_menu_labels = []"//achar(10)//&
+            "    field_menu_open = [False]"//achar(10)//&
+            "    colormap_menu_open = [False]"//achar(10)//&
+            "    field_menu_button = [None]"//achar(10)//&
+            "    colormap_menu_button = [None]"//achar(10)//&
+            "    def set_menu_visibility(widgets, labels, visible):"//achar(10)//&
+            "        for widget in widgets:"//achar(10)//&
+            "            if visible:"//achar(10)//&
+            "                widget.On()"//achar(10)//&
+            "                widget.GetRepresentation().VisibilityOn()"//achar(10)//&
+            "            else:"//achar(10)//&
+            "                widget.Off()"//achar(10)//&
+            "                widget.GetRepresentation().VisibilityOff()"//achar(10)//&
+            "        for label in labels: label.SetVisibility(visible)"//achar(10)//&
+            "    def close_field_menu():"//achar(10)//&
+            "        field_menu_open[0] = False"//achar(10)//&
+            "        set_menu_visibility(field_menu_widgets, field_menu_labels, False)"//achar(10)//&
+            "        if field_menu_button[0] is not None:"//achar(10)//&
+            "            field_menu_button[0].GetRepresentation().SetState(0)"//achar(10)//&
+            "        selected_name = 'Geometry' if active_field[0] is None else active_field[0]"//achar(10)//&
+            "        field_control_label.SetInput(f'Field: {selected_name}  v')"//achar(10)//&
+            "    def close_colormap_menu():"//achar(10)//&
+            "        colormap_menu_open[0] = False"//achar(10)//&
+            "        set_menu_visibility(colormap_menu_widgets, colormap_menu_labels, False)"//achar(10)//&
+            "        if colormap_menu_button[0] is not None:"//achar(10)//&
+            "            colormap_menu_button[0].GetRepresentation().SetState(0)"//achar(10)//&
+            "        colormap_control_label.SetInput(f'Colormap: {active_colormap[0]}  v')"//achar(10)//&
+            "    def choose_field(field_name):"//achar(10)//&
+            "        select_Xg_field(field_name)"//achar(10)//&
+            "        close_field_menu()"//achar(10)//&
+            "        p.render()"//achar(10)//&
+            "    def choose_colormap(colormap_name):"//achar(10)//&
+            "        select_colormap(colormap_name)"//achar(10)//&
+            "        close_colormap_menu()"//achar(10)//&
+            "        p.render()"//achar(10)//&
+            "    def toggle_field_menu(flag):"//achar(10)//&
+            "        field_menu_open[0] = bool(flag)"//achar(10)//&
+            "        if flag: close_colormap_menu()"//achar(10)//&
+            "        set_menu_visibility(field_menu_widgets, field_menu_labels, bool(flag))"//achar(10)//&
+            "        selected_name = 'Geometry' if active_field[0] is None else active_field[0]"//achar(10)//&
+            "        marker = '^' if flag else 'v'"//achar(10)//&
+            "        field_control_label.SetInput(f'Field: {selected_name}  {marker}')"//achar(10)//&
+            "        p.render()"//achar(10)//&
+            "    def toggle_colormap_menu(flag):"//achar(10)//&
+            "        colormap_menu_open[0] = bool(flag)"//achar(10)//&
+            "        if flag: close_field_menu()"//achar(10)//&
+            "        set_menu_visibility(colormap_menu_widgets, colormap_menu_labels, bool(flag))"//achar(10)//&
+            "        marker = '^' if flag else 'v'"//achar(10)//&
+            "        colormap_control_label.SetInput(f'Colormap: {active_colormap[0]}  {marker}')"//achar(10)//&
+            "        p.render()"//achar(10)//&
+            "    controls_y = y_pos - (5 if actor_Xth else 4)*25"//achar(10)//&
+            "    field_menu_button[0] = p.add_checkbox_button_widget(toggle_field_menu,"//&
+            " value=False, position=(0, controls_y), size=16, border_size=2,"//&
+            " color_on='black', color_off='grey', background_color='white')"//achar(10)//&
+            "    field_control_label = p.add_text(f'Field: {field_names[0]}  v',"//&
+            " position=(22, controls_y - 1), font_size=8, color='black', font='times')"//achar(10)//&
+            "    colormap_menu_button[0] = p.add_checkbox_button_widget(toggle_colormap_menu,"//&
+            " value=False, position=(0, controls_y - 22), size=16, border_size=2,"//&
+            " color_on='black', color_off='grey', background_color='white')"//achar(10)//&
+            "    colormap_control_label = p.add_text(f'Colormap: {colormap_names[0]}  v',"//&
+            " position=(22, controls_y - 23), font_size=8, color='black', font='times')"//achar(10)//&
+            "    menu_y = controls_y - 44"//achar(10)//&
+            "    for i, field_name in enumerate(['Geometry'] + field_names):"//achar(10)//&
+            "        option_y = menu_y - 18*i"//achar(10)//&
+            "        widget = p.add_radio_button_widget(lambda name=field_name: choose_field(name),"//&
+            " 'forcad_field', value=field_name == field_names[0], position=(4, option_y),"//&
+            " size=12, border_size=3, color_on='cyan', color_off='grey', background_color='white')"//achar(10)//&
+            "        label = p.add_text(field_name, position=(20, option_y - 1), font_size=7,"//&
+            " color='black', font='times')"//achar(10)//&
+            "        label.GetTextProperty().SetBackgroundColor(1.0, 1.0, 1.0)"//achar(10)//&
+            "        label.GetTextProperty().SetBackgroundOpacity(0.9)"//achar(10)//&
+            "        field_menu_widgets.append(widget)"//achar(10)//&
+            "        field_menu_labels.append(label)"//achar(10)//&
+            "    for i, colormap_name in enumerate(colormap_names):"//achar(10)//&
+            "        option_y = menu_y - 18*i"//achar(10)//&
+            "        widget = p.add_radio_button_widget("//&
+            "lambda name=colormap_name: choose_colormap(name), 'forcad_colormap',"//&
+            " value=i == 0, position=(4, option_y), size=12, border_size=3,"//&
+            " color_on='black', color_off='grey', background_color='white')"//achar(10)//&
+            "        label = p.add_text(colormap_name, position=(20, option_y - 1), font_size=7,"//&
+            " color='black', font='times')"//achar(10)//&
+            "        label.GetTextProperty().SetBackgroundColor(1.0, 1.0, 1.0)"//achar(10)//&
+            "        label.GetTextProperty().SetBackgroundOpacity(0.9)"//achar(10)//&
+            "        colormap_menu_widgets.append(widget)"//achar(10)//&
+            "        colormap_menu_labels.append(label)"//achar(10)//&
+            "    close_field_menu()"//achar(10)//&
+            "    close_colormap_menu()"//achar(10)//&
+            "p.add_text('ForCAD', position=(0.0, 10.0), font_size=14, color='black', font='times')"//achar(10)//&
+            "p.add_text('https://github.com/gha3mi/forcad', position=(0.0, 0.0),"//&
+            " font_size=7, color='blue', font='times')"//achar(10)//&
+            "p.show(title='ForCAD', interactive=True)"//achar(10)//&
+            "p.deep_clean()"//achar(10)//&
+            "del p"
+    end function
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Display previously exported single-patch VTK files with PyVista.
+    !!
+    !! This routine does not export geometry. It starts a synchronous Python
+    !! process and returns after the interactive window closes. Defining
+    !! `NOSHOW_PYVISTA` at compilation makes the routine a no-op.
+    !!
+    impure subroutine show_pyvista_singlepatch(vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg, rank_name)
+        character(len=*), intent(in) :: vtkfile_Xc
+            !! Existing control-geometry VTK path.
+        character(len=*), intent(in) :: vtkfile_Xg
+            !! Existing sampled-geometry VTK path.
+        character(len=*), intent(in), optional :: vtkfile_Xth_in_Xg
+            !! Optional parameter-line VTK path.
+        character(len=*), intent(in), optional :: rank_name
+            !! Optional viewer label.
+#ifndef NOSHOW_PYVISTA
+        block
+        character(len=:), allocatable :: header
+
+        header = "Xc_files = ["//pyvista_string_literal(vtkfile_Xc)//"]"//achar(10)//&
+            "Xg_files = ["//pyvista_string_literal(vtkfile_Xg)//"]"//achar(10)
+        if (present(vtkfile_Xth_in_Xg)) then
+            header = header//"Xth_files = ["//pyvista_string_literal(vtkfile_Xth_in_Xg)//"]"//achar(10)
+        else
+            header = header//"Xth_files = []"//achar(10)
+        end if
+        if (present(rank_name)) then
+            header = header//"rank_label = "//pyvista_string_literal(rank_name)//achar(10)
+        else
+            header = header//"rank_label = 'geometry'"//achar(10)
+        end if
+
+        call run_python_script(pyvista_viewer_script(header))
+        end block
+#endif
+    end subroutine
+    !===============================================================================
+
+
+    !===============================================================================
+    !> author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
+    !> Display previously exported multipatch VTK files using exact paths or glob patterns.
+    !! Matching files are sorted before display so patch ordering is
+    !! deterministic. This routine does not export geometry. Defining
+    !! `NOSHOW_PYVISTA` at compilation makes it a no-op.
+    !!
+    impure subroutine show_pyvista_multipatch(vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg, rank_name)
+        character(len=*), intent(in) :: vtkfile_Xc
+            !! Control-geometry path or glob pattern.
+        character(len=*), intent(in) :: vtkfile_Xg
+            !! Sampled-geometry path or glob pattern.
+        character(len=*), intent(in), optional :: vtkfile_Xth_in_Xg
+            !! Optional parameter-line path or glob pattern.
+        character(len=*), intent(in), optional :: rank_name
+            !! Optional viewer label.
+#ifndef NOSHOW_PYVISTA
+        block
+        character(len=:), allocatable :: header
+
+        header = "import glob"//achar(10)//&
+            "Xc_files = sorted(glob.glob("//pyvista_string_literal(vtkfile_Xc)//"))"//achar(10)//&
+            "Xg_files = sorted(glob.glob("//pyvista_string_literal(vtkfile_Xg)//"))"//achar(10)
+        if (present(vtkfile_Xth_in_Xg)) then
+            header = header//"Xth_files = sorted(glob.glob("//&
+                pyvista_string_literal(vtkfile_Xth_in_Xg)//"))"//achar(10)
+        else
+            header = header//"Xth_files = []"//achar(10)
+        end if
+        if (present(rank_name)) then
+            header = header//"rank_label = "//pyvista_string_literal(rank_name)//achar(10)
+        else
+            header = header//"rank_label = 'multipatch'"//achar(10)
+        end if
+
+        call run_python_script(pyvista_viewer_script(header))
+        end block
+#endif
+    end subroutine
+    !===============================================================================
 end module forcad_utils

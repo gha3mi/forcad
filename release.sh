@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------
 # release.sh — Automate changelog generation, version bumping, tagging, and release.
 #
-# Part of the setup-fortran-conda project: https://github.com/fortran-lang/setup-fortran-conda
+# Part of the setup-fortran-conda project: https://github.com/gha3mi/setup-fortran-conda
 #
 # This script streamlines the release process by:
 #   - Analyzing Git commit messages and merged pull requests (PRs) to determine the next semantic version bump (major, minor, or patch).

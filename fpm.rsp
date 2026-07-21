@@ -28,13 +28,13 @@ options --flag "-DFOR_DEBUG -fopenmp-target-do-concurrent"
 options test
 options --compiler nvfortran
 options --profile debug
-options --flag "-DFOR_DEBUG -stdpar=multicore,gpu -Minfo=stdpar,accel"
+options --flag "-DFOR_DEBUG -tp=px -stdpar=multicore,gpu -Minfo=stdpar,accel"
 
 @ubuntu-latest_nvfortran_release
 options test
 options --compiler nvfortran
 options --profile release
-options --flag "-DFOR_DEBUG -O4 -stdpar=multicore,gpu -gpu=nordc -gpu=ccall -Mvect=simd -Mcache_align -Mvect -Minline -Mconcur -Mlre -Mflushz -Mdaz"
+options --flag "-DFOR_DEBUG -tp=px -O4 -stdpar=multicore,gpu -gpu=nordc -gpu=ccall -Mvect=simd -Mcache_align -Mvect -Minline -Mconcur -Mlre -Mflushz -Mdaz"
 
 @ubuntu-latest_flang-new_debug
 options test
@@ -52,13 +52,13 @@ options --flag "-DFOR_DEBUG -cpp"
 options test
 options --compiler lfortran
 options --profile debug
-options --flag "-DFOR_DEBUG --cpp"
+options --flag "-DFOR_DEBUG --cpp -g -v --verbose --show-stacktrace --no-style-suggestions --linker gcc"
 
 @ubuntu-latest_lfortran_release
 options test
 options --compiler lfortran
 options --profile release
-options --flag "-DFOR_DEBUG --cpp"
+options --flag "-DFOR_DEBUG --cpp --linker gcc"
 
 
 ## macOS
@@ -78,7 +78,7 @@ options --flag "-DFOR_DEBUG -ftree-parallelize-loops=8 -march=native"
 options test
 options --compiler lfortran
 options --profile debug
-options --flag "-DFOR_DEBUG --cpp"
+options --flag "-DFOR_DEBUG --cpp -g -v --verbose --show-stacktrace --no-style-suggestions"
 
 @macos-latest_lfortran_release
 options test
@@ -115,18 +115,20 @@ options --flag "-DFOR_DEBUG /Qopenmp-target-do-concurrent"
 @windows-latest_flang-new_debug
 options test
 options --compiler flang-new
+options --profile debug
 options --flag "-DFOR_DEBUG -cpp"
 
 @windows-latest_flang-new_release
 options test
 options --compiler flang-new
+options --profile release
 options --flag "-DFOR_DEBUG -cpp"
 
 @windows-latest_lfortran_debug
 options test
 options --compiler lfortran
 options --profile debug
-options --flag "-DFOR_DEBUG --cpp"
+options --flag "-DFOR_DEBUG --cpp -g -v --verbose --show-stacktrace --no-style-suggestions"
 
 @windows-latest_lfortran_release
 options test

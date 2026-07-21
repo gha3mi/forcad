@@ -40,20 +40,37 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 
 ## Main Features
 
-- Parallelized using `do concurrent`.
-- Create NURBS objects by specifying control points, weights and knots.
-- Refine NURBS objects by inserting or removing knots and elevating degree.
-- Compute analytical basis functions and their first and second derivatives for NURBS and B-Spline objects.
-- Generation of IGA-compatible element connectivity and shape functions.
-- Obtain visualized elements connectivity and coordinates for geometry and control geometry.
-- Mesh insertion into a NURBS object.
-- Export NURBS objects to VTK files for visualization.
-- Export of NURBS curves and surfaces to IGES format (volumes currently not supported).
-- Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
-- Rotate and translate NURBS objects.
-- Visualization using provided python PyVista scripts.
-- Least squares fitting for NURBS curves, surfaces and volumes.
-- Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.
+- **Unified spline geometry:** polynomial B-spline, NURBS, Bezier and rational
+  Bezier curves, surfaces and volumes through a consistent object-oriented API.
+- **General knot-vector handling:** complete nondecreasing knot vectors,
+  including uniform, nonuniform, clamped, unclamped and repeated-knot forms,
+  with optional periodic parameter wrapping.
+- **Basis evaluation:** dense and locally active polynomial or rational basis
+  functions, arbitrary-order parametric derivatives and mixed derivatives for
+  tensor-product geometries.
+- **Geometry-preserving refinement:** exact knot insertion and degree elevation
+  in homogeneous coordinates, together with tolerance-controlled knot removal.
+- **Geometry construction and editing:** extrusion, revolution, sweep, loft,
+  control-point and weight modification, rotation and translation.
+- **Ready-to-use geometry:** exact rational circles and annuli, half-circle and
+  half-annulus variants, tetragons, hexahedra and predefined C-shaped objects.
+- **Fitting and projection:** B-spline and NURBS least-squares fitting plus
+  sample-based and iterative nearest-point searches for every geometry rank.
+- **IGA data:** nonzero-span element connectivity, element-local basis data,
+  derivatives and physical differential measures through `ansatz`.
+- **Multipatch modeling:** oriented curve, surface and volume connections,
+  `C^n` and `G^n` continuity constraints, compact global degree-of-freedom maps
+  and sparse CSR constraint assembly.
+- **Geometric analysis:** elementwise Gauss integration of curve length,
+  surface area and volume.
+- **Interoperability:** VTK export of control, sampled and parameter geometry
+  with point data, IGES export for curves and surfaces, and interactive PyVista
+  visualization of single- and multi-patch models.
+- **HPC-oriented implementation:** configurable real precision, allocation-aware
+  local kernels and standard `do concurrent` loops that compilers can parallelize
+  with opt-in host or accelerator flags.
+- **Recoverable diagnostics:** structured error state on geometry and multipatch
+  objects for invalid input, failed numerical operations and unsupported output.
 
 ## Examples
 

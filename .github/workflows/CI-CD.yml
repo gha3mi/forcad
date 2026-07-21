@@ -3,10 +3,10 @@ name: Setup Fortran Conda CI/CD
 on:
   push:
     branches: [main, dev]
-    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
+    paths-ignore: ["README.md", "CHANGELOG.md", "VERSION", "LICENSE"]
   pull_request:
     branches: [main]
-    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
+    paths-ignore: ["README.md", "CHANGELOG.md", "VERSION", "LICENSE"]
   workflow_dispatch:
 
 permissions:
@@ -22,13 +22,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - {os: ubuntu-latest,  compiler: gfortran }
-        - {os: ubuntu-latest,  compiler: ifx      }
-        - {os: ubuntu-latest,  compiler: flang-new}
-        - {os: ubuntu-latest,  compiler: nvfortran}
-        - {os: windows-latest, compiler: gfortran }
-        - {os: windows-latest, compiler: ifx,      fpm-version: "0.12.0"}
-        - {os: macos-latest,   compiler: gfortran }
+          - { os: ubuntu-latest, compiler: gfortran }
+          - { os: ubuntu-latest, compiler: ifx }
+          - { os: ubuntu-latest, compiler: flang-new }
+          - { os: ubuntu-latest, compiler: nvfortran }
+          - { os: windows-latest, compiler: gfortran }
+          - { os: windows-latest, compiler: ifx, fpm-version: "0.12.0" }
+          - { os: windows-latest, compiler: flang-new }
+          - { os: macos-latest, compiler: gfortran }
 
     steps:
       - name: Setup Fortran
@@ -53,13 +54,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - {os: ubuntu-latest,  compiler: gfortran }
-        - {os: ubuntu-latest,  compiler: ifx      }
-        - {os: ubuntu-latest,  compiler: flang-new}
-        - {os: ubuntu-latest,  compiler: nvfortran}
-        - {os: windows-latest, compiler: gfortran }
-        - {os: windows-latest, compiler: ifx      }
-        - {os: macos-latest,   compiler: gfortran }
+          - { os: ubuntu-latest, compiler: gfortran }
+          - { os: ubuntu-latest, compiler: ifx }
+          - { os: ubuntu-latest, compiler: flang-new }
+          - { os: ubuntu-latest, compiler: nvfortran }
+          - { os: windows-latest, compiler: gfortran }
+          - { os: windows-latest, compiler: ifx }
+          - { os: windows-latest, compiler: flang-new }
+          - { os: macos-latest, compiler: gfortran }
 
     steps:
       - name: Setup Fortran
@@ -103,8 +105,28 @@ jobs:
         if: always()
         run: cmake --build build/cmake/shared --target uninstall
 
+  codecov:
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
+    name: Upload Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Fortran
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          compiler: gfortran
+
+      - name: fpm test (coverage)
+        run: |
+          fpm test --profile debug --compiler gfortran --flag "-DFOR_DEBUG --coverage -g -O0" --verbose
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
   doc_ford:
-    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && !contains(github.event.head_commit.message, '[skip ci]') }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Generate FORD Documentation
     runs-on: ubuntu-latest
     steps:
@@ -115,7 +137,7 @@ jobs:
           generate-doc-ford: true
           ford-working-directory: .
           ford-config: README.md
-          ford-output-directory: doc
+          ford-output-directory: docs/ford/api
           ford-branch: gh-pages
           ford-target-folder: .
 
@@ -129,9 +151,9 @@ jobs:
         uses: gha3mi/setup-fortran-conda@latest
         with:
           update-readme-table: true
-          update-readme-token: ${{ secrets.GH_PAT }}   # Update with your GitHub personal access token
+          update-readme-token: ${{ secrets.GH_PAT }} # Update with your GitHub personal access token
           update-readme-user-name: "Seyed Ali Ghasemi" # Update with your name
-          update-readme-user-email: "info@gha3mi.com"  # Update with your email
+          update-readme-user-email: "info@gha3mi.com" # Update with your email
 
   linter_fortitude:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}

@@ -21,17 +21,19 @@ option(${PROJECT_NAME_UPPER}_BUILD_TESTS "Build unit tests" OFF)
 # mod directory
 set(Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/mod)
 
-# compiler
+# Keep default flags portable and numerically conservative. Native CPU tuning,
+# automatic loop threading, GPU stdpar/offload, and denormal-flushing flags are
+# better supplied explicitly for local benchmarking.
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -fPIC -O3 -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fPIC -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O3 -Wimplicit-interface -fPIC -fmax-errors=1 -fcoarray=single -fimplicit-none -Werror=implicit-interface -ffree-form")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Wall -Wextra -fmax-errors=1 -g -fcheck=bounds -fcheck=array-temps -fbacktrace -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form -Wno-maybe-uninitialized")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -ftree-parallelize-loops=8 -march=native -O3 -funroll-loops -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O3 -Wimplicit-interface -fmax-errors=1 -fcoarray=single -fPIC -fimplicit-none -Werror=implicit-interface -ffree-form")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
@@ -39,14 +41,14 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
         set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -fpp -diag-error 10006 -check all,nouninit -error-limit 1 -O0 -g -assume byterecl -traceback -fPIC -free")
         set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fpp -O3 -fp-model precise -pc64 -align all -error-limit 1 -reentrancy threaded -nogen-interfaces -assume byterecl -fPIC -free")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} /fpp /Qdiag-error:10006 /check:all /check:nouninit /error-limit:1 /Od /Z7 /debug:full /assume:byterecl /traceback /free /Qopenmp-target-do-concurrent")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} /fpp /O3 /fp:precise /align:all /error-limit:1 /reentrancy:threaded /nogen-interfaces /assume:byterecl /Qopenmp-target-do-concurrent")
+        set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} /fpp /Qdiag-error:10006 /check:all /check:nouninit /error-limit:1 /Od /Z7 /debug:full /assume:byterecl /traceback /free")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} /fpp /O3 /fp:precise /align:all /error-limit:1 /reentrancy:threaded /nogen-interfaces /assume:byterecl")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "NVHPC")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -Minform=inform -Mbackslash -Mbounds -Mchkptr -Mchkstk -traceback -fPIC -mp -Mfree -stdpar=multicore,gpu -Minfo=stdpar,accel")
-        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -O4 -fPIC -stdpar=multicore,gpu -Mbackslash -Mvect=simd -Mcache_align -Mvect -Minline -Mconcur -Mlre -Mflushz -Mdaz -mp -Mfree")
+        set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -cpp -tp=px -Minform=inform -Mbackslash -Mbounds -Mchkptr -Mchkstk -traceback -fPIC -mp -Mfree")
+        set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -cpp -tp=px -O3 -fPIC -Mbackslash -Mvect=simd -Mcache_align -Mvect -Minline -Mlre -mp -Mfree")
     endif()
 
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")
@@ -101,6 +103,9 @@ set_target_properties(fordebug PROPERTIES
     Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
 )
 target_compile_definitions(fordebug PRIVATE NOPURE_DEBUG)
+if(${PROJECT_NAME_UPPER}_BUILD_TESTS)
+    target_compile_definitions(fordebug PRIVATE FOR_DEBUG)
+endif()
 
 set(BUILD_TEST OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
@@ -161,7 +166,7 @@ install(FILES "${CMAKE_SOURCE_DIR}/VERSION" "${CMAKE_SOURCE_DIR}/LICENSE"
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
 )
 
-# install(DIRECTORY "${CMAKE_SOURCE_DIR}/doc/"
+# install(DIRECTORY "${CMAKE_SOURCE_DIR}/docs/ford/api/"
 #   DESTINATION ${CMAKE_INSTALL_DOCDIR}
 #   FILES_MATCHING PATTERN "*"
 # )
@@ -197,25 +202,22 @@ if(${PROJECT_NAME_UPPER}_BUILD_TESTS)
         Fortran_MODULE_DIRECTORY ${Fortran_MODULE_DIRECTORY}
     )
 
-    file(GLOB TESTS CONFIGURE_DEPENDS test/*.f90 test/*.F90)
-    foreach(test_file ${TESTS})
-        get_filename_component(test_name ${test_file} NAME_WE)
-        add_executable(${test_name} ${test_file})
-        target_link_libraries(${test_name} PRIVATE ${PROJECT_NAME_LOWER} forunittest)
+    file(GLOB TEST_SOURCES CONFIGURE_DEPENDS test/*.f90 test/*.F90)
+    add_executable(check ${TEST_SOURCES})
+    target_link_libraries(check PRIVATE ${PROJECT_NAME_LOWER} forunittest)
 
-        add_test(NAME ${test_name}
-            COMMAND ${test_name}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        )
+    add_test(NAME check
+        COMMAND check
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
 
-        target_include_directories(${test_name} PRIVATE
-            ${Fortran_MODULE_DIRECTORY}
-        )
+    target_include_directories(check PRIVATE
+        ${Fortran_MODULE_DIRECTORY}
+    )
 
-        if(OpenMP_Fortran_FOUND)
-            target_link_libraries(${test_name} PRIVATE OpenMP::OpenMP_Fortran)
-        endif()
-    endforeach()
+    if(OpenMP_Fortran_FOUND)
+        target_link_libraries(check PRIVATE OpenMP::OpenMP_Fortran)
+    endif()
 endif()
 
 
@@ -243,20 +245,21 @@ if(${PROJECT_NAME_UPPER}_BUILD_EXAMPLES)
         add_dependencies(fortime FACE)
     endif()
 
-    file(GLOB EXAMPLES CONFIGURE_DEPENDS example/*.f90 example/*.F90)
+    file(GLOB EXAMPLES CONFIGURE_DEPENDS
+        example/*.f90
+        example/*.F90
+    )
     foreach(example_file ${EXAMPLES})
         get_filename_component(example_name ${example_file} NAME_WE)
         add_executable(${example_name} ${example_file})
         target_link_libraries(${example_name} PRIVATE ${PROJECT_NAME_LOWER})
 
         # Link additional libraries depending on example name
-        if(${example_name} MATCHES "example_ppm[1-3]")
+        if(${example_name} MATCHES "^surface_ppm_.*_colormap$")
             target_link_libraries(${example_name} PRIVATE forimage forcolormap fortime)
-        elseif(${example_name} STREQUAL "nearest_point_2d_bench")
+        elseif(${example_name} STREQUAL "surface_iga_poisson")
             target_link_libraries(${example_name} PRIVATE fortime)
-        elseif(${example_name} STREQUAL "poisson_iga_solver_2d")
-            target_link_libraries(${example_name} PRIVATE fortime)
-        elseif(${example_name} STREQUAL "poisson_iga_solver_3d")
+        elseif(${example_name} STREQUAL "volume_iga_poisson")
             target_link_libraries(${example_name} PRIVATE fortime)
         endif()
 
