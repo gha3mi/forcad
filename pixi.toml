@@ -84,14 +84,11 @@ cxx-compiler = "*"
 [feature.studio.target.win-64.dependencies]
 clangxx = ">=22"
 
-[feature.studio.target.win-64.activation.env]
-QTF_CXX = "$CONDA_PREFIX/Library/bin/clang++.exe"
-
 [feature.studio.tasks]
 stage-studio-manifest = { cmd = "mkdir -p build/studio && cp fpm-studio.toml build/studio/fpm.toml", inputs = ["fpm-studio.toml"], outputs = ["build/studio/fpm.toml"] }
 fetch-qt-fortran = { cmd = "fpm update --fetch-only", cwd = "build/studio", depends-on = ["stage-studio-manifest"], inputs = ["build/studio/fpm.toml", "fpm.toml"], outputs = ["build/studio/build/dependencies/qt-fortran/tools/fpm_qt.py"] }
 build-studio = { cmd = """
-python build/dependencies/qt-fortran/tools/fpm_qt.py install --profile {{ profile }} --prefix ../studio-install{% if pixi.is_win %} && cp build/qtf/qtf.dll ../studio-install/bin/ {% endif %}
+{% if pixi.is_win %}export QTF_CXX="$CONDA_PREFIX/Library/bin/clang++.exe" && {% endif %}python build/dependencies/qt-fortran/tools/fpm_qt.py install --profile {{ profile }} --prefix ../studio-install{% if pixi.is_win %} && cp build/qtf/qtf.dll ../studio-install/bin/ {% endif %}
 """, args = [{ arg = "profile", default = "release" }], cwd = "build/studio", depends-on = ["fetch-qt-fortran"] }
 start = { cmd = "build/studio-install/bin/forcad-studio", depends-on = ["build-studio"] }
 
