@@ -1,0 +1,102 @@
+[workspace]
+name = "forcad"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+[dependencies]
+fpm = "0.14.*"
+git = "*"
+
+[tasks]
+build = "fpm build"
+test = "fpm test"
+
+[feature.gnu.dependencies]
+gfortran = ">=16.2,<17"
+
+[feature.gnu.activation.env]
+FPM_FC = "gfortran"
+
+[feature.intel]
+platforms = ["linux-64", "win-64"]
+
+[feature.intel.target.linux-64.dependencies]
+ifx_linux-64 = "*"
+dpcpp_linux-64 = "*"
+
+[feature.intel.target.win-64.dependencies]
+ifx_win-64 = "*"
+dpcpp_win-64 = "*"
+
+[feature.intel.activation.env]
+FPM_FC = "ifx"
+
+[feature.intel.target.linux-64.activation.env]
+LD_LIBRARY_PATH = "$CONDA_PREFIX/lib"
+
+[feature.flang]
+platforms = ["linux-64", "win-64"]
+
+[feature.flang.target.linux-64.dependencies]
+flang_linux-64 = "22.*"
+
+[feature.flang.target.win-64.dependencies]
+flang_win-64 = "22.*"
+
+[feature.flang.activation.env]
+FPM_FC = "flang"
+
+[feature.nvhpc]
+platforms = ["linux-64"]
+
+[feature.nvhpc.activation.env]
+FPM_FC = "nvfortran"
+FPM_CC = "nvc"
+FPM_CXX = "nvc++"
+
+[feature.docs.dependencies]
+ford = "*"
+graphviz = "*"
+
+[feature.docs.tasks]
+docs = "ford README.md"
+
+[feature.lint.dependencies]
+fortitude-lint = "*"
+
+[feature.lint.tasks]
+lint = "fortitude check src/core test"
+
+[feature.studio.dependencies]
+python = ">=3.11"
+qt6-main = ">=6.9,<7"
+pkg-config = "*"
+
+[feature.studio.target.linux-64.dependencies]
+gxx = ">=16.2,<17"
+
+[feature.studio.target.osx.dependencies]
+cxx-compiler = "*"
+
+[feature.studio.target.win-64.dependencies]
+clang = "*"
+
+[feature.studio.tasks]
+stage-studio-manifest = { cmd = "mkdir -p build/studio && cp fpm-studio.toml build/studio/fpm.toml", inputs = ["fpm-studio.toml"], outputs = ["build/studio/fpm.toml"] }
+fetch-qt-fortran = { cmd = "fpm update --fetch-only", cwd = "build/studio", depends-on = ["stage-studio-manifest"], inputs = ["build/studio/fpm.toml", "fpm.toml"], outputs = ["build/studio/build/dependencies/qt-fortran/tools/fpm_qt.py"] }
+build-studio = { cmd = """
+python build/dependencies/qt-fortran/tools/fpm_qt.py install --profile {{ profile }} --prefix ../studio-install{% if pixi.is_win %} && cp build/qtf/qtf.dll ../studio-install/bin/ {% endif %}
+""", args = [{ arg = "profile", default = "release" }], cwd = "build/studio", depends-on = ["fetch-qt-fortran"] }
+start = { cmd = "build/studio-install/bin/forcad-studio", depends-on = ["build-studio"] }
+
+[feature.studio.target.win-64.tasks]
+start = { cmd = "build/studio-install/bin/forcad-studio.exe", depends-on = ["build-studio"] }
+
+[environments]
+default = ["gnu"]
+intel = ["intel"]
+flang = ["flang"]
+nvhpc = ["nvhpc"]
+studio = ["gnu", "studio"]
+docs = ["docs"]
+lint = ["lint"]

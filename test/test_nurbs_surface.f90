@@ -80,18 +80,24 @@ program test_nurbs_surface
     call nurbs%set([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [1,1], [-1, -1], [-1, -1], Xc, Wc)
     call bsp%set([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [1,1], [-1, -1], [-1, -1], Xc)
 
+    call nurbs%create(20, 20)
+    call bsp%create(20, 20)
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 13")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 14")
 
     call nurbs%set([2,2], Xc, Wc)
     call bsp%set([2,2], Xc)
 
+    call nurbs%create(20, 20)
+    call bsp%create(20, 20)
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_surface: 15")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_surface: 16")
 
 
     call nurbs%create(Xt1 = nurbs%get_Xt(1), Xt2 = nurbs%get_Xt(2))
-    call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = nurbs%get_Xt(2))
+    call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = bsp%get_Xt(2))
 
     call nurbs%export_Xc("vtk/test_nurbs_surface_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_surface_Xc.vtk")

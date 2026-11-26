@@ -1,33 +1,15 @@
 name: codecov
 on:
   push:
-    branches: [main, master]
+    branches: [main, dev]
 jobs:
-
-  Build:
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        compiler: [gfortran]
-
+  coverage:
+    runs-on: ubuntu-latest
     steps:
-    - name: Setup Fortran
-      uses: gha3mi/setup-fortran-conda@latest
-      with:
-        compiler: ${{ matrix.compiler }}
-        platform: ${{ matrix.os }}
-        extra-packages: ""
-
-    - name: Run Tests
-      run: |
-        fpm test --profile debug --compiler ${{ matrix.compiler }} --flag "--coverage -g -O0" --verbose
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v6
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        verbose: true
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.11.3
+      - run: pixi run test --profile coverage
+      - uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true

@@ -1,0 +1,23 @@
+name = "forcad-studio"
+version = "../../VERSION"
+
+[library]
+source-dir = "../../src/studio"
+
+[dependencies]
+forcad = { path = "../.." }
+qt-fortran = { git = "https://github.com/jacobwilliams/qt-fortran", tag = "0.1.0" }
+
+[features]
+desktop.gfortran.flags = "-ffree-line-length-none"
+desktop.linux.executable = [{ name = "forcad-studio", source-dir = "../../app", main = "main.f90" }]
+desktop.macos.executable = [{ name = "forcad-studio", source-dir = "../../app", main = "main.f90" }]
+desktop.windows.executable = [{ name = "forcad-studio", source-dir = "../../app", main = "main.f90", link = ["advapi32", "bcrypt"] }]
+
+debug.gfortran.flags = "-O0 -g -fcheck=bounds -fbacktrace"
+release.gfortran.flags = "-O3"
+
+[profiles]
+default = ["desktop"]
+debug = ["debug"]
+release = ["release"]

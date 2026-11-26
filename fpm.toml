@@ -9,6 +9,8 @@ copyright  = "Copyright 2025, Seyed Ali Ghasemi"
 categories = ["graphics"]
 keywords   = ["Fortran", "CAD","NURBS", "b-spline","bezier","rational bezier","geometry"]
 
+executable = []
+
 [build]
 auto-executables = false
 auto-tests       = true
@@ -29,12 +31,39 @@ source-form       = "free"
 [dependencies]
 openmp = "*"
 forIGES = {git="https://github.com/rweed/forIGES.git"}
-fordebug = {git="https://github.com/gha3mi/fordebug.git", preprocess.cpp.macros=["NOPURE_DEBUG"]}
-# stdlib = { git="https://github.com/fortran-lang/stdlib", branch="stdlib-fpm", preprocess.cpp.macros=["STDLIB_EXTERNAL_BLAS", "STDLIB_EXTERNAL_LAPACK"] }
-# stdlib = { git="https://github.com/fortran-lang/stdlib", branch="stdlib-fpm" }
+fordebug = {git="https://github.com/gha3mi/fordebug.git", tag="v0.2.1", preprocess.cpp.macros=["NOPURE_DEBUG"]}
 
 [dev-dependencies]
-forunittest = {git="https://github.com/gha3mi/forunittest"}
+forunittest = {git="https://github.com/gha3mi/forunittest", tag="v0.3.2"}
+
+[library]
+source-dir = "src/core"
+
+[features]
+gnu.gfortran.flags = "-ffree-line-length-none"
+
+debug.gfortran.flags = "-O0 -g -fcheck=bounds -fbacktrace"
+release.gfortran.flags = "-O3"
+
+debug.ifx.linux.flags = "-O0 -g -check bounds -traceback -fp-model precise"
+release.ifx.linux.flags = "-O3 -fp-model precise"
+debug.ifx.windows.flags = "/Od /debug:full /check:bounds /traceback /fp:precise"
+release.ifx.windows.flags = "/O3 /fp:precise"
+
+debug.flang.flags = "-O0 -g"
+release.flang.flags = "-O3"
+
+debug.nvfortran.flags = "-O0 -g"
+release.nvfortran.flags = "-O3"
+
+coverage.gfortran.flags = "--coverage"
+coverage.gfortran.link-time-flags = "--coverage"
+
+[profiles]
+default = ["gnu"]
+debug = ["debug"]
+release = ["release"]
+coverage = ["gnu", "debug", "coverage"]
 
 [[example]]
 name       = "demo_curve"
@@ -299,7 +328,7 @@ author              = "Seyed Ali Ghasemi"
 email               = "info@gha3mi.com"
 github              = "https://github.com/gha3mi"
 license             = "BSD 3-Clause"
-src_dir             = ["src", "example", "test"]
+src_dir             = ["src/core", "example", "test"]
 output_dir          = "doc"
 source              = true
 incl_src            = true
@@ -313,4 +342,9 @@ favicon             = "logo/logo.png"
 
 
 [extra.fortitude.check]
-ignore = ["S001", "S061", "S081", "C003", "C061", "C051", "E001"]
+ignore = ["S001", "S061", "S081", "S241", "C003", "C061", "C051", "E001"]
+
+[extra.fortitude.check.per-file-ignores]
+"src/core/forcad_nurbs_curve.F90" = ["C143", "C191"]
+"src/core/forcad_nurbs_surface.F90" = ["C143", "C191"]
+"src/core/forcad_nurbs_volume.F90" = ["C143", "C191"]

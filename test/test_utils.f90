@@ -242,7 +242,7 @@ program test_forcad_utils
    ! ----------------------------
    call ut%test(20)%check( &
       name     = "findspan_middle", &
-      res      = findspan(4, 2, 0.5_rk, knot), &
+      res      = findspan(nc-1, degree, Xt, knot), &
       expected = 3, &
       msg      = "Find span index at Xt=0.5", &
       group    = "findspan")
@@ -340,18 +340,19 @@ program test_forcad_utils
    k  = 3
    allocate(knot_in(0:6))
    knot_in = [0.0_rk, 0.0_rk, 0.0_rk, 0.5_rk, 1.0_rk, 1.0_rk, 1.0_rk]
-   allocate(Pw(0:2,1:2))
+   allocate(Pw(0:3,1:2))
    Pw(0,:) = [0.0_rk, 0.0_rk]
-   Pw(1,:) = [0.5_rk, 0.5_rk]
-   Pw(2,:) = [1.0_rk, 1.0_rk]
+   Pw(1,:) = 1.0_rk / 3.0_rk
+   Pw(2,:) = 2.0_rk / 3.0_rk
+   Pw(3,:) = [1.0_rk, 1.0_rk]
 
    call insert_knot_A_5_1(p, knot_in, Pw, 0.5_rk, k, s, rr, nq, knot_out, Qw)
 
    call ut%test(29)%check( &
       name     = "insert_knot_A_5_1_nq", &
       res      = nq, &
-      expected = 3, &
-      msg      = "Inserted knot, new number of control points", &
+      expected = 4, &
+      msg      = "Last zero-based control index after insertion", &
       group    = "insert_knot")
 
    ! ----------------------------

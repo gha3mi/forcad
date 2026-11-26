@@ -1,7 +1,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-ForCAD-blue.svg?style=social&logo=github)](https://github.com/gha3mi/forcad)
 [![Version](https://img.shields.io/github/v/tag/gha3mi/forcad?label=version&sort=semver)](https://github.com/gha3mi/forcad/releases)
 [![Documentation](https://img.shields.io/badge/ford-Documentation%20-blueviolet.svg)](https://gha3mi.github.io/forcad/)
-[![Setup Fortran Conda CI/CD](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml/badge.svg?branch=main)](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml)
+[![ForCAD CI](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml/badge.svg?branch=main)](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml)
 [![codecov](https://codecov.io/gh/gha3mi/forcad/branch/main/graph/badge.svg?token=N69NG6C86I)](https://codecov.io/gh/gha3mi/forcad)
 [![License](https://img.shields.io/github/license/gha3mi/forcad?color=green)](https://github.com/gha3mi/forcad/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/778032800.svg)](https://zenodo.org/doi/10.5281/zenodo.10904447)
@@ -17,16 +17,12 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 - [Main Features](#main-features)
 - [Examples](#examples)
 - [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Clone the repository](#clone-the-repository)
+  - [Using Pixi](#using-pixi)
+  - [Compiler environments](#compiler-environments)
   - [Install PyVista (Optional)](#install-pyvista-optional)
   - [Using fpm](#using-fpm)
     - [Running Examples with fpm](#running-examples-with-fpm)
     - [Using ForCAD as a fpm Dependency](#using-forcad-as-a-fpm-dependency)
-  - [Using CMake](#using-cmake)
-    - [Install](#install)
-    - [Uninstall](#uninstall)
-    - [Using ForCAD with CMake](#using-forcad-with-cmake)
 - [Configuration](#configuration)
   - [Do Concurrent Support](#do-concurrent-support)
   - [Precision Configuration](#precision-configuration)
@@ -75,36 +71,45 @@ Below are some sample outputs from the `examples` directory:
 
 ## Installation
 
-### Requirements
+### Using Pixi
 
-* Fortran compiler:
+Install [Pixi](https://pixi.sh/) and run these commands from the checkout.
 
-  * [GNU Fortran (`gfortran`)](https://gcc.gnu.org/fortran/)
-  * [Intel Fortran Compiler (`ifx`)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit.html)
-  * [NVIDIA HPC SDK Fortran Compiler (`nvfortran`)](https://developer.nvidia.com/hpc-sdk)
-  * [LLVM Flang (`flang`)](https://flang.llvm.org/)
-
-  **Note:** Latest compiler versions are required to ensure compatibility.
-
-* Build system:
-
-  * [Fortran Package Manager (`fpm`)](https://fpm.fortran-lang.org/) 
-  * [CMake](https://cmake.org/)
-
-* Optional visualization tools:
-
-  * [PyVista](https://pyvista.org/) (recommended)
-  * [ParaView](https://www.paraview.org/)
-
-
-### Clone the repository
-
-Clone the ForCAD repository from GitHub:
-
-```shell
-git clone https://github.com/gha3mi/forcad.git
-cd forcad
+```sh
+pixi run build --profile release
+pixi run test --profile debug
+pixi run start
 ```
+
+Pixi installs fpm 0.14 and GNU Fortran by default. The core builds without Qt.
+ForCAD Studio uses GNU Fortran and qt-fortran. Pixi copies
+`fpm-studio.toml` into `build/studio/` before building. Run
+`pixi run build-studio debug` to build a Debug executable in
+`build/studio-install/bin`. The `start` task builds and launches Release.
+
+macOS builds need the Xcode command-line tools. On Windows, ifx, Flang and
+ForCAD Studio need Visual Studio Build Tools with the C++ workload.
+
+### Compiler environments
+
+Choose the compiler with `-e` and the build profile with `--profile`.
+
+| Environment | Compiler | Platform |
+| --- | --- | --- |
+| `default` | GNU Fortran | Linux, macOS (Apple Silicon and Intel), Windows |
+| `intel` | Intel ifx | Linux, Windows |
+| `flang` | LLVM Flang | Linux, Windows |
+| `nvhpc` | NVIDIA nvfortran | Linux, with NVIDIA HPC SDK already on the path |
+
+```sh
+pixi run -e intel build --profile release
+pixi run -e flang test --profile debug
+pixi run lint
+```
+
+Pixi provisions the compiler and tools for each environment. The `nvhpc`
+environment uses the compiler from the NVIDIA HPC SDK and installs fpm.
+Compiler flags for Debug and Release live in `fpm.toml`.
 
 ### Install PyVista (Optional)
 
@@ -136,30 +141,6 @@ you can easily include it by adding the following line to your `fpm.toml` file:
 forcad = {git="https://github.com/gha3mi/forcad.git"}
 ```
 
-### Using CMake
-
-#### Install
-
-```shell
-cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=. -G Ninja
-cmake --build build/cmake --config Release
-cmake --install build/cmake --config Release --verbose
-```
-
-#### Uninstall
-
-```shell
-cmake --build build/cmake --target uninstall
-```
-
-#### Using ForCAD with CMake
-
-```cmake
-find_package(forcad REQUIRED)
-add_executable(app main.f90)
-target_link_libraries(app PRIVATE forcad::forcad)
-```
-
 ## Configuration
 
 ### Do Concurrent Support
@@ -182,7 +163,7 @@ Compiler flags can be passed to fpm using the `--flag` option, for example:
 fpm build --flag "-stdpar=multicore,gpu -Minfo=stdpar,accel"
 ```
 
-Alternatively, flags can be added to a `fpm.rsp` file in the root directory of the project.
+Store recurring compiler flags in the profiles in `fpm.toml`.
 
 ### Precision Configuration
 
@@ -243,21 +224,14 @@ Graph generated with [fpm-deps](https://github.com/ivan-pi/fpm-deps), modified t
 
 ## CI Status
 
-<!-- STATUS:setup-fortran-conda:START -->
+CI runs the core tests with fpm in Debug and Release and checks that Studio
+renders Home and the bundled project views.
 
-| OS | Compiler | Version | fpm | cmake |
-| --- | --- | ---: | :---: | :---: |
-| ubuntu 24.04 | `flang-new` | 22.1.5 | 0.13.0 ✅ | 4.3.3 ✅ |
-| ubuntu 24.04 | `gfortran` | 15.2.0 | 0.13.0 ✅ | 4.3.3 ✅ |
-| ubuntu 24.04 | `ifx` | 2026.0.0 | 0.13.0 ✅ | 4.3.3 ✅ |
-| ubuntu 24.04 | `nvfortran` | 26.3 | 0.13.0 ✅ | 4.3.3 ✅ |
-| macos 15 | `gfortran` | 15.2.0 | 0.13.0 ✅ | 4.3.3 ✅ |
-| windows 2025 | `gfortran` | 15.2.0 | 0.13.0 ✅ | 4.3.3 ✅ |
-| windows 2025 | `ifx` | 2026.0.0 | 0.12.0 ✅ | 4.3.3 ✅ |
-
-<!-- STATUS:setup-fortran-conda:END -->
-
-This table is automatically generated by the CI workflow using [setup-fortran-conda](https://github.com/gha3mi/setup-fortran-conda).
+| Platform | Core compilers | Studio smoke check |
+| --- | --- | --- |
+| Linux | GNU Fortran, Intel ifx, LLVM Flang | GNU Fortran |
+| macOS (Apple Silicon and Intel) | GNU Fortran | GNU Fortran |
+| Windows | GNU Fortran, Intel ifx, LLVM Flang | GNU Fortran |
 
 ## API documentation
 
@@ -268,7 +242,7 @@ To generate the API documentation for ForCAD using
 command:
 
 ```shell
-ford README.md
+pixi run docs
 ```
 
 ## Contributing

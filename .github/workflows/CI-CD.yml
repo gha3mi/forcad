@@ -1,145 +1,100 @@
-name: Setup Fortran Conda CI/CD
+name: ForCAD CI
 
 on:
   push:
     branches: [main, dev]
     paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
   pull_request:
-    branches: [main]
+    branches: [main, dev]
     paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   test_fpm:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: ${{ matrix.os }}_${{ matrix.compiler }}_fpm
+    name: Core · ${{ matrix.os }} · ${{ matrix.environment }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-        - {os: ubuntu-latest,  compiler: gfortran }
-        - {os: ubuntu-latest,  compiler: ifx      }
-        - {os: ubuntu-latest,  compiler: flang-new}
-        - {os: ubuntu-latest,  compiler: nvfortran}
-        - {os: windows-latest, compiler: gfortran }
-        - {os: windows-latest, compiler: ifx,      fpm-version: "0.12.0"}
-        - {os: macos-latest,   compiler: gfortran }
+          - {os: ubuntu-latest,   environment: default}
+          - {os: ubuntu-latest,   environment: intel}
+          - {os: ubuntu-latest,   environment: flang}
+          - {os: windows-latest,  environment: default}
+          - {os: windows-latest,  environment: intel}
+          - {os: windows-latest,  environment: flang}
+          - {os: macos-latest,    environment: default}
+          - {os: macos-15-intel,  environment: default}
 
     steps:
-      - name: Setup Fortran
-        uses: gha3mi/setup-fortran-conda@latest
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          compiler: ${{ matrix.compiler }}
-          fpm-version: ${{ matrix.fpm-version }}
+          environments: ${{ matrix.environment }}
 
-      - name: fpm test (debug)
-        if: always()
-        run: fpm @${{ matrix.os }}_${{ matrix.compiler }}_debug --verbose
+      - name: Test Debug
+        run: pixi run -e ${{ matrix.environment }} test --profile debug
 
-      - name: fpm test (release)
-        if: always()
-        run: fpm @${{ matrix.os }}_${{ matrix.compiler }}_release --verbose
+      - name: Test Release
+        if: success() || failure()
+        run: pixi run -e ${{ matrix.environment }} test --profile release
 
-  test_cmake:
+  test_studio:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: ${{ matrix.os }}_${{ matrix.compiler }}_cmake
+    name: Studio · ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - {os: ubuntu-latest,  compiler: gfortran }
-        - {os: ubuntu-latest,  compiler: ifx      }
-        - {os: ubuntu-latest,  compiler: flang-new}
-        - {os: ubuntu-latest,  compiler: nvfortran}
-        - {os: windows-latest, compiler: gfortran }
-        - {os: windows-latest, compiler: ifx      }
-        - {os: macos-latest,   compiler: gfortran }
-
+        os: [ubuntu-latest, macos-latest, macos-15-intel, windows-latest]
+    env:
+      QT_QPA_PLATFORM: offscreen
     steps:
-      - name: Setup Fortran
-        uses: gha3mi/setup-fortran-conda@latest
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          compiler: ${{ matrix.compiler }}
+          environments: studio
 
-      - name: cmake test (debug)
-        if: always()
+      - name: Capture Home and both bundled projects
+        shell: bash
         run: |
-          cmake -S . -B build/cmake/debug -DCMAKE_BUILD_TYPE=Debug -G Ninja -DFORCAD_BUILD_TESTS=ON -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
-          cmake --build build/cmake/debug --config Debug --verbose
-          ctest --test-dir build/cmake/debug --output-on-failure -VV
+          pixi run start --preview home --size 1180 740 --screenshot build/ci-home.png
+          pixi run start --project samples/chess.fcad --size 1180 740 --screenshot build/ci-chess.png
+          pixi run start --project samples/head.fcad --size 1180 740 --screenshot build/ci-head.png
+          test -s build/ci-home.png && test -s build/ci-chess.png && test -s build/ci-head.png
 
-      - name: cmake test (release)
-        if: always()
-        run: |
-          cmake -S . -B build/cmake/release -DCMAKE_BUILD_TYPE=Release -G Ninja -DFORCAD_BUILD_TESTS=ON -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
-          cmake --build build/cmake/release --config Release --verbose
-          ctest --test-dir build/cmake/release --output-on-failure -VV
-
-      - name: cmake install (static)
-        if: always()
-        run: |
-          cmake -S . -B build/cmake/static -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -G Ninja -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
-          cmake --build build/cmake/static --config Release
-          cmake --install build/cmake/static --config Release --verbose
-
-      - name: cmake uninstall
-        if: always()
-        run: cmake --build build/cmake/static --target uninstall
-
-      - name: cmake install (shared)
-        if: always()
-        run: |
-          cmake -S . -B build/cmake/shared -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=. -G Ninja -DCMAKE_Fortran_FLAGS="-DFOR_DEBUG"
-          cmake --build build/cmake/shared --config Release
-          cmake --install build/cmake/shared --config Release --verbose
-
-      - name: cmake uninstall
-        if: always()
-        run: cmake --build build/cmake/shared --target uninstall
+      - name: Build Studio Debug
+        run: pixi run build-studio debug
 
   doc_ford:
     if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Generate FORD Documentation
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Setup and Generate FORD Documentation
-        uses: gha3mi/setup-fortran-conda@latest
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          compiler: gfortran
-          generate-doc-ford: true
-          ford-working-directory: .
-          ford-config: README.md
-          ford-output-directory: doc
-          ford-branch: gh-pages
-          ford-target-folder: .
-
-  update_readme_table:
-    if: ${{ always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
-    name: Update README.md status table
-    needs: [test_fpm, test_cmake]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update README status
-        uses: gha3mi/setup-fortran-conda@latest
+          environments: docs
+      - run: pixi run docs
+      - uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
-          update-readme-table: true
-          update-readme-token: ${{ secrets.GH_PAT }}   # Update with your GitHub personal access token
-          update-readme-user-name: "Seyed Ali Ghasemi" # Update with your name
-          update-readme-user-email: "info@gha3mi.com"  # Update with your email
+          branch: gh-pages
+          folder: doc
+          commit-message: Deploy FORD docs
 
   linter_fortitude:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Run Fortitude Linter
     runs-on: ubuntu-latest
     steps:
-      - name: Run Fortitude Linter
-        uses: gha3mi/setup-fortran-conda@latest
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          fortitude-check: true
-          fortitude-settings: "--output-format github"
+          environments: lint
+      - run: pixi run lint --output-format github

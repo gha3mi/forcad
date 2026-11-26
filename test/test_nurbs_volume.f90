@@ -81,18 +81,24 @@ program test_nurbs_volume
     call nurbs%set([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [1,1,1], [-1, -1], [-1, -1], [-1, -1], Xc, Wc)
     call bsp%set([0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [0.0_rk, 1.0_rk], [1,1,1], [-1, -1], [-1, -1], [-1, -1], Xc)
 
+    call nurbs%create(20, 20, 20)
+    call bsp%create(20, 20, 20)
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 13")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 14")
 
     call nurbs%set([2,2,2], Xc, Wc)
     call bsp%set([2,2,2], Xc)
 
+    call nurbs%create(20, 20, 20)
+    call bsp%create(20, 20, 20)
+
     call ut%check(res=nurbs%get_Xg(), expected=Xg,  tol=1e-5_rk, msg="test_nurbs_volume: 15")
     call ut%check(res=bsp%get_Xg(),   expected=Xgb, tol=1e-5_rk, msg="test_nurbs_volume: 16")
 
 
-    call nurbs%create(Xt1 = nurbs%get_Xt(1), Xt2 = nurbs%get_Xt(2))
-    call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = nurbs%get_Xt(2))
+    call nurbs%create(Xt1 = nurbs%get_Xt(1), Xt2 = nurbs%get_Xt(2), Xt3 = nurbs%get_Xt(3))
+    call bsp%create(Xt1 = bsp%get_Xt(1), Xt2 = bsp%get_Xt(2), Xt3 = bsp%get_Xt(3))
 
     call nurbs%export_Xc("vtk/test_nurbs_volume_Xc.vtk")
     call bsp%export_Xc("vtk/test_bsp_volume_Xc.vtk")
