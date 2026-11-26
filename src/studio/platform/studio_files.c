@@ -429,6 +429,15 @@ int studio_random_fill(void *buffer, size_t length)
 #endif
 #ifdef __APPLE__
 #include <sys/acl.h>
+
+static int clear_extended_acl(int fd)
+{
+    acl_t empty = acl_init(0);
+    if (!empty) return -1;
+    int status = acl_set_fd_np(fd, empty, ACL_TYPE_EXTENDED);
+    acl_free(empty);
+    return status;
+}
 #endif
 
 static int native_dir(int fd) { return fd == current_directory ? AT_FDCWD : fd; }
@@ -493,7 +502,7 @@ int studio_create_file(int fd, const char *path)
 {
     int file = openat(native_dir(fd), path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
 #ifdef __APPLE__
-    if (file >= 0 && acl_delete_fd_np(file, ACL_TYPE_EXTENDED) < 0 && errno != ENOENT) {
+    if (file >= 0 && clear_extended_acl(file) < 0) {
         close(file);
         unlinkat(native_dir(fd), path, 0);
         return -1;
@@ -507,7 +516,7 @@ int studio_mkdir_private(int fd, const char *path)
     if (mkdirat(native_dir(fd), path, 0700) < 0) return -1;
 #ifdef __APPLE__
     int folder = studio_open_directory(fd, path);
-    if (folder < 0 || (acl_delete_fd_np(folder, ACL_TYPE_EXTENDED) < 0 && errno != ENOENT)) {
+    if (folder < 0 || clear_extended_acl(folder) < 0) {
         if (folder >= 0) close(folder);
         unlinkat(native_dir(fd), path, AT_REMOVEDIR);
         return -1;
@@ -561,7 +570,7 @@ int studio_restrict_file(const char *path)
     if (studio_inspect_fd(fd, &metadata) == 0 && metadata.owned && metadata.links == 1) {
         status = fchmod(fd, 0600);
 #ifdef __APPLE__
-        if (status == 0 && acl_delete_fd_np(fd, ACL_TYPE_EXTENDED) < 0 && errno != ENOENT) status = -1;
+        if (status == 0 && clear_extended_acl(fd) < 0) status = -1;
 #endif
     }
     close(fd);

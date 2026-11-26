@@ -34,6 +34,9 @@ FPM_FC = "ifx"
 [feature.intel.target.linux-64.activation.env]
 LD_LIBRARY_PATH = "$CONDA_PREFIX/lib"
 
+[feature.intel.target.win-64.activation.env]
+FPM_FFLAGS = '-I"$CONDA_PREFIX/opt/compiler/include/intel64"'
+
 [feature.flang]
 platforms = ["linux-64", "win-64"]
 
@@ -79,7 +82,10 @@ gxx = ">=16.2,<17"
 cxx-compiler = "*"
 
 [feature.studio.target.win-64.dependencies]
-clang = "*"
+clangxx = ">=22"
+
+[feature.studio.target.win-64.activation.env]
+QTF_CXX = "$CONDA_PREFIX/Library/bin/clang++.exe"
 
 [feature.studio.tasks]
 stage-studio-manifest = { cmd = "mkdir -p build/studio && cp fpm-studio.toml build/studio/fpm.toml", inputs = ["fpm-studio.toml"], outputs = ["build/studio/fpm.toml"] }
