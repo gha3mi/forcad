@@ -26,7 +26,7 @@ module studio_live_viewport
     private
 
     public :: save_viewport_image
-    public :: paint_live_viewport, pick_live_viewport, live_viewport_point, live_yaw_offset, live_pitch_offset
+    public :: paint_live_viewport, paint_viewport_hud, pick_live_viewport, live_viewport_point, live_yaw_offset, live_pitch_offset
     public :: begin_live_control_drag, update_live_control_drag
     public :: pick_scene_patch, zoom_live_viewport, reset_live_viewport_zoom, viewport_feature_text, frame_workspace_scene
     public :: workspace_view_bounds, workspace_view_hit, fit_around_panels, fit_framed_scene_in_clear_area
@@ -73,6 +73,7 @@ contains
             call painter%scale(factor,factor)
             call painter%translate(-bounds(1),-bounds(2))
             call paint_live_viewport(painter,s,real(s%surface%width(),dp),real(s%surface%height(),dp))
+            call paint_viewport_hud(painter,s)
             call painter%end()
             saved=image%save(path)
         end if
@@ -87,24 +88,12 @@ contains
         type(projected_patch), allocatable :: objects(:)
         type(projected_mesh_part), allocatable :: mesh_parts(:)
         real(dp), allocatable :: controls(:,:),slice(:,:)
-        character(:), allocatable :: empty_title
-        real(dp) :: marker(3),bounds(4)
+        real(dp) :: marker(3)
         integer :: counts(3), dimension, point, object
         logical,allocatable :: show_guides(:),mesh_coverage(:,:),mesh_sources_selected(:,:)
         logical :: active_visible,preview,navigating
 
-        call painter%save()
-        bounds=workspace_view_bounds(s)
-        if (.not.prepare_camera(s,camera)) then
-            empty_title='No visible geometry'
-            if(s%mesh_only)empty_title='No visible meshes'
-            call painter%setPen(QColor('#eff9ff'))
-            call painter%setFont(QFont(family='Adwaita Sans',pointSize=17._dp,bold=.true.))
-            call painter%drawText(bounds(1),.5_dp*(bounds(2)+bounds(4))-15._dp,bounds(3)-bounds(1),30._dp, &
-                                  Qt_AlignCenter,empty_title)
-            call painter%restore()
-            return
-        end if
+        if(.not.prepare_camera(s,camera))return
         preview=transform_drag_matches(s)
         call project_visible_meshes(s,camera,preview,mesh_parts,clip=[0._dp,0._dp,width,height])
         navigating=dense_mesh_navigation(s,mesh_parts)
@@ -192,10 +181,30 @@ contains
             end if
         end if
         call painter%restore()
-        call paint_triad(painter,camera,bounds)
-        if(s%transform_mode>0)call paint_transform_gizmo(painter,s,camera,preview)
-        call painter%restore()
     end subroutine paint_live_viewport
+
+    subroutine paint_viewport_hud(painter,s)
+        type(QPainter),intent(inout) :: painter
+        type(studio_t),intent(in) :: s
+        type(viewport_camera) :: camera
+        real(dp) :: bounds(4)
+        character(:),allocatable :: empty_title
+
+        bounds=workspace_view_bounds(s)
+        call painter%save()
+        if(prepare_camera(s,camera))then
+            call paint_triad(painter,camera,bounds)
+            if(s%transform_mode>0)call paint_transform_gizmo(painter,s,camera,transform_drag_matches(s))
+        else
+            empty_title='No visible geometry'
+            if(s%mesh_only)empty_title='No visible meshes'
+            call painter%setPen(QPen(QColor('#eff9ff')))
+            call painter%setFont(QFont(family='Adwaita Sans',pointSize=17._dp,bold=.true.))
+            call painter%drawText(bounds(1),.5_dp*(bounds(2)+bounds(4))-15._dp,bounds(3)-bounds(1),30._dp, &
+                Qt_AlignCenter,empty_title)
+        end if
+        call painter%restore()
+    end subroutine paint_viewport_hud
 
     subroutine paint_control_guides(painter,s,camera,clip,preview,mesh_coverage,focused)
         type(QPainter),intent(inout) :: painter

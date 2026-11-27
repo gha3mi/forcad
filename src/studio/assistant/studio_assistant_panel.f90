@@ -15,7 +15,7 @@ module studio_assistant_panel
 
     use studio_chat_history, only: chat_summary_t, delete_chat
     use studio_theme, only: studio_frame_edge, studio_divider, studio_heading, studio_style_primary, &
-        studio_secondary_text, studio_selected_fill, studio_active_edge, studio_tooltip
+        studio_secondary_text, studio_selected_fill, studio_active_edge, studio_tooltip, build_opaque_panel
     use studio_status_hints, only: set_status_hint
     implicit none(type, external)
     private
@@ -90,19 +90,21 @@ contains
         type(QWidget), intent(out) :: overlay
         type(QMainWindow), intent(out) :: dock_host
         type(QDockWidget), intent(out) :: dock
+        type(QWidget) :: frame
         type(QVBoxLayout) :: overlay_layout
         integer :: features,areas
+        character(*), parameter :: assistant_fill='#16212a'
 
         ! The nested host keeps native detach/redock while owning no canvas layout space.
-        overlay=QWidget(parent)
+        call build_opaque_panel(overlay,frame,assistant_fill,'studioAssistantFrame',parent)
         call overlay%setObjectName('studioAssistantOverlay')
-        overlay_layout=QVBoxLayout(overlay)
+        overlay_layout=QVBoxLayout(frame)
         call overlay_layout%setContentsMargins(1,1,1,1)
         dock_host=QMainWindow()
         call dock_host%setObjectName('studioAssistantHost')
         call overlay_layout%addWidget(dock_host)
-        call overlay%setStyleSheet( &
-            'QWidget#studioAssistantOverlay { background:#16212a; border:1px solid '//studio_frame_edge//'; }'// &
+        call frame%setStyleSheet( &
+            'QWidget#studioAssistantFrame { background:'//assistant_fill//'; border:1px solid '//studio_frame_edge//'; }'// &
             'QMainWindow#studioAssistantHost { background:transparent; }')
         dock=QDockWidget('Assistant',dock_host)
         call dock%setObjectName('studioAssistantDock')

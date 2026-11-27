@@ -1,5 +1,5 @@
 module studio_theme
-    use qt, only: QPushButton
+    use qt, only: QColor,QPalette,QPalette_Window,QPushButton,QVBoxLayout,QWidget
     use studio_icons, only: stylesheet_icon, icon_chevron, icon_chevron_up, icon_chevron_right, icon_check, &
         icon_scene_branch_closed, icon_scene_branch_open
     use studio_commands, only: canvas_command, restore_layout_command, toggle_patch_inspection_command, find_command, &
@@ -25,14 +25,36 @@ module studio_theme
     implicit none(type, external)
     private
 
-    public :: studio_style_sheet, studio_tooltip, studio_command_tooltip, studio_style_primary
+    public :: studio_style_sheet, studio_tooltip, studio_command_tooltip, studio_style_primary, build_opaque_panel
 
     character(*), parameter, public :: studio_frame_edge='#3b4d5a', studio_divider='#2e3e4b'
     character(*), parameter, public :: studio_heading='#202c37', studio_secondary_text='#b4c8d7'
     character(*), parameter, public :: studio_selected_fill='#244653', studio_active_edge='#76d8d4'
+    character(*), parameter, public :: studio_panel_fill='#19232d', studio_ribbon_fill='#19242e', studio_messages_fill='#1a2732'
+    character(*), parameter, public :: studio_viewport_controls_fill='#182630'
     character(*), parameter :: popup_fill='#1b2832'
 
 contains
+
+    subroutine build_opaque_panel(panel,frame,fill,frame_name,parent)
+        type(QWidget), intent(out) :: panel,frame
+        character(*), intent(in) :: fill,frame_name
+        class(QWidget), intent(in), optional :: parent
+        type(QPalette) :: palette
+        type(QVBoxLayout) :: layout
+
+        panel=QWidget(parent)
+        palette=panel%palette()
+        call palette%setColor(QPalette_Window,QColor(fill))
+        call panel%setPalette(palette)
+        call palette%delete()
+        call panel%setAutoFillBackground(.true.)
+        frame=QWidget(panel)
+        call frame%setObjectName(frame_name)
+        layout=QVBoxLayout(panel)
+        call layout%setContentsMargins(0,0,0,0)
+        call layout%addWidget(frame)
+    end subroutine build_opaque_panel
 
     subroutine studio_style_primary(button)
         class(QPushButton), intent(in) :: button
@@ -95,7 +117,7 @@ contains
             'QWidget#brand { background:#171f28; border-bottom:1px solid '//studio_divider//'; }'// &
             'QLabel#brandTitle { font-size:17px; font-weight:650; background:transparent; }'// &
             'QLabel#studioDocumentTitle { color:'//studio_secondary_text//'; padding-left:8px; font-size:13px; font-weight:500; }'// &
-            'QWidget#panel { border:1px solid '//studio_frame_edge//'; background:#19232d; }'// &
+            'QWidget#panel { border:1px solid '//studio_frame_edge//'; background:'//studio_panel_fill//'; }'// &
             'QWidget#panelHeader { font-weight:700; font-size:14px;'// &
             'border:0; border-bottom:1px solid '//studio_divider//'; background:'//studio_heading//'; }'// &
             'QLabel#panelTitle { color:#f2f7fb; font-size:14px; font-weight:700; border:0; background:transparent; }'// &
@@ -148,7 +170,8 @@ contains
             'QTabWidget#studioRibbonTabs QTabBar::tab:selected { color:#edf8ff; background:#243642;'// &
             'border-bottom-color:'//studio_active_edge//'; }'// &
             'QTabWidget#studioRibbonTabs QTabBar::tab:selected:focus { border-color:'//studio_active_edge//'; }'// &
-            'QWidget#viewportControls { background:#182630; border:1px solid '//studio_frame_edge//'; }'// &
+            'QWidget#studioViewportControlsFrame { background:'//studio_viewport_controls_fill// &
+            '; border:1px solid '//studio_frame_edge//'; }'// &
             'QWidget#studioViewerDivider { background:'//studio_divider//'; }'// &
             'QWidget#studioCanvasMeshControls { border-top:1px solid '//studio_divider//'; }'// &
             'QLabel#studioCanvasMeshValue { color:#c5dbeb; font-weight:600; }'// &
@@ -201,7 +224,7 @@ contains
             'QPushButton:hover { background:#30414d; border-color:#6d8b9c; }'// &
             'QPushButton:pressed { background:#1d4b53; }'// &
             'QPushButton:checked { background:#173e46; border:1px solid #58cfc9; }'// &
-            'QWidget#studioRibbon { background:#19242e; border:1px solid '//studio_frame_edge//'; }'// &
+            'QWidget#studioRibbonFrame { background:'//studio_ribbon_fill//'; border:1px solid '//studio_frame_edge//'; }'// &
             'QWidget#ribbonGroup { background:transparent; border:0; border-left:1px solid '//studio_divider//'; }'// &
             'QWidget#ribbonGroup[firstRibbonGroup="true"] { border-left:0; }'// &
             'QWidget#studioRibbonQuickDivider { background:'//studio_divider//'; }'// &
@@ -283,7 +306,7 @@ contains
             'QTreeWidget::branch:has-children:open { '//open_branch//' }'// &
             'QTreeWidget#studioProjectTree { border:1px solid transparent; padding:0 3px 2px;'// &
             'alternate-background-color:#1b2630; selection-background-color:#234a53;'// &
-            'qproperty-indentation:12; qproperty-textElideMode:ElideMiddle; }'// &
+            'qproperty-indentation:12; qproperty-textElideMode:ElideMiddle; qproperty-verticalScrollMode:ScrollPerPixel; }'// &
             'QTreeWidget#studioProjectTree:focus { border-color:'//studio_active_edge//'; }'// &
             'QTreeWidget#studioProjectTree::branch:has-children:closed { '//closed_scene_branch//' }'// &
             'QTreeWidget#studioProjectTree::branch:has-children:open { '//open_scene_branch//' }'// &
@@ -310,11 +333,11 @@ contains
             'QTabBar::tab { background:#222e39; border:1px solid #35424e; '// &
             'padding:6px 7px; margin:0; }'// &
             'QTabBar::tab:selected { background:#173e46; border-color:#58cfc9; }'// &
-            'QSplitter::handle { background:transparent; } QSplitter::handle:hover { background:#246393; }'// &
-            'QSplitter#studioWorkspaceColumns::handle:horizontal,QSplitter#studioAssistantColumns::handle:horizontal {'// &
-            'margin:0 3px; background:'//studio_divider//'; }'// &
-            'QSplitter#studioWorkspaceColumns::handle:horizontal:hover,QSplitter#studioAssistantColumns::handle:horizontal:hover {'// &
-            'background:'//studio_active_edge//'; }'// &
+            'QWidget#studioPanelResizeGuide { background:'//studio_active_edge//'; }'// &
+            'QSplitterHandle { qproperty-autoFillBackground:true; }'// &
+            'QSplitter::handle { background:#182630; }'// &
+            'QSplitter::handle:horizontal { border-left:3px solid #182630; border-right:3px solid #182630;'// &
+            'background:'//studio_divider//'; }'// &
             'QWidget#studioStatusContent { background:#151e27; border-top:1px solid '//studio_frame_edge//' }'// &
             'QLabel#studioStatusWarning { color:#ffcd89; }'// &
             'QLabel#studioStatusGuidance { color:#d4e4ef; }'// &
@@ -324,7 +347,7 @@ contains
             'background:#273a49; border-left-color:#65b6bd; color:#f1f7fb; }'// &
             'QToolButton#studioStatusAssistant { color:#b9e2e3; }'// &
             'QLabel#studioAssistantElapsed { color:#a9c4d6; padding:0 3px; }'// &
-            'QWidget#studioMessagesDrawer { background:#1a2732; border:1px solid #4a6476; }'// &
+            'QWidget#studioMessagesFrame { background:'//studio_messages_fill//'; border:1px solid #4a6476; }'// &
             'QLabel#studioMessagesTitle { color:#e5eef5; font-weight:700; }'// &
             'QPlainTextEdit#studioMessagesList { background:#14212b; border:1px solid #364b5b; padding:6px; }'// &
             'QScrollBar:vertical { width:8px; background:#17212a; }'// &

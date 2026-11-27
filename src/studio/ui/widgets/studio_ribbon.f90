@@ -6,7 +6,7 @@ module studio_ribbon
         Qt_ToolButtonIconOnly,Qt_ToolButtonTextBesideIcon, &
         Qt_ToolButtonTextUnderIcon
     use studio_state, only: studio_t
-    use studio_theme, only: studio_tooltip
+    use studio_theme, only: studio_tooltip,studio_ribbon_fill,build_opaque_panel
     use studio_workspace_widgets, only: studio_ribbon_controls
     use studio_icons, only: line_icon,icon_close,icon_fit_selection,icon_fit_panels,icon_export,icon_mesh, &
         icon_measure,icon_delete,icon_box_selection,icon_lasso_selection,icon_mesh_pick,icon_mesh_shaded, &
@@ -86,7 +86,7 @@ contains
         type(QTabWidget)::tabs
         type(QAction)::action,save_action,edit_controls_action
         type(QGridLayout)::ribbon_layout
-        type(QWidget)::quick
+        type(QWidget)::frame,quick
         type(QHBoxLayout)::quick_row
         integer::i
         integer,parameter::codes(17)=[new_project_command,import_iges_command,screenshot_command,undo_patch_command,redo_patch_command, &
@@ -113,12 +113,12 @@ contains
             'Set the camera, appearance, and workspace panels.']
 
         controls=>s%widgets%ribbon
-        s%command_ribbon=QWidget(s%surface)
+        call build_opaque_panel(s%command_ribbon,frame,studio_ribbon_fill,'studioRibbonFrame',s%surface)
         call s%command_ribbon%setObjectName('studioRibbon')
-        ribbon_layout=QGridLayout(s%command_ribbon)
+        ribbon_layout=QGridLayout(frame)
         call ribbon_layout%setContentsMargins(1,1,1,1)
         call ribbon_layout%setSpacing(0)
-        tabs=QTabWidget(s%command_ribbon)
+        tabs=QTabWidget(frame)
         s%widgets%ribbon_tabs=tabs
         call ribbon_layout%addWidget(tabs,0,0)
         call tabs%setObjectName('studioRibbonTabs')
@@ -147,7 +147,7 @@ contains
         end do
         call tabs%setCurrentIndex(model_ribbon_tab)
 
-        quick=QWidget(s%command_ribbon)
+        quick=QWidget(frame)
         call quick%setObjectName('studioRibbonQuickActions')
         quick_row=QHBoxLayout(quick)
         call quick_row%setContentsMargins(2,0,6,0)

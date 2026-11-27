@@ -3,7 +3,7 @@ module studio_state
     use studio_display_cache, only: viewport_display_cache
     use studio_commands, only: viewport_layer_count, default_viewport_layers, &
         viewport_shaded,viewport_edges,viewport_wireframe,viewport_fast_shaded
-    use qt, only: QAction, QDoubleSpinBox, QLabel, QMainWindow, QPushButton, QSplitter, &
+    use qt, only: QAction, QDoubleSpinBox, QImage, QLabel, QMainWindow, QPushButton, QSplitter, &
         QStackedWidget, QTableWidget, QTimer, QToolButton, QWidget, Qt_NoButton, QtfWidget, qt_string
     use, intrinsic :: iso_c_binding, only: c_double
     use, intrinsic :: iso_fortran_env, only: int64
@@ -75,6 +75,11 @@ module studio_state
         integer(int64) :: document_revision=0_int64
     end type workspace_diagnostic_t
 
+    type, extends(QtfWidget) :: studio_canvas_t
+    contains
+        procedure :: update => invalidate_canvas
+    end type studio_canvas_t
+
     type :: studio_t
         type(selection_set_t) :: selection
         type(selection_set_t) :: isolation
@@ -90,7 +95,10 @@ module studio_state
         type(QMainWindow) :: window
         type(QStackedWidget) :: pages
         type(QWidget) :: home_page
-        type(QtfWidget) :: surface, domain, basis, workspace
+        type(studio_canvas_t) :: surface
+        type(QtfWidget) :: domain, basis, workspace
+        type(QImage) :: viewport_frame
+        real(dp) :: viewport_frame_scale=0._dp
         type(studio_status_t) :: status
         type(QDoubleSpinBox) :: probe_u, probe_v, probe_w
         type(QLabel) :: probe_label, diagnostic_label, basis_title
@@ -103,7 +111,7 @@ module studio_state
         type(QAction) :: viewport_grid
         type(QAction) :: toolbar_actions(17), panel_actions(8)
         type(QWidget) :: panels(8), left_column, lower_row, command_ribbon, viewport_controls
-        type(QWidget) :: assistant_overlay, assistant_space
+        type(QWidget) :: assistant_overlay, assistant_space, panel_resize_guide
         type(QtfWidget) :: viewport_aperture
         type(QSplitter) :: columns, center_rows, assistant_columns
         integer :: assistant_width=default_assistant_width
@@ -343,6 +351,13 @@ contains
         s%control_dependency_source=control_dependency_source_t()
         s%control_dependency_preview=multipatch_control_preview_t()
     end subroutine clear_control_dependency_preview
+    subroutine invalidate_canvas(self)
+        class(studio_canvas_t),intent(in) :: self
+
+        call self%setProperty('studioSceneNeedsPaint',.true.)
+        call self%QWidget%update()
+    end subroutine invalidate_canvas
+
     subroutine repaint_all(s)
         type(studio_t), intent(inout) :: s
         call s%surface%update()

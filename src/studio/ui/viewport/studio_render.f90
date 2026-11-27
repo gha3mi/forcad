@@ -1,7 +1,7 @@
 module studio_render
     use, intrinsic :: iso_fortran_env, only: int64
     use studio_display_refinement, only: connect_display_refinement,request_display_refinement
-    use studio_live_viewport, only: paint_live_viewport
+    use studio_live_viewport, only: paint_live_viewport,paint_viewport_hud
     use studio_viewport_camera, only: connect_viewport_zoom_quality
     use studio_viewport_selection, only: paint_viewport_selection
     use studio_live_plots, only: paint_live_basis
@@ -13,7 +13,7 @@ module studio_render
     use studio_canvas_input, only: connect_canvas_input, zoom_domain_view, reset_domain_view, control_move_handler, &
         control_selection_handler, selection_handler, transform_handler, viewport_context_handler, region_selection_handler
     use studio_theme, only: studio_active_edge, studio_frame_edge
-    use qt, only: QBrush, QColor, QFont, QFontMetrics, QLinearGradient, QPainter, QPainter_Antialiasing, &
+    use qt, only: QBrush, QColor, QFont, QFontMetrics, QImage, QLinearGradient, QPainter, QPainter_Antialiasing, &
         QPainter_TextAntialiasing, QPen, Qt_DashLine, Qt_DotLine, Qt_NoBrush, Qt_NoPen, Qt_SolidLine
     use studio_state, only: studio_t, dp, axis_rgb
     implicit none(type, external)
@@ -114,22 +114,62 @@ contains
         type(QPainter), intent(inout) :: painter
         class(*), intent(inout), optional :: data
         real(dp) :: w,h
-        integer(int64) :: started,finished,rate
+
         select type(s=>data)
         type is(studio_t)
-            call system_clock(started,rate)
             w=real(s%surface%width(),dp)
             h=real(s%surface%height(),dp)
-            call backdrop(painter,w,h,viewport=.true.)
             call request_display_refinement(s)
-            call paint_live_viewport(painter,s,w,h)
-
+            call paint_viewport_frame(painter,s,w,h)
+            call painter%setRenderHint(QPainter_Antialiasing)
+            call painter%setRenderHint(QPainter_TextAntialiasing)
+            call paint_viewport_hud(painter,s)
             call paint_viewport_selection(painter,s)
             call paint_studio_ai_cursor(painter,s,4)
-            call system_clock(finished)
-            if(rate>0) s%canvas_gesture%frame_time_ms=1000._dp*real(finished-started,dp)/real(rate,dp)
         end select
     end subroutine paint_surface
+
+    subroutine paint_viewport_frame(painter,s,w,h)
+        type(QPainter),intent(inout) :: painter
+        type(studio_t),intent(inout) :: s
+        real(dp),intent(in) :: w,h
+        type(QPainter) :: frame_painter
+        real(dp) :: scale
+        integer :: pixels(2)
+        integer(int64) :: started,finished,rate
+        logical :: rebuild
+
+        scale=s%surface%devicePixelRatio()
+        pixels=nint([w,h]*scale)
+        rebuild=s%viewport_frame%isNull().or.s%viewport_frame_scale/=scale
+        if(.not.rebuild)rebuild=any(pixels/=[s%viewport_frame%width(),s%viewport_frame%height()])
+        if(rebuild)then
+            call s%viewport_frame%delete()
+            s%viewport_frame=QImage(pixels(1),pixels(2))
+            call s%viewport_frame%fill(QColor(12,20,30))
+            s%viewport_frame_scale=scale
+        end if
+
+        if(rebuild.or.s%surface%boolProperty('studioSceneNeedsPaint'))then
+            call system_clock(started,rate)
+            if(.not.s%viewport_frame%isNull())frame_painter=QPainter(s%viewport_frame)
+            if(frame_painter%isActive())then
+                call frame_painter%scale(scale,scale)
+                call backdrop(frame_painter,w,h,viewport=.true.)
+                call paint_live_viewport(frame_painter,s,w,h)
+                call frame_painter%end()
+                call s%surface%setProperty('studioSceneNeedsPaint',.false.)
+            else
+                call frame_painter%end()
+                call backdrop(painter,w,h,viewport=.true.)
+                call paint_live_viewport(painter,s,w,h)
+                call s%viewport_frame%delete()
+            end if
+            call system_clock(finished)
+            if(rate>0)s%canvas_gesture%frame_time_ms=1000._dp*real(finished-started,dp)/real(rate,dp)
+        end if
+        if(.not.s%viewport_frame%isNull())call painter%drawImage(0._dp,0._dp,w,h,s%viewport_frame)
+    end subroutine paint_viewport_frame
 
     function parameter_breaks(s,axis) result(breaks)
         type(studio_t),intent(in)::s

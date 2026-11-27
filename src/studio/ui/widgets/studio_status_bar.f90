@@ -4,6 +4,7 @@ module studio_status_bar
         Qt_PlainText,QSizePolicy_Ignored,QSizePolicy_Preferred,Qt_ToolButtonTextOnly,Qt_ToolButtonTextBesideIcon,Qt_StrongFocus,QScrollBar
     use studio_icons, only: line_icon,icon_close,icon_history
     use studio_presentation_text, only: integer_text
+    use studio_theme, only: build_opaque_panel,studio_messages_fill
     implicit none(type,external)
     private
     public :: studio_status_t,studio_status_log
@@ -57,6 +58,7 @@ contains
         type(QMainWindow),intent(in) :: window
         type(QWidget),intent(in) :: workspace
         type(QHBoxLayout) :: layout,heading
+        type(QWidget) :: drawer_frame
         type(QVBoxLayout) :: drawer_layout
         type(QLabel) :: title
         type(QtfEventFilter) :: events,drawer_events,workspace_events
@@ -101,24 +103,24 @@ contains
         call layout%addWidget(self%unit_button)
         call layout%addWidget(self%messages)
 
-        self%drawer=QWidget(workspace)
+        call build_opaque_panel(self%drawer,drawer_frame,studio_messages_fill,'studioMessagesFrame',workspace)
         call self%drawer%setObjectName('studioMessagesDrawer')
         call self%drawer%setAccessibleName('Project messages')
-        drawer_layout=QVBoxLayout(self%drawer)
+        drawer_layout=QVBoxLayout(drawer_frame)
         call drawer_layout%setContentsMargins(10,6,10,10)
         call drawer_layout%setSpacing(6)
         heading=QHBoxLayout()
-        title=QLabel('Messages',self%drawer)
+        title=QLabel('Messages',drawer_frame)
         call title%setObjectName('studioMessagesTitle')
         call heading%addWidget(title,1)
-        self%close_drawer=QToolButton(self%drawer)
+        self%close_drawer=QToolButton(drawer_frame)
         call self%close_drawer%setIcon(line_icon(icon_close))
         call self%close_drawer%setFocusPolicy(Qt_StrongFocus)
         call self%close_drawer%setAccessibleName('Close Messages')
         call self%close_drawer%clicked%connect(close_messages_slot,self)
         call heading%addWidget(self%close_drawer)
         call drawer_layout%addLayout(heading)
-        self%message_list=QPlainTextEdit('',self%drawer)
+        self%message_list=QPlainTextEdit('',drawer_frame)
         call self%message_list%setObjectName('studioMessagesList')
         call self%message_list%setReadOnly(.true.)
         call self%message_list%setAccessibleName('Recent messages for the active project')

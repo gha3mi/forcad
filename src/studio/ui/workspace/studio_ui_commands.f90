@@ -76,7 +76,7 @@ contains
         integer(int64) :: selected_multipatch_stamp
         type(selection_target_t) :: focused
         type(selection_set_t) :: saved_selection
-        logical::visible,changed
+        logical::visible,changed,was_updating
         if(allocated(s%selection%items))then
             if(s%selection%count()/=1)then
                 select case(command)
@@ -317,9 +317,11 @@ contains
         case(snap_command,snap_off_command:snap_closest_command)
             call change_snap_mode(s,command)
             return
-        case(canvas_command)
-            if(s%home_active)return
-            call toggle_canvas(s)
+        case(canvas_command,restore_layout_command,show_basis_command,show_inspector_command, &
+             inspect_patch_command,toggle_patch_inspection_command,toggle_parameter_panels_command, &
+             close_panel_command_base+1:close_panel_command_base+8,toggle_panel_command_base+1:toggle_panel_command_base+7)
+            call change_panel_layout(s,command)
+            return
         case(clear_selection_command)
             call clear_workspace_selection(s)
             return
@@ -429,8 +431,6 @@ contains
             call zoom_live_viewport(s,1._dp)
         case(zoom_out_command)
             call zoom_live_viewport(s,-1._dp)
-        case(restore_layout_command)
-            call restore_workspace_layout(s)
         case(select_tool_command,orbit_tool_command)
             call cancel_area_drag(s)
             if(s%transform_mode>0)call on_transform_exit(s)
@@ -460,14 +460,18 @@ contains
             call s%status%showMessage('Selection coordinates reset',2500)
         case(control_net_layer_command)
             s%layers(3)=.not.s%layers(3)
-        case(parameter_grid_command)
-            s%domain_layers(1)=.not.s%domain_layers(1)
-        case(basis_support_command)
-            s%domain_layers(4)=.not.s%domain_layers(4)
-        case(basis_functions_command,basis_derivative_command)
-            s%basis_derivative=command==basis_derivative_command
-        case(basis_u_command:basis_dw_command,knots_u_command:knots_w_command)
-            if(command<=basis_dw_command)then
+        case(parameter_grid_command,basis_support_command)
+            i=merge(1,4,command==parameter_grid_command)
+            s%domain_layers(i)=.not.s%domain_layers(i)
+            call sync_controls(s)
+            call s%domain%update()
+            return
+        case(basis_functions_command,basis_derivative_command, &
+             basis_u_command:basis_dw_command,knots_u_command:knots_w_command)
+            i=s%knot_axis
+            if(command==basis_functions_command.or.command==basis_derivative_command)then
+                s%basis_derivative=command==basis_derivative_command
+            else if(command<=basis_dw_command)then
                 i=mod(command-basis_u_command,3)+1
                 if(i>s%entity_kind)return
                 s%basis_derivative=command>=basis_du_command
@@ -479,6 +483,11 @@ contains
                 s%knot_axis=i
                 call refresh_knot_table(s)
             end if
+            call sync_controls(s)
+            call refresh_inspector(s)
+            call s%domain%update()
+            call s%basis%update()
+            return
         case(insert_knot_command,remove_knot_command)
             call run_knot_editor(s,command==remove_knot_command)
             return
@@ -538,9 +547,15 @@ contains
             call select_scene_mesh_source(s)
             return
         case(project_expand_command)
+            was_updating=s%updating
+            s%updating=.true.
             call s%widgets%project_browser%tree%expandAll()
+            s%updating=was_updating
+            if(.not.was_updating.and.s%selection%count()>1)call sync_selection_rows(s)
+            return
         case(project_collapse_command)
             call s%widgets%project_browser%tree%collapseAll()
+            return
         case(new_multipatch_command)
             call run_multipatch_editor(s,0)
             return
@@ -606,35 +621,25 @@ contains
             s%domain_edit_knots=command/=domain_probe_command
             if(.not.s%domain_edit_knots)s%domain_knot_tool=knot_select_tool
             if(command==domain_details_command)s%domain_knot_details=.not.visible
+            call sync_assistant_layout(s)
+            call sync_controls(s)
+            call refresh_domain_readout(s)
             call s%domain%setFocus()
+            call s%domain%update()
+            return
         case(domain_select_command:domain_remove_command)
             s%domain_knot_tool=command-domain_select_command
+            call sync_controls(s)
+            call refresh_domain_readout(s)
             call s%domain%setFocus()
+            call s%domain%update()
+            return
         case(domain_reset_command)
             call reset_domain_view(s)
             return
         case(domain_zoom_out_command,domain_zoom_in_command)
             call zoom_domain_view(s,merge(1.2_dp,1._dp/1.2_dp,command==domain_zoom_in_command))
             return
-        case(show_basis_command)
-            call set_panel_visibility(s,6,.true.)
-            call s%basis_buttons(merge(2,1,s%basis_derivative))%setFocus()
-        case(show_inspector_command)
-            if(s%selected_multipatch==0)s%focused_surface=.false.
-            if(assistant_shares_inspector_space(s))call hide_studio_assistant(s)
-            call set_panel_visibility(s,8,.true.)
-            call s%inspector%headers(1)%setFocus()
-        case(inspect_patch_command,toggle_patch_inspection_command)
-            if(.not.s%live_scene%valid.or.s%selected_mesh>0.or.s%selection%count()>1)return
-            visible=command==inspect_patch_command.or..not.(s%panels(5)%isVisible().and.s%panels(6)%isVisible())
-            call set_panel_visibility(s,5,visible)
-            call set_panel_visibility(s,6,visible)
-            if(visible)call s%domain%setFocus()
-        case(close_panel_command_base+1:close_panel_command_base+8)
-            i=command-close_panel_command_base
-            if(i==4.or..not.any(workspace_panels==i))return
-            call set_panel_visibility(s,i,.false.)
-            call s%status%showMessage('Panel closed · Reopen it from the View ribbon',3500)
         case(toggle_inspector_command)
             if(s%canvas_only.or..not.s%panels(8)%isVisible())then
                 call invoke_command(s,show_inspector_command)
@@ -642,33 +647,13 @@ contains
                 call invoke_command(s,close_panel_command_base+8)
             end if
             return
-        case(toggle_panel_command_base+1:toggle_panel_command_base+7)
-            i=command-toggle_panel_command_base
-            if(i==4.or..not.any(workspace_panels==i))return
-            visible=.not.s%panels(i)%isVisible()
-            if(visible.and.s%canvas_only)call toggle_canvas(s)
-            call set_panel_visibility(s,i,visible)
-        case(toggle_parameter_panels_command)
-            s%focused_surface=.not.s%focused_surface
-            if(s%focused_surface)then
-                s%normal_columns=s%columns%sizes(); s%normal_center=s%center_rows%sizes()
-                do axis=1,size(workspace_panels)
-                    i=workspace_panels(axis)
-                    s%saved_panels(i)=s%panels(i)%isVisible()
-                end do
-                s%saved_panels(8)=s%widgets%inspector_requested
-                call set_panel_visibility(s,5,.false.)
-                call set_panel_visibility(s,6,.false.)
-                call set_panel_visibility(s,8,.false.)
-            else
-                call leave_viewport_focus(s)
-            end if
         case(select_curve_command:select_volume_command)
             i=command-select_curve_command+1
             call select_patch(s,i,active_patch_id(i,catalog=s%document%patches),reveal=.false.)
             return
         case(inspector_section_command_base+1:inspector_section_command_base+2)
             call update_inspector_section(s%inspector,command-inspector_section_command_base)
+            return
         case(clean_display_command,control_structure_command)
             i=command-clean_display_command+1
             s%layers=display_layer_presets(:,i)
@@ -774,6 +759,64 @@ contains
         call sync_controls(s)
         call refresh_inspector(s); call repaint_all(s)
     end procedure invoke_command
+
+    recursive subroutine change_panel_layout(s,command)
+        type(studio_t),intent(inout),target :: s
+        integer,intent(in) :: command
+        logical :: visible
+        integer :: i,axis
+
+        select case(command)
+        case(canvas_command)
+            if(s%home_active)return
+            call toggle_canvas(s)
+        case(restore_layout_command)
+            call restore_workspace_layout(s)
+        case(show_basis_command)
+            call set_panel_visibility(s,6,.true.)
+            call s%basis_buttons(merge(2,1,s%basis_derivative))%setFocus()
+        case(show_inspector_command)
+            if(s%selected_multipatch==0)s%focused_surface=.false.
+            if(assistant_shares_inspector_space(s))call hide_studio_assistant(s)
+            call set_panel_visibility(s,8,.true.)
+            call s%inspector%headers(1)%setFocus()
+        case(inspect_patch_command,toggle_patch_inspection_command)
+            if(.not.s%live_scene%valid.or.s%selected_mesh>0.or.s%selection%count()>1)return
+            visible=command==inspect_patch_command.or..not.(s%panels(5)%isVisible().and.s%panels(6)%isVisible())
+            call set_panel_visibility(s,5,visible)
+            call set_panel_visibility(s,6,visible)
+            if(visible)call s%domain%setFocus()
+        case(close_panel_command_base+1:close_panel_command_base+8)
+            i=command-close_panel_command_base
+            if(i==4.or..not.any(workspace_panels==i))return
+            call set_panel_visibility(s,i,.false.)
+            call s%status%showMessage('Panel closed · Reopen it from the View ribbon',3500)
+        case(toggle_panel_command_base+1:toggle_panel_command_base+7)
+            i=command-toggle_panel_command_base
+            if(i==4.or..not.any(workspace_panels==i))return
+            visible=.not.s%panels(i)%isVisible()
+            if(visible.and.s%canvas_only)call toggle_canvas(s)
+            call set_panel_visibility(s,i,visible)
+        case(toggle_parameter_panels_command)
+            s%focused_surface=.not.s%focused_surface
+            if(s%focused_surface)then
+                s%normal_columns=s%columns%sizes(); s%normal_center=s%center_rows%sizes()
+                do axis=1,size(workspace_panels)
+                    i=workspace_panels(axis)
+                    s%saved_panels(i)=s%panels(i)%isVisible()
+                end do
+                s%saved_panels(8)=s%widgets%inspector_requested
+                call set_panel_visibility(s,5,.false.)
+                call set_panel_visibility(s,6,.false.)
+                call set_panel_visibility(s,8,.false.)
+            else
+                call leave_viewport_focus(s)
+            end if
+        end select
+        call sync_assistant_layout(s)
+        call sync_controls(s)
+        call s%workspace%update()
+    end subroutine change_panel_layout
 
     subroutine toggle_fullscreen(s)
         type(studio_t),intent(inout) :: s

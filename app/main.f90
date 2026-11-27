@@ -66,6 +66,7 @@ program forcad_studio
 
     call schedule_preview(workspace,options%preview,options%screenshot)
     status=app%exec()
+    call workspace%viewport_frame%delete()
     call finish_display_refinement(workspace)
     call finish_studio_assistant()
     call finish_studio_mcp()

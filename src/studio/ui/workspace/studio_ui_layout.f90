@@ -1,6 +1,6 @@
 submodule(studio_ui) studio_ui_layout
     use qt, only: QActionGroup, QButtonGroup, QHeaderView, QHeaderView_Fixed, QHeaderView_Stretch, &
-        QSlider, QShortcut, Qt_WidgetShortcut, Qt_ToolButtonTextOnly, QToolButton_MenuButtonPopup
+        QPointF, QSlider, QShortcut, Qt_WidgetShortcut, Qt_ToolButtonTextOnly, QToolButton_MenuButtonPopup
     use studio_live_viewport, only: pick_mesh_cell,transform_gizmo_hint
     use studio_viewport_camera, only: sync_viewport_orientation
     use studio_commands, only: patch_ribbon_tab,multipatch_ribbon_tab,mesh_ribbon_tab
@@ -8,11 +8,14 @@ submodule(studio_ui) studio_ui_layout
     use studio_viewport_scene, only: pick_selected_control,pick_shared_control,viewport_patch_target
     use studio_selection_status, only: selection_status_text,mesh_counts_text
     use studio_status_hints, only: register_status_hints,register_status_menu
+    use studio_theme, only: studio_panel_fill,studio_viewport_controls_fill,build_opaque_panel
     use studio_command_presentation, only: command_visual
     implicit none(type, external)
     integer, parameter :: workspace_side_inset=12, workspace_bottom_inset=10, workspace_gap=8
     integer, parameter :: panel_inset=10
     integer, parameter :: quick_action_label_width=1280, assistant_min_width=318
+    character(*), parameter :: center_column_name='studioCenterColumn', inspector_column_name='studioInspectorColumn'
+    character(*), parameter :: assistant_space_name='studioAssistantSpace'
     character(*), parameter :: camera_guidance='Orbit: Shift+middle or right drag · Pan: Middle drag · Zoom: Scroll'
     integer, parameter :: viewer_button_width=27, viewport_button_width=34, viewer_button_height=26, viewer_icon_size=18
 contains
@@ -75,8 +78,8 @@ contains
         call title_button(s%widgets%maximize_button,brand_layout,s,maximize_window_command)
         call title_button(button,brand_layout,s,close_window_command)
         call root_layout%addWidget(brand)
-        s%surface=QtfWidget()
-        s%workspace=s%surface
+        s%surface%QtfWidget=QtfWidget()
+        s%workspace=s%surface%QtfWidget
         s%panels(4)=s%surface%QWidget
         call s%surface%setMinimumSize(298,230)
         call s%surface%setAccessibleName('Interactive 3D scene')
@@ -107,7 +110,7 @@ contains
         call create_panel('Scene',p,p_layout,s,1)
         call build_project_tree(p_layout,s)
         call left_layout%addWidget(p,1)
-        center = QWidget()
+        center = QWidget(); call center%setObjectName(center_column_name)
         center_layout = QHBoxLayout(center)
         call center_layout%setContentsMargins(0,0,0,0); call center_layout%setSpacing(workspace_gap)
         s%center_rows = QSplitter(Qt_Vertical)
@@ -152,6 +155,7 @@ contains
         call build_domain(p_layout,s)
         call center_layout%addWidget(domain_panel,37)
         call create_panel('Inspector',right,p_layout,s,8)
+        call right%setObjectName(inspector_column_name)
         call right%setMinimumWidth(330); call right%setMaximumWidth(455)
         call build_inspector(p_layout,s)
         call domain_panel%showEvent%connect(sync_parameter_panels,s)
@@ -168,6 +172,7 @@ contains
         call s%assistant_columns%setChildrenCollapsible(.false.)
         call s%assistant_columns%setHandleWidth(workspace_gap)
         s%assistant_space=QWidget()
+        call s%assistant_space%setObjectName(assistant_space_name)
         call s%assistant_space%setMinimumWidth(assistant_min_width)
         call s%assistant_columns%addWidget(s%columns)
         call s%assistant_columns%addWidget(s%assistant_space)
@@ -179,6 +184,12 @@ contains
         assistant_space_events=QtfEventFilter(s%assistant_space)
         call assistant_space_events%resizeEvent%connect(on_assistant_space_resize,s)
         call workspace_layout%addWidget(s%assistant_columns,1)
+        s%panel_resize_guide=QWidget(s%command_ribbon)
+        call s%panel_resize_guide%setObjectName('studioPanelResizeGuide')
+        call s%panel_resize_guide%setFixedSize(3,12)
+        call s%panel_resize_guide%hide()
+        call connect_panel_resize(s,s%columns,[character(24)::center_column_name,inspector_column_name])
+        call connect_panel_resize(s,s%assistant_columns,[assistant_space_name])
         s%pages=QStackedWidget()
         call s%pages%addWidget(s%workspace)
         call build_project_home(s,connect_button)
@@ -357,7 +368,7 @@ contains
 
         select type(s=>data)
         type is(studio_t)
-            call s%surface%update()
+            call s%workspace%update()
         end select
     end subroutine on_viewport_aperture_resize
 
@@ -386,6 +397,70 @@ contains
     module procedure assistant_shares_inspector_space
         shares_space=studio_assistant_is_docked(s).and.s%window%width()<wide_workspace_with_chat
     end procedure assistant_shares_inspector_space
+
+    subroutine connect_panel_resize(s,splitter,child_names)
+        type(studio_t),intent(inout),target :: s
+        type(QSplitter),intent(in) :: splitter
+        character(*),intent(in) :: child_names(:)
+        type(QWidget) :: handles(size(child_names))
+        type(QtfEventFilter) :: events
+        integer :: i
+
+        do i=1,size(handles)
+            call splitter%findChild('qt_splithandle_'//trim(child_names(i)),handles(i))
+            if(handles(i)%isNull())return
+            if(.not.handles(i)%inherits('QSplitterHandle'))return
+        end do
+        call splitter%setProperty('opaqueResize',.false.)
+        do i=1,size(handles)
+            events=QtfEventFilter(handles(i))
+            call events%mouseMoveEvent%connect(on_panel_resize_move,s)
+            call events%mouseReleaseEvent%connect(on_panel_resize_release,s)
+            call events%hideEvent%connect(hide_panel_resize_guide,s)
+        end do
+    end subroutine connect_panel_resize
+
+    subroutine on_panel_resize_move(event,data)
+        type(QMouseEvent),intent(in) :: event
+        class(*),intent(inout),optional :: data
+        type(QPointF) :: global_position
+        type(QPoint) :: position
+        integer :: x,y
+
+        select type(s=>data)
+        type is(studio_t)
+            if(iand(event%buttons(),Qt_LeftButton)==0)then
+                call hide_panel_resize_guide(s)
+                return
+            end if
+            global_position=event%globalPosition()
+            position=s%command_ribbon%mapFromGlobal(QPoint(nint(global_position%x),nint(global_position%y)))
+            x=max(0,min(position%x-1,s%command_ribbon%width()-s%panel_resize_guide%width()))
+            y=s%command_ribbon%height()-s%panel_resize_guide%height()
+            call s%panel_resize_guide%move(x,y)
+            if(.not.s%panel_resize_guide%isVisible())then
+                call s%panel_resize_guide%raise()
+                call s%panel_resize_guide%show()
+            end if
+            call event%accept()
+        end select
+    end subroutine on_panel_resize_move
+
+    subroutine on_panel_resize_release(event,data)
+        type(QMouseEvent),intent(in) :: event
+        class(*),intent(inout),optional :: data
+
+        if(event%button()==Qt_LeftButton)call hide_panel_resize_guide(data)
+    end subroutine on_panel_resize_release
+
+    subroutine hide_panel_resize_guide(data)
+        class(*),intent(inout),optional :: data
+
+        select type(s=>data)
+        type is(studio_t)
+            if(.not.s%panel_resize_guide%isNull())call s%panel_resize_guide%hide()
+        end select
+    end subroutine hide_panel_resize_guide
 
     subroutine on_scene_divider_moved(position,index,data)
         integer,intent(in) :: position,index
@@ -519,16 +594,18 @@ contains
         type(QVBoxLayout),intent(out)::layout
         type(studio_t),intent(inout),target::s
         integer,intent(in)::index
-        type(QWidget)::header
+        type(QWidget)::frame,header
         type(QHBoxLayout)::header_layout
         type(QLabel)::label
-        panel=QWidget(); call panel%setObjectName('panel'); s%panels(index)=panel
+
+        call build_opaque_panel(panel,frame,studio_panel_fill,'panel')
+        s%panels(index)=panel
         call panel%setAccessibleName(title)
         if(any(index==[1,5,6]))then
             call panel%showEvent%connect(on_panel_shown,s%panel_actions(index))
             call panel%hideEvent%connect(on_panel_hidden,s%panel_actions(index))
         end if
-        layout=QVBoxLayout(panel)
+        layout=QVBoxLayout(frame)
         call layout%setContentsMargins(1,1,1,1); call layout%setSpacing(0)
         header=QWidget(); call header%setObjectName('panelHeader'); call header%setFixedHeight(32)
         header_layout=QHBoxLayout(header)
@@ -905,28 +982,30 @@ contains
 
     subroutine build_viewport_controls(s)
         type(studio_t),intent(inout),target::s
+        type(QWidget)::frame
         type(QVBoxLayout)::controls_layout,stack
         type(QHBoxLayout)::tools_row
 
         controls_layout=QVBoxLayout(s%viewport_aperture)
         call controls_layout%setContentsMargins(0,0,0,0)
-        s%viewport_controls=QWidget(s%viewport_aperture)
+        call build_opaque_panel(s%viewport_controls,frame,studio_viewport_controls_fill, &
+            'studioViewportControlsFrame',s%viewport_aperture)
         call s%viewport_controls%setObjectName('viewportControls')
-        stack=QVBoxLayout(s%viewport_controls)
+        stack=QVBoxLayout(frame)
         call stack%setContentsMargins(4,4,4,4)
         call stack%setSpacing(6)
         tools_row=QHBoxLayout()
         call tools_row%addStretch()
         call tools_row%setSpacing(2)
-        call build_selection_filter(tools_row,s%viewport_controls,s)
-        call build_viewport_snap_menu(tools_row,s%viewport_controls,s)
-        call add_viewer_divider(tools_row,s%viewport_controls)
-        call build_viewport_fit_menu(tools_row,s%viewport_controls,s)
-        call build_viewport_orientation_menu(tools_row,s%viewport_controls,s)
-        call add_viewer_divider(tools_row,s%viewport_controls)
-        call build_viewport_display_menu(tools_row,s%viewport_controls,s)
-        call build_viewport_visibility_menu(tools_row,s%viewport_controls,s)
-        s%widgets%leave_canvas_button=QPushButton('',s%viewport_controls)
+        call build_selection_filter(tools_row,frame,s)
+        call build_viewport_snap_menu(tools_row,frame,s)
+        call add_viewer_divider(tools_row,frame)
+        call build_viewport_fit_menu(tools_row,frame,s)
+        call build_viewport_orientation_menu(tools_row,frame,s)
+        call add_viewer_divider(tools_row,frame)
+        call build_viewport_display_menu(tools_row,frame,s)
+        call build_viewport_visibility_menu(tools_row,frame,s)
+        s%widgets%leave_canvas_button=QPushButton('',frame)
         call s%widgets%leave_canvas_button%setObjectName('studioExitCanvasOnly')
         call s%widgets%leave_canvas_button%setIcon(line_icon(icon_restore))
         call s%widgets%leave_canvas_button%setIconSize(15,15)
@@ -937,8 +1016,8 @@ contains
         call tools_row%addWidget(s%widgets%leave_canvas_button)
         call s%widgets%leave_canvas_button%hide()
         call stack%addLayout(tools_row)
-        call build_canvas_mesh_controls(stack,s)
-        call build_transform_strip(stack,s)
+        call build_canvas_mesh_controls(stack,frame,s)
+        call build_transform_strip(stack,frame,s)
         call controls_layout%addWidget(s%viewport_controls,alignment=Qt_AlignRight)
         call controls_layout%addStretch(1)
         call sync_selection_filter(s)
@@ -1107,7 +1186,8 @@ contains
         call s%widgets%ribbon%volume_mesh_layer%valueChanged%connect(volume_mesh_layer_changed,s)
     end subroutine build_volume_mesh_controls
 
-    subroutine build_canvas_mesh_controls(stack,s)
+    subroutine build_canvas_mesh_controls(stack,parent,s)
+        type(QWidget), intent(in) :: parent
         type(QVBoxLayout), intent(inout) :: stack
         type(studio_t), intent(inout), target :: s
         type(QVBoxLayout) :: rows
@@ -1116,7 +1196,7 @@ contains
         character(*), parameter :: axes='XYZ'
 
         associate(hud=>s%widgets%canvas_mesh)
-            hud%panel=QWidget(s%viewport_controls)
+            hud%panel=QWidget(parent)
             call hud%panel%setObjectName('studioCanvasMeshControls')
             rows=QVBoxLayout(hud%panel)
             call rows%setContentsMargins(1,5,1,1)
@@ -1212,7 +1292,8 @@ contains
         call label%setMinimumWidth(32)
     end subroutine configure_mesh_value
 
-    subroutine build_transform_strip(stack,s)
+    subroutine build_transform_strip(stack,parent,s)
+        type(QWidget), intent(in) :: parent
         type(QVBoxLayout),intent(inout)::stack
         type(studio_t),intent(inout),target::s
         type(QVBoxLayout)::layout
@@ -1223,7 +1304,7 @@ contains
         integer::i
         character(3),parameter::axes='XYZ'
 
-        s%widgets%transform_strip=QWidget(s%viewport_controls)
+        s%widgets%transform_strip=QWidget(parent)
         call s%widgets%transform_strip%setObjectName('transformStrip')
         layout=QVBoxLayout(s%widgets%transform_strip)
         call layout%setContentsMargins(8,7,8,8)
