@@ -1,5 +1,6 @@
 module studio_viewport_geometry
     use, intrinsic :: iso_fortran_env, only: int8
+    !$ use omp_lib, only: omp_get_max_threads
     use qt, only: QColor,QPainter,QPen,Qt_NoPen
     use studio_state, only: studio_t,dp,mesh_lattice,viewport_shaded,viewport_wireframe,scene_patch_drawn,studio_mesh_count
     use studio_workspace_selection, only: mesh_in_selection
@@ -21,6 +22,7 @@ module studio_viewport_geometry
     real(dp),parameter :: mesh_ink(3)=[205._dp,164._dp,103._dp]
     integer,parameter :: shared_mesh_opacity(*)=[180,233,249,253]
     integer,parameter :: dense_preview_patches=1024
+    integer,parameter :: parallel_face_count=256,parallel_pixel_count=150000
 
     type :: face_colors
         real(dp),allocatable :: rgb(:,:)
@@ -49,9 +51,9 @@ contains
         integer,allocatable :: mesh_quads(:,:)
         integer(int8),allocatable :: edge_uses(:,:)
         integer :: capacity,used,transparent_count,object,part,side,primitive,counts(3),lower(2),upper(2),pixel_step,suppressed_edges
-        integer :: opacity,transparent_index
+        integer :: transparent_index, threads, bands, band, band_height
         real(dp) :: bias,mesh_spacing
-        logical :: cad_fill(size(objects)),wireframe,overview,light,motion
+        logical :: cad_fill(size(objects)),wireframe,overview,light,motion,translucent_faces
         logical,allocatable :: selected_mesh(:)
         logical,allocatable,target :: coverage(:,:)
         logical,pointer :: replaced(:,:)
@@ -166,20 +168,21 @@ contains
             multisample=viewport_multisampling(s),pixel_step=pixel_step)
         if(.not.buffer%ready())return
         bias=.85_dp/camera%scale
-        transparent_count=0
-        if(any(objects%opacity<255).or.(size(parts)>0.and.s%mesh_view==mesh_lattice))then
-            do primitive=1,used
-                opacity=quad_opacity(quads(primitive))
-                if(opacity<255)then
-                    transparent_count=transparent_count+1
-                else
-                    call paint_quad(quads(primitive),.false.,opacity)
-                end if
+        translucent_faces=any(objects%opacity<255).or.(size(parts)>0.and.s%mesh_view==mesh_lattice)
+        threads=1
+        !$ threads=min(4,omp_get_max_threads())
+        if(threads>1.and.pixel_step==1.and.used>=parallel_face_count.and. &
+            product(real(upper-lower,dp))>=parallel_pixel_count)then
+            call buffer%cover_full_frame()
+            band_height=(upper(2)-lower(2)+2*threads-1)/(2*threads)
+            bands=(upper(2)-lower(2)+band_height-1)/band_height
+            !$omp parallel do default(none) schedule(dynamic,1) num_threads(threads) shared(bands,band_height)
+            do band=1,bands
+                call paint_opaque_faces([(band-1)*band_height+1,band*band_height])
             end do
+            !$omp end parallel do
         else
-            do primitive=1,used
-                call paint_quad(quads(primitive),.false.,255)
-            end do
+            call paint_opaque_faces()
         end if
         if(s%mesh_shaded)call draw_sections(.false.)
         do object=1,size(objects)
@@ -187,7 +190,8 @@ contains
                 call draw_patch_lines(painter,s,objects(object),0._dp,camera%scale,0,buffer)
             end if
         end do
-        if(transparent_count>0)then
+        if(translucent_faces)then
+            transparent_count=count([(quad_opacity(quads(primitive))<255,primitive=1,used)])
             allocate(transparent(transparent_count))
             transparent_index=0
             do primitive=1,used
@@ -195,10 +199,10 @@ contains
                 transparent_index=transparent_index+1
                 transparent(transparent_index)=primitive
             end do
-            call sort_quad_indices(quads,transparent,1,transparent_count)
+            if(transparent_count>0)call sort_quad_indices(quads,transparent,1,transparent_count)
             do transparent_index=1,transparent_count
                 primitive=transparent(transparent_index)
-                call paint_quad(quads(primitive),.false.,quad_opacity(quads(primitive)))
+                call paint_quad_fill(quads(primitive),quad_opacity(quads(primitive)))
             end do
         end if
         if(allocated(mesh_quads))then
@@ -217,6 +221,18 @@ contains
         call buffer%paint(painter)
     contains
 
+        subroutine paint_opaque_faces(rows)
+            integer,optional,intent(in) :: rows(2)
+            integer :: index
+
+            do index=1,used
+                if(translucent_faces)then
+                    if(quad_opacity(quads(index))<255)cycle
+                end if
+                call paint_quad_fill(quads(index),255,rows)
+            end do
+        end subroutine paint_opaque_faces
+
         subroutine paint_mesh_edges(part,first,last)
             integer,intent(in) :: part,first,last
             integer :: index
@@ -230,7 +246,7 @@ contains
                     if(paint_shared_mesh_edges(piece,quads(first:last)))return
                 end if
                 do index=first,last
-                    call paint_quad(quads(index),.true.)
+                    call paint_mesh_quad_edges(quads(index))
                 end do
             end associate
         end subroutine paint_mesh_edges
@@ -293,19 +309,14 @@ contains
             end if
         end function quad_opacity
 
-        subroutine paint_quad(quad,edges,face_opacity)
+        subroutine paint_quad_fill(quad,opacity,rows)
             type(screen_quad),intent(in) :: quad
-            logical,intent(in) :: edges
-            integer,intent(in),optional :: face_opacity
+            integer,intent(in) :: opacity
+            integer,optional,intent(in) :: rows(2)
+            real(dp) :: points(3,4),rgb(3,4)
             type(QColor) :: color
-            real(dp) :: points(3,4),rgb(3,4),line_rgb(3),thickness
-            integer :: opacity,step,next
-            logical :: picked,hovered
+            logical :: picked
 
-            picked=.false.
-            hovered=.false.
-            opacity=255
-            if(present(face_opacity))opacity=face_opacity
             if(quad%mesh_part==0)then
                 associate(patch=>objects(quad%object))
                     if(patch%kind==3)then
@@ -313,26 +324,37 @@ contains
                     else
                         points=patch%points(:,quad%vertices)
                     end if
-                    rgb=shading(quad%face,quad%object)%rgb(:,quad%vertices)
                 end associate
             else
-                associate(piece=>parts(quad%mesh_part))
-                    points=piece%points(:,quad%vertices)
-                    picked=cell_selected(quad%mesh_part,quad%mesh_cell)
-                    if(.not.edges)then
-                        color=mesh_face_color(points,[1,2,3,4],camera%scale,quad%selected,picked,opacity)
-                        call buffer%flat_quad(points,real([color%r,color%g,color%b],dp),opacity)
-                        return
-                    end if
-                    hovered=all(s%canvas_gesture%viewport_mesh_hover==[piece%mesh,piece%part,quad%mesh_cell])
-                    if(motion.and..not.(picked.or.hovered))return
-                end associate
+                points=parts(quad%mesh_part)%points(:,quad%vertices)
             end if
-            if(.not.edges)then
-                call buffer%triangle(points(:,first_triangle),rgb(:,first_triangle),opacity)
-                call buffer%triangle(points(:,second_triangle),rgb(:,second_triangle),opacity)
-                return
+            if(present(rows))then
+                if(maxval(points(2,:))<lower(2)+rows(1)-1.or.minval(points(2,:))>lower(2)+rows(2))return
             end if
+
+            if(quad%mesh_part==0)then
+                rgb=shading(quad%face,quad%object)%rgb(:,quad%vertices)
+                call buffer%triangle(points(:,first_triangle),rgb(:,first_triangle),opacity,rows)
+                call buffer%triangle(points(:,second_triangle),rgb(:,second_triangle),opacity,rows)
+            else
+                picked=cell_selected(quad%mesh_part,quad%mesh_cell)
+                color=mesh_face_color(points,[1,2,3,4],camera%scale,quad%selected,picked,opacity)
+                call buffer%flat_quad(points,real([color%r,color%g,color%b],dp),opacity,rows)
+            end if
+        end subroutine paint_quad_fill
+
+        subroutine paint_mesh_quad_edges(quad)
+            type(screen_quad),intent(in) :: quad
+            real(dp) :: points(3,4),line_rgb(3),thickness
+            integer :: step,next
+            logical :: picked,hovered
+
+            associate(piece=>parts(quad%mesh_part))
+                picked=cell_selected(quad%mesh_part,quad%mesh_cell)
+                hovered=all(s%canvas_gesture%viewport_mesh_hover==[piece%mesh,piece%part,quad%mesh_cell])
+                if(motion.and..not.(picked.or.hovered))return
+                points=piece%points(:,quad%vertices)
+            end associate
             if(light.and..not.(hovered.or.picked).and.quad%mesh_cell>0)then
                 if(maxval(maxval(points(:2,:),dim=2)-minval(points(:2,:),dim=2))<=3._dp*pixel_step)return
             end if
@@ -350,7 +372,7 @@ contains
                 next=mod(step,4)+1
                 call buffer%line(points(:,step),points(:,next),line_rgb,merge(245,180,picked),thickness,bias)
             end do
-        end subroutine paint_quad
+        end subroutine paint_mesh_quad_edges
 
         subroutine draw_sections(edges)
             logical,intent(in) :: edges

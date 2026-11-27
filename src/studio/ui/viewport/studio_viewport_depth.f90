@@ -21,6 +21,7 @@ module studio_viewport_depth
     contains
         procedure :: initialize
         procedure :: ready
+        procedure :: cover_full_frame
         procedure :: triangle
         procedure :: flat_quad
         procedure :: line
@@ -72,43 +73,54 @@ contains
         ready=allocated(self%depth)
     end function ready
 
-    subroutine triangle(self,points,colors,opacity)
+    subroutine cover_full_frame(self)
+        class(viewport_depth_t),intent(inout) :: self
+
+        self%first=1
+        self%last=self%extent
+    end subroutine cover_full_frame
+
+    subroutine triangle(self,points,colors,opacity,rows)
         class(viewport_depth_t),intent(inout) :: self
         real(dp),intent(in) :: points(3,3),colors(3,3)
         integer,intent(in) :: opacity
+        integer,optional,intent(in) :: rows(2)
+
         if(self%samples==1)then
-            call raster_triangle(self,points,opacity,1,colors=colors)
+            call raster_triangle(self,points,opacity,1,colors=colors,rows=rows)
         else
-            call raster_triangle(self,points,opacity,self%samples,colors=colors)
+            call raster_triangle(self,points,opacity,max_samples,colors=colors,rows=rows)
         end if
     end subroutine triangle
 
-    subroutine flat_quad(self,points,rgb,opacity)
+    subroutine flat_quad(self,points,rgb,opacity,rows)
         class(viewport_depth_t),intent(inout) :: self
         real(dp),intent(in) :: points(3,4),rgb(3)
         integer,intent(in) :: opacity
+        integer,optional,intent(in) :: rows(2)
         integer(c_int32_t) :: fragment
         integer :: alpha
 
         alpha=min(opacity,255)
         if(.not.self%ready().or.alpha<=0.or..not.all(ieee_is_finite(rgb)))return
         fragment=fragment_color(rgb,alpha)
-        call raster_triangle(self,points(:,:3),alpha,self%samples,fill=fragment)
-        call raster_triangle(self,points(:,[1,3,4]),alpha,self%samples,fill=fragment)
+        call raster_triangle(self,points(:,:3),alpha,self%samples,fill=fragment,rows=rows)
+        call raster_triangle(self,points(:,[1,3,4]),alpha,self%samples,fill=fragment,rows=rows)
     end subroutine flat_quad
 
-    subroutine raster_triangle(self,points,opacity,sample_count,colors,fill)
+    subroutine raster_triangle(self,points,opacity,sample_count,colors,fill,rows)
         class(viewport_depth_t),intent(inout) :: self
         real(dp),intent(in) :: points(3,3)
         integer,intent(in) :: opacity
         integer,intent(in),value :: sample_count
         real(dp),optional,intent(in) :: colors(3,3)
         integer(c_int32_t),optional,intent(in) :: fill
+        integer,optional,intent(in) :: rows(2)
         integer,parameter :: edge_start(3)=[2,3,1],edge_end(3)=[3,1,2]
         real(dp) :: pos(2,3),dx(3),dy(3),area,origin_edge(3),sample_edge(3,max_samples)
         real(dp) :: base_edge(3),edge(3),depth(max_samples),inverse_area,direction,depth_offset(max_samples)
         real(dp) :: base_depth,depth_step(2),base_rgb(3),rgb_step(3,2),sample_reach(3)
-        integer :: first(2),last(2),x,y,sample,alpha,row_first,row_last,span
+        integer :: first(2),last(2),x,y,y_first,y_last,sample,alpha,row_first,row_last,span
         integer(c_int32_t) :: fragment
         logical :: owned_edge(3),visible(max_samples),flat_color
 
@@ -123,6 +135,13 @@ contains
         if(self%pixel_step/=1)pos=pos/self%pixel_step
         call triangle_sample_span(self,minval(pos,dim=2),maxval(pos,dim=2),first,last)
         if(any(first>last))return
+        y_first=first(2)
+        y_last=last(2)
+        if(present(rows))then
+            y_first=max(y_first,rows(1))
+            y_last=min(y_last,rows(2))
+            if(y_first>y_last)return
+        end if
 
         dx=pos(1,edge_end)-pos(1,edge_start)
         dy=pos(2,edge_end)-pos(2,edge_start)
@@ -155,9 +174,11 @@ contains
         span=last(1)-first(1)
         if(span>12)sample_reach=maxval(sample_edge(:,:sample_count),dim=2)+64._dp*epsilon(1._dp)* &
             (abs(origin_edge)+abs(dx)*real(last(2),dp)+abs(dy)*real(last(1),dp))
-        self%first=min(self%first,first)
-        self%last=max(self%last,last)
-        do y=first(2),last(2)
+        if(.not.present(rows))then
+            self%first=min(self%first,first)
+            self%last=max(self%last,last)
+        end if
+        do y=y_first,y_last
             base_edge=origin_edge+dx*real(y-1,dp)-dy*real(first(1)-1,dp)
             row_first=0
             row_last=span
