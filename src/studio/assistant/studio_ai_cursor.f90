@@ -696,7 +696,7 @@ contains
     subroutine request_repaint(s)
         type(studio_t), intent(in) :: s
 
-        if(.not.s%surface%isNull())call s%surface%update()
+        if(.not.s%workspace%isNull())call s%workspace%update()
         if(.not.s%domain%isNull())call s%domain%update()
     end subroutine request_repaint
 

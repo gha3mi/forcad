@@ -80,10 +80,11 @@ contains
         call image%delete()
     end function save_viewport_image
 
-    subroutine paint_live_viewport(painter,s,width,height)
+    subroutine paint_live_viewport(painter,s,width,height,frame_camera)
         type(QPainter), intent(inout) :: painter
         type(studio_t), intent(in) :: s
         real(dp), intent(in) :: width,height
+        real(dp),optional,intent(out) :: frame_camera(3)
         type(viewport_camera) :: camera
         type(projected_patch), allocatable :: objects(:)
         type(projected_mesh_part), allocatable :: mesh_parts(:)
@@ -93,7 +94,9 @@ contains
         logical,allocatable :: show_guides(:),mesh_coverage(:,:),mesh_sources_selected(:,:)
         logical :: active_visible,preview,navigating
 
+        if(present(frame_camera))frame_camera=0._dp
         if(.not.prepare_camera(s,camera))return
+        if(present(frame_camera))frame_camera=[camera%screen,camera%scale]
         preview=transform_drag_matches(s)
         call project_visible_meshes(s,camera,preview,mesh_parts,clip=[0._dp,0._dp,width,height])
         navigating=dense_mesh_navigation(s,mesh_parts)

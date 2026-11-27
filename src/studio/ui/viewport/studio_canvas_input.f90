@@ -345,11 +345,11 @@ contains
             s%canvas_gesture%pointer_button=Qt_NoButton
             s%canvas_gesture%middle_orbit=.false.
             s%dragging=.false.
-            call s%surface%update()
             call s%status%setActivity('')
             if(s%canvas_gesture%area_count>0)then
                 if(finish_area_drag(s,event))return
             end if
+            call s%surface%update()
             if(transform_dragging(s))then
                 call finish_transform_drag(s,event%x(),event%y(),iand(event%modifiers(),Qt_ShiftModifier)/=0, &
                     linear,position,pivot,changed)
@@ -564,7 +564,7 @@ contains
             gesture%area_points(:,n)=point
             gesture%area_count=n
         end associate
-        if(.not.released)call s%surface%update()
+        if(.not.released)call s%workspace%update()
     end subroutine track_area_drag
 
     logical function finish_area_drag(s,event) result(consumed)
@@ -602,7 +602,7 @@ contains
         s%canvas_gesture%pointer_button=Qt_NoButton
         s%dragging=.false.
         call s%surface%unsetCursor()
-        call s%surface%update()
+        call s%workspace%update()
     end subroutine cancel_area_drag
 
     logical function picking_controls(s) result(enabled)

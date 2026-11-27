@@ -98,7 +98,7 @@ module studio_state
         type(studio_canvas_t) :: surface
         type(QtfWidget) :: domain, basis, workspace
         type(QImage) :: viewport_frame
-        real(dp) :: viewport_frame_scale=0._dp
+        real(dp) :: viewport_frame_scale=0._dp, viewport_frame_camera(3)=0._dp
         type(studio_status_t) :: status
         type(QDoubleSpinBox) :: probe_u, probe_v, probe_w
         type(QLabel) :: probe_label, diagnostic_label, basis_title
@@ -147,7 +147,7 @@ module studio_state
         logical :: domain_layers(5) = [.true., .true., .true., .false., .false.]
         logical :: basis_legend=.true.,basis_probe_guide=.true.,basis_derivative=.false.
         logical :: world_grid=.true., interactive_quality=.true.
-        type(QTimer) :: zoom_quality_timer,viewport_hover_timer
+        type(QTimer) :: zoom_quality_timer,viewport_hover_timer,viewport_resize_timer
         ! Parameter Space, its knot editor and the basis plot share this direction.
         integer :: entity_kind = 2, knot_axis = 1, surface_tool = 2
         real(dp), allocatable :: live_knots(:), live_knot_groups(:)

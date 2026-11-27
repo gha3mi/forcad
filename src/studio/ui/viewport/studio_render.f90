@@ -2,7 +2,7 @@ module studio_render
     use, intrinsic :: iso_fortran_env, only: int64
     use studio_display_refinement, only: connect_display_refinement,request_display_refinement
     use studio_live_viewport, only: paint_live_viewport,paint_viewport_hud
-    use studio_viewport_camera, only: connect_viewport_zoom_quality
+    use studio_viewport_camera, only: connect_viewport_zoom_quality,viewport_camera,prepare_camera
     use studio_viewport_selection, only: paint_viewport_selection
     use studio_live_plots, only: paint_live_basis
     use studio_ai_cursor, only: paint_studio_ai_cursor
@@ -14,7 +14,8 @@ module studio_render
         control_selection_handler, selection_handler, transform_handler, viewport_context_handler, region_selection_handler
     use studio_theme, only: studio_active_edge, studio_frame_edge
     use qt, only: QBrush, QColor, QFont, QFontMetrics, QImage, QLinearGradient, QPainter, QPainter_Antialiasing, &
-        QPainter_TextAntialiasing, QPen, Qt_DashLine, Qt_DotLine, Qt_NoBrush, Qt_NoPen, Qt_SolidLine
+        QPainter_SmoothPixmapTransform, QPainter_TextAntialiasing, QPen, QResizeEvent, QTimer, &
+        Qt_DashLine, Qt_DotLine, Qt_NoBrush, Qt_NoPen, Qt_SolidLine
     use studio_state, only: studio_t, dp, axis_rgb
     implicit none(type, external)
     private
@@ -26,6 +27,8 @@ module studio_render
     character(len=3), parameter :: parameter_axes='UVW'
     character(*), parameter :: domain_tick_color='#d2e2ee'
     real(dp), parameter :: domain_tick_size=9.5_dp, domain_axis_size=11._dp
+    integer, parameter :: viewport_resize_idle_ms=120
+    real(dp), parameter :: viewport_resize_budget_ms=24._dp
 
 contains
 
@@ -42,6 +45,10 @@ contains
 
         call connect_display_refinement(s)
         call connect_viewport_zoom_quality(s)
+        s%viewport_resize_timer=QTimer(s%surface)
+        call s%viewport_resize_timer%setSingleShot(.true.)
+        call s%viewport_resize_timer%timeout%connect(on_viewport_resize_settled,s)
+        call s%workspace%resizeEvent%connect(on_viewport_resize,s)
         call s%surface%paintEvent%connect(paint_surface,s)
         call s%domain%paintEvent%connect(paint_domain,s)
         call s%basis%paintEvent%connect(paint_basis,s)
@@ -119,7 +126,6 @@ contains
         type is(studio_t)
             w=real(s%surface%width(),dp)
             h=real(s%surface%height(),dp)
-            call request_display_refinement(s)
             call paint_viewport_frame(painter,s,w,h)
             call painter%setRenderHint(QPainter_Antialiasing)
             call painter%setRenderHint(QPainter_TextAntialiasing)
@@ -144,19 +150,21 @@ contains
         rebuild=s%viewport_frame%isNull().or.s%viewport_frame_scale/=scale
         if(.not.rebuild)rebuild=any(pixels/=[s%viewport_frame%width(),s%viewport_frame%height()])
         if(rebuild)then
+            if(paint_resize_preview(painter,s,w,h))return
             call s%viewport_frame%delete()
             s%viewport_frame=QImage(pixels(1),pixels(2))
             call s%viewport_frame%fill(QColor(12,20,30))
             s%viewport_frame_scale=scale
         end if
 
+        call request_display_refinement(s)
         if(rebuild.or.s%surface%boolProperty('studioSceneNeedsPaint'))then
             call system_clock(started,rate)
             if(.not.s%viewport_frame%isNull())frame_painter=QPainter(s%viewport_frame)
             if(frame_painter%isActive())then
                 call frame_painter%scale(scale,scale)
                 call backdrop(frame_painter,w,h,viewport=.true.)
-                call paint_live_viewport(frame_painter,s,w,h)
+                call paint_live_viewport(frame_painter,s,w,h,frame_camera=s%viewport_frame_camera)
                 call frame_painter%end()
                 call s%surface%setProperty('studioSceneNeedsPaint',.false.)
             else
@@ -170,6 +178,50 @@ contains
         end if
         if(.not.s%viewport_frame%isNull())call painter%drawImage(0._dp,0._dp,w,h,s%viewport_frame)
     end subroutine paint_viewport_frame
+
+    subroutine on_viewport_resize(event,data)
+        type(QResizeEvent),intent(in) :: event
+        class(*),intent(inout),optional :: data
+
+        select type(s=>data)
+        type is(studio_t)
+            if(s%interactive_quality.and.s%canvas_gesture%frame_time_ms>=viewport_resize_budget_ms)then
+                call s%viewport_resize_timer%start(viewport_resize_idle_ms)
+            end if
+        end select
+    end subroutine on_viewport_resize
+
+    subroutine on_viewport_resize_settled(data)
+        class(*),intent(inout),optional :: data
+
+        select type(s=>data)
+        type is(studio_t)
+            call s%workspace%update()
+        end select
+    end subroutine on_viewport_resize_settled
+
+    logical function paint_resize_preview(painter,s,w,h) result(painted)
+        type(QPainter),intent(inout) :: painter
+        type(studio_t),intent(in) :: s
+        real(dp),intent(in) :: w,h
+        type(viewport_camera) :: camera
+        real(dp) :: factor,origin(2),extent(2)
+
+        painted=.false.
+        if(.not.s%interactive_quality.or..not.s%viewport_resize_timer%isActive())return
+        if(s%viewport_frame%isNull().or.s%viewport_frame_camera(3)<=0._dp)return
+        if(s%surface%boolProperty('studioSceneNeedsPaint'))return
+        if(.not.prepare_camera(s,camera))return
+        factor=camera%scale/s%viewport_frame_camera(3)
+        origin=camera%screen-factor*s%viewport_frame_camera(:2)
+        extent=factor*real([s%viewport_frame%width(),s%viewport_frame%height()],dp)/s%viewport_frame_scale
+        call painter%save()
+        call backdrop(painter,w,h,viewport=.true.)
+        call painter%setRenderHint(QPainter_SmoothPixmapTransform)
+        call painter%drawImage(origin(1),origin(2),extent(1),extent(2),s%viewport_frame)
+        call painter%restore()
+        painted=.true.
+    end function paint_resize_preview
 
     function parameter_breaks(s,axis) result(breaks)
         type(studio_t),intent(in)::s

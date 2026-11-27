@@ -559,7 +559,8 @@ contains
     logical function viewport_multisampling(s) result(enabled)
         type(studio_t),intent(in) :: s
 
-        enabled=.not.(s%viewport_style==viewport_fast_shaded.or.s%dragging.or.s%control_dragging)
+        enabled=.not.(s%viewport_style==viewport_fast_shaded.or.s%control_dragging.or. &
+            (s%dragging.and.s%canvas_gesture%area_count==0))
         if(enabled.and.s%interactive_quality)enabled=.not.viewport_zoom_active(s)
     end function viewport_multisampling
 
