@@ -86,7 +86,7 @@ module forcad_nurbs_volume
         refine_control_net, get_array, spline_connectivity, spline_span_plan, spline_element, bezier_element_data, repelem, &
         unique, rotate_points, transform_geometry, export_vtk_legacy, valid_knot_vector, &
         knot_start, knot_end, knot_tolerance, active_knots, active_span_count, active_span, infer_knot_shape, &
-        show_pyvista_singlepatch, map_parameter, periodic_topology, &
+        map_parameter, periodic_topology, &
         query_parameter_axis, valid_weights, nonuniform_weights, normalize_rational_basis, &
         unpack_refinement_controls, slice_control_net, isoparametric_grid, restrict_control_net, reparameterize_knots, &
         reorient_patch, map_parameter_values, nearest_sample_index, nearest_spline_point
@@ -251,7 +251,6 @@ module forcad_nurbs_volume
         procedure :: rotate_Xg             !!> Rotate cached geometry points in three-dimensional physical space.
         procedure :: translate_Xc          !!> Translate the control lattice by a physical-space vector.
         procedure :: translate_Xg          !!> Translate cached geometry points by a physical-space vector.
-        procedure :: show                  !!> Display previously exported representations with PyVista.
         procedure :: nearest_point         !!> Select the nearest cached geometry sample.
         procedure :: nearest_point2        !!> Minimize squared distance with bounded Newton iterations and backtracking.
         procedure :: ansatz                !!> Evaluate element-local physical basis data and differential volume.
@@ -3495,37 +3494,6 @@ contains
         do concurrent (i = 1:this%ng(1)*this%ng(2)*this%ng(3), d = 1:size(this%Xg,2))
             this%Xg(i,d) = this%Xg(i,d) + vec(d)
         end do
-    end subroutine
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    !> Display previously exported volume representations with PyVista.
-    !!
-    !! The filenames are consumed by the optional Python viewer; this procedure
-    !! does not export them. Scalar `Xg` point fields and available colormaps
-    !! are selected in the viewer. Defining `NOSHOW_PYVISTA` makes the
-    !! operation a no-op.
-    impure subroutine show(this, vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg)
-        class(nurbs_volume), intent(inout) :: this
-        character(len=*), intent(in) :: vtkfile_Xc
-            !! Existing control-geometry VTK path.
-        character(len=*), intent(in) :: vtkfile_Xg
-            !! Existing sampled-geometry VTK path containing optional point fields.
-        character(len=*), intent(in), optional :: vtkfile_Xth_in_Xg
-            !! Optional existing parameter-grid VTK path.
-
-        if (.not. this%err%ok) return
-
-#ifndef NOSHOW_PYVISTA
-        call show_pyvista_singlepatch(&
-            vtkfile_Xc        = vtkfile_Xc,&
-            vtkfile_Xg        = vtkfile_Xg,&
-            vtkfile_Xth_in_Xg = vtkfile_Xth_in_Xg,&
-            rank_name         = "volume")
-#endif
     end subroutine
     !===============================================================================
 

@@ -35,9 +35,6 @@ program example_twist_taper
    call sh%export_Xg("vtk/example_twist_taper_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/example_twist_taper_Xth_in_Xg.vtk", res=30)
 
-   ! Show the NURBS volume
-   call sh%show("vtk/example_twist_taper_Xc.vtk","vtk/example_twist_taper_Xg.vtk", "vtk/example_twist_taper_Xth_in_Xg.vtk")
-
 contains
 
    !===============================================================================

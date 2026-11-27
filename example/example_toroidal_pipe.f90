@@ -54,9 +54,6 @@ program example_toroidal_pipe
    call sh%export_Xg("vtk/example_toroidal_pipe_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/example_toroidal_pipe_Xth.vtk", res=24)
 
-   ! Show the resulting VTK files
-   call sh%show("vtk/example_toroidal_pipe_Xc.vtk","vtk/example_toroidal_pipe_Xg.vtk","vtk/example_toroidal_pipe_Xth.vtk")
-
 contains
 
    !===============================================================================

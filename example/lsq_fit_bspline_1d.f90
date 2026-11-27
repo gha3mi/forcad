@@ -77,6 +77,5 @@ program lsq_fit_bspline_1d
    ! Export results
    call bsp%export_Xc("vtk/lsq_fit_bspline_1d_Xc.vtk")
    call bsp%export_Xg("vtk/lsq_fit_bspline_1d_Xg.vtk")
-   call bsp%show("vtk/lsq_fit_bspline_1d_Xc.vtk", "vtk/lsq_fit_bspline_1d_Xg.vtk")
 
 end program

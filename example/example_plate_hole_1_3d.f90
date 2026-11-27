@@ -28,8 +28,6 @@ program example_plate_hole_1_3d
    call plate_hole%export_Xg("vtk/plate_hole_1_3d_Xg.vtk")
    call plate_hole%export_Xth_in_Xg("vtk/plate_hole_1_3d_Xth.vtk")
 
-   call plate_hole%show("vtk/plate_hole_1_3d_Xc.vtk","vtk/plate_hole_1_3d_Xg.vtk","vtk/plate_hole_1_3d_Xth.vtk")
-
 contains
 
    !===============================================================================

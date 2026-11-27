@@ -26,8 +26,6 @@ program example_plate_hole_4_2d
    call plate_hole%export_Xg("vtk/plate_hole_4_2d_Xg.vtk")
    call plate_hole%export_Xth_in_Xg("vtk/plate_hole_4_2d_Xth.vtk")
 
-   call plate_hole%show("vtk/plate_hole_4_2d_Xc.vtk","vtk/plate_hole_4_2d_Xg.vtk","vtk/plate_hole_4_2d_Xth.vtk")
-
 contains
 
    !===============================================================================

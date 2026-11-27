@@ -45,9 +45,6 @@ program example_bend_pipe
    call sh%export_Xg("vtk/bend_pipe_pipe90_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe90_Xth.vtk")
 
-   ! Show the NURBS volume
-   call sh%show("vtk/bend_pipe_pipe90_Xc.vtk", "vtk/bend_pipe_pipe90_Xg.vtk", "vtk/bend_pipe_pipe90_Xth.vtk")
-
    !===============================================================================
    ! Apply bending with angle 270°
 
@@ -65,9 +62,6 @@ program example_bend_pipe
    call sh%export_Xg("vtk/bend_pipe_pipe270_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe270_Xth.vtk")
 
-   ! Show the NURBS volume
-   call sh%show("vtk/bend_pipe_pipe270_Xc.vtk", "vtk/bend_pipe_pipe270_Xg.vtk", "vtk/bend_pipe_pipe270_Xth.vtk")
-
    !===============================================================================
    ! Apply bending with angle 360°
 
@@ -84,9 +78,6 @@ program example_bend_pipe
    call sh%export_Xc("vtk/bend_pipe_pipe360_Xc.vtk")
    call sh%export_Xg("vtk/bend_pipe_pipe360_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/bend_pipe_pipe360_Xth.vtk")
-
-   ! Show the NURBS volume
-   call sh%show("vtk/bend_pipe_pipe360_Xc.vtk", "vtk/bend_pipe_pipe360_Xg.vtk", "vtk/bend_pipe_pipe360_Xth.vtk")
 
 contains
 

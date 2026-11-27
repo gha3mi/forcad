@@ -89,6 +89,5 @@ program lsq_fit_bspline_2d
    call bsp%export_Xc("vtk/lsq_fit_bspline_2d_Xc.vtk")
    call bsp%export_Xg("vtk/lsq_fit_bspline_2d_Xg.vtk")
    call bsp%export_Xth_in_Xg("vtk/lsq_fit_bspline_2d_Xth.vtk", res=20)
-   call bsp%show("vtk/lsq_fit_bspline_2d_Xc.vtk", "vtk/lsq_fit_bspline_2d_Xg.vtk", "vtk/lsq_fit_bspline_2d_Xth.vtk")
 
 end program

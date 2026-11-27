@@ -19,7 +19,6 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 - [Installation](#installation)
   - [Using Pixi](#using-pixi)
   - [Compiler environments](#compiler-environments)
-  - [Install PyVista (Optional)](#install-pyvista-optional)
   - [Using fpm](#using-fpm)
     - [Running Examples with fpm](#running-examples-with-fpm)
     - [Using ForCAD as a fpm Dependency](#using-forcad-as-a-fpm-dependency)
@@ -47,7 +46,6 @@ ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curv
 - Export of NURBS curves and surfaces to IGES format (volumes currently not supported).
 - Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
 - Rotate and translate NURBS objects.
-- Visualization using provided python PyVista scripts.
 - Least squares fitting for NURBS curves, surfaces and volumes.
 - Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.
 
@@ -111,16 +109,6 @@ Pixi provisions the compiler and tools for each environment. The `nvhpc`
 environment uses the compiler from the NVIDIA HPC SDK and installs fpm.
 Compiler flags for Debug and Release live in `fpm.toml`.
 
-### Install PyVista (Optional)
-
-To install PyVista, run the following command:
-
-```shell
-pip install pyvista
-```
-
-By default PyVista visualization is enabled. To disable it, define the preprocessor flag `NOSHOW_PYVISTA` in the `fpm.toml` file or pass it as a compiler flag.
-
 ### Using fpm
 
 #### Running Examples with fpm
@@ -128,7 +116,7 @@ By default PyVista visualization is enabled. To disable it, define the preproces
 ```shell
 fpm run --example <file name excluding the .f90 extension> --compiler gfortran --profile release --flag "-ftree-parallelize-loops=8 -march=native"
 ```
-After executing the examples, `.vtk` files will be generated in the `vtk` directory. To visualize these files, a `show()` method is provided which utilizes PyVista. Alternatively, other visualization tools like ParaView can also be used.
+Examples that export VTK write their files to the `vtk` directory. Open those files in ParaView or another VTK viewer.
 
 
 #### Using ForCAD as a fpm Dependency
@@ -270,7 +258,5 @@ If you use ForCAD in your research, please cite it as follows:
 - Piegl, L., & Tiller, W. (1995). The NURBS Book. In Monographs in Visual Communications. Springer Berlin Heidelberg. [https://doi.org/10.1007/978-3-642-97385-7](https://doi.org/10.1007/978-3-642-97385-7)
 
 - An Introduction to NURBS. (2001). Elsevier. [https://doi.org/10.1016/b978-1-55860-669-2.x5000-3](https://doi.org/10.1016/b978-1-55860-669-2.x5000-3)
-
-- Sullivan et al., (2019). PyVista: 3D plotting and mesh analysis through a streamlined interface for the Visualization Toolkit (VTK). Journal of Open Source Software, 4(37), 1450, https://doi.org/10.21105/joss.01450
 
 - Ahrens, James, Geveci, Berk, Law, Charles, ParaView: An End-User Tool for Large Data Visualization, Visualization Handbook, Elsevier, 2005, ISBN-13: 9780123875822

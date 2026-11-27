@@ -47,9 +47,6 @@ program example_helix_pipe
    call sh%export_Xg("vtk/helix_pipe_Xg.vtk")
    call sh%export_Xth_in_Xg("vtk/helix_pipe_Xth.vtk", res=20)
 
-   ! Show the NURBS volume
-   call sh%show("vtk/helix_pipe_Xc.vtk","vtk/helix_pipe_Xg.vtk","vtk/helix_pipe_Xth.vtk")
-
 contains
 
    !===============================================================================

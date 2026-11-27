@@ -57,14 +57,6 @@ program example_nurbs_surface
     call nurbs%export_Xth_in_Xg('vtk/demo_surface_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry, geometry and parameters using PyVista
-    call nurbs%show('vtk/demo_surface_Xc.vtk', 'vtk/demo_surface_Xg.vtk', 'vtk/demo_surface_Xth_in_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 

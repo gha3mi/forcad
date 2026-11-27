@@ -54,14 +54,6 @@ program example1_curve
     call nurbs%export_iges('iges/nurbs_curve.iges')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_curve_Xc.vtk','vtk/nurbs_curve_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Refinements
     !-----------------------------------------------------------------------------
 
@@ -108,14 +100,6 @@ program example1_curve
     call nurbs%export_iges('iges/nurbs_curve2.iges')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_curve_Xc2.vtk','vtk/nurbs_curve_Xg2.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Transformations
     !-----------------------------------------------------------------------------
 
@@ -142,14 +126,6 @@ program example1_curve
 
     !> Export the transformed NURBS curve to an IGES file
     call nurbs%export_iges('iges/nurbs_curve3.iges')
-
-    !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_curve_Xc3.vtk','vtk/nurbs_curve_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

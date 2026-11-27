@@ -53,14 +53,6 @@ program example3_volume
     !> Not supported for volumes.
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_volume_Xc.vtk','vtk/nurbs_volume_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Refinements
     !-----------------------------------------------------------------------------
 
@@ -120,14 +112,6 @@ program example3_volume
     !> Not supported for volumes.
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_volume_Xc2.vtk','vtk/nurbs_volume_Xg2.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Transformations
     !-----------------------------------------------------------------------------
 
@@ -154,14 +138,6 @@ program example3_volume
 
     !> Export the NURBS volume to an IGES file
     !> Not supported for volumes.
-
-    !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_volume_Xc3.vtk','vtk/nurbs_volume_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
     ! Extract faces

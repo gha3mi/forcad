@@ -95,7 +95,7 @@ module forcad_nurbs_curve
         geometry_derivative, coarsen_control_lines, reduce_control_lines, refine_control_net, get_array, &
         spline_connectivity, spline_span_plan, bezier_element_data, repelem, unique, rotate_points, transform_geometry, &
         gauss_leg, export_vtk_legacy, valid_knot_vector, knot_start, knot_end, active_knots, &
-        active_span_count, show_pyvista_singlepatch, tensor_basis_derivative_at, &
+        active_span_count, tensor_basis_derivative_at, &
         basis_bspline_der_all_active, tensor_basis_derivatives2_local, map_parameter, periodic_topology, valid_weights, &
         nonuniform_weights, query_parameter_axis, normalize_rational_basis, restrict_control_net, map_parameter_values, &
         reparameterize_knots, reorient_patch, nearest_spline_point, nearest_sample_index
@@ -253,7 +253,6 @@ module forcad_nurbs_curve
         procedure :: rotate_Xg             !!> Rotate cached geometry points in three-dimensional embedding space.
         procedure :: translate_Xc          !!> Translate control points by a physical-space vector.
         procedure :: translate_Xg          !!> Translate cached geometry points by a physical-space vector.
-        procedure :: show                  !!> Display previously exported representations with PyVista.
         procedure :: nearest_point         !!> Select the nearest cached geometry sample.
         procedure :: nearest_point2        !!> Compute a bounded continuous nearest-point candidate with optional warm start.
         procedure :: ansatz                !!> Evaluate element-local physical basis data and differential length.
@@ -3347,36 +3346,6 @@ contains
         do concurrent (i = 1:this%ng, d = 1:size(this%Xg,2))
             this%Xg(i,d) = this%Xg(i,d) + vec(d)
         end do
-    end subroutine
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    !> Display previously exported curve representations with PyVista.
-    !!
-    !! The viewer discovers scalar point fields stored in the sampled `Xg`
-    !! file and exposes field and colormap selectors in its window. This
-    !! procedure never exports files.
-    impure subroutine show(this, vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg)
-        class(nurbs_curve), intent(inout) :: this
-        character(len=*), intent(in) :: vtkfile_Xc
-            !! Existing control-geometry VTK path.
-        character(len=*), intent(in) :: vtkfile_Xg
-            !! Existing sampled-geometry VTK path containing optional point fields.
-        character(len=*), intent(in), optional :: vtkfile_Xth_in_Xg
-            !! Optional existing parameter-line VTK path.
-
-        if (.not. this%err%ok) return
-
-#ifndef NOSHOW_PYVISTA
-        call show_pyvista_singlepatch(&
-            vtkfile_Xc        = vtkfile_Xc,&
-            vtkfile_Xg        = vtkfile_Xg,&
-            vtkfile_Xth_in_Xg = vtkfile_Xth_in_Xg,&
-            rank_name         = "curve")
-#endif
     end subroutine
     !===============================================================================
 

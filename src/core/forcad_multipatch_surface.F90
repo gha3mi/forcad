@@ -36,8 +36,7 @@ module forcad_multipatch_surface
     use forcad_multipatch, only: multipatch_dof_map, multipatch_dof_offsets, assemble_design_gradient, interface_quadrature
     use forcad_multipatch, only: multipatch_elements, element_layout, multipatch_element_ids, requested
     use forcad_nurbs_surface, only: nurbs_surface
-    use forcad_utils, only: active_span_count, export_vtk_legacy, &
-        show_pyvista_multipatch
+    use forcad_utils, only: active_span_count, export_vtk_legacy
     use fordebug, only: debug
 
     implicit none
@@ -105,7 +104,6 @@ module forcad_multipatch_surface
         procedure :: rotate_Xg => rotate_Xg_surface !!> Rotate all cached patch geometry points.
         procedure :: translate_Xc => translate_Xc_surface !!> Translate all patch control points.
         procedure :: translate_Xg => translate_Xg_surface !!> Translate all cached patch geometry points.
-        procedure :: show => show_surface !!> Display selected patch representations together with PyVista.
     end type
     !===============================================================================
 
@@ -1027,34 +1025,6 @@ contains
         do i = 1, this%get_npatch()
             call this%patches(i)%translate_Xg(vec)
         end do
-    end subroutine
-    !===============================================================================
-
-
-    !===============================================================================
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
-    !> Display previously exported multipatch VTK files using PyVista.
-    !! File arguments may be exact paths or glob patterns and are never created
-    !! or overwritten by this procedure. Common scalar `Xg` point fields and
-    !! colormaps are selected in the viewer.
-    impure subroutine show_surface(this, vtkfile_Xc, vtkfile_Xg, vtkfile_Xth_in_Xg)
-        class(nurbs_multipatch_surface), intent(inout) :: this
-        character(len=*), intent(in) :: vtkfile_Xc
-            !! Existing control-geometry VTK path or glob pattern.
-        character(len=*), intent(in) :: vtkfile_Xg
-            !! Existing sampled-geometry VTK path or glob pattern.
-        character(len=*), intent(in), optional :: vtkfile_Xth_in_Xg
-            !! Optional existing parameter-grid VTK path or glob pattern.
-
-        if (.not. this%err%ok) return
-#ifndef NOSHOW_PYVISTA
-        call show_pyvista_multipatch(&
-            vtkfile_Xc        = vtkfile_Xc,&
-            vtkfile_Xg        = vtkfile_Xg,&
-            vtkfile_Xth_in_Xg = vtkfile_Xth_in_Xg,&
-            rank_name         = "multipatch surface")
-#endif
     end subroutine
     !===============================================================================
 end module forcad_multipatch_surface

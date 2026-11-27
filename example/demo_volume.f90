@@ -59,14 +59,6 @@ program example_nurbs_volume
     call nurbs%export_Xth_in_Xg('vtk/demo_volume_Xth_in_Xg.vtk')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry, geometry and parameters using PyVista
-    call nurbs%show('vtk/demo_volume_Xc.vtk', 'vtk/demo_volume_Xg.vtk', 'vtk/demo_volume_Xth_in_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 

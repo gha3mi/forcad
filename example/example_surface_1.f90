@@ -53,14 +53,6 @@ program example_surface_1
     call nurbs%export_iges('iges/nurbs_surface.iges')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_surface_Xc.vtk','vtk/nurbs_surface_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Refinements
     !-----------------------------------------------------------------------------
 
@@ -114,14 +106,6 @@ program example_surface_1
     call nurbs%export_iges('iges/nurbs_surface2.iges')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_surface_Xc2.vtk','vtk/nurbs_surface_Xg2.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Transformations
     !-----------------------------------------------------------------------------
 
@@ -148,14 +132,6 @@ program example_surface_1
 
     !> Export the transformed NURBS surface to an IGES file
     call nurbs%export_iges('iges/nurbs_surface3.iges')
-
-    !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call nurbs%show('vtk/nurbs_surface_Xc3.vtk','vtk/nurbs_surface_Xg3.vtk')
 
     !-----------------------------------------------------------------------------
     ! Finalizing

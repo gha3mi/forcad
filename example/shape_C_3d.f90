@@ -26,14 +26,6 @@ program shape_C_3d
     call shape%export_Xg('vtk/shape_C_3d_Xg.vtk')
 
     !-----------------------------------------------------------------------------
-    ! Visualization using PyVista
-    ! Note: PyVista is required for visualization. Install it using `pip install pyvista`
-    !-----------------------------------------------------------------------------
-
-    !> Show the control geometry and geometry using PyVista
-    call shape%show('vtk/shape_C_3d_Xc.vtk','vtk/shape_C_3d_Xg.vtk')
-
-    !-----------------------------------------------------------------------------
     ! Finalizing
     !-----------------------------------------------------------------------------
 

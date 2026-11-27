@@ -82,6 +82,5 @@ program lsq_fit_nurbs_1d
    ! Export results
    call nrb%export_Xc("vtk/lsq_fit_bspline_1d_Xc.vtk")
    call nrb%export_Xg("vtk/lsq_fit_bspline_1d_Xg.vtk")
-   call nrb%show("vtk/lsq_fit_bspline_1d_Xc.vtk", "vtk/lsq_fit_bspline_1d_Xg.vtk")
 
 end program
