@@ -30,8 +30,8 @@ print_help() {
     cat <<EOF
 Usage: ./release.sh [OPTIONS]
 
-Automatically generate a semantic version bump, update CHANGELOG.md and VERSION,
-create a Git tag, and publish a GitHub Release based on recent commits and merged PRs.
+Use the version in VERSION, or propose a bump when it matches the last release.
+Update CHANGELOG.md and VERSION, create a Git tag, and publish a GitHub Release based on recent commits and merged PRs.
 
 Options:
   --dry-run     Preview the version bump and generated changelog.
@@ -104,7 +104,14 @@ if ! gh auth status &>/dev/null; then
 fi
 
 repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
-previous_tag=$(git tag --sort=-v:refname | grep '^v' | head -n1)
+release_version=$(<VERSION)
+release_version=${release_version%$'\r'}
+if [[ ! $release_version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+    echo "VERSION must contain a release number in X.Y.Z format." >&2
+    exit 1
+fi
+
+previous_tag=$(git tag --merged HEAD --sort=-v:refname --list 'v[0-9]*' | sed -n '1p')
 previous_tag=${previous_tag:-v0.0.0}
 echo "📌 Previous tag: $previous_tag"
 
@@ -114,24 +121,30 @@ if [[ -z "$commits" ]]; then
     exit 0
 fi
 
-bump="patch"
-if echo "$commits" | grep -qE "^feat(\(.+\))?!?: "; then bump="minor"; fi
-if echo "$commits" | grep -qE "BREAKING CHANGE|!: "; then bump="major"; fi
+next_tag="v$release_version"
+if [[ "$next_tag" == "$previous_tag" ]]; then
+    bump="patch"
+    if grep -qE "^feat(\(.+\))?!?: " <<<"$commits"; then bump="minor"; fi
+    if grep -qE "BREAKING CHANGE|!: " <<<"$commits"; then bump="major"; fi
 
-IFS=. read -r major minor patch <<<"${previous_tag#v}"
-case "$bump" in
-major)
-    major=$((major + 1))
-    minor=0
-    patch=0
-    ;;
-minor)
-    minor=$((minor + 1))
-    patch=0
-    ;;
-patch) patch=$((patch + 1)) ;;
-esac
-next_tag="v$major.$minor.$patch"
+    IFS=. read -r major minor patch <<<"$release_version"
+    case "$bump" in
+    major)
+        major=$((major + 1))
+        minor=0
+        patch=0
+        ;;
+    minor)
+        minor=$((minor + 1))
+        patch=0
+        ;;
+    patch) patch=$((patch + 1)) ;;
+    esac
+    next_tag="v$major.$minor.$patch"
+elif git show-ref --verify --quiet "refs/tags/$next_tag"; then
+    echo "VERSION selects an existing tag: $next_tag." >&2
+    exit 1
+fi
 echo "🆕 Next version: $next_tag"
 
 echo "🔍 Fetching commits between $previous_tag and HEAD..."
@@ -288,7 +301,19 @@ if [[ "$DRY_RUN" == true ]]; then
     exit 0
 fi
 
-# ✅ STEP 1: Confirm writing CHANGELOG.md
+# The tagged commit must carry the version printed by Studio and the handbook.
+if [[ "v$(git show HEAD:VERSION)" != "$next_tag" ]]; then
+    echo
+    read -rp "📝 Write and commit VERSION as ${next_tag#v}? [y/N] " confirm
+    if [[ "${confirm,,}" != "y" && "${confirm,,}" != "yes" ]]; then
+        echo "Release stopped before writing the changelog or tagging."
+        exit 0
+    fi
+    printf '%s\n' "${next_tag#v}" > VERSION
+    git commit --only -m "chore: update VERSION to $next_tag" -- VERSION
+fi
+
+# Confirm writing CHANGELOG.md
 if [[ -f CHANGELOG.md && $(grep -c "## \[$next_tag\]" CHANGELOG.md) -gt 0 ]]; then
     echo "⚠️ Changelog for $next_tag already exists — skipping update."
 else
@@ -298,25 +323,13 @@ else
     if [[ "$confirm" == "y" || "$confirm" == "yes" ]]; then
         echo -e "$changelog_md\n$(cat CHANGELOG.md 2>/dev/null)" >.CHANGELOG.md && mv .CHANGELOG.md CHANGELOG.md
         git add CHANGELOG.md
-        git commit -m "docs: update CHANGELOG for $next_tag"
+        git commit --only -m "docs: update CHANGELOG for $next_tag" -- CHANGELOG.md
     else
         echo "⏭️ Skipping CHANGELOG.md update."
     fi
 fi
 
-# ✅ STEP 2: Confirm writing VERSION
-echo
-read -rp "📝 Write and commit VERSION file? [y/N] " confirm
-confirm="${confirm,,}"
-if [[ "$confirm" == "y" || "$confirm" == "yes" ]]; then
-    echo "${next_tag#v}" >VERSION
-    git add VERSION
-    git commit -m "chore: update VERSION to ${next_tag}"
-else
-    echo "⏭️ Skipping VERSION file update."
-fi
-
-# ✅ STEP 3: Confirm pushing commits
+# Confirm pushing commits
 if [[ "$LOCAL_ONLY" == false ]]; then
     echo
     read -rp "📤 Push commits to GitHub? [y/N] " confirm
@@ -328,7 +341,7 @@ if [[ "$LOCAL_ONLY" == false ]]; then
     fi
 fi
 
-# ✅ STEP 4: Confirm tagging release
+# Confirm tagging release
 if [[ "$LOCAL_ONLY" == false ]]; then
     echo
     read -rp "🏷️  Create and push Git tag $next_tag? [y/N] " confirm
@@ -347,13 +360,13 @@ if [[ "$LOCAL_ONLY" == false ]]; then
     fi
 fi
 
-# ✅ STEP 5: Confirm creating GitHub Release
+# Confirm creating the GitHub release
 if [[ "$LOCAL_ONLY" == false ]]; then
     echo
     read -rp "🚀 Create GitHub Release $next_tag? [y/N] " confirm
     confirm="${confirm,,}"
     if [[ "$confirm" == "y" || "$confirm" == "yes" ]]; then
-        gh release create "$next_tag" --title "$next_tag" --notes-file <(echo -e "$changelog_release")
+        gh release create "$next_tag" --verify-tag --title "$next_tag" --notes-file <(echo -e "$changelog_release")
         echo "✅ GitHub Release $next_tag created."
     else
         echo "⏭️ Skipping GitHub Release."

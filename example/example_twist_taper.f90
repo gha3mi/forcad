@@ -5,8 +5,7 @@
 !>   Creates a straight hexahedral block (control points `nc = [7,7,9]` over a box of size `L`),
 !>   Copies it to `shape`,
 !>   Applies a z-dependent twist up to \(\alpha_{\max}^\circ =\) `twist_deg` and a linear taper to factor `taper`,
-!>   Exports the resulting NURBS volume to VTK,
-!>   Displays the geometry.
+!>   Exports the resulting NURBS volume to VTK.
 program example_twist_taper
 
    use forcad, only: rk, nurbs_volume

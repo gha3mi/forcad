@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Topology, continuity constraints, and assembly data for volume patches.
 !!
@@ -557,7 +557,7 @@ contains
         call multipatch_dof_map(this%patches,this%connections,this%nconnection,this%cmp_dof_offsets(),active_only,map)
     end function
 
-    !> Quadrature on both trace meshes. See [[forcad_multipatch:interface_quadrature]].
+    !> Quadrature on both trace meshes. See `interface_quadrature`.
     pure subroutine interface_quadrature_volume(this,connection,Xt_a,Xt_b,weight,ngauss,physical,err)
         class(nurbs_multipatch_volume), intent(in) :: this
         integer, intent(in) :: connection
@@ -569,7 +569,7 @@ contains
             connection,Xt_a,Xt_b,weight,ngauss,physical,err)
     end subroutine
 
-    !> Assemble patch-local partials in independent design variables. See [[forcad_multipatch:assemble_design_gradient]].
+    !> Assemble patch-local partials in independent design variables. See `assemble_design_gradient`.
     pure subroutine assemble_sensitivities_volume(this,local_dXc,local_dlogWc,dXc,dlogWc,err,map)
         class(nurbs_multipatch_volume), intent(in) :: this
         real(rk), optional, intent(in) :: local_dXc(:,:),local_dlogWc(:)
@@ -586,7 +586,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Assemble one-based sparse continuity equations for connected faces.
-    !! Call `is_valid` to verify the geometry. See [[forcad_multipatch:constraint_rows]]
+    !! Call `is_valid` to verify the geometry. See `constraint_rows`
     !! for the field, solver-numbering and connection-filter options.
     pure subroutine cmp_dof_constraint_volume(this, rowptr, col, val, geometric, field, err, active_only)
         class(nurbs_multipatch_volume), intent(in) :: this
@@ -663,7 +663,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Validate the stored volume patches, their oriented interfaces and homogeneous continuity residuals.
-    !! See [[valid_multipatch]] for the residual test used by geometry sensitivity assembly.
+    !! See `valid_multipatch` for the residual test used by geometry sensitivity assembly.
     pure function is_valid_volume(this, rtol, atol) result(ok)
         class(nurbs_multipatch_volume), intent(in) :: this
         real(rk), intent(in), optional :: rtol

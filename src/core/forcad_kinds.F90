@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Floating-point kind policy for the complete ForCAD public API.
 !!

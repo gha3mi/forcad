@@ -1,5 +1,5 @@
 !===============================================================================
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Tensor-product construction and interpolation operations for NURBS geometry.
 !!
@@ -40,7 +40,7 @@
 !!   coordinates. Section degree, control-net shape, coordinate dimension, and
 !!   inherited wrapping mode must agree. Knot arrays must have equal shape and
 !!   agree within the precision-scaled tolerance documented by
-!!   [[same_knot_vector]]; the first section's knots are retained.
+!!   `same_knot_vector`; the first section's knots are retained.
 !!
 !! For a loft through homogeneous section controls \(\mathbf H_i^{(\ell)}\)
 !! at parameters \(t_\ell\), the new controls satisfy
@@ -716,7 +716,7 @@ contains
     !> license: BSD 3-Clause
     !> Interpolate compatible NURBS curve sections by a NURBS surface.
     !! Section knot vectors, degrees, control counts and coordinate dimensions
-    !! must match, with knot values compared by [[same_knot_vector]]. Parameters
+    !! must match, with knot values compared by `same_knot_vector`. Parameters
     !! must be finite and strictly increasing. The default loft degree is
     !! `min(3,number_of_sections-1)`. Interpolation is performed on homogeneous
     !! coordinates. With identical section knots, rational section geometry is
@@ -730,7 +730,7 @@ contains
     !! Uses the averaged open knot vector and global interpolation construction
     !! of Piegl and Tiller, *The NURBS Book*, 2nd ed., Section 9.2.1. The result
     !! is rejected if the solve residual exceeds the criterion documented by
-    !! [[interpolate_loft]] or any interpolated weight is nonpositive/nonfinite.
+    !! `interpolate_loft` or any interpolated weight is nonpositive/nonfinite.
     pure function loft_curves(sections, parameters, degree) result(surface)
         type(nurbs_curve), intent(in), contiguous :: sections(:)
             !! Two or more valid and mutually compatible curves.
@@ -907,7 +907,7 @@ contains
     !> Interpolate compatible NURBS surface sections by a NURBS volume.
     !! Section knot vectors, degrees, control counts and coordinate dimensions
     !! must match, with directional knot values compared by
-    !! [[same_knot_vector]]. Parameters must be finite and strictly increasing.
+    !! `same_knot_vector`. Parameters must be finite and strictly increasing.
     !! The default loft degree is `min(3,number_of_sections-1)`.
     !! Interpolation is performed independently for every homogeneous
     !! control-net coordinate, including the weight. Identical section knots
@@ -921,7 +921,7 @@ contains
     !! Uses the averaged open knot vector and global interpolation construction
     !! of Piegl and Tiller, *The NURBS Book*, 2nd ed., Section 9.2.1. The result
     !! is rejected if the solve residual exceeds the criterion documented by
-    !! [[interpolate_loft]] or any interpolated weight is nonpositive/nonfinite.
+    !! `interpolate_loft` or any interpolated weight is nonpositive/nonfinite.
     pure function loft_surfaces(sections, parameters, degree) result(volume)
         type(nurbs_surface), intent(in), contiguous :: sections(:)
             !! Two or more valid and mutually compatible surfaces.

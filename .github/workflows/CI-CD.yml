@@ -3,10 +3,10 @@ name: ForCAD CI
 on:
   push:
     branches: [main, dev]
-    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
+    paths-ignore: [README.md, CHANGELOG.md, LICENSE]
   pull_request:
     branches: [main, dev]
-    paths-ignore: ['README.md','CHANGELOG.md','VERSION','LICENSE']
+    paths-ignore: [README.md, CHANGELOG.md, LICENSE]
   workflow_dispatch:
 
 permissions:
@@ -14,21 +14,20 @@ permissions:
 
 jobs:
   test_fpm:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Core · ${{ matrix.os }} · ${{ matrix.environment }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - {os: ubuntu-latest,   environment: default}
-          - {os: ubuntu-latest,   environment: intel}
-          - {os: ubuntu-latest,   environment: flang}
-          - {os: windows-latest,  environment: default}
-          - {os: windows-latest,  environment: intel}
-          - {os: windows-latest,  environment: flang}
-          - {os: macos-latest,    environment: default}
-          - {os: macos-15-intel,  environment: default}
+          - {os: ubuntu-latest, environment: gnu}
+          - {os: ubuntu-latest, environment: intel}
+          - {os: ubuntu-latest, environment: flang}
+          - {os: macos-latest, environment: gnu}
+          - {os: macos-15-intel, environment: gnu}
+          - {os: windows-latest, environment: gnu}
+          - {os: windows-latest, environment: intel}
+          - {os: windows-latest, environment: flang}
 
     steps:
       - uses: actions/checkout@v6
@@ -44,7 +43,6 @@ jobs:
         run: pixi run -e ${{ matrix.environment }} test --profile release
 
   test_studio:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Studio · ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -71,7 +69,7 @@ jobs:
         run: pixi run build-studio debug
 
   doc_ford:
-    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]') }}
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     name: Generate FORD Documentation
     runs-on: ubuntu-latest
     permissions:
@@ -81,15 +79,20 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.11.3
         with:
           environments: docs
-      - run: pixi run docs
+      - name: Build and verify FORD documentation
+        run: |
+          pixi run docs
+          test -s docs/ford/index.html
+          test -s docs/ford/page/index.html
+          test -s docs/ford/type/nurbs_curve.html
+          test -s docs/ford/pagefind/pagefind.js
       - uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           branch: gh-pages
-          folder: doc
+          folder: docs/ford
           commit-message: Deploy FORD docs
 
   linter_fortitude:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Run Fortitude Linter
     runs-on: ubuntu-latest
     steps:

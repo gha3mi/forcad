@@ -10,6 +10,7 @@ Contributions to ForCAD are welcome and thanks for taking the time to help impro
     - [Suggesting Enhancements](#suggesting-enhancements)
     - [Implementing Changes and Adding Features](#implementing-changes-and-adding-features)
     - [Sharing Examples](#sharing-examples)
+    - [Release version](#release-version)
   - [Styleguides](#styleguides)
     - [Code Style](#code-style)
     - [Documentation](#documentation)
@@ -39,6 +40,10 @@ If you'd like to add new features, fix bugs, or enhance existing functionality, 
 
 Contribute to ForCAD by submitting a pull request (PR) with examples. Ensure that your examples are documented.
 
+### Release version
+
+The root [VERSION](VERSION) file supplies the package versions, the Studio About dialog, Assistant handshakes, and the documentation footer. To select a release number, edit that file once and rebuild. `bash release.sh --dry-run` previews the release notes. When the file still matches the last release tag, the helper proposes a version based on the intervening commits.
+
 ## Styleguides
 
 ### Code Style
@@ -49,7 +54,14 @@ Contribute to ForCAD by submitting a pull request (PR) with examples. Ensure tha
 
 ### Documentation
 
-- Follow the [FORD documentation styles](https://forddocs.readthedocs.io/en/latest/user_guide/writing_documentation.html) for documentation.
+- Choose the Diátaxis section under `docs/guide/` that matches the reader's goal. Use tutorials for guided learning, how-to guides for tasks, reference for lookup, and explanation for concepts. [Diátaxis](https://diataxis.fr/)
+- Use sentence-case headings, exact Studio labels, runnable code, and expected results. Give screenshots meaningful alt text and keep them in `docs/images/`. [Google developer style guide](https://developers.google.com/style/)
+- Document interfaces exported by `use forcad` in the Fortran source. When a helper needs public visibility between core modules only, keep its access declaration in the existing `#ifndef FORCAD_PUBLIC_DOCS` group. Use LaTeX for mathematical expressions and code formatting for Fortran identifiers. Where applicable, include array shapes, parameter intervals, units, and error behavior. [FORD documentation syntax](https://forddocs.readthedocs.io/en/stable/user_guide/writing_documentation.html)
+- Give each how-to guide one task and an outcome the reader can check. Put it under ForCAD Studio (`how-to/`), `fortran/`, or `assistant/`. Keep runnable public API examples in `fortran/` and link the equivalent Studio steps in both directions. In the comparison reference, use a dash for a Studio action without a direct public API.
+- Capture the relevant control in a clean practice project. Exclude accounts, personal paths, and private chat content. When a model selector is relevant, show an OpenAI model. Keep the visible control labels in the instructions.
+- Add each new guide to its section's `index.md` and link it from a related task. Keep published page paths and heading anchors usable when reorganizing topics.
+- Run the steps or compile the examples you change. Build with `pixi run docs` and open `docs/ford/index.html`. Edit the landing page in `docs/index.md`, layouts in `docs/templates/`, and colors and spacing in `docs/ford.css`.
+- For layout or theme changes, check a guide, a public API page, and search. Try the keyboard, Light and Dark, and a 320-pixel viewport. [WCAG reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html)
 
 ### Git Commit Messages
 

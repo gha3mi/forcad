@@ -1,262 +1,88 @@
-[![GitHub](https://img.shields.io/badge/GitHub-ForCAD-blue.svg?style=social&logo=github)](https://github.com/gha3mi/forcad)
-[![Version](https://img.shields.io/github/v/tag/gha3mi/forcad?label=version&sort=semver)](https://github.com/gha3mi/forcad/releases)
-[![Documentation](https://img.shields.io/badge/ford-Documentation%20-blueviolet.svg)](https://gha3mi.github.io/forcad/)
-[![ForCAD CI](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml/badge.svg?branch=main)](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml)
-[![codecov](https://codecov.io/gh/gha3mi/forcad/branch/main/graph/badge.svg?token=N69NG6C86I)](https://codecov.io/gh/gha3mi/forcad)
-[![License](https://img.shields.io/github/license/gha3mi/forcad?color=green)](https://github.com/gha3mi/forcad/blob/main/LICENSE)
+# ForCAD
+
+[![Latest release](https://img.shields.io/github/v/release/gha3mi/forcad)](https://github.com/gha3mi/forcad/releases/latest)
+[![CI](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml/badge.svg)](https://github.com/gha3mi/forcad/actions/workflows/CI-CD.yml)
+[![Documentation](https://img.shields.io/badge/docs-FORD-336d91)](https://gha3mi.github.io/forcad/)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
 [![DOI](https://zenodo.org/badge/778032800.svg)](https://zenodo.org/doi/10.5281/zenodo.10904447)
 
-![](logo/logo.png)
+ForCAD is a Fortran library for NURBS curves, surfaces, and volumes. Build geometry in code or edit it in **ForCAD Studio**, then use the same model for structured meshing and isogeometric analysis (IGA).
 
-**ForCAD**: A parallel Fortran library for geometric modeling using NURBS (Non-Uniform Rational B-Splines).
+[Start ForCAD Studio](#start-forcad-studio) · [Use the Fortran API](#use-the-fortran-api) · [Browse examples](docs/guide/reference/examples.md) · [Read the handbook](https://gha3mi.github.io/forcad/)
 
-ForCAD supports **B-Spline**, **NURBS**, **Bezier** and **Rational Bezier** curves, surfaces and volumes.
+[<img src="docs/images/chess-viewport.webp" alt="Chessboard and pieces modeled with multipatch volumes" width="48%">](docs/images/studio-chess.webp)
+[<img src="docs/images/head-viewport.webp" alt="Two heads modeled with freeform surfaces" width="48%">](docs/images/studio-head.webp)
 
-## Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Main Features](#main-features)
-- [Examples](#examples)
-- [Installation](#installation)
-  - [Using Pixi](#using-pixi)
-  - [Compiler environments](#compiler-environments)
-  - [Using fpm](#using-fpm)
-    - [Running Examples with fpm](#running-examples-with-fpm)
-    - [Using ForCAD as a fpm Dependency](#using-forcad-as-a-fpm-dependency)
-- [Configuration](#configuration)
-  - [Do Concurrent Support](#do-concurrent-support)
-  - [Precision Configuration](#precision-configuration)
-- [Dependencies](#dependencies)
-- [CI Status](#ci-status)
-- [API documentation](#api-documentation)
-- [Contributing](#contributing)
-- [Citation](#citation)
-- [References](#references)
+*Chess and Head, two editable projects included with ForCAD Studio.*
 
+## Features
 
-## Main Features
+- **Geometry construction.** Start from primitives or define Bézier, B-spline, and NURBS patches, including periodic curves. Extrude, revolve, sweep, loft, and transform them.
+- **Patch editing.** Edit controls and weights, insert or remove knots, and elevate or reduce degree. Refine or split patches and extract parameter ranges, faces, and sections.
+- **Multipatch assemblies.** Connect patches, check interface orientation and continuity, and edit shared controls across a join.
+- **Structured meshing.** Generate line, quadrilateral, or hexahedral cells by count or target size, with conforming hex meshes across matching volume faces.
+- **Fitting and measurement.** Fit patches to point data by least squares, find closest points and their parameters, and measure length, area, or volume.
+- **Sensitivity and IGA.** Differentiate geometric measures with respect to control positions and weights. Assemble IGA systems with spline basis functions, physical derivatives, quadrature, and shared degrees of freedom.
+- **Interactive modeling.** Explore parameter domains, basis plots, and mesh cells. Undo or redo edits and review changes proposed by the optional [AI Assistant](docs/guide/assistant/index.md).
+- **File exchange.** Save FCAD projects, import and export IGES curves and surfaces, write VTK grids, and export a model as a standalone Fortran program.
 
-- Parallelized using `do concurrent`.
-- Create NURBS objects by specifying control points, weights and knots.
-- Refine NURBS objects by inserting or removing knots and elevating degree.
-- Compute analytical basis functions and their first and second derivatives for NURBS and B-Spline objects.
-- Generation of IGA-compatible element connectivity and shape functions.
-- Obtain visualized elements connectivity and coordinates for geometry and control geometry.
-- Mesh insertion into a NURBS object.
-- Export NURBS objects to VTK files for visualization.
-- Export of NURBS curves and surfaces to IGES format (volumes currently not supported).
-- Includes predefined NURBS shapes: Circle, Half Circle, Tetragon, Hexahedron, 2D Ring, Half 2D Ring, 3D Ring, Half 3D Ring, C-shapes.
-- Rotate and translate NURBS objects.
-- Least squares fitting for NURBS curves, surfaces and volumes.
-- Numerical integration of: NURBS curve length, NURBS surface area and NURBS volume.
+## Quick start
 
-## Examples
+### Start ForCAD Studio
 
-Below are some sample outputs from the `examples` directory:
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/3.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/4.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/5.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/6.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe90.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe270.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_bend_pipe360.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_helix_pipe.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_twist_taper.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_toroidal_pipe.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_4_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_1_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/example_plate_hole_2_2d.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm1.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm2.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/ppm/example_ppm3.png" width="30%">
-
-<img src="https://github.com/gha3mi/forcad/raw/main/vtk/lsq_fit_bspline_3d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_2d.png" width="30%"> <img src="https://github.com/gha3mi/forcad/raw/main/vtk/poisson_iga_solver_3d.png" width="30%">
-
-## Installation
-
-### Using Pixi
-
-Install [Pixi](https://pixi.sh/) and run these commands from the checkout.
+Install Git and [Pixi](https://pixi.sh/), then run the commands below. The first launch builds Studio. [Platform prerequisites](docs/guide/how-to/install.md)
 
 ```sh
-pixi run build --profile release
-pixi run test --profile debug
+git clone --branch dev https://github.com/gha3mi/forcad.git
+cd forcad
 pixi run start
 ```
 
-Pixi installs fpm 0.14 and GNU Fortran by default. The core builds without Qt.
-ForCAD Studio uses GNU Fortran and qt-fortran. Pixi copies
-`fpm-studio.toml` into `build/studio/` before building. Run
-`pixi run build-studio debug` to build a Debug executable in
-`build/studio-install/bin`. The `start` task builds and launches Release.
+From the home screen, open **Chess** to [inspect a multipatch model](docs/guide/tutorials/explore-studio.md).
 
-macOS builds need the Xcode command-line tools. On Windows, ifx, Flang and
-ForCAD Studio need Visual Studio Build Tools with the C++ workload.
+### Use the Fortran API
 
-### Compiler environments
-
-Choose the compiler with `-e` and the build profile with `--profile`.
-
-| Environment | Compiler | Platform |
-| --- | --- | --- |
-| `default` | GNU Fortran | Linux, macOS (Apple Silicon and Intel), Windows |
-| `intel` | Intel ifx | Linux, Windows |
-| `flang` | LLVM Flang | Linux, Windows |
-| `nvhpc` | NVIDIA nvfortran | Linux, with NVIDIA HPC SDK already on the path |
-
-```sh
-pixi run -e intel build --profile release
-pixi run -e flang test --profile debug
-pixi run lint
-```
-
-Pixi provisions the compiler and tools for each environment. The `nvhpc`
-environment uses the compiler from the NVIDIA HPC SDK and installs fpm.
-Compiler flags for Debug and Release live in `fpm.toml`.
-
-### Using fpm
-
-#### Running Examples with fpm
-
-```shell
-fpm run --example <file name excluding the .f90 extension> --compiler gfortran --profile release --flag "-ftree-parallelize-loops=8 -march=native"
-```
-Examples that export VTK write their files to the `vtk` directory. Open those files in ParaView or another VTK viewer.
-
-
-#### Using ForCAD as a fpm Dependency
-
-If you want to use ForCAD as a dependency in your own fpm project,
-you can easily include it by adding the following line to your `fpm.toml` file:
+Add ForCAD to your fpm project's `fpm.toml`.
 
 ```toml
 [dependencies]
-forcad = {git="https://github.com/gha3mi/forcad.git"}
+forcad = { git = "https://github.com/gha3mi/forcad.git", branch = "dev" }
 ```
 
-## Configuration
+Save this program as `app/main.f90` and run `fpm run`. A tube with radii 1 and 2 and length 4 has a volume of 12π cubic units. The program prints `37.6991`.
 
-### Do Concurrent Support
+```fortran
+program measure_tube
+    use forcad, only: nurbs_volume, rk
+    implicit none
+    type(nurbs_volume) :: tube
+    real(rk) :: volume
 
-Compiler flags for enabling `do concurrent` parallelism:
-
-| Compiler      | Flag(s)                                             |
-| ------------- | --------------------------------------------------- |
-| `gfortran`    | `-fopenmp -ftree-parallelize-loops=n`               |
-| `ifx`         | `-qopenmp -fopenmp-target-do-concurrent`            |
-| `nvfortran`   | `-stdpar=multicore,gpu -Minfo=stdpar,accel`         |
-| `flang(-new)` | `-fopenmp -fdo-concurrent-to-openmp=[host\|device]` |
-| `lfortran`    | ?                                                   |
-
-*flang-new 21.1.0: warning: Mapping `do concurrent` to OpenMP is still experimental.*
-
-Compiler flags can be passed to fpm using the `--flag` option, for example:
-
-```shell
-fpm build --flag "-stdpar=multicore,gpu -Minfo=stdpar,accel"
+    call tube%set_ring(center=[0._rk, 0._rk, 0._rk], &
+                       radius1=1._rk, radius2=2._rk, length=4._rk)
+    if (.not. tube%err%ok) error stop "Could not construct the tube"
+    call tube%cmp_volume(volume, ngauss=[10, 2, 2])
+    if (.not. tube%err%ok) error stop "Could not measure the tube"
+    print '(f8.4)', volume
+end program measure_tube
 ```
 
-Store recurring compiler flags in the profiles in `fpm.toml`.
+### Try isogeometric analysis
 
-### Precision Configuration
-
-The library uses **double precision** (`real64`) by default for all real-valued computations. To change the precision, you can define one of the following preprocessor flags during compilation:
-
-| Preprocessor Flag    | Fortran Kind             | Description               |
-| -------------------- | ------------------------ | ------------------------- |
-| `REAL32`             | `selected_real_kind(6)`  | Single precision          |
-| `REAL64` *(default)* | `selected_real_kind(15)` | Double precision          |
-| `REALXDP`            | `selected_real_kind(18)` | Extended double precision |
-| `REAL128`            | `selected_real_kind(33)` | Quadruple precision       |
-
-**Note**: The examples `example_ppm1.f90`, `example_ppm2.f90` and `example_ppm3.f90` use the `ForColormap` library, which only supports `REAL64` precision.
-
-Example: Building with double precision
-
-```bash
-fpm build --profile release --flag "-DREAL64"
-```
+The [IGA guides](docs/guide/iga/index.md) start with a one-dimensional Poisson problem and extend to [two volumes with a shared face](docs/guide/iga/solve-two-volumes-poisson.md), where you can check both the solution and the flux across the interface.
 
 ## Dependencies
 
-```mermaid
-flowchart LR
-  N1[forcad]
-  N2[forIGES]
-  N3[fordebug]
-  N4[forunittest]
-  N5[forimage]
-  N6[forcolormap]
-  N7[fortime]
-  N8[FACE]
+Pixi manages the build tools. fpm resolves the [core](fpm.toml) and [Studio](fpm-studio.toml) dependencies.
 
-  click N1 href "https://github.com/gha3mi/forcad" "A parallel Fortran library for geometric modeling using NURBS"
-  click N2 href "https://github.com/rweed/forIGES" "Modern Fortran Library for Reading and Writing IGES CAD Files"
-  click N3 href "https://github.com/gha3mi/fordebug" "A Fortran library for handling errors, warnings and info messages with debugging support in pure procedures"
-  click N4 href "https://github.com/gha3mi/forunittest" "A Fortran library for unit testing"
-  click N5 href "https://github.com/gha3mi/forimage" "A Fortran library for processing and editing images and managing colors"
-  click N6 href "https://github.com/vmagnin/forcolormap" "A Fortran colormap library"
-  click N7 href "https://github.com/gha3mi/fortime" "A Fortran library for measuring elapsed time, DATE_AND_TIME time, CPU time, OMP time and MPI time"
-  click N8 href "https://github.com/szaghi/FACE" "Fortran Ansi Colors (and Styles) Environment"
+| Component | Dependencies |
+| --- | --- |
+| Core library | Fortran compiler, [OpenMP](https://www.openmp.org/), [forIGES](https://github.com/rweed/forIGES) for IGES exchange, [fordebug](https://github.com/gha3mi/fordebug) for diagnostics |
+| ForCAD Studio | [Qt 6](https://www.qt.io/), [qt-fortran](https://github.com/jacobwilliams/qt-fortran), a C++ compiler, pkg-config, and Python for the Qt build helper |
+| Optional AI Assistant | Codex CLI, OpenCode CLI, Claude Code CLI, or Ollama. See [agent roles and skills](docs/guide/assistant/roles-and-skills.md). |
+| Tests and examples | [forunittest](https://github.com/gha3mi/forunittest) with [FACE](https://github.com/szaghi/FACE) for test output. Examples use [forimage](https://github.com/gha3mi/forimage), [forcolormap](https://github.com/vmagnin/forcolormap), and [fortime](https://github.com/gha3mi/fortime). fordebug also uses fortime. |
+| Documentation and lint | [FORD](https://forddocs.readthedocs.io/), [Pagefind](https://pagefind.app/), and [Fortitude](https://fortitude.readthedocs.io/) |
 
-  %% core dependencies
-  N1 --> N2
-  N1 --> N3
-  N3 --> N7
-  N7 --> N8
+From the checkout, `pixi run -e gnu test` runs the core tests and `pixi run docs` builds the handbook. [Compiler environments](docs/guide/reference/build.md) · [Contributing](CONTRIBUTING.md) · [Report an issue](https://github.com/gha3mi/forcad/issues)
 
-  %% example dependency (dashed line)
-  N1 -.->|example| N6
-  N6 --> N5
-
-  %% test dependency (dotted line)
-  N1 ...->|test| N4
-  N4 --> N8
-```
-Graph generated with [fpm-deps](https://github.com/ivan-pi/fpm-deps), modified to include example and test dependencies.
-
-## CI Status
-
-CI runs the core tests with fpm in Debug and Release and checks that Studio
-renders Home and the bundled project views.
-
-| Platform | Core compilers | Studio smoke check |
-| --- | --- | --- |
-| Linux | GNU Fortran, Intel ifx, LLVM Flang | GNU Fortran |
-| macOS (Apple Silicon and Intel) | GNU Fortran | GNU Fortran |
-| Windows | GNU Fortran, Intel ifx, LLVM Flang | GNU Fortran |
-
-## API documentation
-
-The most up-to-date API documentation for the master branch is available
-[here](https://gha3mi.github.io/forcad/).
-To generate the API documentation for ForCAD using
-[ford](https://github.com/Fortran-FOSS-Programmers/ford) run the following
-command:
-
-```shell
-pixi run docs
-```
-
-## Contributing
-
-To contribute to ForCAD, please review the [CONTRIBUTING.md](https://github.com/gha3mi/forcad/blob/main/CONTRIBUTING.md).
-
-## Citation
-
-If you use ForCAD in your research, please cite it as follows:
-
-
-```bibtex
-@software{seyed_ali_ghasemi_2025_10904447,
-  author       = {Ghasemi, S. A.},
-  title        = {gha3mi/ForCAD},
-  year         = {2025},
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.10904447},
-  url          = {https://doi.org/10.5281/zenodo.10904447}
-}
-```
-
-## References
-
-- Piegl, L., & Tiller, W. (1995). The NURBS Book. In Monographs in Visual Communications. Springer Berlin Heidelberg. [https://doi.org/10.1007/978-3-642-97385-7](https://doi.org/10.1007/978-3-642-97385-7)
-
-- An Introduction to NURBS. (2001). Elsevier. [https://doi.org/10.1016/b978-1-55860-669-2.x5000-3](https://doi.org/10.1016/b978-1-55860-669-2.x5000-3)
-
-- Ahrens, James, Geveci, Berk, Law, Charles, ParaView: An End-User Tool for Large Data Visualization, Visualization Handbook, Elsevier, 2005, ISBN-13: 9780123875822
+Copyright © 2026 Seyed Ali Ghasemi. [BSD 3-Clause License](LICENSE)

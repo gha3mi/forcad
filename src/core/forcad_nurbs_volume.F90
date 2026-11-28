@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Trivariate tensor-product B-spline and NURBS volumes.
 !!
@@ -96,9 +96,14 @@ module forcad_nurbs_volume
     implicit none
 
     private
-    public nurbs_volume, compute_Tgc, compute_dTgc, volume_geometry_derivative
+    public nurbs_volume
+#ifndef FORCAD_PUBLIC_DOCS
+    public compute_Tgc, compute_dTgc, volume_geometry_derivative
+#endif
 
     !===============================================================================
+    ! author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     !> Mutable trivariate B-spline or NURBS volume mapping.
     !!
     !! Initialize the object with [[nurbs_volume:set]]. Directional arrays use
@@ -132,8 +137,6 @@ module forcad_nurbs_volume
     !!
     !! @note Getter generics return allocatable copies of object-owned arrays.
     !! @endnote
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
     type nurbs_volume
         real(rk), allocatable, private :: Xc(:,:)  !! Flattened control lattice `[product(nc),ncoord]`.
         real(rk), allocatable, private :: Xg(:,:)  !! Cached sampled points `[product(ng),ncoord]`.
@@ -600,7 +603,7 @@ contains
     !> license: BSD 3-Clause
     !> Construct all spline directions from breakpoints and continuities.
     !! Directional continuity arrays are converted to knot multiplicities by
-    !! [[compute_knot_vector]]. Optional controls and weights must match the
+    !! `compute_knot_vector`. Optional controls and weights must match the
     !! resulting tensor-product count. In direction \(d\), breakpoints must be
     !! finite and strictly increasing. Values in \([-1,p_d-1]\) retain a
     !! breakpoint with multiplicity \(p_d-c_i\); `-1` gives full multiplicity
@@ -3020,7 +3023,7 @@ contains
     !!
     !! The result is `"periodic"` only when the selected knot extension,
     !! every repeated control layer, and any stored weight layer satisfy the
-    !! cyclic identities in [[periodic_topology]]. Every other valid direction
+    !! cyclic identities in `periodic_topology`. Every other valid direction
     !! is `"bounded"`. Invalid directions and incomplete or inconsistent
     !! objects return `"invalid"`. Parameter wrapping is independent.
     pure function get_parameter_topology(this, dir) result(topology)

@@ -8,6 +8,7 @@ submodule(studio_ui) studio_ui_commands
     use studio_document, only: set_document_project_directory
     use studio_commands, only: about_command, head_sample_command
     use studio_help_dialog, only: show_interaction_guide
+    use studio_presentation_text, only: studio_version
     implicit none(type, external)
 contains
     function sample_path(filename) result(path)
@@ -611,7 +612,8 @@ contains
             return
         case(about_command)
             result=QMessageBox_information('About '//studio_product_name, &
-                studio_product_name//new_line('a')//'Parametric geometry and structured meshing'//new_line('a')//new_line('a')// &
+                studio_product_name//' '//studio_version//new_line('a')// &
+                'Parametric geometry and structured meshing'//new_line('a')//new_line('a')// &
                 'Powered by ForCAD and Qt for Fortran.',parent=s%window)
         case(interaction_guide_command)
             call show_interaction_guide(s%window)

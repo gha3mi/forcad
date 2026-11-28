@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Shared topology and continuity metadata for NURBS multipatches.
 !!
@@ -128,11 +128,13 @@ module forcad_multipatch
     implicit none
 
     private
+    public multipatch_connection
+#ifndef FORCAD_PUBLIC_DOCS
     public check_constraint_residuals, store_constraint_points, finish_constraint_block, finish_constraint_matrix
     public valid_multipatch, record_connection, resolve_patch_interface, interface_sampling
     public check_new_patch, check_patch_transform, require_patches, sampling_bounds, sample_count
     public requested, constraint_rows, storage_weights, interface_quadrature
-    public multipatch_connection, multipatch_compatible_trace_space, multipatch_projective_weight_scale, &
+    public multipatch_compatible_trace_space, multipatch_projective_weight_scale, &
         multipatch_growth_capacity, multipatch_chain_rule_coefficients, multipatch_composition_coefficients, &
         multipatch_valid_reparameterization, multipatch_element_ids, multipatch_element_block, &
         append_separable_constraint, include_constraint
@@ -143,6 +145,7 @@ module forcad_multipatch
     public append_bernstein_constraint, add_bernstein_shape
     public element_layout, multipatch_elements
     public resolve_connection_sides, append_connection, valid_connection_metadata
+#endif
 
     !> Bernstein coefficients of the supplied transition and projective jets on one interface cell.
     type interface_jet
@@ -2327,7 +2330,7 @@ contains
     !! Thus \(C_{r,k}=B_{r,k}\), the partial exponential Bell polynomial used
     !! by the univariate Faa di Bruno formula. This compact routine is used
     !! when a surface or volume connection omits the full multivariate
-    !! transition jet; [[multipatch_composition_coefficients]] handles the
+    !! transition jet; `multipatch_composition_coefficients` handles the
     !! general mapped-coordinate jet.
     pure subroutine multipatch_chain_rule_coefficients(connection, normal_sign, coefficient)
         type(multipatch_connection), intent(in) :: connection

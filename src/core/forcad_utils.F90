@@ -1,6 +1,8 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
-!> Numerical kernels and low-level geometry utilities used by ForCAD.
+!> Build coordinate grids and rectangular control nets, form rotation matrices, and solve dense systems.
+!! Import these routines from [[forcad]].
+#ifndef FORCAD_PUBLIC_DOCS
 !!
 !! This module contains the public building blocks behind the single- and
 !! multipatch APIs. Real arguments use `rk`, and tensor-product indices are
@@ -112,6 +114,7 @@
 !! - R. E. Tarjan, "Efficiency of a Good But Not Linear Set Union Algorithm,"
 !!   *Journal of the ACM* 22 (1975), 215-225.
 !!   [doi:10.1145/321879.321884](https://doi.org/10.1145/321879.321884).
+#endif
 module forcad_utils
 
     use, intrinsic :: ieee_arithmetic, only: ieee_is_finite, ieee_is_nan, ieee_quiet_nan, ieee_support_datatype, &
@@ -123,18 +126,20 @@ module forcad_utils
     implicit none
 
     private
+    public :: ndgrid, hexahedron_Xc, rotation, solve
+#ifndef FORCAD_PUBLIC_DOCS
+    public :: bernstein_span
     public :: geometry_jet, map_analysis_point, gradient_sensitivity, jacobian_log_sensitivity
     public :: axis_transfer, nested_edge_transfer, tensor_transfer
     public :: tensor_ansatz, tensor_ansatz_element, curve_frame, tensor_basis_jet, tensor_measure
-    interface valid_trace_side
-        module procedure valid_trace_scalar, valid_trace_vector
-    end interface
-    public basis_bernstein, basis_bspline, elemConn_C0, kron, ndgrid, compute_multiplicity, compute_knot_vector, &
+    public :: prepare_bernstein_pair, eval_bernstein_pair, eval_bernstein_endpoint
+    public :: interval_ratio, two_sum, add_scaled_term, weighted_tangent_measure, scaled_measure
+    public basis_bernstein, basis_bspline, elemConn_C0, kron, compute_multiplicity, compute_knot_vector, &
         basis_bspline_der, basis_bspline_der_order, basis_bspline_der_order_active, basis_bspline_der_all_active, &
         geometry_derivative, tensor_basis_derivative_local, tensor_basis_derivatives2_local, tensor_basis_derivative_at, &
         insert_knot_A_5_1, insert_knot_periodic_A_5_1, findspan, &
-        elevate_degree_A_5_9, hexahedron_Xc, tetragon_Xc, remove_knots_A_5_8, &
-        elemConn_Cn, unique, rotation, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, solve, &
+        elevate_degree_A_5_9, tetragon_Xc, remove_knots_A_5_8, &
+        elemConn_Cn, unique, basis_bspline_2der, det, inv, dyad, gauss_leg, export_vtk_legacy, &
         solve_spd_banded, solve_least_squares_qr, sparse_left_matmul, repelem, linspace, fill_uniform, eye, kron_eye, &
         valid_knot_vector, knot_start, knot_end, active_knots, active_span_count, active_span, &
         active_knot_multiplicity, infer_knot_shape, knot_tolerance, map_parameter, valid_trace_side, periodic_topology, &
@@ -149,6 +154,11 @@ module forcad_utils
         nearest_sample_index, nearest_spline_point, &
         spline_element, spline_connectivity, spline_span_plan, bezier_element_data, transform_geometry, check_affine_map, resize_buffer, &
         refine_control_net, get_array
+#endif
+
+    interface valid_trace_side
+        module procedure valid_trace_scalar, valid_trace_vector
+    end interface
 
 
     !> Fine coefficients by row, coarse coefficients by column.
@@ -169,15 +179,13 @@ module forcad_utils
     end type
 
     !> One active B-spline span expressed in its own Bernstein coordinate.
-    type, public :: bernstein_span
+    type :: bernstein_span
         integer :: first
         real(rk) :: domain(2), bounds_knot(2)
         real(rk), private :: domain_width, span_width, correction(2)
         integer, private :: domain_power, span_power
         type(bernstein_coefficients), private, allocatable :: derivative(:)
     end type
-    public :: prepare_bernstein_pair, eval_bernstein_pair, eval_bernstein_endpoint
-    public :: interval_ratio, two_sum, add_scaled_term, weighted_tangent_measure, scaled_measure
 
     interface resize_buffer
         module procedure resize_buffer_1, resize_buffer_2, resize_buffer_3, resize_buffer_4, resize_buffer_5
@@ -199,7 +207,7 @@ module forcad_utils
     !! each directional count must satisfy `nnode=nelem*p+1` with `p>=1`.
     !! Overloads accept scalar counts for curves and directional counts for
     !! surfaces or volumes. Direction 1 varies fastest in every element row.
-    !! Use [[elemConn_Cn]] or the rank-specific NURBS `cmp_elem` bindings for
+    !! Use `elemConn_Cn` or the rank-specific NURBS `cmp_elem` bindings for
     !! arbitrary knot vectors, repeated knots, or degree-zero spaces.
     interface elemConn_C0
         module procedure cmp_elemConn_C0_L
@@ -4765,14 +4773,14 @@ contains
     !! This is repeated Boehm insertion with Dierckx's periodic boundary update.
     !! After each insertion, the \(p\) exterior knots and repeated coefficient
     !! rows on the affected side are regenerated from the opposite side of the
-    !! period. The result therefore satisfies [[periodic_topology]] rather than
+    !! period. The result therefore satisfies `periodic_topology` rather than
     !! merely preserving the mapping on the active interval. `T`, when requested,
     !! includes these cyclic row identifications and satisfies
     !! `Qw=matmul(T,Pw)`.
     !!
     !! The seam multiplicity must remain at most \(p\); a full \(C^{-1}\) break
     !! is not a periodic topology. Inputs and outputs follow the zero-based
-    !! bounds of [[insert_knot_A_5_1]].
+    !! bounds of `insert_knot_A_5_1`.
     !!
     !! **References:**
     !!
@@ -5286,7 +5294,7 @@ contains
     !> license: BSD 3-Clause
     !> Return surface-control indices in an inward layer parallel to one edge.
     !!
-    !! Sides and ordering follow [[boundary_index]]. `layer=0` is the boundary;
+    !! Sides and ordering follow `boundary_index`. `layer=0` is the boundary;
     !! positive values advance along its inward normal control direction. This
     !! low-level routine assumes the layer lies inside the control net.
     pure subroutine boundary_layer_index_2d(nc, side, layer, reverse, idx)
@@ -5311,7 +5319,7 @@ contains
     !> license: BSD 3-Clause
     !> Return volume-control indices in an inward layer parallel to one face.
     !!
-    !! Face identifiers and orientation options follow [[boundary_index]].
+    !! Face identifiers and orientation options follow `boundary_index`.
     !! `layer=0` is the boundary face; positive layers advance along the inward
     !! normal control direction. The caller must supply an in-range layer.
     pure subroutine boundary_layer_index_3d(nc, side, layer, reverse, swap, flip, idx)
@@ -5599,7 +5607,7 @@ contains
     !! "periodic-form" means only that exterior knots and unclamped active
     !! endpoints can be represented. This structural predicate does not verify
     !! periodic knot-spacing extension or repeated control data; use
-    !! [[periodic_topology]] when those data are available.
+    !! `periodic_topology` when those data are available.
     !!
     pure function valid_knot_vector(knot, nc, degree) result(valid)
         real(rk), intent(in), contiguous :: knot(:)
@@ -5765,7 +5773,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Return the lower active parameter bound \(U_p\).
-    !! Input is assumed to satisfy [[valid_knot_vector]].
+    !! Input is assumed to satisfy `valid_knot_vector`.
     pure function knot_start(knot, nc, degree) result(a)
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: nc, degree
@@ -5922,7 +5930,7 @@ contains
     !> author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Return the upper active parameter bound \(U_{n_c}\).
-    !! Input is assumed to satisfy [[valid_knot_vector]].
+    !! Input is assumed to satisfy `valid_knot_vector`.
     pure function knot_end(knot, nc, degree) result(b)
         real(rk), intent(in), contiguous :: knot(:)
         integer, intent(in) :: nc, degree
@@ -6080,7 +6088,7 @@ contains
     !!
     !! The result has `nc` entries but at most `degree+1` are nonzero.
     !! Parameters outside the active interval return zeros, except values within
-    !! [[knot_tolerance]] of an endpoint, which are snapped to that endpoint.
+    !! `knot_tolerance` of an endpoint, which are snapped to that endpoint.
     !!
     pure function basis_bspline(Xt, knot, nc, degree) result(B)
         integer, intent(in) :: degree
@@ -6246,7 +6254,7 @@ contains
     !> license: BSD 3-Clause
     !> Return local basis values and optional first or second derivatives.
     !! This convenience overload requests at most order two from
-    !! [[basis_bspline_der_all_active]] and never forms a dense `nc`-vector.
+    !! `basis_bspline_der_all_active` and never forms a dense `nc`-vector.
     pure subroutine basis_bspline_active_ders(Xt, knot, nc, degree, nder, first, N, dN, d2N)
         integer, intent(in) :: degree, nc, nder
         real(rk), intent(in), contiguous :: knot(:)
@@ -6574,7 +6582,7 @@ contains
     !> Evaluate the dense B-spline basis and its first derivative at one parameter.
     !!
     !! Both outputs have length `nc`; entries outside the local support are
-    !! zero. This is the value-and-derivative overload of [[basis_bspline_der]].
+    !! zero. This is the value-and-derivative overload of `basis_bspline_der`.
     pure subroutine basis_bspline_der_A(Xt, knot, nc, degree, dB, B)
         integer, intent(in) :: degree
             !! Polynomial degree \(p\).
@@ -7131,7 +7139,7 @@ contains
     !! Rows and local controls both use direction-1-fastest ordering. The knot
     !! values are not read; each directional size supplies its element count.
     !! Directional control counts and multiplicities must satisfy the scalar
-    !! consistency relation documented by [[elemConn_Cn]].
+    !! consistency relation documented by `elemConn_Cn`.
     pure subroutine cmp_elemConn_Cn_S(nnode1, nnode2, p1, p2, &
         Xth1, Xth2, vecKnot_mul1, vecKnot_mul2, elemConn)
         integer,  intent(in)              :: nnode1, nnode2, p1, p2
@@ -7158,7 +7166,7 @@ contains
     !! Rows and local controls both use direction-1-fastest ordering. Knot
     !! values are not read; directional array sizes supply element counts.
     !! Every directional control count and multiplicity vector must satisfy the
-    !! scalar consistency relation documented by [[elemConn_Cn]].
+    !! scalar consistency relation documented by `elemConn_Cn`.
     pure subroutine cmp_elemConn_Cn_V(nnode1,nnode2,nnode3,p1,p2,p3, &
         Xth1,Xth2,Xth3,vecKnot_mul1,vecKnot_mul2,vecKnot_mul3, elemConn)
         integer,  intent(in)              :: nnode1, nnode2, nnode3, p1, p2, p3
@@ -7528,7 +7536,7 @@ contains
     !> Elevate a spline degree while preserving bounded or periodic topology.
     !!
     !! Homogeneous coordinates must be supplied for rational geometry. A
-    !! representation satisfying [[periodic_topology]] is elevated cyclically:
+    !! representation satisfying `periodic_topology` is elevated cyclically:
     !! each seam and interior multiplicity increases by `t`, the knot extension
     !! remains periodic, and the final elevated-degree control rows repeat the
     !! first rows. Other valid inputs are elevated on their active interval; a
@@ -7644,7 +7652,7 @@ contains
     !! The routine raises degree `degree` by `t`, preserves every geometric or
     !! homogeneous coordinate column of `Xcw`, and optionally returns the dense
     !! linear operator satisfying `Xcw_new=matmul(Tmap,Xcw)`. The input is the
-    !! open-clamped workspace prepared by [[elevate_degree_A_5_9]].
+    !! open-clamped workspace prepared by `elevate_degree_A_5_9`.
     !!
     !! **Reference:** L. Piegl and W. Tiller, *The NURBS Book*, 2nd ed.,
     !! Springer, 1997, Algorithm A5.9.
@@ -7887,7 +7895,7 @@ contains
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    ! author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Generate a uniformly spaced axis-aligned hexahedral control net.
     !!
@@ -8312,7 +8320,7 @@ contains
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    ! author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Return an active right-handed Euler rotation matrix.
     !!
@@ -9289,7 +9297,7 @@ contains
 
 
     !===============================================================================
-    !> author: Seyed Ali Ghasemi
+    ! author: Seyed Ali Ghasemi
     !> license: BSD 3-Clause
     !> Solve the square dense system \(AX=B\) for one or more right-hand sides.
     !!

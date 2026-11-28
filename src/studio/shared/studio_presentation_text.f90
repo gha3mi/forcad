@@ -5,6 +5,8 @@ module studio_presentation_text
 
     public :: entity_name, integer_text, number_text, without_nul
     character(*), parameter, public :: studio_product_name='ForCAD Studio'
+    character(*), parameter, public :: studio_version = '&
+        &FORCAD_RELEASE_VERSION'
 
 contains
 

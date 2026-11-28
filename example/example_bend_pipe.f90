@@ -4,8 +4,7 @@
 !>   Creates a straight pipe segment (as a ring extruded in \(z\)),
 !>   Refines the shape,
 !>   Applies bending with different bend angles (90°, 270°, 360°),
-!>   Exports the resulting NURBS volumes to VTK,
-!>   Displays the geometry.
+!>   Exports the resulting NURBS volumes to VTK.
 program example_bend_pipe
 
    use forcad, only: rk, nurbs_volume

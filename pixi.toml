@@ -8,8 +8,9 @@ fpm = "0.14.*"
 git = "*"
 
 [tasks]
-build = "fpm build"
-test = "fpm test"
+build = { cmd = "fpm build", default-environment = "gnu" }
+test = { cmd = "fpm test", default-environment = "gnu" }
+fpm = { cmd = "fpm", default-environment = "gnu" }
 
 [feature.gnu.dependencies]
 gfortran = ">=16.2,<17"
@@ -58,11 +59,16 @@ FPM_CC = "nvc"
 FPM_CXX = "nvc++"
 
 [feature.docs.dependencies]
-ford = "*"
-graphviz = "*"
+ford = "7.*"
+
+[feature.docs.pypi-dependencies]
+pagefind-bin = "==1.6.0"
 
 [feature.docs.tasks]
-docs = "ford README.md"
+docs = """
+ford --revision "$(cat VERSION)" --no-externalize - < docs/index.md &&
+python -m pagefind_bin --site docs/ford --keep-index-url
+"""
 
 [feature.lint.dependencies]
 fortitude-lint = "*"
@@ -96,7 +102,7 @@ start = { cmd = "build/studio-install/bin/forcad-studio", depends-on = ["build-s
 start = { cmd = "build/studio-install/bin/forcad-studio.exe", depends-on = ["build-studio"] }
 
 [environments]
-default = ["gnu"]
+gnu = ["gnu"]
 intel = ["intel"]
 flang = ["flang"]
 nvhpc = ["nvhpc"]

@@ -6,6 +6,7 @@ module studio_assistant_catalog
     use studio_assistant_local_http, only: assistant_environment,local_assistant_models,local_model_info, &
         local_model_efforts,local_model_metadata,has_json_string,parse_json_object,assistant_effort_label
     use studio_assistant_process, only: start_provider_process
+    use studio_presentation_text, only: studio_version
     implicit none(type,external)
     private
     public :: discover_assistant_catalog
@@ -34,7 +35,7 @@ contains
         has_codex=start_catalog_process(codex,workspace,'codex',[character(24)::'app-server','--listen','stdio://'])
         codex_ready=.false.
         if(has_codex)codex_ready=write_catalog_frame(codex, &
-            '{"id":1,"method":"initialize","params":{"clientInfo":{"name":"forcad_studio","version":"0.1.0"}}}')
+            '{"id":1,"method":"initialize","params":{"clientInfo":{"name":"forcad_studio","version":"'//studio_version//'"}}}')
         call system_clock(claude_started)
         has_claude=start_catalog_process(claude,workspace,'claude',[character(32)::'--print','--verbose', &
             '--input-format','stream-json','--output-format','stream-json','--no-session-persistence','--strict-mcp-config'])

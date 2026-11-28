@@ -9,7 +9,7 @@ module studio_assistant_cli
     use studio_assistant_transport, only: read_text,write_text,valid_provider_session
     use studio_chat_attachment, only: studio_attachment
     use studio_platform_files, only: file_metadata,inspect_path,is_regular_file
-    use studio_presentation_text, only: integer_text
+    use studio_presentation_text, only: integer_text,studio_version
     implicit none(type,external)
     private
 
@@ -396,7 +396,7 @@ contains
         empty=QJsonObject()
         client=QJsonObject()
         call client%insert('name','ForCAD Studio')
-        call client%insert('version','0.1.0')
+        call client%insert('version',studio_version)
         call params%insert('protocolVersion',1)
         call params%insert('clientCapabilities',empty)
         call params%insert('clientInfo',client)

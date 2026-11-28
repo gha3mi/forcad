@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} · {{ project }}{% endblock %}
+{% block body %}
+<div class="guide-layout">
+  <article class="guide-article" data-page="{{ page_url.stem }}">
+    <nav data-pagefind-ignore class="doc-crumbs" aria-label="Breadcrumb">
+      <a href="{{ project_url }}/index.html">Home</a>
+      {% for ancestor in page.hierarchy %}<span aria-hidden="true">/</span>{{ ancestor | relurl(page_url) }}{% if loop.first and page.location.name == 'assistant' %}<span aria-hidden="true">/</span><a href="{{ project_url }}/page/how-to/index.html">ForCAD Studio</a>{% endif %}{% endfor %}
+    </nav>
+    <div id="text">
+      <h1>{{ page.title }}</h1>
+      {{ page.contents }}
+    </div>
+  </article>
+  <nav data-pagefind-ignore class="guide-nav" aria-label="Guide contents">
+    <a class="guide-root" href="{{ pages.url | relurl(page_url) }}"{% if page == pages %} aria-current="page"{% endif %}>Guide contents</a>
+    {% set assistant_section = pages.subpages | selectattr('location.name', 'equalto', 'assistant') | first %}
+    {% macro section_menu(section) %}
+      {% set is_studio = section.location.name == 'how-to' %}
+      <details{% if section == page or section in page.hierarchy or (is_studio and page.location.name == 'assistant') %} open{% endif %}>
+        <summary>{{ section.title }}</summary>
+        <ul>
+          <li><a href="{{ section.url | relurl(page_url) }}"{% if section == page %} aria-current="page"{% endif %}>{{ section.title }} overview</a></li>
+          {% for category in section.subpages | map(attribute='meta.category') | unique %}
+            {% if category %}
+              <li><details class="guide-group"{% if page.meta.category == category and section in page.hierarchy %} open{% endif %}>
+                <summary>{{ category }}</summary>
+                <ul>
+            {% endif %}
+            {% for child in section.subpages if child.meta.category == category %}
+              <li><a href="{{ child.url | relurl(page_url) }}"{% if child == page %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+            {% endfor %}
+            {% if category %}</ul></details></li>{% endif %}
+          {% endfor %}
+          {% if is_studio and assistant_section %}<li>{{ section_menu(assistant_section) }}</li>{% endif %}
+        </ul>
+      </details>
+    {% endmacro %}
+    {% for section in pages.subpages if section != assistant_section %}{{ section_menu(section) }}{% endfor %}
+  </nav>
+</div>
+{% endblock %}

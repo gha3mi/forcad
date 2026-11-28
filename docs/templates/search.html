@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Guide and API index · {{ project }}{% endblock %}
+{% block body %}
+<article class="doc-results" data-pagefind-ignore>
+  <h1>Guide and API index</h1>
+  <p>Browse the guides by task or use your browser’s Find command to locate a title on this page.</p>
+  <h2>Public Fortran API</h2>
+  <ul>
+    <li><a href="{{ project_url }}/page/reference/api.html">Public types, interfaces, and numerical utilities</a></li>
+    <li><a href="{{ project_url }}/lists/types.html">Derived types and their bindings</a></li>
+    <li><a href="{{ project_url }}/lists/procedures.html">Procedures and generic interfaces</a></li>
+  </ul>
+  {% for section in pages.subpages %}
+    <h2><a href="{{ section.url | relurl(page_url) }}">{{ section.title }}</a></h2>
+    <ul class="directory-columns">
+      {% for child in section.subpages %}<li><a href="{{ child.url | relurl(page_url) }}">{{ child.title }}</a></li>{% endfor %}
+    </ul>
+  {% endfor %}
+</article>
+{% endblock %}

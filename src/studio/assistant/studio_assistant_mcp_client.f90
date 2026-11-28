@@ -3,6 +3,7 @@ module studio_assistant_mcp_client
     use qt, only: QProcess,QProcess_NotRunning,QThread_isInterruptionRequested,QCoreApplication_applicationFilePath, &
         QJsonObject,QJsonValue_Object
     use studio_assistant_local_http, only: parse_json_object
+    use studio_presentation_text, only: studio_version
     implicit none(type,external)
     private
     public :: assistant_mcp_client_t,connect_assistant_mcp,request_assistant_mcp,close_assistant_mcp
@@ -59,7 +60,7 @@ contains
         capabilities=QJsonObject()
         client_info=QJsonObject()
         call client_info%insert('name','ForCAD Studio')
-        call client_info%insert('version','1')
+        call client_info%insert('version',studio_version)
         call parameters%insert('clientInfo',client_info)
         call parameters%insert('protocolVersion','2025-11-25')
         call parameters%insert('capabilities',capabilities)

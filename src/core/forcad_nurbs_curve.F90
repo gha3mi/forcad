@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Curves represented by B-spline and NURBS bases.
 !!
@@ -104,9 +104,14 @@ module forcad_nurbs_curve
     implicit none
 
     private
-    public nurbs_curve, compute_Tgc, compute_dTgc
+    public nurbs_curve
+#ifndef FORCAD_PUBLIC_DOCS
+    public compute_Tgc, compute_dTgc
+#endif
 
     !===============================================================================
+    ! author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     !> Mutable B-spline or NURBS curve.
     !!
     !! Construct a valid curve with [[nurbs_curve:set]]. Sampling with
@@ -139,8 +144,6 @@ module forcad_nurbs_curve
     !! modify_Xc/modify_Wc operations discard sampled points and display
     !! connectivity while keeping parameters for create() to refresh.
     !! @endwarning
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
     type nurbs_curve
         real(rk), allocatable, private :: Xc(:,:) !! Control points `[nc,ncoord]`.
         real(rk), allocatable, private :: Xg(:,:) !! Cached sampled points `[ng,ncoord]`.
@@ -734,7 +737,7 @@ contains
     !> Construct a spline space from breakpoints and requested continuities.
     !!
     !! `continuity(i)` is converted to knot multiplicity `degree-continuity(i)`
-    !! for each parameter node according to [[compute_knot_vector]]. Optional
+    !! for each parameter node according to `compute_knot_vector`. Optional
     !! control data must match the resulting count. Breakpoints must be finite
     !! and strictly increasing. Values
     !! \(-1\leq\mathtt{continuity(i)}\leq p-1\) retain a breakpoint with
@@ -2963,7 +2966,7 @@ contains
     !!
     !! The result is `"periodic"` only when the knot extension, repeated
     !! control points, and any stored weights satisfy the cyclic identities in
-    !! [[periodic_topology]]. Every other valid curve is `"bounded"`; an
+    !! `periodic_topology`. Every other valid curve is `"bounded"`; an
     !! incomplete or inconsistent object is `"invalid"`. Parameter wrapping is
     !! an independent evaluation policy and does not affect this result.
     pure function get_parameter_topology(this) result(topology)
@@ -4086,7 +4089,7 @@ contains
     !! recomputed.
     !!
     !! **Numerical method.** The banded normal equations are the low-memory
-    !! primary path. [[solve_least_squares_qr]] is allocated only after their
+    !! primary path. `solve_least_squares_qr` is allocated only after their
     !! failure and rejects numerically rank-deficient data with code 108.
     pure subroutine lsq_fit_bspline(this, Xt, Xdata, ndata)
         use forcad_utils, only: solve_least_squares_qr, solve_spd_banded

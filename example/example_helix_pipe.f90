@@ -5,8 +5,7 @@
 !>   Creates a straight ring extruded along \(z\) (a pipe segment),
 !>   Refines it along the axial direction (knot insertion + degree elevation),
 !>   Maps the control points onto a helix of radius `rh`, pitch `pitch`, with `nturns` turns,
-!>   Exports the resulting NURBS volume to VTK,
-!>   Displays the geometry.
+!>   Exports the resulting NURBS volume to VTK.
 program example_helix_pipe
 
    use forcad, only: rk, nurbs_volume

@@ -6,6 +6,7 @@ module studio_mcp_stdio
     use studio_mcp_schema, only: studio_mcp_catalog,studio_mcp_tool_schema,studio_mcp_valid_arguments,studio_rpc_token
     use studio_mcp_mailbox, only: mcp_mailbox,submit_mcp_request,read_mcp_response,close_mcp_mailbox,mcp_mailbox_exists, &
         mcp_request_waiting,mcp_request_claimed,retract_mcp_request,mcp_response_pending,mcp_response_valid,max_mcp_request_bytes
+    use studio_presentation_text, only: studio_version
     implicit none(type, external)
     private
     public :: run_studio_mcp_stdio
@@ -231,7 +232,7 @@ contains
         call empty%delete()
         server=QJsonObject()
         call server%insert('name','forcad-studio')
-        call server%insert('version','0.1.0')
+        call server%insert('version',studio_version)
         response=QJsonObject()
         call response%insert('protocolVersion',version)
         call response%insert('capabilities',capabilities)

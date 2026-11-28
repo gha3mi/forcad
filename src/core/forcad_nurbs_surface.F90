@@ -1,4 +1,4 @@
-!> author: Seyed Ali Ghasemi
+! author: Seyed Ali Ghasemi
 !> license: BSD 3-Clause
 !> Tensor-product B-spline and NURBS surfaces.
 !!
@@ -99,9 +99,14 @@ module forcad_nurbs_surface
     implicit none
 
     private
-    public nurbs_surface, compute_Tgc, compute_dTgc, surface_geometry_derivative
+    public nurbs_surface
+#ifndef FORCAD_PUBLIC_DOCS
+    public compute_Tgc, compute_dTgc, surface_geometry_derivative
+#endif
 
     !===============================================================================
+    ! author: Seyed Ali Ghasemi
+    !> license: BSD 3-Clause
     !> Mutable tensor-product B-spline or NURBS surface.
     !!
     !! Initialize the object with [[nurbs_surface:set]]. The two entries of
@@ -135,8 +140,6 @@ module forcad_nurbs_surface
     !!
     !! @note Getter generics return allocatable copies of object-owned arrays.
     !! @endnote
-    !> author: Seyed Ali Ghasemi
-    !> license: BSD 3-Clause
     type nurbs_surface
         real(rk), allocatable, private :: Xc(:,:)  !! Flattened control net `[product(nc),ncoord]`.
         real(rk), allocatable, private :: Xg(:,:)  !! Cached sampled points `[product(ng),ncoord]`.
@@ -412,7 +415,7 @@ contains
     !!
     !! The result is `"periodic"` only when the selected knot extension,
     !! every repeated control layer, and any stored weight layer satisfy the
-    !! cyclic identities in [[periodic_topology]]. Every other valid direction
+    !! cyclic identities in `periodic_topology`. Every other valid direction
     !! is `"bounded"`. Invalid directions and incomplete or inconsistent
     !! objects return `"invalid"`. Parameter wrapping is independent.
     pure function get_parameter_topology(this, dir) result(topology)
@@ -747,7 +750,7 @@ contains
     !> license: BSD 3-Clause
     !> Construct both spline directions from breakpoints and continuities.
     !! `continuity1/2` are converted to knot multiplicities by
-    !! [[compute_knot_vector]]. Optional control data must match the resulting
+    !! `compute_knot_vector`. Optional control data must match the resulting
     !! tensor-product count. In direction \(d\), breakpoints must be finite and
     !! strictly increasing. Values in \([-1,p_d-1]\) retain a breakpoint with
     !! multiplicity \(p_d-c_i\); `-1` gives full multiplicity \(p_d+1\), while
